@@ -27,11 +27,12 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 

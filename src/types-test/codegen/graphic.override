@@ -26,6 +26,7 @@ static void nsp_graphic_scale(NspGraphic *o,double *alpha);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/graphic.h>

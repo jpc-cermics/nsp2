@@ -3472,6 +3472,8 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
 %%
 override nsp_graphic_new
 
+#include <nsp/opengl.h>
+
 int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
 {
   int win_id,open_gl=FALSE;
@@ -3494,7 +3496,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   if (wpdim != NULL){ CheckDims(NspFname(stack),3,wpdim,1,2);}
   if (viewport != NULL) {CheckDims(NspFname(stack),3,viewport,1,2);}
   if (wpos != NULL) {CheckDims(NspFname(stack),3,wpos,1,2);}
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( open_gl == TRUE )
     win_id= nsp_graphic_new_gl(GTK_WIDGET(window->obj), GTK_WIDGET(vbox->obj), winnum,
 			    (wdim) ? (int*) wdim->R: NULL ,

@@ -137,7 +137,7 @@ static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, i
 static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_contour3d(NspContour3d *P);
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_OPENGL 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 #endif 
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);

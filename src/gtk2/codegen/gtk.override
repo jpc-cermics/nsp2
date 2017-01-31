@@ -48,11 +48,6 @@ enum {STYLE_COLOUR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} type;
 #define  GtkCellEditable_Private 
 #include "nsp/gtk/gtkcelleditable.h"
 
-/* XXXX */
-extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-#ifdef WITH_GTKGLEXT
-extern int nsp_graphic_new_gl_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-#endif 
 /* XXXXX : only implemented in 2.4 */
 #define gtk_calendar_set_display_options gtk_calendar_display_options
 #define gtk_calendar_get_display_options(x) 0 
@@ -3438,6 +3433,13 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
 
 %%
 override nsp_graphic_new
+
+#include <nsp/opengl.h>
+
+extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+#ifdef WITH_OPENGL
+extern int nsp_graphic_new_gl_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+#endif 
 
 int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
 {

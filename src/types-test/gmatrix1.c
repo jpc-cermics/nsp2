@@ -27,15 +27,16 @@
 #line 36 "codegen/gmatrix1.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
-#line 39 "gmatrix1.c"
+#line 40 "gmatrix1.c"
 
 /* -----------NspGMatrix1 ----------- */
 
@@ -108,7 +109,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 
   type->init = (init_func *) init_gmatrix1;
 
-#line 53 "codegen/gmatrix1.override"
+#line 54 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -121,7 +122,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 125 "gmatrix1.c"
+#line 126 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -890,7 +891,7 @@ static AttrTab gmatrix1_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 76 "codegen/gmatrix1.override"
+#line 77 "codegen/gmatrix1.override"
 
 extern function int_nspgraphic_extract;
 
@@ -899,10 +900,10 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 903 "gmatrix1.c"
+#line 904 "gmatrix1.c"
 
 
-#line 86 "codegen/gmatrix1.override"
+#line 87 "codegen/gmatrix1.override"
 
 extern function int_graphic_set_attribute;
 
@@ -911,7 +912,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 915 "gmatrix1.c"
+#line 916 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -946,7 +947,7 @@ void nsp_initialize_GMatrix1_types(void)
   new_type_gmatrix1(T_BASE);
 }
 
-#line 96 "codegen/gmatrix1.override"
+#line 97 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
@@ -1296,7 +1297,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      *    into its differents zones (polygons) by the function PaintTriangle
      */
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
     if (  Xgc->graphic_engine == &GL_gengine )
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
@@ -1779,4 +1780,4 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-#line 1783 "gmatrix1.c"
+#line 1784 "gmatrix1.c"

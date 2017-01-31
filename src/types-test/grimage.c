@@ -27,10 +27,11 @@
 #line 25 "codegen/grimage.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 34 "grimage.c"
+#line 35 "grimage.c"
 
 /* -----------NspGrImage ----------- */
 
@@ -103,7 +104,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
 
   type->init = (init_func *) init_grimage;
 
-#line 37 "codegen/grimage.override"
+#line 38 "codegen/grimage.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -116,7 +117,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 120 "grimage.c"
+#line 121 "grimage.c"
   /* 
    * NspGrImage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -739,7 +740,7 @@ static AttrTab grimage_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 60 "codegen/grimage.override"
+#line 61 "codegen/grimage.override"
 
 extern function int_nspgraphic_extract;
 
@@ -748,10 +749,10 @@ int _wrap_nsp_extractelts_grimage(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 752 "grimage.c"
+#line 753 "grimage.c"
 
 
-#line 70 "codegen/grimage.override"
+#line 71 "codegen/grimage.override"
 
 extern function int_graphic_set_attribute;
 
@@ -761,7 +762,7 @@ int _wrap_nsp_setrowscols_grimage(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 765 "grimage.c"
+#line 766 "grimage.c"
 
 
 /*----------------------------------------------------
@@ -796,7 +797,7 @@ void nsp_initialize_GrImage_types(void)
   new_type_grimage(T_BASE);
 }
 
-#line 81 "codegen/grimage.override"
+#line 82 "codegen/grimage.override"
 
 /* inserted verbatim at the end */
 
@@ -908,4 +909,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 912 "grimage.c"
+#line 913 "grimage.c"

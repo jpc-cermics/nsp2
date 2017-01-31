@@ -26,7 +26,7 @@ static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, in
 static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_points3d(NspPoints3d *P);
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 static void draw_points3d_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -37,13 +37,14 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -132,7 +133,7 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return;
     }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* if we are using OpenGl we make a full draw of
@@ -253,11 +254,11 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
  * parties cachées. Il faut un drapolymark3d.
  */
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
 #endif
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
   int mark[2],current_mark[2],color=0;

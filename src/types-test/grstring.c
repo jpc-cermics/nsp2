@@ -27,11 +27,12 @@
 #line 24 "codegen/grstring.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#line 35 "grstring.c"
+#line 36 "grstring.c"
 
 /* -----------NspGrstring ----------- */
 
@@ -104,7 +105,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 
   type->init = (init_func *) init_grstring;
 
-#line 37 "codegen/grstring.override"
+#line 38 "codegen/grstring.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -117,7 +118,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 121 "grstring.c"
+#line 122 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -857,7 +858,7 @@ static AttrTab grstring_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 59 "codegen/grstring.override"
+#line 60 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -866,10 +867,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 870 "grstring.c"
+#line 871 "grstring.c"
 
 
-#line 69 "codegen/grstring.override"
+#line 70 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -879,7 +880,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 883 "grstring.c"
+#line 884 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -914,7 +915,7 @@ void nsp_initialize_Grstring_types(void)
   new_type_grstring(T_BASE);
 }
 
-#line 80 "codegen/grstring.override"
+#line 81 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str);
@@ -1296,4 +1297,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   return FALSE;
 }
 
-#line 1300 "grstring.c"
+#line 1301 "grstring.c"

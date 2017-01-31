@@ -137,7 +137,7 @@ static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M);
 static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M);
 static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi);
 #endif

@@ -33,7 +33,7 @@ extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
 				 int Mm,int ncoord);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);

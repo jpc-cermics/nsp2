@@ -10,11 +10,14 @@
 #define WITH_PANGO
 #endif /* PERICAIRO */
 
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
 #ifdef WIN32
 #include <windows.h>
 #endif
+
+#if ! defined(PERIGTK3GL)
 #include <gtk/gtkgl.h>
+#endif
 
 /* should be checked in configure */
 #define HAVE_FREETYPE
@@ -26,6 +29,9 @@
 #include <pango/pangoft2.h>
 #endif
 
+#ifdef WITH_EPOXY
+#include <epoxy/gl.h>
+#else
 #ifdef __APPLE__
 #   include <OpenGL/gl.h>
 #   include <OpenGL/glu.h>
@@ -33,9 +39,12 @@
 #   include <GL/gl.h>
 #   include <GL/glu.h>
 #endif
+#endif
 
 #include <gtk/gtk.h>
+#if ! defined(PERIGTK3GL)
 #include <gtk/gtkgl.h>
+#endif
 
 #define TAILLE_CHAR 16
 #define TRANSLATE_CHAR 10
@@ -143,7 +152,7 @@ typedef struct  _gtk_data {
   GdkGC *wgc;
   GdkGC *stdgc;
 #else 
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
   void *pixmap;              /* backing store surface */
   void *extra_pixmap;        /* extra backing store pixmap used when pixmap mode is on  */
   void *drawable;            /* can be set to pixmap or extra_pixmap */
@@ -180,7 +189,7 @@ typedef struct  _gtk_data {
   cairo_t *cairo_extra_pixmap_cr;       /* used to draw on the private surface pixmap */
   cairo_t *cairo_drawable_cr;           /* set to one of the two previous */
 #endif
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
   int gdk_only;                         /* when true only gdk draw  */
   int gl_only;                          /* when true only gl draw  */
   TextureImage  tab_textures_font[2];   /* caracters as textures */
@@ -188,9 +197,14 @@ typedef struct  _gtk_data {
   GLuint  tab_base[2];
   GLuint  base_encours;
   t_camera camera;                      /*   opengl camera */
+#if defined(PERIGL)
   GdkGLContext *glcontext ;
   GdkGLDrawable *gldrawable;
-#endif
+#else
+  void *glcontext ;
+  void *gldrawable;
+#endif /* defined(PERIGL) */
+#endif /* defined(PERIGL) || defined(PERIGTK3GL) */
   GdkRectangle invalidated;             /* used for expose_event */
   int          configured;              /* used to wait for configure event */
   cairo_rectangle_int_t invalidated_r;  /* filled in the nsp_drawing_invalidate_handler */
@@ -215,11 +229,11 @@ extern Gengine1 nsp_gengine1 ;
  * private functions for drivers
  *-----------------------------------------------------------------*/
 
-#ifdef PERICAIRO
+#if  defined(PERICAIRO) && !  defined(PERIGTK3GL)
 #define xx__gengine Cairo_gengine
 #endif
 
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
 #define xx__gengine GL_gengine
 #endif
 
@@ -369,19 +383,18 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 extern void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk(void);
 
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect);
 static void unclip_rectangle(const GdkRectangle *clip_rect);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+#if defined(PERIGL) 
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
+#endif
 #ifdef LIGHTS
 static void init_gl_lights(GLfloat light0_pos[4]);
 #endif /* LIGHTS */
-#ifdef PERIGLGTK
-static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
-#endif
 #endif /* PERIGL */
 
 #endif /*  PERI_PRIVATE */

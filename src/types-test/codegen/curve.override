@@ -21,7 +21,7 @@ static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M);
 static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M);
 static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi);
 #endif
@@ -33,6 +33,7 @@ static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/curve.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
@@ -330,7 +331,7 @@ extern Gengine GL_gengine;
 
 static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     /* if we are using OpenGl we need to detect the convex parts */
     {
@@ -373,7 +374,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
   double xi ;
@@ -474,7 +475,7 @@ static NspMatrix *nsp_curve_stairs_alloc(NspMatrix *M)
 
 static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M)
 {
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     /* if we are using OpenGl we need to detect the convex parts */
     {

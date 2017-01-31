@@ -27,15 +27,16 @@
 #line 28 "codegen/gmatrix.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
-#line 39 "gmatrix.c"
+#line 40 "gmatrix.c"
 
 /* -----------NspGMatrix ----------- */
 
@@ -108,7 +109,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
 
   type->init = (init_func *) init_gmatrix;
 
-#line 45 "codegen/gmatrix.override"
+#line 46 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -121,7 +122,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 125 "gmatrix.c"
+#line 126 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -761,7 +762,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 67 "codegen/gmatrix.override"
+#line 68 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -770,10 +771,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "gmatrix.c"
+#line 775 "gmatrix.c"
 
 
-#line 77 "codegen/gmatrix.override"
+#line 78 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -782,7 +783,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 786 "gmatrix.c"
+#line 787 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -817,7 +818,7 @@ void nsp_initialize_GMatrix_types(void)
   new_type_gmatrix(T_BASE);
 }
 
-#line 87 "codegen/gmatrix.override"
+#line 88 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -1018,4 +1019,4 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
   Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
-#line 1022 "gmatrix.c"
+#line 1023 "gmatrix.c"

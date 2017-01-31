@@ -48,11 +48,11 @@ static void *initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double
  * widget hierarchy
  */
 
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
 #define nsp_graphic_new_new nsp_graphic_new_gl_new
 #endif
 
-#ifdef PERICAIRO
+#if defined(PERICAIRO) && !defined(PERIGTK3GL)
 int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 int nsp_graphic_new_cairo_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -94,7 +94,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   private->draw_init= TRUE;
   private->gcol_bg = white;
   private->gcol_fg = black;
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
   private->gdk_only= FALSE;
   private->gl_only= FALSE;
 #endif
@@ -111,10 +111,10 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->CurWindow = WinNum;
 
   /* the graphic engine associated to this graphic window */
-#ifdef PERIGL
+#if defined(PERIGL) || defined(PERIGTK3GL)
   NewXgc->graphic_engine = &GL_gengine ;
 #else
-#ifdef PERICAIRO
+#if defined(PERICAIRO) && !defined(PERIGTK3GL)
   NewXgc->graphic_engine = &Cairo_gengine;
 #else
   NewXgc->graphic_engine = &Gtk_gengine;
@@ -186,7 +186,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
    */
   /* Default value is without Pixmap */
   NewXgc->CurPixmapStatus = 0;
-#if defined(PERIGL) 
+#if defined(PERIGL) || defined(PERIGTK3GL)
   NewXgc->private->drawable = gtk_widget_get_window(NewXgc->private->drawing);
 #endif
   /* initialize a pango_layout */
@@ -380,7 +380,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     gtk_widget_show(scrolled_window);
   
   /* create private->drawingarea */
+
+#if GTK_CHECK_VERSION(3,0,0) && defined(PERIGTK3GL)
+  dd->private->drawing = gtk_gl_area_new ();
+  gtk_widget_set_hexpand (dd->private->drawing, TRUE);
+  gtk_widget_set_vexpand (dd->private->drawing, TRUE);
+#else
+  /* standard widget + gtkglext */
   dd->private->drawing = gtk_drawing_area_new();
+#endif
+    
 #if defined(PERIGL) 
   /* Set OpenGL-capability to the widget
    * opengl rendering in the window
@@ -469,10 +478,17 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   */
 
 #if GTK_CHECK_VERSION(3,0,0)
+#if defined(PERIGTK3GL)
+  g_signal_connect((dd->private->drawing), "render",
+		   G_CALLBACK(render_callback), (gpointer) dd);
+  g_signal_connect((dd->private->scrolled), "draw",
+		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
+#else
   g_signal_connect((dd->private->drawing), "draw",
 		   G_CALLBACK(draw_callback), (gpointer) dd);
   g_signal_connect((dd->private->scrolled), "draw",
 		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
+#endif
 #else
   g_signal_connect((dd->private->drawing), "expose_event",
 		   G_CALLBACK(expose_event_new), (gpointer) dd);

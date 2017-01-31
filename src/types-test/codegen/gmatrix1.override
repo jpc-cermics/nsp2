@@ -35,11 +35,12 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -442,7 +443,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      *    into its differents zones (polygons) by the function PaintTriangle
      */
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
     if (  Xgc->graphic_engine == &GL_gengine )
       {
 	for ( i = 0 ; i < nx -1 ; i++ )

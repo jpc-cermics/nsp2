@@ -23,7 +23,7 @@ static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -37,6 +37,7 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include <nsp/figure.h>
@@ -127,7 +128,7 @@ static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *r
       return ;
     }
   */
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* if we are using OpenGl we make a full draw of
@@ -410,7 +411,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 {
   int one_face_color = FALSE;

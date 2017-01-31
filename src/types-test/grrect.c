@@ -27,10 +27,11 @@
 #line 27 "codegen/grrect.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
-#line 34 "grrect.c"
+#line 35 "grrect.c"
 
 /* -----------NspGrRect ----------- */
 
@@ -103,7 +104,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 
   type->init = (init_func *) init_grrect;
 
-#line 39 "codegen/grrect.override"
+#line 40 "codegen/grrect.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -116,7 +117,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 120 "grrect.c"
+#line 121 "grrect.c"
   /* 
    * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -723,7 +724,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 62 "codegen/grrect.override"
+#line 63 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -732,10 +733,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 736 "grrect.c"
+#line 737 "grrect.c"
 
 
-#line 72 "codegen/grrect.override"
+#line 73 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -745,7 +746,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 749 "grrect.c"
+#line 750 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -780,7 +781,7 @@ void nsp_initialize_GrRect_types(void)
   new_type_grrect(T_BASE);
 }
 
-#line 83 "codegen/grrect.override"
+#line 84 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -1010,4 +1011,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1014 "grrect.c"
+#line 1015 "grrect.c"

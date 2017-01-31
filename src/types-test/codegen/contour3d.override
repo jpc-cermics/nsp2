@@ -23,7 +23,7 @@ static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, i
 static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_contour3d(NspContour3d *P);
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_OPENGL 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 #endif 
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -32,6 +32,7 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/contour3d.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
@@ -121,7 +122,7 @@ static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
       return;
     }
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_OPENGL 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       /* if we are using OpenGl we make a full draw of 
@@ -226,7 +227,7 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   nsp_contour3d_draw_new(Xgc,Q->x->R,Q->y->R,Q->z->R,Q->x->mn,Q->y->mn,nz, zz,Q->flag,Q->zlev);
 }
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_OPENGL 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob)
 {
   draw_contour3d_face(Xgc,Ob,0);

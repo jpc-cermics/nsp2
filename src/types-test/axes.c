@@ -30,7 +30,7 @@
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -1940,7 +1940,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       FRect1[1]= exp10(ymin);FRect1[3]= exp10(ymax);
     }
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   /* transmit info to opengl */
   if ( Xgc->graphic_engine == &GL_gengine )
     {

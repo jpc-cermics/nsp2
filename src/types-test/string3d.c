@@ -32,7 +32,7 @@
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -783,7 +783,7 @@ static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return;
     }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* if we are using OpenGl we make a full draw of
@@ -873,7 +873,7 @@ int nsp_check_string3d( NspString3d *P)
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 static void draw_justified_string3d(BCG *Xgc,NspGraphic *V, int xj, int yj);
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj);
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_string3d_ogl(BCG *Xgc,void *Ob);
 static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj);
 #endif
@@ -920,7 +920,7 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
 
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 {
   draw_justified_string3d_ogl(Xgc,Ob,CENTER,CENTER);

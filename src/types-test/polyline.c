@@ -27,10 +27,11 @@
 #line 22 "codegen/polyline.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
-#line 34 "polyline.c"
+#line 35 "polyline.c"
 
 /* -----------NspPolyline ----------- */
 
@@ -103,7 +104,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
 
   type->init = (init_func *) init_polyline;
 
-#line 34 "codegen/polyline.override"
+#line 35 "codegen/polyline.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -116,7 +117,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 120 "polyline.c"
+#line 121 "polyline.c"
   /* 
    * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -795,7 +796,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 56 "codegen/polyline.override"
+#line 57 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -804,10 +805,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 808 "polyline.c"
+#line 809 "polyline.c"
 
 
-#line 66 "codegen/polyline.override"
+#line 67 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -817,7 +818,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 821 "polyline.c"
+#line 822 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -852,7 +853,7 @@ void nsp_initialize_Polyline_types(void)
   new_type_polyline(T_BASE);
 }
 
-#line 77 "codegen/polyline.override"
+#line 78 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1065,4 +1066,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1069 "polyline.c"
+#line 1070 "polyline.c"

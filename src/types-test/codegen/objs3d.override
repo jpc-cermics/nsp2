@@ -69,8 +69,8 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 %%
 headers
 #include <gtk/gtk.h>
-
-#ifdef  WITH_GTKGLEXT
+#include <nsp/graphics-new/Graphics.h>
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -449,7 +449,7 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
   return  ((NspObjs3d *) Obj)->obj->children;
 }
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
 				 int *flag,double *ebox,int with_box,int box_color,int box_style);
 #endif
@@ -480,7 +480,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
   int background_color;
   */
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_box,box_color,box_style);
@@ -519,7 +519,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 			   ebox,&zzmin,&zzmax,param3d_t);
   SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   /* transmit info to opengl pretending we are doing 2d !!! */
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -599,7 +599,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
 				 int *flag,double *ebox,int with_box,int box_color,int box_style)
@@ -819,7 +819,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 {
   /*                      s0    s1    s2    s3    s4    s5    s6    s7    s8    s9    s10   s11  */
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   double coord[24];
 #endif
   Plot3dBox *B;
@@ -866,7 +866,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
   B->coord[18] = xmax; B->coord[19] = ymin; B->coord[20] = zmin; //7
   B->coord[21] = xmin; B->coord[22] = ymax; B->coord[23] = zmax; //8
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* in open_gl we do not want to change coordinates */
@@ -884,7 +884,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
     {
       build_ticks_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->ticks_pos = malloc(2*(B->nb_xyz_ticks)*sizeof(VisionPos));
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       if ( Xgc->graphic_engine != &GL_gengine )
 #endif
 	apply_transforms_new1(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks));
@@ -893,7 +893,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
     {
       build_box_others_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->others_pos = malloc(4*(B->nb_xyz_ticks)*sizeof(VisionPos));
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       if ( Xgc->graphic_engine != &GL_gengine )
 #endif
 	apply_transforms_new1(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
@@ -908,7 +908,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
       /* allocate and fill B->leg_coord */
       build_legend_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->leg_pos = malloc(2*(3)*sizeof(VisionPos));
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       /* no need for apply_transforms_new1 when we use the GL_gengine */
       if ( Xgc->graphic_engine != &GL_gengine )
 #endif
@@ -1263,7 +1263,7 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   int xj, yj;
   char buf[60];
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
@@ -1297,7 +1297,7 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   sprintf(buf, "%g", val);
   xt = XScale(Xgc->scales,xt);
   yt = YScale(Xgc->scales,yt);
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_2dview(Xgc);
@@ -1318,7 +1318,7 @@ static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[])
   int xj, yj;
   char buf[60];
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
@@ -1352,7 +1352,7 @@ static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[])
   sprintf(buf, "%s",leg);
   xt = XScale(Xgc->scales,xt);
   yt = YScale(Xgc->scales,yt);
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_2dview(Xgc);
@@ -1402,7 +1402,7 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
   int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double x[2], y[2];
   int n=2;
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       double xd[2], yd[2],zd[2];
@@ -1431,7 +1431,7 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
   int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double x[2], y[2];
   int n=2;
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       double x[2], y[2], z[2];
@@ -1481,7 +1481,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
   int i, numpt, np=1, m=4;
   const int *current_vertex;
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       double xd[4],yd[4],zd[4];
@@ -1829,7 +1829,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
     }
 
   /* end of code added by es */
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   /* transmit info to opengl */
   if ( Xgc->graphic_engine == &GL_gengine )
     {

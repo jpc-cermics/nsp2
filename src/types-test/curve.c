@@ -27,11 +27,12 @@
 #line 34 "codegen/curve.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/curve.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
-#line 35 "curve.c"
+#line 36 "curve.c"
 
 /* -----------NspCurve ----------- */
 
@@ -104,7 +105,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
   type->init = (init_func *) init_curve;
 
-#line 47 "codegen/curve.override"
+#line 48 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -117,7 +118,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 121 "curve.c"
+#line 122 "curve.c"
   /* 
    * NspCurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -676,7 +677,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 69 "codegen/curve.override"
+#line 70 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -690,7 +691,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 694 "curve.c"
+#line 695 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -698,7 +699,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 84 "codegen/curve.override"
+#line 85 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -727,7 +728,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 731 "curve.c"
+#line 732 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -781,7 +782,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 114 "codegen/curve.override"
+#line 115 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -790,10 +791,10 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 794 "curve.c"
+#line 795 "curve.c"
 
 
-#line 124 "codegen/curve.override"
+#line 125 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -803,7 +804,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 807 "curve.c"
+#line 808 "curve.c"
 
 
 /*----------------------------------------------------
@@ -838,7 +839,7 @@ void nsp_initialize_Curve_types(void)
   new_type_curve(T_BASE);
 }
 
-#line 135 "codegen/curve.override"
+#line 136 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /*
@@ -1037,7 +1038,7 @@ extern Gengine GL_gengine;
 
 static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     /* if we are using OpenGl we need to detect the convex parts */
     {
@@ -1080,7 +1081,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
   double xi ;
@@ -1181,7 +1182,7 @@ static NspMatrix *nsp_curve_stairs_alloc(NspMatrix *M)
 
 static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M)
 {
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     /* if we are using OpenGl we need to detect the convex parts */
     {
@@ -1251,4 +1252,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1255 "curve.c"
+#line 1256 "curve.c"

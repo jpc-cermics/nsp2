@@ -135,7 +135,7 @@ static int nsp_getbounds_string3d(NspGraphic *o,double *bounds);
 static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_string3d(NspString3d *P);
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_string3d_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);

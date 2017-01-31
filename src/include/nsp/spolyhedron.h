@@ -149,7 +149,7 @@ static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);

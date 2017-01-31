@@ -204,7 +204,7 @@ extern void nsp_clear_queue(nsp_event_queue *q);
 extern int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev);
 extern void window_list_clear_queue(BCG *Xgc);
 extern int window_list_search_from_drawing(void *win);
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 extern void nsp_ogl_set_2dview(BCG *Xgc);
 extern void nsp_ogl_set_3dview(BCG *Xgc);
 extern void nsp_ogl_set_view(BCG *Xgc);

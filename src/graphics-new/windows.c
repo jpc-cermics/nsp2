@@ -25,10 +25,6 @@
 
 #include "nsp/graphics-new/Graphics.h"
 
-#ifdef  WITH_GTKGLEXT
-extern Gengine GL_gengine;
-#endif
-
 extern int window_list_check_top(BCG *,void *) ;
 extern int window_list_check_drawing(BCG *dd,void *win);
 

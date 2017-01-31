@@ -63,7 +63,7 @@ int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 }
 
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 			double *viewport_pos,int *wpos)
 {

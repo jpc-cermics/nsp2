@@ -27,6 +27,7 @@ static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/grarc.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 

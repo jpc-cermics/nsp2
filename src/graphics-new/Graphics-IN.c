@@ -2407,7 +2407,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
  *
  *-----------------------------------------------------------*/
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
@@ -4072,11 +4072,12 @@ static int int_xinit(Stack stack, int rhs, int opt, int lhs)
       driver_initgraphic *initg = Cairo_gengine.initgraphic;
       if ( opengl == TRUE )
 	{
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 	  initg = GL_gengine.initgraphic;
 #else
 	  Sciprintf("No opengl support in this version\n");
 #endif
+	  
 	}
       if ( cairo  == TRUE )
 	{

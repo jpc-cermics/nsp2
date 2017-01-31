@@ -192,7 +192,9 @@ void start_sci_gtk(void)
 static void nsp_gtk_gl_init (int *argc,char ***argv)
 {
 #ifdef WITH_GTKGLEXT
+#if ! GTK_CHECK_VERSION(3,0,0)
   gtk_gl_init(argc,argv);
+#endif
 #endif
 }
 

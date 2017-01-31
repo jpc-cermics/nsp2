@@ -24,9 +24,8 @@
 #include <gtk/gtk.h>
 #include <nsp/graphics-new/Graphics.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
-#define PERIGL
 #include <nsp/graphics-new/periGtk.h>
 #endif
 
@@ -56,7 +55,7 @@ static int Gcont_size = 0;
 static void ContourTrace (BCG *Xgc,double Cont, int style);
 static level_f Contstore_, Contstore_1, Contstore_2, GContstore_2;
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 static void ContourTrace_ogl(BCG *Xgc,double Cont, int style);
 static level_f Contstore_ogl,Contstore_1_ogl ;
 #endif
@@ -166,7 +165,7 @@ int nsp_contour3d_draw_new(BCG *Xgc,double *x, double *y, double *z, int n1, int
     default:
     case 0:
       /* 3D geometry with projection on the surface */
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_;
       break;
 #else
@@ -174,7 +173,7 @@ int nsp_contour3d_draw_new(BCG *Xgc,double *x, double *y, double *z, int n1, int
 #endif
     case 1:
       /* 3D geometry with projection on a fixed z level  */
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1;
       break;
 #else
@@ -504,7 +503,7 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
     }
   else
     {
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       if ( Xgc->graphic_engine == &GL_gengine
 	   && ( func== Contstore_ogl || func==Contstore_1_ogl ))
 	ContourTrace_ogl(Xgc,Cont,style);
@@ -597,7 +596,7 @@ static double *xcont=NULL,*ycont=NULL;
  * used for a contour in a 3D drawing and with opengl
  */
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 
 static double *xdcont=NULL,*ydcont=NULL,*zdcont=NULL;
 
@@ -628,7 +627,7 @@ G_Contstore_ogl(int ival, double xncont, double yncont, double zncont)
  * used for a contour in a 3D drawing
  */
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 
 static void
 Contstore_ogl(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
@@ -737,7 +736,7 @@ static void ContourTrace(BCG *Xgc,double Cont, int style)
 				     GR_STR_XLEFT, GR_STR_YBOTTOM);
 }
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 
 static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
 {

@@ -28,15 +28,16 @@
 #line 38 "codegen/fec.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
-#line 40 "fec.c"
+#line 41 "fec.c"
 
 /* -----------NspFec ----------- */
 
@@ -109,7 +110,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 55 "codegen/fec.override"
+#line 56 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -122,7 +123,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 126 "fec.c"
+#line 127 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -969,7 +970,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 77 "codegen/fec.override"
+#line 78 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -978,10 +979,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 982 "fec.c"
+#line 983 "fec.c"
 
 
-#line 87 "codegen/fec.override"
+#line 88 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -990,7 +991,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 994 "fec.c"
+#line 995 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1025,7 +1026,7 @@ void nsp_initialize_Fec_types(void)
   new_type_fec(T_BASE);
 }
 
-#line 97 "codegen/fec.override"
+#line 98 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1293,7 +1294,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    {
 	      if ( P->obj->paint == TRUE  )
 		{
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 		  /* when using opengl we use gouraud shading ?
 		   */
 		  if ( Xgc->graphic_engine == &GL_gengine )
@@ -1556,4 +1557,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,sx,sy,3,1);
 }
 
-#line 1560 "fec.c"
+#line 1561 "fec.c"

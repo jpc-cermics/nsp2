@@ -68,6 +68,7 @@ static void nsp_figure_process_updates(NspFigure *F);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
@@ -349,7 +350,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 }
 
 
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 #ifdef WITH_CAIRO
@@ -409,7 +410,7 @@ static int nsp_figure_connect(NspFigure *F)
   if ( strcmp(F->obj->driver,"Gtk") == 0) initg = Cairo_gengine.initgraphic;
   else if ( strcmp(F->obj->driver,"OpenGl") == 0)
     {
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
       initg = GL_gengine.initgraphic;
 #else
       Sciprintf("No opengl support in this version\n");
@@ -1886,7 +1887,7 @@ NspObject *nsp_check_for_current_axes_or_objs3d(void)
 
 void nsp_send_scale_2D_to_opengl(BCG *Xgc)
 {
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   /* transmit info to opengl */
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -1897,7 +1898,7 @@ void nsp_send_scale_2D_to_opengl(BCG *Xgc)
 
 void nsp_send_scale_3D_to_opengl(BCG *Xgc)
 {
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
   /* transmit info to opengl */
   if ( Xgc->graphic_engine == &GL_gengine )
     {

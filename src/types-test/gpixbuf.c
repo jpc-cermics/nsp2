@@ -27,15 +27,16 @@
 #line 23 "codegen/gpixbuf.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 extern Gengine GL_gengine;
 #endif
 
-#line 39 "gpixbuf.c"
+#line 40 "gpixbuf.c"
 
 /* -----------NspGPixbuf ----------- */
 
@@ -108,7 +109,7 @@ NspTypeGPixbuf *new_type_gpixbuf(type_mode mode)
 
   type->init = (init_func *) init_gpixbuf;
 
-#line 40 "codegen/gpixbuf.override"
+#line 41 "codegen/gpixbuf.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -121,7 +122,7 @@ NspTypeGPixbuf *new_type_gpixbuf(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
-#line 125 "gpixbuf.c"
+#line 126 "gpixbuf.c"
   /* 
    * NspGPixbuf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -302,11 +303,11 @@ void nsp_gpixbuf_destroy_partial(NspGPixbuf *H)
    H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 54 "codegen/gpixbuf.override"
+#line 55 "codegen/gpixbuf.override"
   /* verbatim in destroy */
   gobject_destroy(H->obj->pixbuf);
 
-#line 310 "gpixbuf.c"
+#line 311 "gpixbuf.c"
     FREE(H->obj);
    }
 }
@@ -719,7 +720,7 @@ void nsp_initialize_GPixbuf_types(void)
   new_type_gpixbuf(T_BASE);
 }
 
-#line 67 "codegen/gpixbuf.override"
+#line 68 "codegen/gpixbuf.override"
 
 /* inserted verbatim at the end */
 
@@ -777,4 +778,4 @@ static int nsp_getbounds_gpixbuf (NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 781 "gpixbuf.c"
+#line 782 "gpixbuf.c"

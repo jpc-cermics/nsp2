@@ -26,7 +26,7 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyline3d(NspPolyline3d *P);
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -35,6 +35,7 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
@@ -125,7 +126,7 @@ static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       return;
     }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* if we are using OpenGl we make a full draw of
@@ -245,7 +246,7 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
-#ifdef  WITH_GTKGLEXT
+#ifdef  WITH_OPENGL
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
 {
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;

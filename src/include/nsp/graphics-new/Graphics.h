@@ -11,6 +11,7 @@
 
 #include "nsp/machine.h"
 #include "nsp/sciio.h"
+#include "nsp/opengl.h"
 #include "perigen.h"
 
 /* Other functions */

@@ -56,7 +56,11 @@ static void nsp_configure_wait(BCG *dd);
 #ifdef PERICAIRO
 static void nsp_drawing_resize(BCG *dd,int width, int height);
 #if GTK_CHECK_VERSION(3,0,0)
+#ifdef PERIGTK3GL
+static gint render_callback(GtkGLArea    *area, GdkGLContext *context,  gpointer data);
+#else
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
+#endif 
 static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
 static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *region);
 #endif 
@@ -1999,6 +2003,7 @@ static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *re
  * Thus begin/end paint are not called before the draw_callback 
  */
 
+#if ! defined(PERIGTK3GL) 
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
   gint width, height;
@@ -2118,13 +2123,198 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   return FALSE;
 }
+#endif
+
+#if defined(PERIGTK3GL) 
+
+/* coords of a cube */
+static GLfloat cube[8][3] =
+  {{0.0, 0.0, 0.0},
+   {1.0, 0.0, 0.0},
+   { 1.0, 0.0, 1.0},
+   {0.0, 0.0, 1.0},
+   {1.0, 1.0, 0.0},
+   {1.0, 1.0, 1.0},
+   {0.0, 1.0, 1.0},
+   {0.0, 1.0, 0.0}};
+
+static int faceIndex[6][4] =
+{{0, 1, 2, 3},
+  {1, 4, 5, 2},
+  {4, 7, 6, 5},
+  {7, 0, 3, 6},
+  {3, 2, 5, 6},
+  {7, 4, 1, 0}};
+
+void
+drawWireframe(int face)
+{
+  int i;
+  glBegin(GL_LINE_LOOP);
+  for (i = 0; i < 4; i++)
+    glVertex3fv((GLfloat *) cube[faceIndex[face][i]]);
+  glEnd();
+}
+
+void
+drawFilled(int face)
+{
+  int i;
+  glBegin(GL_POLYGON);
+  for (i = 0; i < 4; i++)
+    glVertex3fv((GLfloat *) cube[faceIndex[face][i]]);
+  glEnd();
+}
+
+
+void
+setMatrix(void)
+{
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-2.0, 2.0, -2.0, 2.0, -2.0, 2.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+}
+float ax, ay, az;       /* angles for animation */
+static int stencilOn = 1;
+void
+drawScene(void)
+{
+
+  int i;
+  glViewport(0, 0, 100,100);
+  setMatrix();
+  ax = 10.0;
+  ay = -10.0;
+  az = 0.0;
+
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glPushMatrix();
+
+  glRotatef(ax, 1.0, 0.0, 0.0);
+  glRotatef(-ay, 0.0, 1.0, 0.0);
+
+  /* all the good stuff follows */
+
+  if (stencilOn) {
+    glEnable(GL_STENCIL_TEST);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glStencilMask(1);
+    glStencilFunc(GL_ALWAYS, 0, 1);
+    glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
+  }
+  glColor3f(1.0, 1.0, 0.0);
+  for (i = 0; i < 6; i++) {
+    drawWireframe(i);
+    if (stencilOn) {
+      glStencilFunc(GL_EQUAL, 0, 1);
+      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    }
+    glColor3f(0.0, 0.0, 0.0);
+    drawFilled(i);
+
+    glColor3f(1.0, 1.0, 0.0);
+    if (stencilOn) {
+      glStencilFunc(GL_ALWAYS, 0, 1);
+      glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
+    }
+    glColor3f(1.0, 1.0, 0.0);
+    drawWireframe(i);
+  }
+  glPopMatrix();
+
+  if (stencilOn)
+    glDisable(GL_STENCIL_TEST);
+
+  /* end of good stuff */
+
+  /* glutSwapBuffers(); */
+}
+
+
+
+static gint render_callback(GtkGLArea    *area, GdkGLContext *context,  gpointer data)
+{
+  GdkRectangle *rect;
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  
+  if (gtk_gl_area_get_error (area) != NULL)
+    return FALSE;
+
+  drawScene();
+  glFlush ();
+  
+  return TRUE;
+
+  
+  /*   rect = ( event != NULL) ? &dd->private->invalidated : NULL; */
+  /*
+   * with this driver we need to fully redraw.
+   */
+  rect = NULL;
+  
+  if ( dd->private->resize != 0)
+    {
+      /* redraw after resize
+       */
+      dd->private->resize = 0;
+      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+      glClear(GL_DEPTH_BUFFER_BIT);
+      nsp_ogl_set_view(dd);
+      /* if we have an extra pixmap we must resize */
+      dd->graphic_engine->pixmap_resize(dd);
+      /* we want to redraw all the window */
+      dd->private->draw = TRUE;
+      rect = NULL;
+    }
+
+  /* with this driver we have to draw all times */
+
+  if ( 1 ||  dd->private->draw == TRUE  )
+    {
+      /* just redraw if we have recorded stuffs */
+      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+      glClear(GL_DEPTH_BUFFER_BIT);
+      nsp_ogl_set_view(dd);
+      dd->private->draw = FALSE;
+      /* need to redraw */
+      if (dd->figure == NULL)
+	{
+	  dd->graphic_engine->cleararea(dd,rect);
+	}
+      else
+	{
+	  NspGraphic *G = (NspGraphic *) dd->figure ;
+	  G->type->draw(dd,G,rect,NULL);
+	}
+      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
+	{
+	  double zrect[4];
+	  int i;
+	  for ( i = 0 ; i < 4 ; i++) zrect[i]=dd->zrect[i];
+	  dd->graphic_engine->drawrectangle(dd,zrect);
+	}
+    }
+  
+  /* Flush the contents of the pipeline */
+  glFlush ();
+  
+  return TRUE;
+}
+#endif
 
 static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
   return FALSE;
 }
-
-
 #endif
 #endif
 
@@ -2217,7 +2407,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
  * include the cairo basic graphic routines
  */
 
-#ifdef PERICAIRO
+#if defined(PERICAIRO) && !defined(PERIGTK3GL)
 #include "perigtk/peridraw_cairo_new.c"
 #endif /* PERICAIRO */
 
@@ -2225,9 +2415,16 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
  * include the opengl basic graphic routines
  */
 
-#ifdef PERIGL
+#if defined(PERIGL) 
 #include "perigtk/peridraw_gl.c"
 #endif /* PERIGL */
+
+
+#if defined(PERIGTK3GL)
+#include "perigtk/peridraw_gtk3gl.c"
+#endif /* PERIGL */
+
+
 
 /* function below are to be defined once they are 
  * shared by all drivers. PERI_COMMON is just defined 
