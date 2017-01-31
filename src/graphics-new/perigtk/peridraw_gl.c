@@ -1067,6 +1067,10 @@ static void examine_gl_config_attrib (GdkGLConfig *glconfig)
  *
  */
 
+static void  mygluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez, GLdouble centerx,
+			 GLdouble centery, GLdouble centerz, GLdouble upx, GLdouble upy,
+			 GLdouble upz);
+
 void afficher_repere(float ox, float oy, float oz)
 {
   printf("Afficher_repere\n");
@@ -1083,11 +1087,12 @@ void afficher_repere(float ox, float oy, float oz)
   glEnd();
 }
 
+#if 0
 int use_camera(BCG *Xgc)
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
-  gluLookAt( Xgc->private->camera.position.x,
+  mygluLookAt( Xgc->private->camera.position.x,
 	     Xgc->private->camera.position.y,
 	     Xgc->private->camera.position.z,
 	     Xgc->private->camera.cible.x,
@@ -1107,11 +1112,11 @@ int use_camera(BCG *Xgc)
   glMatrixMode(GL_MODELVIEW);
   return 0;
 }
+#endif
 
-
+#if 0
 void change_camera(BCG *Xgc,const double *val)
 {
-#if 1
   Xgc->private->camera.position.x=*val;val++;
   Xgc->private->camera.position.y=*val;val++;
   Xgc->private->camera.position.z=*val;val++;
@@ -1127,9 +1132,9 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.xmax=*val;val++;
   Xgc->private->camera.ymin=*val;val++;
   Xgc->private->camera.ymax=*val;val++;
-#endif
   expose_event_new( Xgc->private->drawing,NULL, Xgc);
 }
+#endif
 
 /* select the view mode from 2d view to
  * 3d view.
@@ -1153,7 +1158,7 @@ void nsp_ogl_set_2dview(BCG *Xgc)
 	      Xgc->private->drawing->allocation.height);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
-  gluLookAt (0,0,1,
+  mygluLookAt (0,0,1,
 	     0,0,-1,
 	     0,1,0);
   glMatrixMode(GL_PROJECTION);
@@ -1191,16 +1196,17 @@ void nsp_ogl_set_3dview(BCG *Xgc)
    * and a point on the sphere circumscribing the box
    * qui sont important pour l'élimination des parties cachées
    */
+
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
-  gluLookAt (cx+R*cost*sina,
+  mygluLookAt (cx+R*cost*sina,
 	     cy+R*sint*sina,
 	     cz+R*cosa,
 	     cx,cy,cz,
 	     0,0,(sina >= 0.0 ) ? 1 : -1);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-
+  
   /*
    * setting the modelview
    * we use the computed min max points
@@ -1209,18 +1215,7 @@ void nsp_ogl_set_3dview(BCG *Xgc)
    * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer
    *      i.e donner l'info
    */
-
-  /*
-     xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
-     (1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
-     ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
-     (1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
-     glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
-     Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
-     Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
-     Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
-     -2*R,2*R);
-  */
+  
   glLoadIdentity();
   glOrtho(XPi2R(Xgc->scales,0),XPi2R(Xgc->scales,Xgc->scales->wdim[0]),
 	  YPi2R(Xgc->scales,Xgc->scales->wdim[1]),YPi2R(Xgc->scales,0),
@@ -1805,3 +1800,99 @@ void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,
 {
 
 }
+
+/*
+ * SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008)
+ * Copyright (C) 1991-2000 Silicon Graphics, Inc. All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice including the dates of first publication and
+ * either this permission notice or a reference to
+ * http://oss.sgi.com/projects/FreeB/
+ * shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * SILICON GRAPHICS, INC. BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Silicon Graphics, Inc.
+ * shall not be used in advertising or otherwise to promote the sale, use or
+ * other dealings in this Software without prior written authorization from
+ * Silicon Graphics, Inc.
+ */
+
+static void identityf(GLfloat m[16])
+{
+    m[0+4*0] = 1; m[0+4*1] = 0; m[0+4*2] = 0; m[0+4*3] = 0;
+    m[1+4*0] = 0; m[1+4*1] = 1; m[1+4*2] = 0; m[1+4*3] = 0;
+    m[2+4*0] = 0; m[2+4*1] = 0; m[2+4*2] = 1; m[2+4*3] = 0;
+    m[3+4*0] = 0; m[3+4*1] = 0; m[3+4*2] = 0; m[3+4*3] = 1;
+}
+
+static void normalize(float v[3])
+{
+  float r =  sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+  if (r == 0.0) return;
+  v[0] /= r;
+  v[1] /= r;
+  v[2] /= r;
+}
+
+static void cross(float v1[3], float v2[3], float result[3])
+{
+  result[0] = v1[1]*v2[2] - v1[2]*v2[1];
+  result[1] = v1[2]*v2[0] - v1[0]*v2[2];
+  result[2] = v1[0]*v2[1] - v1[1]*v2[0];
+}
+
+static void  mygluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez, GLdouble centerx,
+			 GLdouble centery, GLdouble centerz, GLdouble upx, GLdouble upy,
+			 GLdouble upz)
+{
+    float forward[3], side[3], up[3];
+    GLfloat m[4][4];
+
+    forward[0] = centerx - eyex;
+    forward[1] = centery - eyey;
+    forward[2] = centerz - eyez;
+
+    up[0] = upx;
+    up[1] = upy;
+    up[2] = upz;
+
+    normalize(forward);
+
+    /* Side = forward x up */
+    cross(forward, up, side);
+    normalize(side);
+
+    /* Recompute up as: up = side x forward */
+    cross(side, forward, up);
+
+    identityf(&m[0][0]);
+    m[0][0] = side[0];
+    m[1][0] = side[1];
+    m[2][0] = side[2];
+
+    m[0][1] = up[0];
+    m[1][1] = up[1];
+    m[2][1] = up[2];
+
+    m[0][2] = -forward[0];
+    m[1][2] = -forward[1];
+    m[2][2] = -forward[2];
+
+    glMultMatrixf(&m[0][0]);
+    glTranslated(-eyex, -eyey, -eyez);
+}
+
