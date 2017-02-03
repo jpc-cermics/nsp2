@@ -222,6 +222,41 @@ periCairoNew.o: periCairoNew.c periGtkstd.c \
  ../include/nsp/gtk/gtkobject.h \
  ../include/nsp/gtk/gobject.h perigtk/events.c perigtk/actions.c \
  perigtk/init.c perigtk/peridraw_cairo_new.c
+periGTK3GL.o: periGTK3GL.c periGtkstd.c \
+ ../include/nsp/math.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/sciio.h \
+ ../include/nsp/objectf.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/periGtk.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+ ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/version.h \
+ ../include/nsp/graphics-new/color.h \
+ ../include/nsp/command.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/figure.h \
+ ../include/nsp/objects.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/figuredata.h ../include/nsp/graphic.h \
+ ../include/nsp/axes.h ../include/nsp/gtk/gtkwindow.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h perigtk/events.c perigtk/actions.c \
+ perigtk/init.c perigtk/peridraw_gtk3gl.c
 periFig.o: periFig.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \

@@ -31,6 +31,7 @@
 
 #ifdef WITH_EPOXY
 #include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #else
 #ifdef __APPLE__
 #   include <OpenGL/gl.h>
@@ -50,9 +51,11 @@
 #define TRANSLATE_CHAR 10
 #define ECHELLE_CHAR 0.6
 
+/* 
 #define bool char
 #define true 1
 #define false 0
+*/
 
 /*
  * Frustum (see the Red Book http://www.opengl.org/documentation/red_book_1.0)

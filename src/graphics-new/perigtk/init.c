@@ -424,9 +424,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		     target_table, n_targets ,GDK_ACTION_COPY
 		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
 
+#if GTK_CHECK_VERSION(3,0,0) && defined(PERIGTK3GL)
+  g_signal_connect ((dd->private->drawing), "realize",
+		    G_CALLBACK (realize_gtk3gl), (gpointer) dd);
+  g_signal_connect ((dd->private->drawing), "unrealize",
+		    G_CALLBACK (unrealize_gtk3gl),(gpointer) dd);
+#else
   g_signal_connect_after((dd->private->drawing), "realize",
 			 G_CALLBACK(realize_event), (gpointer) dd);
-
+#endif
+  
   g_signal_connect((dd->private->drawing), "motion-notify-event",
 		   G_CALLBACK(locator_button_motion), (gpointer) dd);
   g_signal_connect((dd->private->drawing), "button-press-event",
@@ -479,6 +486,11 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
 #if GTK_CHECK_VERSION(3,0,0)
 #if defined(PERIGTK3GL)
+
+  g_signal_connect ((dd->private->drawing), "realize",
+		    G_CALLBACK (realize_gtk3gl), (gpointer) dd);
+  g_signal_connect ((dd->private->drawing), "unrealize",
+		    G_CALLBACK (unrealize_gtk3gl),(gpointer) dd);
   g_signal_connect((dd->private->drawing), "render",
 		   G_CALLBACK(render_callback), (gpointer) dd);
   g_signal_connect((dd->private->scrolled), "draw",
