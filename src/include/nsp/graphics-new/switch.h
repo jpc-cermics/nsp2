@@ -14,7 +14,7 @@ extern void nsp_gr_new_raise(int win_num);
 extern int nsp_gr_new_change(int win_num);
 extern int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 extern int nsp_graphic_new_cairo_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-#ifdef WITH_GTKGLEXT
+#ifdef WITH_OPENGL
 extern int nsp_graphic_new_gl_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim, double *viewport_pos,int *wpos);
 #endif
 #endif
