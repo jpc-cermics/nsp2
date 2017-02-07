@@ -9703,6 +9703,7 @@
 (define-function gtk_flow_box_new
   (c-name "gtk_flow_box_new")
   (is-constructor-of "GtkFlowBox")
+  (available "GDK_AVAILABLE_IN_3_12")
   (return-type "GtkFlowBox*")
 )
 
