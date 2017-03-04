@@ -132,7 +132,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libbz2-1.dll bin
     cp -f /usr/$dist/bin/libgconf-2-4.dll bin
     
-    subdirs="lib/gtk-2.0 lib/gnome-vfs-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
+    subdirs="lib/gtk-3.0 lib/gnome-vfs-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
     echo populate directories $subdirs
     for i in $subdirs ;
     do 
