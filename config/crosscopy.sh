@@ -17,7 +17,7 @@ else
 fi
 
 if [ -d "/usr/$dist" ]; then
-    echo populate bin with dlls from cross compiler 
+    echo populate bin with dlls from cross compiler
     if [ $dist = "i686-w64-mingw32" ]; then
       cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
     else
@@ -129,18 +129,33 @@ if [ -d "/usr/$dist" ]; then
       cp -f /usr/$dist/bin/libgcc_s_sjlj-1.dll bin
     fi
     
-    subdirs="lib/gtk-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 etc share" 
-    echo populate directories: lib, etc, share.
+    subdirs="lib/gtk-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
+    echo populate directories: $subdirs
     for i in $subdirs ;
     do 
 	\rm -fr $i
 	\cp -R /usr/$dist/$i $i 
+    done
+    subdirs="etc share" 
+    echo populate directories: $subdirs
+    for i in $subdirs ;
+    do 
+	\rm -fr $i
+	\cp -R /usr/$dist/$i $i
     done
     # clean unused stuffs 
     subdirs="bash-completion cmake common-lisp doc GConf gdb graphite2 gtk-2.0 gtk-doc info inkscape man midori"
     for i in $subdirs ;
     do 
 	\rm -fr share/$i
+    done
+    # clean unused icon themes
+    subdirs="gnome oxygen Tango"
+    for i in $subdirs ;
+    do
+	if [ -f share/icons/$1 ]; then 
+	    \rm -fr share/icons/$i
+	fi
     done
 else
     echo directory /usr/$dist does not exists

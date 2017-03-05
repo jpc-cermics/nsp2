@@ -28,8 +28,8 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/icuuc56.dll bin/
     cp -f /usr/$dist/bin/libatk-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libblas.dll bin/
-    cp -f /usr/$dist/bin/libcairo-gobject-2.dll bin/
     cp -f /usr/$dist/bin/libcairo-2.dll bin/
+    cp -f /usr/$dist/bin/libcairo-gobject-2.dll bin/
     cp -f /usr/$dist/bin/libcdt-5.dll bin/
     cp -f /usr/$dist/bin/libcgraph-6.dll bin/
     cp -f /usr/$dist/bin/libcroco-0.6-3.dll bin/
@@ -133,14 +133,14 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgconf-2-4.dll bin
     
     subdirs="lib/gtk-3.0 lib/gnome-vfs-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
-    echo populate directories $subdirs
+    echo populate directories: $subdirs
     for i in $subdirs ;
     do 
 	\rm -fr $i
 	\cp -R /usr/$dist/$i lib/
     done
     subdirs="etc share" 
-    echo populate directories $subdirs
+    echo populate directories: $subdirs
     for i in $subdirs ;
     do 
 	\rm -fr $i
@@ -151,6 +151,14 @@ if [ -d "/usr/$dist" ]; then
     for i in $subdirs ;
     do
 	\rm -fr share/$i
+    done
+    # clean unused icon themes
+    subdirs="gnome oxygen Tango"
+    for i in $subdirs ;
+    do
+	if [ -f share/icons/$1 ]; then 
+	    \rm -fr share/icons/$i
+	fi
     done
 else
     echo directory /usr/$dist does not exists
