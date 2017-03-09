@@ -27,7 +27,7 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <gtk/gtk.h>
-#include <epoxy/gl.h>
+/* #include <epoxy/gl.h> */
 #define PERI_PRIVATE 1
 #include "nsp/math.h"
 #include "nsp/sciio.h"
