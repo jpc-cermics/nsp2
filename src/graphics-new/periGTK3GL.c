@@ -25,5 +25,8 @@
 #define PERI_PRIVATE_CAIRO 1
 #define PERIGTK3GL
 
+#include <stdbool.h>
+#include "graphene-matrix.h"
+
 #include "periGtkstd.c" 
 

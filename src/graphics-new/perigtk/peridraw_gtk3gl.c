@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2017 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -124,25 +124,69 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 
 static void drawrectangle(BCG *Xgc,const double rect[])
 {
-
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(rect[0]        ,rect[1]);
-  glVertex2d(rect[0]+rect[2],rect[1]);
-  glVertex2d(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2d(rect[0]        ,rect[1]+rect[3]);
-  glEnd();
+  int j;
+  GLfloat vertex_data[4*4];
+  j=0;
+  vertex_data[j]= rect[0];
+  vertex_data[j+1]= rect[1];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=4;
+  vertex_data[j]= rect[0]+rect[2];
+  vertex_data[j+1]= rect[1];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=8;
+  vertex_data[j]= rect[0]+rect[2];
+  vertex_data[j+1]= rect[1]+rect[3];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=12;
+  vertex_data[j]= rect[0];
+  vertex_data[j+1]= rect[1]+rect[3];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  shader_draw_line(vertex_data,4,TRUE);
 }
 
 /* fill one rectangle, with current color */
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
-  glBegin(GL_QUADS);
-  glVertex2d(rect[0]        ,rect[1]);
-  glVertex2d(rect[0]+rect[2],rect[1]);
-  glVertex2d(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2d(rect[0]        ,rect[1]+rect[3]);
-  glEnd();
+  int j;
+  GLfloat vertex_data[4*4];
+  j=0;
+  vertex_data[j]= rect[0];
+  vertex_data[j+1]= rect[1];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=4;
+  vertex_data[j]= rect[0]+rect[2];
+  vertex_data[j+1]= rect[1];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=8;
+  vertex_data[j]= rect[0]+rect[2];
+  vertex_data[j+1]= rect[1]+rect[3];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  shader_draw_triangle(vertex_data);
+  j=0;
+  vertex_data[j]= rect[0]+rect[2];
+  vertex_data[j+1]= rect[1]+rect[3];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=4;
+  vertex_data[j]= rect[0];
+  vertex_data[j+1]= rect[1]+rect[3];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  j=8;
+  vertex_data[j]= rect[0];
+  vertex_data[j+1]= rect[1];
+  vertex_data[j+2]= 0.f;
+  vertex_data[j+3]= 1.0f;
+  shader_draw_triangle(vertex_data);
 }
 
 /*
@@ -1154,25 +1198,38 @@ void nsp_ogl_set_view(BCG *Xgc)
     }
 }
 
-void nsp_ogl_set_2dview(BCG *Xgc)
+void compute_nsp_mvp2d(BCG *Xgc, float v[])
 {
   int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
   int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
-  glViewport (0,  0, width,height);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity ();
-  mygluLookAt (0,0,1,
-	     0,0,-1,
-	     0,1,0);
-  glMatrixMode(GL_PROJECTION);
-
-  glLoadIdentity();
-  glOrtho(0, width, height, 0,-4,4);
-  glMatrixMode(GL_MODELVIEW);
-  glDisable(GL_DEPTH_TEST);
+  graphene_matrix_t o, mv, mvp;
+  graphene_vec3_t eye, center, up;
+  /* view */
+  graphene_vec3_init (&eye,0.f,0.f,1.f);
+  graphene_vec3_init (&center,0.f,0.f,-1.f);
+  graphene_vec3_init (&up,0.f,1.f,0.f);
+  graphene_matrix_init_look_at (&mv, &eye, &center, &up);
+  /* projection  */
+  graphene_matrix_init_ortho (&o, 0.f, width, height,0,-4.f,4.f);
+  /* the product: note that compared to sdl all the matrices 
+   * we have are the transposed of the sdl matrices 
+   * Thus to obtaine sdl p*l*t*r 
+   * we have to perform r*t*l*p 
+   * to obtain the transpose of mvp
+   */
+  graphene_matrix_multiply(&mv,&o,&mvp);
+  /* last transpose to be like in sdl */
+  graphene_matrix_to_float(&mvp, v);
 }
 
-void nsp_ogl_set_3dview(BCG *Xgc)
+void nsp_ogl_set_2dview(BCG *Xgc)
+{
+  float v[16];
+  compute_nsp_mvp2d(Xgc,v);
+  glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
+}
+
+void compute_nsp_mvp3d(BCG *Xgc, float v[])
 {
   /* double xs,ys; */
   double theta = Xgc->scales->theta;
@@ -1189,50 +1246,44 @@ void nsp_ogl_set_3dview(BCG *Xgc)
   double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2];
   double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
   double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
-
-  int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
-  int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
-  
-  glViewport (0,  0, width, height);
-  /*
-   * fix the model view using the box center
-   * and a point on the sphere circumscribing the box
-   * qui sont important pour l'élimination des parties cachées
+  graphene_matrix_t o, mv, mvp;
+  graphene_vec3_t eye, center, up;
+  /* view */
+  graphene_vec3_init (&eye,cx+R*cost*sina,cy+R*sint*sina,cz+R*cosa);
+  graphene_vec3_init (&center,cx,cy,cz);
+  graphene_vec3_init (&up,0,0,(sina >= 0.0 ) ? 1 : -1);
+  graphene_matrix_init_look_at (&mv, &eye, &center, &up);
+  /* projection  */
+  graphene_matrix_init_ortho (&o,
+			      XPi2R(Xgc->scales,0),XPi2R(Xgc->scales,Xgc->scales->wdim[0]),
+			      YPi2R(Xgc->scales,Xgc->scales->wdim[1]),YPi2R(Xgc->scales,0),
+			      -2*R,2*R);
+  /* the product: note that compared to sdl all the matrices 
+   * we have are the transposed of the sdl matrices 
+   * Thus to obtaine sdl p*l*t*r 
+   * we have to perform r*t*l*p 
+   * to obtain the transpose of mvp
    */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity ();
-  mygluLookAt (cx+R*cost*sina,
-	     cy+R*sint*sina,
-	     cz+R*cosa,
-	     cx,cy,cz,
-	     0,0,(sina >= 0.0 ) ? 1 : -1);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  /*
-   * setting the modelview
-   * we use the computed min max points
-   * FIXME: when we use iso mode we have to change
-   *      the next code
-   * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer
-   *      i.e donner l'info
-   */
-  
-  glLoadIdentity();
-  glOrtho(XPi2R(Xgc->scales,0),XPi2R(Xgc->scales,Xgc->scales->wdim[0]),
-	  YPi2R(Xgc->scales,Xgc->scales->wdim[1]),YPi2R(Xgc->scales,0),
-	  -2*R,2*R);
-  glMatrixMode(GL_MODELVIEW);
-  glEnable(GL_DEPTH_TEST);
+  graphene_matrix_multiply(&mv,&o,&mvp);
+  /* last transpose to be like in sdl */
+  graphene_matrix_to_float(&mvp, v);
 }
 
-
-
-
+void nsp_ogl_set_3dview(BCG *Xgc)
+{
+  float v[16];
+  /*
+  int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
+  int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
+  glViewport (0,  0, width, height);
+  */
+  glEnable(GL_DEPTH_TEST);
+  compute_nsp_mvp3d(Xgc,v);
+  glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
+}
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
-
   glBegin(GL_LINES);
   glVertex3d(x1, y1, z1);
   glVertex3d(x2, y2, z2);
@@ -1267,17 +1318,46 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
 {
   gint i;
   if ( n <= 1) return;
-
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(1.0,1.0);
+#if 0
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++)
     {
       xset_color(Xgc,Abs(colors[i]));
-      glVertex2d( vx[i], vy[i]);
+      glVertex3d( vx[i], vy[i], 0.f);
     }
   glEnd();
-  glDisable(GL_POLYGON_OFFSET_FILL);
+#else
+  GLfloat vertex_data[5*4];
+  int j=0;
+  if ( n >= 3 )
+    {
+      for ( i=0 ;  i< 3 ; i++)
+	{
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= 0.f;
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
+	}
+      shader_draw_triangle(vertex_data);
+    }
+  if ( n == 4)
+    {
+      for ( i=3 ;  i< 4 ; i++)
+	{
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= 0.f;
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
+	}
+      vertex_data[j]= vx[0];
+      vertex_data[j+1]= vy[0];
+      vertex_data[j+2]= 0.f;
+      vertex_data[j+3]= 1.0f;
+      shader_draw_triangle(vertex_data+8);
+    }
+#endif
 }
 
 /**
@@ -1341,8 +1421,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 {
   gint i;
   if ( n <= 1) return;
-
-#if 1
+#if 0
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++)
     {
@@ -1351,23 +1430,38 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
     }
   glEnd();
 #else
-  for ( i=0 ;  i < n-2 ; i++)
+  GLfloat vertex_data[5*4];
+  int j=0;
+  if ( n >= 3 )
     {
-      int triangle[]= { 0, i+1,i+2};
-      int j;
-      glBegin(GL_POLYGON);
-      for ( j = 0 ; j < 3 ; j++ )
+      for ( i=0 ;  i< 3 ; i++)
 	{
-	  int k = triangle[j];
-	  xset_color(Xgc,Abs(colors[k]));
-	  glVertex3d( vx[k], vy[k], vz[k]);
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= vz[i];
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
 	}
-      glEnd();
+      shader_draw_triangle(vertex_data);
+    }
+  if ( n == 4)
+    {
+      for ( i=3 ;  i< 4 ; i++)
+	{
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= vz[i];
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
+	}
+      vertex_data[j]= vx[0];
+      vertex_data[j+1]= vy[0];
+      vertex_data[j+2]= vz[0];
+      vertex_data[j+3]= 1.0f;
+      shader_draw_triangle(vertex_data+8);
     }
 #endif
-
 }
-
 
 /**
  * fillpolylines3D:
@@ -1427,28 +1521,53 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 {
   gint i;
   if ( n <= 1) return;
-
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
-  glEnd();
+  GLfloat vertex_data[5*4];
+  int j=0;
+  if ( n >= 3 )
+    {
+      for ( i=0 ;  i< 3 ; i++)
+	{
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= vz[i];
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
+	}
+      shader_draw_triangle(vertex_data);
+    }
+  if ( n == 4)
+    {
+      for ( i=3 ;  i< 4 ; i++)
+	{
+	  vertex_data[j]= vx[i];
+	  vertex_data[j+1]= vy[i];
+	  vertex_data[j+2]= vz[i];
+	  vertex_data[j+3]= 1.0f;
+	  j += 4;
+	}
+      vertex_data[j]= vx[0];
+      vertex_data[j+1]= vy[0];
+      vertex_data[j+2]= vz[0];
+      vertex_data[j+3]= 1.0f;
+      shader_draw_triangle(vertex_data+8);
+    }
 }
-
 
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
 {
-  gint i;
+  GLfloat vertex_data[10*4];
+  gint i=0, j = 0;
   if ( n <= 1) return;
-
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  if ( closeflag == 1 )
-    glBegin(GL_LINE_LOOP);
-  else
-    glBegin(GL_LINE_STRIP);
-  for (i=0; i < n ; i++) glVertex3d(vx[i], vy[i], vz[i]);
-  glEnd();
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  for ( i=0 ;  i < Min(10,n) ; i++)
+    {
+      vertex_data[j]= vx[i];
+      vertex_data[j+1]= vy[i];
+      vertex_data[j+2]= vz[i];
+      vertex_data[j+3]= 1.0f;
+      j += 4;
+    }
+  shader_draw_line(vertex_data,Min(10,n),closeflag);
 }
-
 
 /*
  *
@@ -1458,7 +1577,6 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 {
   int symb[2],dash,color,i,close;
   /* store the current values */
-
   Xgc->graphic_engine->xget_mark(Xgc,symb);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_color(Xgc);
@@ -1482,7 +1600,6 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   Xgc->graphic_engine->xset_color(Xgc,color);
   Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
 }
-
 
 /*
  * FIXME : experimental for tests
@@ -1896,5 +2013,181 @@ static void  mygluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez, GLdouble c
 
     glMultMatrixf(&m[0][0]);
     glTranslated(-eyex, -eyey, -eyez);
+}
+
+static GLuint create_shader (int type, const char *src);
+
+/* Draw a single triangle using shaders */
+/* fixed values of the triangle */
+
+static void gen_buffers()
+{
+  glGenVertexArrays (1, &vao_triangles);
+  glGenBuffers (1, &vbo_triangle_coords);
+  glGenBuffers (1, &vbo_triangle_colors);
+}
+
+/* initialize a vao */
+
+static void array_fill(void)
+{
+  GLfloat triangle_coords[] = {
+    0.f, 0.5f, 0.f, 1.f,
+    0.5f, -0.366f, 0.f, 1.f,
+    -0.5f, -0.366f, 0.f, 1.f
+  };
+  GLfloat triangle_colors[] = {
+    1.0, 1.0, 0.0, 1.f,
+    0.0, 0.0, 1.0, 1.f,
+    1.0, 0.0, 0.0, 1.f
+  };
+
+  glBindVertexArray (vao_triangles);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle_coords);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_coords), triangle_coords, GL_STATIC_DRAW);
+  glVertexAttribPointer (attribute_coords, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle_colors);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_colors),
+	       triangle_colors, GL_STATIC_DRAW);
+  glVertexAttribPointer (attribute_colors, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(attribute_coords);
+  glEnableVertexAttribArray(attribute_colors);
+  glBindVertexArray (0);
+}
+
+/* we create two shaders */
+
+static const char *vertex_shader_code =
+  "#version 330\n"				\
+  "\n"						\
+  "layout(location = 0) in vec4 position;\n"	\
+  "layout(location = 1) in vec4 v_color;\n"	\
+  "varying vec4 f_color;\n"			\
+  "uniform mat4 mvp;\n"				\
+  "void main() {\n"				\
+  "  gl_Position = mvp * position;\n"		\
+  "  f_color = v_color;\n"			\
+  "}";
+
+static const char *fragment_shader_code =
+  "#version 330\n"				\
+  "\n"						\
+  "varying vec4 f_color;\n"			\
+  "void main() {\n"				\
+  "  gl_FragColor = f_color;"			\
+  "}";
+
+static void init_shaders (GLuint *program_out, GLuint *mvp_out)
+{
+  GLuint vertex, fragment;
+  GLuint program = 0;
+  GLuint mvp = 0;
+  int status;
+  
+  vertex = create_shader (GL_VERTEX_SHADER, vertex_shader_code);
+  if (vertex == 0)
+    {
+      *program_out = 0;
+      return;
+    }
+
+  fragment = create_shader (GL_FRAGMENT_SHADER, fragment_shader_code);
+  if (fragment == 0)
+    {
+      glDeleteShader (vertex);
+      *program_out = 0;
+      return;
+    }
+
+  program = glCreateProgram ();
+  glAttachShader (program, vertex);
+  glAttachShader (program, fragment);
+
+  glLinkProgram (program);
+
+  glGetProgramiv (program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE)
+    {
+      int log_len;
+      char *buffer;
+
+      glGetProgramiv (program, GL_INFO_LOG_LENGTH, &log_len);
+
+      buffer = g_malloc (log_len + 1);
+      glGetProgramInfoLog (program, log_len, NULL, buffer);
+
+      g_warning ("Linking failure:\n%s\n", buffer);
+
+      g_free (buffer);
+
+      glDeleteProgram (program);
+      program = 0;
+
+      goto out;
+    }
+
+  mvp = glGetUniformLocation (program, "mvp");
+
+  glDetachShader (program, vertex);
+  glDetachShader (program, fragment);
+
+out:
+  glDeleteShader (vertex);
+  glDeleteShader (fragment);
+
+  if (program_out != NULL)
+    *program_out = program;
+
+  if (mvp_out != NULL)
+    *mvp_out = mvp;
+}
+
+
+/* generic utility: create a shader */
+
+static GLuint
+create_shader (int type, const char *src)
+{
+  GLint status = GL_FALSE;
+  GLuint shader= glCreateShader (type);
+  glShaderSource (shader, 1, &src, NULL);
+  glCompileShader (shader);
+
+  glGetShaderiv (shader, GL_COMPILE_STATUS, &status);
+  if (status == GL_FALSE)
+    {
+      int log_len;
+      char *buffer;
+
+      glGetShaderiv (shader, GL_INFO_LOG_LENGTH, &log_len);
+
+      buffer = g_malloc (log_len + 1);
+      glGetShaderInfoLog (shader, log_len, NULL, buffer);
+      g_warning ("Compile failure in %s shader:\n%s\n",
+                 type == GL_VERTEX_SHADER ? "vertex" : "fragment",
+                 buffer);
+      g_free (buffer);
+      glDeleteShader (shader);
+      return 0;
+    }
+  return shader;
+}
+
+static void shader_draw_triangle(GLfloat vertex_data[])
+{
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
+  glBufferData (GL_ARRAY_BUFFER, 4*3*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  glBindVertexArray (vao_triangles);
+  glDrawArrays (GL_TRIANGLES, 0, 3);
+  glBindVertexArray(0);
+}
+
+static void shader_draw_line(GLfloat vertex_data[],int n, int closeflag)
+{
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
+  glBufferData (GL_ARRAY_BUFFER, 4*n*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  glBindVertexArray (vao_triangles);
+  glDrawArrays ((closeflag) ? GL_LINE_LOOP: GL_LINE_STRIP, 0, n);
+  glBindVertexArray(0);
 }
 
