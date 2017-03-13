@@ -24,6 +24,7 @@
 #define PERICAIRO 1
 #define PERI_PRIVATE_CAIRO 1
 #define PERIGTK3GL
+#define WITH_EPOXY
 
 #include <stdbool.h>
 #include "graphene-matrix.h"

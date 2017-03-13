@@ -486,11 +486,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
 #if GTK_CHECK_VERSION(3,0,0)
 #if defined(PERIGTK3GL)
-
-  g_signal_connect ((dd->private->drawing), "realize",
-		    G_CALLBACK (realize_gtk3gl), (gpointer) dd);
-  g_signal_connect ((dd->private->drawing), "unrealize",
-		    G_CALLBACK (unrealize_gtk3gl),(gpointer) dd);
   g_signal_connect((dd->private->drawing), "render",
 		   G_CALLBACK(render_callback), (gpointer) dd);
   g_signal_connect((dd->private->scrolled), "draw",
