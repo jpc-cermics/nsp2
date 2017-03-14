@@ -504,6 +504,9 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
 /* text and rotated text with pango
  */
 
+#define WITH_PANGO_FT2
+#ifdef WITH_PANGO_FT2
+
 static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
 				       const PangoMatrix *matrix, GdkRectangle *rect);
 
@@ -518,7 +521,7 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
  */
 
 static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag,double angle,
-			  gr_str_posx posx, gr_str_posy posy)
+			      gr_str_posx posx, gr_str_posy posy)
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
@@ -608,7 +611,6 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag
     }
 }
 
-
 /* returns the enclosing rectangle of the pango layout transformed
  * by matrix transformation:
  */
@@ -654,6 +656,198 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
   rect->y = floor (y_min);
   rect->height = floor (y_max) - rect->y;
 }
+
+#else
+/* new method with pango/cairo surfaces without ft2 */
+
+unsigned int create_texture (unsigned int width,
+			     unsigned int height,
+			     unsigned char *pixels)
+{
+  unsigned int texture_id=0;
+  glEnable(GL_TEXTURE_2D);
+  glGenTextures (1, &texture_id);
+  glBindTexture (GL_TEXTURE_2D, texture_id);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D (GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_BGRA,
+		GL_UNSIGNED_BYTE,
+		pixels);
+  return texture_id;
+}
+
+static void draw_texture (double x, double y, double width, double height,
+			  unsigned int texture_id)
+{
+  /* Render a texture in immediate mode. */
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBindTexture (GL_TEXTURE_2D, texture_id);
+  // On peut ici donner la couleur du texte
+  // glColor3f(1.0f,0.0f,0.0f);
+  glBegin (GL_QUADS);
+  glTexCoord2f (0.0f, 0.0f);
+  glVertex2d (x, y-height);
+  glTexCoord2f (1.0f, 0.0f);
+  glVertex2d (x+width,y-height);
+  glTexCoord2f (1.0f, 1.0f);
+  glVertex2d (x+width , y);
+  glTexCoord2f (0.0f, 1.0f);
+  glVertex2d (x, y );
+  glEnd ();
+}
+
+static cairo_t *create_cairo_context (int width, int height, cairo_surface_t** surf, unsigned char** buffer)
+{
+  int stride;
+  stride = cairo_format_stride_for_width ( CAIRO_FORMAT_ARGB32, width);
+  *buffer = calloc (stride * height, sizeof (unsigned char));
+  *surf = cairo_image_surface_create_for_data (*buffer, CAIRO_FORMAT_ARGB32, width, height,stride);
+  return cairo_create (*surf);
+}
+
+cairo_t *create_layout_context (void)
+{
+  cairo_surface_t *temp_surface;
+  cairo_t *context;
+  temp_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 0, 0);
+  context = cairo_create (temp_surface);
+  cairo_surface_destroy (temp_surface);
+  return context;
+}
+
+void get_text_size (PangoLayout *layout, int *width, int *height)
+{
+  pango_layout_get_size (layout, width, height);
+  /* Divide by pango scale to get dimensions in pixels. */
+  *width /= PANGO_SCALE;
+  *height /= PANGO_SCALE;
+}
+
+static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag,double angle,
+			      gr_str_posx posx, gr_str_posy posy )
+{
+  unsigned int texture_id;
+  cairo_surface_t *surface;
+  unsigned char* surface_data = NULL;
+  int text_width, text_height;
+  PangoRectangle ink_rect,logical_rect;
+  int  height,width;
+  cairo_t *cr = create_layout_context ();
+  cairo_t *render_cr;
+  PangoLayout *layout = pango_cairo_create_layout (cr);
+  pango_layout_set_text (layout, str, -1);
+  /* font */
+  pango_layout_set_font_description (layout, Xgc->private->desc);
+  /* used to position the descent of the last line of layout at y */
+  pango_layout_get_pixel_size (layout, &width, &height);
+  
+  if ( posy == GR_STR_YBASELINE )
+    {
+      /* we want (x,y) to be at the baseline of the first layout line
+       */
+      PangoLayoutLine *line;
+      line = pango_layout_get_line(layout,0);
+      pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
+    }
+  if ( Abs(angle) >= 0.1)
+    {
+      int xpos=0,ypos=0;
+      double rad_angle = angle * M_PI/180.0;
+      switch( posx )
+	{
+	case GR_STR_XLEFT: xpos = 0; break;
+	case GR_STR_XCENTER: xpos = 0 - width/2; break;
+	case GR_STR_XRIGHT: xpos = 0 - width; break;
+	}
+      switch( posy )
+	{
+	case GR_STR_YBOTTOM: ypos = 0 -height; break;
+	case GR_STR_YCENTER:  ypos = 0 - height/2; break;
+	case GR_STR_YBASELINE: ypos = 0 + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = 0 ; break;
+	}
+      /* we have to rotate the string at its center */
+      cairo_save (cr);
+      cairo_identity_matrix (cr);
+      cairo_translate (cr, x,y);
+      cairo_rotate (cr, rad_angle);
+      /* position the layout according to (posx,posy) */
+      cairo_move_to (cr, xpos, ypos);
+      pango_layout_set_text (layout,str, -1);
+      pango_cairo_update_layout (cr,layout);
+
+      /* a render context to a surface */
+      get_text_size (layout, &text_width, &text_height);
+      render_cr = create_cairo_context (text_width,text_height,&surface,&surface_data);
+      /* Render */
+      cairo_set_source_rgba (render_cr, 1, 1, 1, 1);
+      pango_cairo_show_layout (render_cr, layout);
+      if ( flag == 1)
+	{
+	  cairo_rectangle (render_cr,0,-height,width,height);
+	  cairo_stroke (render_cr);
+	}
+      
+      texture_id = create_texture(text_width, text_height, surface_data);
+      free (surface_data);
+      g_object_unref (layout);
+      cairo_destroy (cr);
+      cairo_destroy (render_cr);
+      cairo_surface_destroy (surface);
+      draw_texture(x,y,width,height,texture_id);
+    }
+  else
+    {
+      int xpos=x,ypos=y;
+      /* horizontal string */
+      switch( posx )
+	{
+	case GR_STR_XLEFT: xpos = x; break;
+	case GR_STR_XCENTER: xpos = x - width/2; break;
+	case GR_STR_XRIGHT: xpos = x - width; break;
+	}
+      switch( posy )
+	{
+	case GR_STR_YBOTTOM: ypos = y -height; break;
+	case GR_STR_YCENTER:  ypos = y - height/2; break;
+	case GR_STR_YBASELINE: ypos = y + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = y ; break;
+	}
+      cairo_move_to (cr, xpos,ypos);
+      pango_cairo_update_layout (cr,layout);
+      get_text_size (layout, &text_width, &text_height);
+      render_cr = create_cairo_context (text_width,
+					text_height,
+					&surface,
+					&surface_data);
+      /* Render */
+      cairo_set_source_rgba (render_cr, 1, 1, 1, 1);
+      pango_cairo_show_layout (render_cr, layout);
+      /* horizontal string */
+      if ( flag == TRUE ) /*  flag == 1)  */
+	{
+	  cairo_rectangle (render_cr,xpos,ypos,width,height);
+	  cairo_stroke (render_cr);
+	}
+      texture_id = create_texture(text_width, text_height, surface_data);
+      draw_texture(x,y,width,height,texture_id);
+      glDeleteTextures(1,&texture_id);
+      free (surface_data);
+      g_object_unref (layout);
+      cairo_destroy (cr);
+      cairo_destroy (render_cr);
+      cairo_surface_destroy (surface);
+    }
+  // displaystring_old(Xgc,str, x, y, flag,angle, posx, posy);
+}
+#endif
 
 /* returns the bounding box for a non rotated string
  */
@@ -1699,7 +1893,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
       x = - e_rect->x;
       y = - e_rect->y ;
     }
-  /* if pixels != NULL then bitmap.buffer and pixels have already been initializes */
+  /* if pixels != NULL then bitmap.buffer and pixels have already been initialized */
   if ( pixels != NULL )
     {
       if ( bitmap.rows * bitmap.width > size )
