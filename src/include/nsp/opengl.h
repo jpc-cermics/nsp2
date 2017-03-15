@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 #if GTK_CHECK_VERSION(3,16,0)
-/* #define WITH_OPENGL 1 */
+#define WITH_OPENGL 1
 #endif
 
 #endif /* NSP_INC_OPENGL */

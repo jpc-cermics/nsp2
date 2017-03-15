@@ -61,6 +61,7 @@ static void nsp_configure_wait(BCG *dd);
 static void nsp_drawing_resize(BCG *dd,int width, int height);
 #if GTK_CHECK_VERSION(3,0,0)
 #ifdef PERIGTK3GL
+static void xget_color_rgb(BCG *Xgc,double *rgb);
 static gint resize_event(GtkWidget *widget, int width, int height, gpointer data);
 static void realize_gtk3gl (GtkWidget *widget);
 static void unrealize_gtk3gl (GtkWidget *widget);
@@ -2231,7 +2232,7 @@ static void gen_buffers(void);
 static GLuint create_shader (int type, const char *src);
 static void array_fill(void);
 static void init_shaders (GLuint *program_out, GLuint *mvp_out);
-static void shader_draw_triangle(GLfloat vertex_data[]);
+static void shader_draw_triangle(GLfloat vertex_data[],GLfloat vertex_colors[]);
 static void shader_draw_line(GLfloat vertex_data[],int n, int closeflag);
 
 static void realize_gtk3gl (GtkWidget *widget)

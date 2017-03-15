@@ -170,7 +170,7 @@ static void fillrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+1]= rect[1]+rect[3];
   vertex_data[j+2]= 0.f;
   vertex_data[j+3]= 1.0f;
-  shader_draw_triangle(vertex_data);
+  shader_draw_triangle(vertex_data,NULL);
   j=0;
   vertex_data[j]= rect[0]+rect[2];
   vertex_data[j+1]= rect[1]+rect[3];
@@ -186,7 +186,7 @@ static void fillrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+1]= rect[1];
   vertex_data[j+2]= 0.f;
   vertex_data[j+3]= 1.0f;
-  shader_draw_triangle(vertex_data);
+  shader_draw_triangle(vertex_data,NULL);
 }
 
 /*
@@ -1050,6 +1050,15 @@ static int  xset_color(BCG *Xgc,int color)
   return old;
 }
 
+static void xget_color_rgb(BCG *Xgc,double *rgb)
+{
+  if ( Xgc->private->a_colors == NULL)
+    {
+      rgb[0]=rgb[1]=rgb[2]=1.0; return;
+    }
+  nsp_get_color_rgb(Xgc,Xgc->CurColor,rgb,Xgc->private->a_colors);
+}
+
 #if 0
 static void print_gl_config_attrib (GdkGLConfig *glconfig,
 				    const gchar *attrib_str,
@@ -1334,8 +1343,10 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
     }
   glEnd();
 #else
+  double rgb[3];
   GLfloat vertex_data[5*4];
-  int j=0;
+  GLfloat vertex_colors[5*4];
+  int j=0,k;
   if ( n >= 3 )
     {
       for ( i=0 ;  i< 3 ; i++)
@@ -1344,9 +1355,15 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
 	  vertex_data[j+1]= vy[i];
 	  vertex_data[j+2]= 0.f;
 	  vertex_data[j+3]= 1.0f;
+
+	  xset_color(Xgc,Abs(colors[i]));
+	  xget_color_rgb(Xgc, rgb);
+	  for (k=0 ; k < 3; k++)
+	    vertex_colors[j + k ]=rgb[k];
+	  vertex_colors[j +3]= 1.0f;
 	  j += 4;
 	}
-      shader_draw_triangle(vertex_data);
+      shader_draw_triangle(vertex_data,vertex_colors);
     }
   if ( n == 4)
     {
@@ -1356,13 +1373,27 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
 	  vertex_data[j+1]= vy[i];
 	  vertex_data[j+2]= 0.f;
 	  vertex_data[j+3]= 1.0f;
+
+	  xset_color(Xgc,Abs(colors[i]));
+	  xget_color_rgb(Xgc, rgb);
+	  for (k=0 ; k < 3; k++)
+	    vertex_colors[j + k ]=rgb[k];
+	  vertex_colors[j +3]= 1.0f;
+
 	  j += 4;
 	}
+            
       vertex_data[j]= vx[0];
       vertex_data[j+1]= vy[0];
       vertex_data[j+2]= 0.f;
       vertex_data[j+3]= 1.0f;
-      shader_draw_triangle(vertex_data+8);
+      xset_color(Xgc,Abs(colors[0]));
+      xget_color_rgb(Xgc, rgb);
+      for (k=0 ; k < 3; k++)
+	vertex_colors[j + k ]=rgb[k];
+      vertex_colors[j +3]= 1.0f;
+      
+      shader_draw_triangle(vertex_data+8,vertex_colors);
     }
 #endif
 }
@@ -1437,8 +1468,10 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
     }
   glEnd();
 #else
+  double rgb[3];
+  GLfloat vertex_colors[5*4];
   GLfloat vertex_data[5*4];
-  int j=0;
+  int j=0,k;
   if ( n >= 3 )
     {
       for ( i=0 ;  i< 3 ; i++)
@@ -1447,9 +1480,15 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 	  vertex_data[j+1]= vy[i];
 	  vertex_data[j+2]= vz[i];
 	  vertex_data[j+3]= 1.0f;
+
+	  xset_color(Xgc,Abs(colors[i]));
+	  xget_color_rgb(Xgc, rgb);
+	  for (k=0 ; k < 3; k++)
+	    vertex_colors[j + k ]=rgb[k];
+	  vertex_colors[j +3]= 1.0f;
 	  j += 4;
 	}
-      shader_draw_triangle(vertex_data);
+      shader_draw_triangle(vertex_data,vertex_colors);
     }
   if ( n == 4)
     {
@@ -1459,13 +1498,27 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 	  vertex_data[j+1]= vy[i];
 	  vertex_data[j+2]= vz[i];
 	  vertex_data[j+3]= 1.0f;
+
+	  xset_color(Xgc,Abs(colors[i]));
+	  xget_color_rgb(Xgc, rgb);
+	  for (k=0 ; k < 3; k++)
+	    vertex_colors[j + k ]=rgb[k];
+	  vertex_colors[j +3]= 1.0f;
+
 	  j += 4;
 	}
       vertex_data[j]= vx[0];
       vertex_data[j+1]= vy[0];
       vertex_data[j+2]= vz[0];
       vertex_data[j+3]= 1.0f;
-      shader_draw_triangle(vertex_data+8);
+
+      xset_color(Xgc,Abs(colors[0]));
+      xget_color_rgb(Xgc, rgb);
+      for (k=0 ; k < 3; k++)
+	vertex_colors[j + k ]=rgb[k];
+      vertex_colors[j +3]= 1.0f;
+
+      shader_draw_triangle(vertex_data+8,vertex_colors+8);
     }
 #endif
 }
@@ -1540,7 +1593,7 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 	  vertex_data[j+3]= 1.0f;
 	  j += 4;
 	}
-      shader_draw_triangle(vertex_data);
+      shader_draw_triangle(vertex_data,NULL);
     }
   if ( n == 4)
     {
@@ -1556,7 +1609,7 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
       vertex_data[j+1]= vy[0];
       vertex_data[j+2]= vz[0];
       vertex_data[j+3]= 1.0f;
-      shader_draw_triangle(vertex_data+8);
+      shader_draw_triangle(vertex_data+8,NULL);
     }
 }
 
@@ -2180,10 +2233,15 @@ create_shader (int type, const char *src)
   return shader;
 }
 
-static void shader_draw_triangle(GLfloat vertex_data[])
+static void shader_draw_triangle(GLfloat vertex_data[],GLfloat vertex_colors[])
 {
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
   glBufferData (GL_ARRAY_BUFFER, 4*3*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  if ( vertex_colors != NULL)
+    {
+      glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+      glBufferData (GL_ARRAY_BUFFER, 4*3*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+    }
   glBindVertexArray (vao_triangles);
   glDrawArrays (GL_TRIANGLES, 0, 3);
   glBindVertexArray(0);
