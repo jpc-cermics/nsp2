@@ -36,7 +36,7 @@ function create_demo_window()
   B = hash_create(100)
   B('Graphics')=  nsp_graphics_demos ;
   // should be re-activated in gtk3 with opengl
-  // B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
+  B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
   B('Gtk3')=  nsp_gtk3_demos ;
   B('Gtk3 more')=  nsp_gtk3_demos_plus ;
   win = gtkwindow_new()

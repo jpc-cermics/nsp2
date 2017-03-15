@@ -124,7 +124,9 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 
 static void drawrectangle(BCG *Xgc,const double rect[])
 {
-  int j;
+  double rgb[3];
+  int j,k;
+  GLfloat vertex_colors[4*4];
   GLfloat vertex_data[4*4];
   j=0;
   vertex_data[j]= rect[0];
@@ -146,14 +148,24 @@ static void drawrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+1]= rect[1]+rect[3];
   vertex_data[j+2]= 0.f;
   vertex_data[j+3]= 1.0f;
-  shader_draw_line(vertex_data,NULL,4,TRUE);
+  
+  xget_color_rgb(Xgc, rgb);
+  for ( j=0 ;  j < 4 ; j++)
+    {
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
+  shader_draw_line(vertex_data,vertex_colors,4,TRUE);
 }
 
 /* fill one rectangle, with current color */
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
-  int j;
+  double rgb[3];
+  int j,k;
+  GLfloat vertex_colors[4*4];
   GLfloat vertex_data[4*4];
   j=0;
   vertex_data[j]= rect[0];
@@ -170,23 +182,20 @@ static void fillrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+1]= rect[1]+rect[3];
   vertex_data[j+2]= 0.f;
   vertex_data[j+3]= 1.0f;
-  shader_draw_triangle(vertex_data,NULL);
-  j=0;
-  vertex_data[j]= rect[0]+rect[2];
-  vertex_data[j+1]= rect[1]+rect[3];
-  vertex_data[j+2]= 0.f;
-  vertex_data[j+3]= 1.0f;
-  j=4;
+  j=12;
   vertex_data[j]= rect[0];
   vertex_data[j+1]= rect[1]+rect[3];
   vertex_data[j+2]= 0.f;
   vertex_data[j+3]= 1.0f;
-  j=8;
-  vertex_data[j]= rect[0];
-  vertex_data[j+1]= rect[1];
-  vertex_data[j+2]= 0.f;
-  vertex_data[j+3]= 1.0f;
-  shader_draw_triangle(vertex_data,NULL);
+
+  xget_color_rgb(Xgc, rgb);
+  for ( j=0 ;  j < 4 ; j++)
+    {
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
+  shader_draw_quad(vertex_data,vertex_colors);
 }
 
 /*
@@ -239,7 +248,6 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 #if 0
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
-
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 #endif 
@@ -254,7 +262,6 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 #if 0
 static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
-
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 #endif 
@@ -284,10 +291,10 @@ static void fillarc(BCG *Xgc, double arc[])
 #if 0
 static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect,int n, int p)
 {
-
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
-#endif 
+#endif
+
 /*
  *  fill a set of polygons each of which is defined by
  * (*p) points (*n) is the number of polygons
@@ -344,38 +351,73 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
 
 static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
-  gint i;
+  double rgb[3];
+  int j,k;
+  /* XXXX need an alloc */
+  GLfloat vertex_colors[1000*4];
+  GLfloat vertex_data[1000*4];
   if ( n <= 1) return;
-
-  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  if ( closeflag == 1 )
-    glBegin(GL_LINE_LOOP);
-  else
-    glBegin(GL_LINE_STRIP);
-  for (i=0; i < n ; i++) glVertex2d(vx[i], vy[i]);
-  glEnd();
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  xget_color_rgb(Xgc, rgb);
+  for ( j = 0 ; j < Min(1000,n) ; j++)
+    {
+      vertex_data[4*j]= vx[j];
+      vertex_data[4*j+1]= vy[j];
+      vertex_data[4*j+2]= 0.f;
+      vertex_data[4*j+3]= 1.0f;
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
+  shader_draw_line(vertex_data,vertex_colors,Min(n,1000),closeflag);
 }
 
 /*
  * Fill the polygon or polyline
  * according to *closeflag : the given vector is a polyline or a polygon
- * Note that it also draw the polyline 
- */
-
-/* FIXME: Attention ça ne marche que pour un polygone convexe !!!!!!
- * sinon il faut le trianguler
+ * Note that the function also draws the polyline 
+ * FIXME: only works for convex polyline in opengl
  */
 
 static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color)
 {
-  gint i;
+  double rgb[3];
+  int j,k,n1 = Min(n,1000);
+  /* XXXX need an alloc */
+  GLfloat vertex_colors[1000*4];
+  GLfloat vertex_data[1000*4];
   if ( n <= 1) return;
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) glVertex2d( vx[i], vy[i]);
-  glEnd();
+  xget_color_rgb(Xgc, rgb);
+  for ( j = 0 ; j < n1 ; j++)
+    {
+      vertex_data[4*j]= vx[j];
+      vertex_data[4*j+1]= vy[j];
+      vertex_data[4*j+2]= 0.f;
+      vertex_data[4*j+3]= 1.0f;
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
+  glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+  glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+  glBindVertexArray (vao_triangles);
+  glDrawArrays (GL_TRIANGLE_FAN, 0, n1);
+  glBindVertexArray(0);
+  
   if ( color >=0 ) Xgc->graphic_engine->xset_color(Xgc,color);
-  drawpolyline(Xgc,vx, vy, n,closeflag);
+  xget_color_rgb(Xgc, rgb);
+  for ( j = 0 ; j < n1 ; j++)
+    {
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+  glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+  glBindVertexArray (vao_triangles);
+  glDrawArrays ((closeflag) ? GL_LINE_LOOP: GL_LINE_STRIP, 0, n1);
+  glBindVertexArray(0);
 }
 
 /*
@@ -385,7 +427,6 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 
 static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
 {
-
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -410,7 +451,6 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z);
 
 void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
 {
-
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -430,7 +470,6 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
       xset_font(Xgc,keepid,keepsize, FALSE);
     }
 }
-
 
 /*
  *   Draw an axis whith a slope of alpha degree (clockwise)
@@ -912,7 +951,6 @@ static void pixmap_resize(BCG *Xgc)
     }
 #endif
 }
-
 
 /* Change the private->pixmap status of a Graphic Window.
  * adding or removing a Background Pixmap to it
@@ -2230,4 +2268,5 @@ static void shader_draw_line(GLfloat vertex_data[],GLfloat vertex_colors[],int n
   glDrawArrays ((closeflag) ? GL_LINE_LOOP: GL_LINE_STRIP, 0, n);
   glBindVertexArray(0);
 }
+
 
