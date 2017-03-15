@@ -71,10 +71,17 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
 
 static void drawline(BCG *Xgc, double x1, double y1, double x2, double y2)
 {
-  glBegin(GL_LINES);
-  glVertex2d(x1, y1);
-  glVertex2d(x2, y2);
-  glEnd();
+  double rgb[3];
+  int j,k;
+  GLfloat vertex_colors[2*4];
+  GLfloat vertex_data[]={x1,y1,0.f,1.0f,
+			 x2,y2,0.f,1.0f};
+  xget_color_rgb(Xgc, rgb);
+  for ( j = 0 ; j < 2 ; j++)
+    for (k=0 ; k < 3; k++)
+      vertex_colors[4*j + k ]=rgb[k];
+  vertex_colors[4*j +3]= 1.0f;
+  shader_draw_line(vertex_data,vertex_colors,2,FALSE);
 }
 
 /* Draw a set of segments
@@ -1272,12 +1279,6 @@ void compute_nsp_mvp2d(BCG *Xgc, float v[])
 void nsp_ogl_set_2dview(BCG *Xgc)
 {
   float v[16];
-  int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
-  int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
-  Sciprintf("(%d, %d), (%d, %d), (%d, %d)\n",width,height,
-	    Xgc->CWindowWidth, Xgc->CWindowHeight,
-	    Xgc->scales->wdim[0],
-	    Xgc->scales->wdim[1]);
   compute_nsp_mvp2d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
 }
@@ -1325,12 +1326,6 @@ void compute_nsp_mvp3d(BCG *Xgc, float v[])
 void nsp_ogl_set_3dview(BCG *Xgc)
 {
   float v[16];
-  int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
-  int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
-  Sciprintf("(%d, %d), (%d, %d), (%d, %d)\n",width,height,
-	    Xgc->CWindowWidth, Xgc->CWindowHeight,
-	    Xgc->scales->wdim[0],
-	    Xgc->scales->wdim[1]);
   glEnable(GL_DEPTH_TEST);
   compute_nsp_mvp3d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
@@ -1366,74 +1361,29 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
   Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
-
-
 void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,int closeflag)
 {
-  gint i;
-  if ( n <= 1) return;
-#if 0
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++)
-    {
-      xset_color(Xgc,Abs(colors[i]));
-      glVertex3d( vx[i], vy[i], 0.f);
-    }
-  glEnd();
-#else
   double rgb[3];
-  GLfloat vertex_data[5*4];
-  GLfloat vertex_colors[5*4];
-  int j=0,k;
-  if ( n >= 3 )
+  GLfloat vertex_colors[4*4];
+  GLfloat vertex_data[4*4];
+  gint i, k, j=0;
+  if (!( n == 3 || n == 4) ) return;
+  xget_color_rgb(Xgc, rgb);
+  for ( i=0 ;  i < n ; i++)
     {
-      for ( i=0 ;  i< 3 ; i++)
-	{
-	  vertex_data[j]= vx[i];
-	  vertex_data[j+1]= vy[i];
-	  vertex_data[j+2]= 0.f;
-	  vertex_data[j+3]= 1.0f;
-
-	  xset_color(Xgc,Abs(colors[i]));
-	  xget_color_rgb(Xgc, rgb);
-	  for (k=0 ; k < 3; k++)
-	    vertex_colors[j + k ]=rgb[k];
-	  vertex_colors[j +3]= 1.0f;
-	  j += 4;
-	}
-      shader_draw_triangle(vertex_data,vertex_colors);
-    }
-  if ( n == 4)
-    {
-      for ( i=3 ;  i< 4 ; i++)
-	{
-	  vertex_data[j]= vx[i];
-	  vertex_data[j+1]= vy[i];
-	  vertex_data[j+2]= 0.f;
-	  vertex_data[j+3]= 1.0f;
-
-	  xset_color(Xgc,Abs(colors[i]));
-	  xget_color_rgb(Xgc, rgb);
-	  for (k=0 ; k < 3; k++)
-	    vertex_colors[j + k ]=rgb[k];
-	  vertex_colors[j +3]= 1.0f;
-
-	  j += 4;
-	}
-            
-      vertex_data[j]= vx[0];
-      vertex_data[j+1]= vy[0];
-      vertex_data[j+2]= 0.f;
+      vertex_data[j]= vx[i];
+      vertex_data[j+1]= vy[i];
+      vertex_data[j+2]= 0.0f;
       vertex_data[j+3]= 1.0f;
-      xset_color(Xgc,Abs(colors[0]));
-      xget_color_rgb(Xgc, rgb);
       for (k=0 ; k < 3; k++)
 	vertex_colors[j + k ]=rgb[k];
       vertex_colors[j +3]= 1.0f;
-      
-      shader_draw_triangle(vertex_data+8,vertex_colors);
+      j += 4;
     }
-#endif
+  if ( n == 3 )
+    shader_draw_triangle(vertex_data, vertex_colors);
+  else
+    shader_draw_quad(vertex_data,vertex_colors);
 }
 
 /**
