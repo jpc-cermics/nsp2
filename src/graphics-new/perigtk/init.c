@@ -380,7 +380,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     gtk_widget_show(scrolled_window);
   
   /* create private->drawingarea */
-
+  
 #if GTK_CHECK_VERSION(3,0,0) && defined(PERIGTK3GL)
   dd->private->drawing = gtk_gl_area_new ();
   gtk_widget_set_hexpand (dd->private->drawing, TRUE);
@@ -477,11 +477,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     }
   
   /* connect to signal handlers, etc */
-  g_signal_connect((dd->private->drawing), "configure_event",
+#if GTK_CHECK_VERSION(3,0,0) && defined(PERIGTK3GL)
+  g_signal_connect(dd->private->drawing, "resize",
+		   G_CALLBACK(resize_event), (gpointer) dd);
+#else
+  g_signal_connect(dd->private->drawing, "configure_event",
 		   G_CALLBACK(configure_event), (gpointer) dd);
+#endif
   /* 
-  g_signal_connect((dd->private->drawing), "size_allocate",
-		   G_CALLBACK(size_allocate_event), (gpointer) dd);
+     g_signal_connect((dd->private->drawing), "size_allocate",
+     G_CALLBACK(size_allocate_event), (gpointer) dd);
   */
 
 #if GTK_CHECK_VERSION(3,0,0)

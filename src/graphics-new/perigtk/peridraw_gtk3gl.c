@@ -1210,7 +1210,7 @@ void compute_nsp_mvp2d(BCG *Xgc, float v[])
   graphene_vec3_init (&up,0.f,1.f,0.f);
   graphene_matrix_init_look_at (&mv, &eye, &center, &up);
   /* projection  */
-  graphene_matrix_init_ortho (&o, 0.f, width, height,0,-4.f,4.f);
+  graphene_matrix_init_ortho (&o, 0.f, width, height, 0,-4.f,4.f);
   /* the product: note that compared to sdl all the matrices 
    * we have are the transposed of the sdl matrices 
    * Thus to obtaine sdl p*l*t*r 
@@ -1225,6 +1225,12 @@ void compute_nsp_mvp2d(BCG *Xgc, float v[])
 void nsp_ogl_set_2dview(BCG *Xgc)
 {
   float v[16];
+  int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
+  int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
+  Sciprintf("(%d, %d), (%d, %d), (%d, %d)\n",width,height,
+	    Xgc->CWindowWidth, Xgc->CWindowHeight,
+	    Xgc->scales->wdim[0],
+	    Xgc->scales->wdim[1]);
   compute_nsp_mvp2d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
 }
@@ -1272,11 +1278,12 @@ void compute_nsp_mvp3d(BCG *Xgc, float v[])
 void nsp_ogl_set_3dview(BCG *Xgc)
 {
   float v[16];
-  /*
   int width = gtk_widget_get_allocated_width (Xgc->private->drawing);
   int height = gtk_widget_get_allocated_height (Xgc->private->drawing);
-  glViewport (0,  0, width, height);
-  */
+  Sciprintf("(%d, %d), (%d, %d), (%d, %d)\n",width,height,
+	    Xgc->CWindowWidth, Xgc->CWindowHeight,
+	    Xgc->scales->wdim[0],
+	    Xgc->scales->wdim[1]);
   glEnable(GL_DEPTH_TEST);
   compute_nsp_mvp3d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);

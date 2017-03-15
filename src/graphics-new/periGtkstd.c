@@ -61,6 +61,7 @@ static void nsp_configure_wait(BCG *dd);
 static void nsp_drawing_resize(BCG *dd,int width, int height);
 #if GTK_CHECK_VERSION(3,0,0)
 #ifdef PERIGTK3GL
+static gint resize_event(GtkWidget *widget, int width, int height, gpointer data);
 static void realize_gtk3gl (GtkWidget *widget);
 static void unrealize_gtk3gl (GtkWidget *widget);
 static gint render_callback(GtkGLArea    *area, GdkGLContext *context,  gpointer data);
@@ -1715,8 +1716,8 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
     }
   nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
   DEBUG_GRAPHICS(Sciprintf("In drawing configure: wdim (%d,%d), get_size=(%d,%d) event=(%d,%d)\n",
-	    dd->CWindowWidth, dd->CWindowHeight,
-	    width,height, 
+			   dd->CWindowWidth, dd->CWindowHeight,
+			   width,height, 
 			   event->width,event->height));
   nsp_remove_hints(dd,width,height);
   
@@ -1777,6 +1778,93 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
   return FALSE;
 }
+
+
+#if GTK_CHECK_VERSION(3,0,0)
+#ifdef PERIGTK3GL
+
+/* configure_event is not called on gtk_gl_area 
+ * we use the resize event 
+ */
+
+static gint resize_event(GtkWidget *widget, int width, int height, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  /* g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE); */
+  /* check for resize */
+  if( ! gtk_widget_get_realized(dd->private->drawing) ) return FALSE;
+  if ( dd->CurResizeStatus == -1)
+    {
+      /* before initialization */
+      return FALSE ;
+    }
+  nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
+  DEBUG_GRAPHICS(Sciprintf("In drawing configure: wdim (%d,%d), get_size=(%d,%d) event=(%d,%d)\n",
+			   dd->CWindowWidth, dd->CWindowHeight,
+			   width,height, 
+			   event->width,event->height));
+  nsp_remove_hints(dd,width,height);
+  
+  if ( dd->CurResizeStatus == 2 )
+    {
+      if (0 )
+	{
+	  /* The next command when activated during a nsp_gtk_main() loop
+	   * (for example while in a xclick() or xgetmouse() will activate
+	   * the timeout_menu_check function in perigtk/event.c
+	   * and thus will produce a call to nsp_gtk_main_quit.
+	   * Unfortunately, on windows (at least with the version of gtk we use)
+	   * the  nsp_gtk_main_quit call will not produce an exit from nsp_gtk_main
+	   * while the graphic window is enlarged. That's why we have the next
+	   * hack and do not use the enqueue_nsp_command.
+	   */
+	  enqueue_nsp_command("redraw_requested");
+	}
+      else
+	{
+	  /* This is a hack for scicos that should possibly be moved elsewhere.
+	   * when using  dd->CurResizeStatus == 2 we do not want the
+	   * graphic to be scaled when enlarging the drawing area. Thus
+	   * the scales are changed in order to take care of a larger
+	   * drawing area without scaling the graphics.
+	   *
+	   */
+	  if (dd->figure != NULL)
+	    {
+	      NspObject *Obj;
+	      if ( nsp_list_length(((NspFigure *)dd->figure)->obj->children) > 0 
+		   && (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ )
+		{
+		  if ( IsAxes(Obj))
+		    {
+		      double w1,w2, h1, h2, dw,dh;
+		      NspAxes *Axes = (NspAxes *) Obj;
+		      scale_i2f(&Axes->obj->scale,&w1,&h1,&dd->CWindowWidth, &dd->CWindowHeight,1);
+		      scale_i2f(&Axes->obj->scale,&w2,&h2, &width,  &height, 1);
+		      Axes->obj->arect->R[0] = Axes->obj->arect->R[0] * dd->CWindowWidth/width;
+		      Axes->obj->arect->R[1] = Axes->obj->arect->R[1] * dd->CWindowWidth/width;
+		      Axes->obj->arect->R[2] = Axes->obj->arect->R[2] * dd->CWindowHeight/height;
+		      Axes->obj->arect->R[3] = Axes->obj->arect->R[3] * dd->CWindowHeight/height;
+		      Axes->obj->frect->R[2] += (dw=w2-w1,dw);
+		      Axes->obj->rect->R[2]  += dw;
+		      Axes->obj->frect->R[1] += (dh=h2-h1,dh);
+		      Axes->obj->rect->R[1]  += dh;
+		    }
+		}
+	    }
+	}
+    }
+
+  dd->CWindowWidth = width;
+  dd->CWindowHeight = height;
+  /* alert draw that the drawing window was resized */
+  dd->private->resize = 1;
+  return FALSE;
+}
+#endif
+#endif
 
 /* wait for a configure event in the graphic window */
 
