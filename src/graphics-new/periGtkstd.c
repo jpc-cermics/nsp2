@@ -2239,6 +2239,8 @@ static void shader_draw_quad(GLfloat vertex_data[],GLfloat vertex_colors[]);
 static void realize_gtk3gl (GtkWidget *widget)
 {
   gtk_gl_area_make_current (GTK_GL_AREA (widget));
+  /* Enable depth buffer */
+  gtk_gl_area_set_has_depth_buffer(GTK_GL_AREA (widget), TRUE);
   gen_buffers ();
   init_shaders (&program, &mvp_location);
   array_fill();	

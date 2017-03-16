@@ -1333,10 +1333,17 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
-  glBegin(GL_LINES);
-  glVertex3d(x1, y1, z1);
-  glVertex3d(x2, y2, z2);
-  glEnd();
+  double rgb[3];
+  int j,k;
+  GLfloat vertex_colors[2*4];
+  GLfloat vertex_data[]={x1,y1,z1,1.0f,
+			 x2,y2,z2,1.0f};
+  xget_color_rgb(Xgc, rgb);
+  for ( j = 0 ; j < 2 ; j++)
+    for (k=0 ; k < 3; k++)
+      vertex_colors[4*j + k ]=rgb[k];
+  vertex_colors[4*j +3]= 1.0f;
+  shader_draw_line(vertex_data,vertex_colors,2,FALSE);
 }
 
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
