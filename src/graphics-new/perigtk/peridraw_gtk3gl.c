@@ -47,22 +47,18 @@ static void clearwindow(BCG *Xgc)
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  int old;
   nsp_ogl_set_2dview(Xgc);
   if ( r == NULL )
     {
       clearwindow(Xgc);
       return ;
     }
-  old = xset_color(Xgc,Xgc->NumBackground);
-  glBegin(GL_QUADS);
-  glVertex2i(r->x        ,r->y);
-  glVertex2i(r->x+r->width,r->y);
-  glVertex2i(r->x+r->width,r->y+r->height);
-  glVertex2i(r->x        ,r->y+r->height);
-  glEnd();
-  xset_color(Xgc,old);
-  glClear (GL_DEPTH_BUFFER_BIT);
+  xset_color(Xgc,Xgc->NumBackground);
+  glScissor(r->x, r->y,r->x+r->width,r->y+r->height);
+  glEnable(GL_SCISSOR_TEST);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glDisable(GL_SCISSOR_TEST);
+  /* Il faut ensuite repeindre avec le background */
 }
 
 /*
@@ -78,9 +74,11 @@ static void drawline(BCG *Xgc, double x1, double y1, double x2, double y2)
 			 x2,y2,0.f,1.0f};
   xget_color_rgb(Xgc, rgb);
   for ( j = 0 ; j < 2 ; j++)
-    for (k=0 ; k < 3; k++)
-      vertex_colors[4*j + k ]=rgb[k];
-  vertex_colors[4*j +3]= 1.0f;
+    {
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3] = 1.0f;
+    }
   shader_draw_line(vertex_data,vertex_colors,2,FALSE);
 }
 
@@ -813,7 +811,6 @@ static void xset_unclip(BCG *Xgc)
 {
   static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
   Xgc->ClipRegionSet = 0;
-  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
   unclip_rectangle(&clip_rect);
 }
 
@@ -844,33 +841,19 @@ static void xget_clip(BCG *Xgc,int *x)
 static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
 {
 #if 0
-  int bg = Xgc->NumBackground;
-  glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glColor3f(Xgc->private->colors[bg].red/65535.0,
-	    Xgc->private->colors[bg].green/65535.0,
-	    Xgc->private->colors[bg].blue/65535.0);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
+  // const double rect[] ={clip_rect->x, clip_rect->y,  clip_rect->width, clip_rect->height};
+  glScissor(clip_rect->x, clip_rect->y,clip_rect->x+clip_rect->width,clip_rect->y+clip_rect->height);
+  glEnable(GL_SCISSOR_TEST);
+  xset_color(Xgc,4);
+  Sciprintf("[%f,%f,%f,%f]\n",clip_rect->x, clip_rect->y,  clip_rect->width, clip_rect->height);
+  // fillrectangle(Xgc, rect);
 #endif
 }
-
 
 static void unclip_rectangle(const GdkRectangle *clip_rect)
 {
 #if 0
-  glStencilFunc(GL_ALWAYS, 0x0, 0x0);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
+  glDisable(GL_SCISSOR_TEST);
 #endif
 }
 
@@ -1340,9 +1323,11 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
 			 x2,y2,z2,1.0f};
   xget_color_rgb(Xgc, rgb);
   for ( j = 0 ; j < 2 ; j++)
-    for (k=0 ; k < 3; k++)
-      vertex_colors[4*j + k ]=rgb[k];
-  vertex_colors[4*j +3]= 1.0f;
+    {
+      for (k=0 ; k < 3; k++)
+	vertex_colors[4*j + k ]=rgb[k];
+      vertex_colors[4*j +3]= 1.0f;
+    }
   shader_draw_line(vertex_data,vertex_colors,2,FALSE);
 }
 
@@ -1405,7 +1390,6 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
  *
  * when we have one color for each node
  **/
-
 
 static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
 
