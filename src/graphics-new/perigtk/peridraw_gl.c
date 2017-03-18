@@ -863,7 +863,6 @@ static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
-  static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
 #if 0
   {
     int bg = Xgc->NumBackground;
