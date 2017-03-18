@@ -58,7 +58,6 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
   glEnable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
   glDisable(GL_SCISSOR_TEST);
-  /* Il faut ensuite repeindre avec le background */
 }
 
 /*
@@ -793,15 +792,15 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
 
 static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
-#if 0
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
   glEnable(GL_SCISSOR_TEST);
   glScissor(r->x, r->y, r->width, r->height);
+#if 0
   {
     const double rect[] ={ r->x, r->y, r->width, r->height};
+    Sciprintf("[%f,%f,%f,%f]\n", rect[0], rect[1], rect[2], rect[3]);
     xset_color(Xgc,4);
-    Sciprintf("[%f,%f,%f,%f]\n", r->x, r->y, r->width, r->height);
     fillrectangle(Xgc, rect);
   }
 #endif
@@ -1249,7 +1248,10 @@ void nsp_ogl_set_2dview(BCG *Xgc)
   float v[16];
   compute_nsp_mvp2d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
-  glEnable(GL_DEPTH_TEST);
+  /* GL_DEPTH_TEST is disabled for 2d 
+   * the drawing order gives the depth
+   */
+  glDisable(GL_DEPTH_TEST);
 }
 
 void compute_nsp_mvp3d(BCG *Xgc, float v[])

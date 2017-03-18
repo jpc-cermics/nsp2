@@ -2241,6 +2241,8 @@ static void realize_gtk3gl (GtkWidget *widget)
   gtk_gl_area_make_current (GTK_GL_AREA (widget));
   /* Enable depth buffer */
   gtk_gl_area_set_has_depth_buffer(GTK_GL_AREA (widget), TRUE);
+  /* render mode */
+  /* gtk_gl_area_set_auto_render(GTK_GL_AREA (widget), FALSE); */
   gen_buffers ();
   init_shaders (&program, &mvp_location);
   array_fill();	
