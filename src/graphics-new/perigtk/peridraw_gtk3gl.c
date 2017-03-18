@@ -200,7 +200,7 @@ static void fillrectangle(BCG *Xgc,const double rect[])
 	vertex_colors[4*j + k ]=rgb[k];
       vertex_colors[4*j +3]= 1.0f;
     }
-  shader_draw_quad(vertex_data,vertex_colors);
+  shader_fill_quad(vertex_data,vertex_colors);
 }
 
 /*
@@ -323,12 +323,10 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
     {
       if (fillvect[i] > 0 )
 	{
-	  /* fill + boundaries **/
+	  /* fill + boundaries */
 	  xset_color(Xgc,fillvect[i]);
-	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color);
-	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  /* drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color); */
 	}
       else  if (fillvect[i] == 0 )
@@ -795,9 +793,18 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
 
 static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
+#if 0
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
-  clip_rectangle(Xgc, r);
+  glEnable(GL_SCISSOR_TEST);
+  glScissor(r->x, r->y, r->width, r->height);
+  {
+    const double rect[] ={ r->x, r->y, r->width, r->height};
+    xset_color(Xgc,4);
+    Sciprintf("[%f,%f,%f,%f]\n", r->x, r->y, r->width, r->height);
+    fillrectangle(Xgc, rect);
+  }
+#endif
 }
 
 /**
@@ -809,9 +816,9 @@ static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 
 static void xset_unclip(BCG *Xgc)
 {
-  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
+  if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
-  unclip_rectangle(&clip_rect);
+  glDisable(GL_SCISSOR_TEST);
 }
 
 /**
@@ -832,29 +839,6 @@ static void xget_clip(BCG *Xgc,int *x)
       x[3] =Xgc->CurClipRegion.width;
       x[4] =Xgc->CurClipRegion.height;
     }
-}
-
-
-/* Open GL clipping
- */
-
-static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
-{
-#if 0
-  // const double rect[] ={clip_rect->x, clip_rect->y,  clip_rect->width, clip_rect->height};
-  glScissor(clip_rect->x, clip_rect->y,clip_rect->x+clip_rect->width,clip_rect->y+clip_rect->height);
-  glEnable(GL_SCISSOR_TEST);
-  xset_color(Xgc,4);
-  Sciprintf("[%f,%f,%f,%f]\n",clip_rect->x, clip_rect->y,  clip_rect->width, clip_rect->height);
-  // fillrectangle(Xgc, rect);
-#endif
-}
-
-static void unclip_rectangle(const GdkRectangle *clip_rect)
-{
-#if 0
-  glDisable(GL_SCISSOR_TEST);
-#endif
 }
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
@@ -1242,11 +1226,12 @@ void compute_nsp_mvp2d(BCG *Xgc, float v[])
   graphene_matrix_t o, mv, mvp;
   graphene_vec3_t eye, center, up;
   /* view */
-  graphene_vec3_init (&eye,0.f,0.f,1.f);
-  graphene_vec3_init (&center,0.f,0.f,-1.f);
-  graphene_vec3_init (&up,0.f,1.f,0.f);
+  graphene_vec3_init (&eye,0.f,0.f, 1.f);
+  graphene_vec3_init (&center,0.f,0.f, -1.f);
+  graphene_vec3_init (&up,0.f, 1.f,0.f);
   graphene_matrix_init_look_at (&mv, &eye, &center, &up);
   /* projection  */
+  // graphene_matrix_init_ortho (&o, -width, width, height, -height, -4.f, 4.f);
   graphene_matrix_init_ortho (&o, 0.f, width, height, 0,-4.f,4.f);
   /* the product: note that compared to sdl all the matrices 
    * we have are the transposed of the sdl matrices 
@@ -1264,6 +1249,7 @@ void nsp_ogl_set_2dview(BCG *Xgc)
   float v[16];
   compute_nsp_mvp2d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
+  glEnable(GL_DEPTH_TEST);
 }
 
 void compute_nsp_mvp3d(BCG *Xgc, float v[])
@@ -1309,9 +1295,9 @@ void compute_nsp_mvp3d(BCG *Xgc, float v[])
 void nsp_ogl_set_3dview(BCG *Xgc)
 {
   float v[16];
-  glEnable(GL_DEPTH_TEST);
   compute_nsp_mvp3d(Xgc,v);
   glUniformMatrix4fv (mvp_location, 1, GL_FALSE, &v[0]);
+  glEnable(GL_DEPTH_TEST);
 }
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
@@ -1373,9 +1359,9 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
       j += 4;
     }
   if ( n == 3 )
-    shader_draw_triangle(vertex_data, vertex_colors);
+    shader_fill_triangle(vertex_data, vertex_colors);
   else
-    shader_draw_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors);
 }
 
 /**
@@ -1455,9 +1441,9 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
       j += 4;
     }
   if ( n == 3 )
-    shader_draw_triangle(vertex_data,vertex_colors);
+    shader_fill_triangle(vertex_data,vertex_colors);
   else
-    shader_draw_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors);
 }
 
 /**
@@ -1534,9 +1520,9 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
       j += 4;
     }
   if ( n == 3 )
-    shader_draw_triangle(vertex_data, vertex_colors);
+    shader_fill_triangle(vertex_data, vertex_colors);
   else
-    shader_draw_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors);
 }
 
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
@@ -2165,7 +2151,7 @@ create_shader (int type, const char *src)
   return shader;
 }
 
-static void shader_draw_triangle(GLfloat vertex_data[],GLfloat vertex_colors[])
+static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[])
 {
   int nvertex = 3;
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
@@ -2180,7 +2166,7 @@ static void shader_draw_triangle(GLfloat vertex_data[],GLfloat vertex_colors[])
   glBindVertexArray(0);
 }
 
-static void shader_draw_quad(GLfloat vertex_data[],GLfloat vertex_colors[])
+static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[])
 {
   int nvertex = 4;
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);

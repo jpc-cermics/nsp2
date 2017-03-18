@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2017 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -863,7 +863,23 @@ static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
-  clip_rectangle(Xgc, r);
+  static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
+#if 0
+  {
+    int bg = Xgc->NumBackground;
+    glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glColor3f(Xgc->private->colors[bg].red/65535.0,
+	      Xgc->private->colors[bg].green/65535.0,
+	      Xgc->private->colors[bg].blue/65535.0);
+    glBegin(GL_QUADS);
+    glVertex2i(clip_rect.x, clip_rect.y);
+    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+    glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
+    glEnd();
+  }
+#endif
 }
 
 /**
@@ -875,10 +891,20 @@ static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 
 static void xset_unclip(BCG *Xgc)
 {
-  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
+  if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
-  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-  unclip_rectangle(&clip_rect);
+#if 0
+  {
+    glStencilFunc(GL_ALWAYS, 0x0, 0x0);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glBegin(GL_QUADS);
+    glVertex2i(clip_rect.x, clip_rect.y);
+    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+    glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
+    glEnd();
+  }
+#endif
 }
 
 /**
@@ -899,43 +925,6 @@ static void xget_clip(BCG *Xgc,int *x)
       x[3] =Xgc->CurClipRegion.width;
       x[4] =Xgc->CurClipRegion.height;
     }
-}
-
-
-/* Open GL clipping
- */
-
-static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
-{
-#if 0
-  int bg = Xgc->NumBackground;
-  glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glColor3f(Xgc->private->colors[bg].red/65535.0,
-	    Xgc->private->colors[bg].green/65535.0,
-	    Xgc->private->colors[bg].blue/65535.0);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
-#endif
-}
-
-
-static void unclip_rectangle(const GdkRectangle *clip_rect)
-{
-#if 0
-  glStencilFunc(GL_ALWAYS, 0x0, 0x0);
-  glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glBegin(GL_QUADS);
-  glVertex2i(clip_rect.x, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-  glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-  glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-  glEnd();
-#endif
 }
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)

@@ -388,8 +388,6 @@ extern void start_sci_gtk(void);
 
 #if defined(PERIGL) || defined(PERIGTK3GL)
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
-static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect);
-static void unclip_rectangle(const GdkRectangle *clip_rect);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 #if defined(PERIGL) 

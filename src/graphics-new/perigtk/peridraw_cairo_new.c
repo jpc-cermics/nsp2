@@ -576,7 +576,6 @@ static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 static void xset_unclip(BCG *Xgc)
 {
   cairo_t *cr =  Xgc->private->cairo_drawable_cr;
-
   if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
   cairo_reset_clip(cr);

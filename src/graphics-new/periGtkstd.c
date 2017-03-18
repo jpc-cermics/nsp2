@@ -2232,9 +2232,9 @@ static void gen_buffers(void);
 static GLuint create_shader (int type, const char *src);
 static void array_fill(void);
 static void init_shaders (GLuint *program_out, GLuint *mvp_out);
-static void shader_draw_triangle(GLfloat vertex_data[],GLfloat vertex_colors[]);
+static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[]);
 static void shader_draw_line(GLfloat vertex_data[],GLfloat vertex_colors[],int n, int closeflag);
-static void shader_draw_quad(GLfloat vertex_data[],GLfloat vertex_colors[]);
+static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[]);
 
 static void realize_gtk3gl (GtkWidget *widget)
 {
