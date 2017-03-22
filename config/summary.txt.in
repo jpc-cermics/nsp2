@@ -3,7 +3,7 @@
 *******************
 
 FFTW3 support..........:@HAVE_FFTW3@
-OpenGl support.........:@WITH_OPENGL@
+OpenGl support.........:@HAVE_OPENGL@
 Sndfile support........:@HAVE_SNDFILE@
 Portaudio support......:@HAVE_PORTAUDIO@
 Mongodb support........:@HAVE_MONGODB_C@

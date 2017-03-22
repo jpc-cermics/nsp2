@@ -1134,7 +1134,7 @@ fi
 ## GTK3
 #################
 HAVE_EPOXY=no
-WITH_OPENGL="no"
+HAVE_OPENGL="no"
 PERIGLEXT=
 
 if test xx"$with_gtk" = xx; then 
@@ -1177,6 +1177,7 @@ if test xx"$with_gtk" = xx; then
        if test "$HAVE_EPOXY" = "yes"; then
          AC_DEFINE(WITH_EPOXY,[],[epoxy library for opengl in gtk3])
          AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
+	 HAVE_OPENGL="yes"
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS epoxy"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS epoxy"
          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
@@ -1555,6 +1556,7 @@ if test "$with_gtkglext" != no; then
 			GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
 			GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 			AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
+			HAVE_OPENGL="yes"
 			PERIGLEXT="periGL.o"
 			AC_DEFINE(WITH_GTKGLEXT,[],[gtkglext: opengl in gtk ])
 		 else
@@ -2343,7 +2345,7 @@ AC_SUBST(VTE_PKG)
 # for summary file
 
 AC_SUBST(HAVE_FFTW3)
-AC_SUBST(WITH_OPENGL)
+AC_SUBST(HAVE_OPENGL)
 AC_SUBST(HAVE_SNDFILE)
 AC_SUBST(HAVE_GI)
 AC_SUBST(HAVE_PORTAUDIO)
@@ -2391,7 +2393,7 @@ echo "*     Summary     *"
 echo "*******************"
 echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
-echo "OpenGl support.........:" $WITH_OPENGL
+echo "OpenGl support.........:" $HAVE_OPENGL
 echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Portaudio support......:" $HAVE_PORTAUDIO
 echo "Mongodb support........:" $HAVE_MONGODB_C
