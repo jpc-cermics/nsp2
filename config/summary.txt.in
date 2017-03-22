@@ -3,7 +3,7 @@
 *******************
 
 FFTW3 support..........:@HAVE_FFTW3@
-OpenGl support.........:@WITH_GL@
+OpenGl support.........:@WITH_OPENGL@
 Sndfile support........:@HAVE_SNDFILE@
 Portaudio support......:@HAVE_PORTAUDIO@
 Mongodb support........:@HAVE_MONGODB_C@
@@ -16,6 +16,7 @@ Umfpack support........:@HAVE_UMFPACK@
 Spqr support...........:@HAVE_SPQR@
 GtkSourceView support..:@have_gtksourceview@
 gobject-introspection..:@HAVE_GI@
+epoxy support..........:@HAVE_EPOXY@
 man vizualization......:@MAN_VIZUALIZATION@
 
 Managed by pkg-config..:@GTK_PKGS_CFLAGS@

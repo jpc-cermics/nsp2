@@ -1133,12 +1133,15 @@ fi
 #################
 ## GTK3
 #################
+HAVE_EPOXY=no
+WITH_OPENGL="no"
+PERIGLEXT=
 
 if test xx"$with_gtk" = xx; then 
   if test "$with_gtk3" = yes; then
     GTKDIR=gtk3
     ZZLEDT="reader"
-    GTK_REQUIRED_VERSION=2.0.0
+    GTK_REQUIRED_VERSION=3.0.0
     GTK_PKGS_CFLAGS='gtk+-3.0'
     GTK_PKGS_LIBS='gtk+-3.0'
     
@@ -1166,6 +1169,22 @@ if test xx"$with_gtk" = xx; then
       AC_DEFINE(WITH_GTKOSX,[],[Gtk version with native OsX graphics])
       GTK_OSX="yes"
       GZVT=
+    fi
+    # we need epoxy library for opengl and gtk3
+    PKG_CHECK_MODULES(GTK,[$GTK_PKGS_CFLAGS >= 3.16.0], HAVE_GTK3GL=yes, HAVE_GTK3GL=no)
+    PKG_CHECK_MODULES(epoxy, epoxy, HAVE_EPOXY=yes, HAVE_EPOXY=no)
+    if test "$HAVE_GTK3GL" = "yes"; then 
+       if test "$HAVE_EPOXY" = "yes"; then
+         AC_DEFINE(WITH_EPOXY,[],[epoxy library for opengl in gtk3])
+         AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS epoxy"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS epoxy"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+ 	 PERIGLEXT="periGTK3GL.o graphene-matrix.o 	graphene-simd4f.o"
+	else
+         AC_MSG_WARN([you should install epoxy library to enable opengl support with gtk3])
+       fi 
     fi
   fi
 fi
@@ -1503,13 +1522,10 @@ if test "$with_cairo" != no; then
   fi
 fi
 
-#################
-## GTKglext
-#################
+##########################################
+## GTKglext: opengl for Gtk version 2
+##########################################
 
-PERIGLEXT=
-
-WITH_GL="no"
 if test "$with_gtkglext" != no; then
     gtkglext_version="1.0.0"
     AC_MSG_CHECKING([if gtkglext exists ])
@@ -1538,7 +1554,7 @@ if test "$with_gtkglext" != no; then
 			GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtkglext-1.0 pangoft2 "
 			GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
 			GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-			WITH_GL="yes"
+			AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
 			PERIGLEXT="periGL.o"
 			AC_DEFINE(WITH_GTKGLEXT,[],[gtkglext: opengl in gtk ])
 		 else
@@ -1764,11 +1780,6 @@ if test "xx$umfpack_libs" == "xx" ; then
     HAVE_CHOLMOD="no"
   fi
 fi
-
-
-
-
-
 
 #################
 ## fftw
@@ -2332,7 +2343,7 @@ AC_SUBST(VTE_PKG)
 # for summary file
 
 AC_SUBST(HAVE_FFTW3)
-AC_SUBST(WITH_GL)
+AC_SUBST(WITH_OPENGL)
 AC_SUBST(HAVE_SNDFILE)
 AC_SUBST(HAVE_GI)
 AC_SUBST(HAVE_PORTAUDIO)
@@ -2344,6 +2355,7 @@ AC_SUBST(HAVE_CLP)
 AC_SUBST(HAVE_CHOLMOD)
 AC_SUBST(HAVE_UMFPACK)
 AC_SUBST(HAVE_SPQR)
+AC_SUBST(HAVE_EPOXY)
 AC_SUBST(have_gtksourceview)
 AC_SUBST(MAN_VIZUALIZATION)
 AC_SUBST(GTK_PKG)
@@ -2366,7 +2378,7 @@ AC_SUBST(CROSS_VERSION)
 AC_SUBST(CROSS_POPULATE)
 AC_SUBST(TARGET_MACHINE)
 AC_SUBST(CROSS_COPIER)
-  
+
 AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
 
 # should be executable
@@ -2379,7 +2391,7 @@ echo "*     Summary     *"
 echo "*******************"
 echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
-echo "OpenGl support.........:" $WITH_GL
+echo "OpenGl support.........:" $WITH_OPENGL
 echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Portaudio support......:" $HAVE_PORTAUDIO
 echo "Mongodb support........:" $HAVE_MONGODB_C
@@ -2391,6 +2403,7 @@ echo "Cholmod support........:" $HAVE_CHOLMOD
 echo "Umfpack support........:" $HAVE_UMFPACK
 echo "GtkSourceView support..:" $have_gtksourceview
 echo "gobject-introspection..:" $HAVE_GI
+echo "epoxy support..........:" $HAVE_EPOXY
 echo "man vizualization......:" $MAN_VIZUALIZATION
 echo ""
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
