@@ -551,6 +551,7 @@ static const int symbols[] =
 
 static void draw_mark(BCG *Xgc, double *x, double *y)
 {
+#if 0
   double dx,dy;
   PangoRectangle ink_rect,logical_rect;
   int code = symbols[Xgc->CurHardSymb];
@@ -576,10 +577,12 @@ static void draw_mark(BCG *Xgc, double *x, double *y)
       for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
       drawrectangle(Xgc,myrect);
     }
+#endif
 }
 
 static void draw_mark3D(BCG *Xgc,double x, double y, double z)
 {
+#if 0
   PangoRectangle ink_rect,logical_rect;
   int code = symbols[Xgc->CurHardSymb];
   gchar symbol_code[4], *iter = symbol_code;
@@ -598,6 +601,7 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
   /* glRasterPos3f(x- PANGO_PIXELS(dx),y + PANGO_PIXELS(-dy),z); */
   glRasterPos3f(x,y,z);
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
+#endif
 }
 
 
@@ -672,6 +676,7 @@ static cairo_t *create_layout_context (void)
 static void displaystring(BCG *Xgc,const char *str, double x, double y,
 			  int flag,double angle, gr_str_posx posx, gr_str_posy posy )
 {
+#if 0
   cairo_t *render_cr;
   unsigned int texture_id;
   cairo_surface_t *surface;
@@ -750,6 +755,7 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   cairo_destroy (cr);
   cairo_destroy (render_cr);
   cairo_surface_destroy (surface);
+#endif
 }
 
 /* returns the bounding box for a non rotated string
@@ -1661,11 +1667,6 @@ static void nsp_fonts_finalize(BCG *Xgc)
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
       pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
       pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
-#ifdef PANGO_VERSION_CHECK
-#if   PANGO_VERSION_CHECK(1,22,0)
-      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
-#endif
-#endif
     }
 }
 
@@ -1673,9 +1674,13 @@ static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL)
     {
+
+      cairo_t *cr = create_layout_context ();
+      PangoLayout *layout = pango_cairo_create_layout (cr);
+      PangoLayout *mark_layout = pango_cairo_create_layout (cr);
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
-      Xgc->private->layout = NULL;
-      Xgc->private->mark_layout = NULL;
+      Xgc->private->layout = layout;
+      Xgc->private->mark_layout = mark_layout;
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }
