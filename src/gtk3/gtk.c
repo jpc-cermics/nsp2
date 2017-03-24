@@ -55,7 +55,7 @@
 
 #include <nsp/gtk/cairo_t.h>
 #include <nsp/gtk/cairo_surface_t.h>
-
+#include <nsp/gtk/cairo_region_t.h>
 
 /* XXXX */
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
