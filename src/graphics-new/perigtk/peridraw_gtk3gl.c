@@ -535,39 +535,6 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
-/* very similar to display string
- */
-static void display_symbol(BCG *Xgc,double x, double y,int flag);
-
-static void draw_mark(BCG *Xgc, double *x, double *y)
-{
-  display_symbol(Xgc, *x, *y,0);
-}
-
-static void draw_mark3D(BCG *Xgc,double x, double y, double z)
-{
-#if 0
-  PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb];
-  gchar symbol_code[4], *iter = symbol_code;
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  Xgc->CurColor=1;
-  xset_color(Xgc,Xgc->CurColor);
-  /* XXX  we need here to move x,y,z to center the mark at (x,y,z)  */
-  /* double dx,dy;
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  */
-  /* glRasterPos3f(x- PANGO_PIXELS(dx),y + PANGO_PIXELS(-dy),z); */
-  glRasterPos3f(x,y,z);
-  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-#endif
-}
-
 /* new method with pango/cairo surfaces without ft2 
  * we use a texture to draw the text 
  */
@@ -732,8 +699,12 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   cairo_surface_destroy (surface);
 }
 
-static void display_symbol(BCG *Xgc,double x, double y,int flag)
+/* very similar to display string
+ */
+
+static void draw_mark(BCG *Xgc, double *x, double *y)
 {
+  int flag = 0;
   cairo_t *render_cr;
   unsigned int texture_id;
   cairo_surface_t *surface;
@@ -755,8 +726,8 @@ static void display_symbol(BCG *Xgc,double x, double y,int flag)
   /* (xpos,ypos) is the bottom left position 
    * where the texture is to be drawn
    */
-  xpos = x + x_offset;
-  ypos = y + y_offset;
+  xpos = *x + x_offset;
+  ypos = *y + y_offset;
   /* create a surface to render the layout */
   render_cr = create_cairo_context (width,
 				    height,
@@ -781,6 +752,19 @@ static void display_symbol(BCG *Xgc,double x, double y,int flag)
   free (surface_data);
   cairo_destroy (render_cr);
   cairo_surface_destroy (surface);
+}
+
+static void draw_mark3D(BCG *Xgc,double x, double y, double z)
+{
+  double xn,yn;
+  xn=TRX(Xgc->scales,x,y,z);
+  yn=TRY(Xgc->scales,x,y,z);
+  xn = XScale(Xgc->scales,xn);
+  yn = YScale(Xgc->scales,yn);
+  /* now (xn,yn) are 2d */
+  nsp_ogl_set_2dview(Xgc);
+  draw_mark(Xgc, &xn,&yn);
+  nsp_ogl_set_3dview(Xgc);
 }
 
 /* returns the bounding box for a non rotated string
