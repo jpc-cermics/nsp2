@@ -82,18 +82,14 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
 static void drawline(BCG *Xgc, double x1, double y1, double x2, double y2)
 {
   double rgb[3];
-  int j,k;
-  GLfloat vertex_colors[2*4];
+  int k;
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[]={x1,y1,0.f,1.0f,
 			 x2,y2,0.f,1.0f};
   xget_color_rgb(Xgc, rgb);
-  for ( j = 0 ; j < 2 ; j++)
-    {
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3] = 1.0f;
-    }
-  shader_draw_line(vertex_data,vertex_colors,2,FALSE);
+  for (k=0 ; k < 3; k++) vertex_colors[k]=rgb[k];
+  vertex_colors[3] = 1.0f;
+  shader_draw_line(vertex_data,2,FALSE,vertex_colors,1);
 }
 
 /* Draw a set of segments
@@ -145,7 +141,7 @@ static void drawrectangle(BCG *Xgc,const double rect[])
 {
   double rgb[3];
   int j,k;
-  GLfloat vertex_colors[4*4];
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[4*4];
   j=0;
   vertex_data[j]= rect[0];
@@ -169,13 +165,9 @@ static void drawrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+3]= 1.0f;
   
   xget_color_rgb(Xgc, rgb);
-  for ( j=0 ;  j < 4 ; j++)
-    {
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
-    }
-  shader_draw_line(vertex_data,vertex_colors,4,TRUE);
+  for (k=0 ; k < 3; k++) vertex_colors[k ]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  shader_draw_line(vertex_data,4, TRUE, vertex_colors,1);
 }
 
 /* fill one rectangle, with current color */
@@ -184,7 +176,7 @@ static void fillrectangle(BCG *Xgc,const double rect[])
 {
   double rgb[3];
   int j,k;
-  GLfloat vertex_colors[4*4];
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[4*4];
   j=0;
   vertex_data[j]= rect[0];
@@ -208,13 +200,10 @@ static void fillrectangle(BCG *Xgc,const double rect[])
   vertex_data[j+3]= 1.0f;
 
   xget_color_rgb(Xgc, rgb);
-  for ( j=0 ;  j < 4 ; j++)
-    {
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
-    }
-  shader_fill_quad(vertex_data,vertex_colors);
+  for (k=0 ; k < 3; k++)
+    vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  shader_fill_quad(vertex_data,vertex_colors,1);
 }
 
 /*
@@ -371,7 +360,7 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
   double rgb[3];
   int j,k;
   /* XXXX need an alloc */
-  GLfloat vertex_colors[1000*4];
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[1000*4];
   if ( n <= 1) return;
   xget_color_rgb(Xgc, rgb);
@@ -381,11 +370,11 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
       vertex_data[4*j+1]= vy[j];
       vertex_data[4*j+2]= 0.f;
       vertex_data[4*j+3]= 1.0f;
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
     }
-  shader_draw_line(vertex_data,vertex_colors,Min(n,1000),closeflag);
+  for (k=0 ; k < 3; k++)
+    vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  shader_draw_line(vertex_data,Min(n,1000),closeflag,vertex_colors,1);
 }
 
 /*
@@ -399,8 +388,8 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 {
   double rgb[3];
   int j,k,n1 = Min(n,1000);
+  GLfloat vertex_colors[4];
   /* XXXX need an alloc */
-  GLfloat vertex_colors[1000*4];
   GLfloat vertex_data[1000*4];
   if ( n <= 1) return;
   xget_color_rgb(Xgc, rgb);
@@ -410,28 +399,25 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
       vertex_data[4*j+1]= vy[j];
       vertex_data[4*j+2]= 0.f;
       vertex_data[4*j+3]= 1.0f;
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
     }
+  glUniform1i(c_flag, 0);
+  for (k=0 ; k < 3; k++) vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  glUniform4fv(c_color,1, vertex_colors);
+
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
   glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
-  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
-  glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+
   glBindVertexArray (vao_triangles);
   glDrawArrays (GL_TRIANGLE_FAN, 0, n1);
   glBindVertexArray(0);
   
   if ( color >=0 ) Xgc->graphic_engine->xset_color(Xgc,color);
   xget_color_rgb(Xgc, rgb);
-  for ( j = 0 ; j < n1 ; j++)
-    {
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
-    }
-  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
-  glBufferData (GL_ARRAY_BUFFER, 4*n1*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+  glUniform1i(c_flag, 0);
+  for (k=0 ; k < 3; k++) vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  glUniform4fv(c_color,1, vertex_colors);
   glBindVertexArray (vao_triangles);
   glDrawArrays ((closeflag) ? GL_LINE_LOOP: GL_LINE_STRIP, 0, n1);
   glBindVertexArray(0);
@@ -549,35 +535,13 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
+/* very similar to display string
+ */
+static void display_symbol(BCG *Xgc,double x, double y,int flag);
+
 static void draw_mark(BCG *Xgc, double *x, double *y)
 {
-#if 0
-  double dx,dy;
-  PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb];
-  gchar symbol_code[4], *iter = symbol_code;
-
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  Xgc->CurColor=1;
-  xset_color(Xgc,Xgc->CurColor);
-  glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
-  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-  if (0)
-    {
-      /* draw the ink_rectangle around the mark */
-      int i;
-      double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
-      double myrect[]={*x,*y,0,0};
-      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
-      drawrectangle(Xgc,myrect);
-    }
-#endif
+  display_symbol(Xgc, *x, *y,0);
 }
 
 static void draw_mark3D(BCG *Xgc,double x, double y, double z)
@@ -603,7 +567,6 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
 #endif
 }
-
 
 /* new method with pango/cairo surfaces without ft2 
  * we use a texture to draw the text 
@@ -631,29 +594,39 @@ unsigned int create_texture (unsigned int width,
   return texture_id;
 }
 
+/* Render a texture: 
+ * (x,y) is the top left of the texture 
+ * (xpos,ypos) the bottom left 
+ * we use blending to preserve the background of 
+ * the zone where the string is drawn. 
+ * we could also paint the layout with the background color 
+ * and not use blending if what we really want is 
+ * a non-transparent background for strings.
+ */
+
 static void draw_texture (double xpos, double ypos, double width, double height,
 			  unsigned int texture_id)
 {
-  /* Render a texture: using anti-aliases 
-   * (x,y) is the top left of the texture 
-   * (xpos,ypos) the bottom left 
-   */
-  int x=xpos, y = ypos + height;
+  int nvertex = 4;
+  double x=xpos, y = ypos + height;
+  GLfloat vertex_data[] = {
+    x , y-height, 0.f, 1.f,
+    x+width, y-height, 0.f, 1.f,
+    x+width, y, 0.f, 1.f,
+    x , y, 0.f, 1.f
+  };
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glActiveTexture(GL_TEXTURE0);
+  glUniform1i(mytexture,/* GL_TEXTURE*/ 0);
   glBindTexture (GL_TEXTURE_2D, texture_id);
-  // textcolor can be set here
-  // glColor3f(1.0f,0.0f,0.0f);
-  glBegin (GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex2d (x, y - height);
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex2d (x+width, y-height);
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex2d (x+width, y);
-  glTexCoord2f (0.0f, 1.0f);
-  glVertex2d (x, y);
-  glEnd ();
+  glUniform1i(c_flag, 2);
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_textriangle_coords);
+  glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  glBindVertexArray (vao_textriangles);
+  glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
+  glBindVertexArray(0);
+  glDisable(GL_BLEND);
 }
 
 static cairo_t *create_cairo_context (int width, int height, cairo_surface_t** surf, unsigned char** buffer)
@@ -676,7 +649,6 @@ static cairo_t *create_layout_context (void)
 static void displaystring(BCG *Xgc,const char *str, double x, double y,
 			  int flag,double angle, gr_str_posx posx, gr_str_posy posy )
 {
-#if 0
   cairo_t *render_cr;
   unsigned int texture_id;
   cairo_surface_t *surface;
@@ -727,12 +699,15 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
 				    height,
 				    &surface,
 				    &surface_data);
-  /* Render */
-  cairo_set_source_rgba (render_cr, 1, 1, 1, 1);
+  /* Render: we need here to set up the color 
+   * used for text 
+   */
+  cairo_set_source_rgba (render_cr, 0, 0, 0, 1);
   pango_cairo_show_layout (render_cr, layout);
   if ( flag == TRUE ) /*  flag == 1)  */
     {
       /* add a rectangle in the render surface */
+      cairo_set_source_rgba (render_cr, 1, 0, 0, 1);
       cairo_rectangle (render_cr,0,0,width,height);
       cairo_stroke (render_cr);
     }
@@ -755,7 +730,57 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   cairo_destroy (cr);
   cairo_destroy (render_cr);
   cairo_surface_destroy (surface);
-#endif
+}
+
+static void display_symbol(BCG *Xgc,double x, double y,int flag)
+{
+  cairo_t *render_cr;
+  unsigned int texture_id;
+  cairo_surface_t *surface;
+  unsigned char* surface_data = NULL;
+  int height,width, x_offset=0, y_offset=0, xpos, ypos;
+  /* we use a mark_layout that we already have 
+   * and fill that layout with the symbol 
+   */
+  int code = symbols[Xgc->CurHardSymb];
+  gchar symbol_code[4], *iter = symbol_code;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_pixel_size (Xgc->private->mark_layout, &width, &height);
+  /* the symbol must be centered */
+  x_offset = - width/2;
+  y_offset = - height/2;
+  /* (xpos,ypos) is the bottom left position 
+   * where the texture is to be drawn
+   */
+  xpos = x + x_offset;
+  ypos = y + y_offset;
+  /* create a surface to render the layout */
+  render_cr = create_cairo_context (width,
+				    height,
+				    &surface,
+				    &surface_data);
+  /* Render: we need here to set up the color 
+   * used for mark 
+   */
+  cairo_set_source_rgba (render_cr, 0,0,0, 1);
+  pango_cairo_show_layout (render_cr, Xgc->private->mark_layout);
+  if ( flag == TRUE ) /*  flag == 1)  */
+    {
+      /* add a rectangle in the render surface */
+      cairo_set_source_rgba (render_cr, 1, 0, 0, 1);
+      cairo_rectangle (render_cr,0,0,width,height);
+      cairo_stroke (render_cr);
+    }
+  texture_id = create_texture(width, height, surface_data);
+  draw_texture(xpos,ypos,width,height,texture_id);
+  glDeleteTextures(1,&texture_id);
+  /* cleaning */
+  free (surface_data);
+  cairo_destroy (render_cr);
+  cairo_surface_destroy (surface);
 }
 
 /* returns the bounding box for a non rotated string
@@ -1345,18 +1370,15 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
   double rgb[3];
-  int j,k;
-  GLfloat vertex_colors[2*4];
+  int k;
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[]={x1,y1,z1,1.0f,
 			 x2,y2,z2,1.0f};
   xget_color_rgb(Xgc, rgb);
-  for ( j = 0 ; j < 2 ; j++)
-    {
-      for (k=0 ; k < 3; k++)
-	vertex_colors[4*j + k ]=rgb[k];
-      vertex_colors[4*j +3]= 1.0f;
-    }
-  shader_draw_line(vertex_data,vertex_colors,2,FALSE);
+  for (k=0 ; k < 3; k++)
+    vertex_colors[ k ]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  shader_draw_line(vertex_data,2,FALSE,vertex_colors,1);
 }
 
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
@@ -1395,15 +1417,17 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
       vertex_data[j+1]= vy[i];
       vertex_data[j+2]= 0.0f;
       vertex_data[j+3]= 1.0f;
+      xset_color(Xgc,Abs(colors[i]));
+      xget_color_rgb(Xgc, rgb);
       for (k=0 ; k < 3; k++)
-	vertex_colors[j + k ]=rgb[k];
+        vertex_colors[j + k ]=rgb[k];
       vertex_colors[j +3]= 1.0f;
       j += 4;
     }
   if ( n == 3 )
-    shader_fill_triangle(vertex_data, vertex_colors);
+    shader_fill_triangle(vertex_data, vertex_colors,4);
   else
-    shader_fill_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors,4);
 }
 
 /**
@@ -1478,14 +1502,14 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
       xset_color(Xgc,Abs(colors[i]));
       xget_color_rgb(Xgc, rgb);
       for (k=0 ; k < 3; k++)
-	vertex_colors[j + k ]=rgb[k];
+        vertex_colors[j + k ]=rgb[k];
       vertex_colors[j +3]= 1.0f;
       j += 4;
     }
   if ( n == 3 )
-    shader_fill_triangle(vertex_data,vertex_colors);
+    shader_fill_triangle(vertex_data,vertex_colors,4);
   else
-    shader_fill_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors,4);
 }
 
 /**
@@ -1545,7 +1569,7 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
 {
   double rgb[3];
-  GLfloat vertex_colors[4*4];
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[4*4];
   gint i, k, j=0;
   if (!( n == 3 || n == 4) ) return;
@@ -1556,21 +1580,21 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
       vertex_data[j+1]= vy[i];
       vertex_data[j+2]= vz[i];
       vertex_data[j+3]= 1.0f;
-      for (k=0 ; k < 3; k++)
-	vertex_colors[j + k ]=rgb[k];
-      vertex_colors[j +3]= 1.0f;
       j += 4;
     }
+  for (k=0 ; k < 3; k++)
+    vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
   if ( n == 3 )
-    shader_fill_triangle(vertex_data, vertex_colors);
+    shader_fill_triangle(vertex_data, vertex_colors,1);
   else
-    shader_fill_quad(vertex_data,vertex_colors);
+    shader_fill_quad(vertex_data,vertex_colors,1);
 }
 
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
 {
   double rgb[3];
-  GLfloat vertex_colors[10*4];
+  GLfloat vertex_colors[4];
   GLfloat vertex_data[10*4];
   gint i=0, k, j = 0;
   if ( n <= 1) return;
@@ -1581,12 +1605,12 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
       vertex_data[j+1]= vy[i];
       vertex_data[j+2]= vz[i];
       vertex_data[j+3]= 1.0f;
-      for (k=0 ; k < 3; k++)
-	vertex_colors[j + k ]=rgb[k];
-      vertex_colors[j +3]= 1.0f;
       j += 4;
     }
-  shader_draw_line(vertex_data,vertex_colors,Min(10,n),closeflag);
+  for (k=0 ; k < 3; k++)
+    vertex_colors[k]=rgb[k];
+  vertex_colors[3]= 1.0f;
+  shader_draw_line(vertex_data,Min(10,n),closeflag,vertex_colors,1);
 }
 
 /*
@@ -1765,155 +1789,6 @@ static void queryfamily(char *name, int *j,int *v3)
 {
 }
 
-/*
- * rendering text with PangoFT2
- * from: font-pangoft2.c written by Naofumi Yasufuku
- * <naofumi@users.sourceforge.net>
- * Note that if the layout uses a transformation matrix
- * the enclosing rectangle is given by e_rect
- */
-
-#ifndef ZZHAVE_FREETYPE
-
-static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
-{
-  Sciprintf("WIP: to be done with gtk3\n");
-}
-
-#else
-
-static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
-{
-  int x,y;
-  PangoRectangle logical_rect;
-  static FT_Bitmap bitmap;
-  static GLvoid *pixels=NULL;
-  guint32 *p;
-  GLfloat color[4];
-  guint32 rgb;
-  GLfloat a;
-  guint8 *row, *row_end;
-  int i;
-  static int size = 0;
-  pango_layout_get_extents (layout, NULL, &logical_rect);
-  if (logical_rect.width == 0 || logical_rect.height == 0)
-    return;
-
-  if ( e_rect == NULL )
-    {
-      bitmap.rows = PANGO_PIXELS (logical_rect.height);
-      bitmap.width = PANGO_PIXELS (logical_rect.width);
-      bitmap.pitch = bitmap.width;
-      x= PANGO_PIXELS(-logical_rect.x) ;
-      y= 0;
-    }
-  else
-    {
-      /* rotated string: we use the enclosing rectangle */
-      bitmap.rows = e_rect->height;
-      bitmap.width = e_rect->width;
-      bitmap.pitch = bitmap.width;
-      /* note that displaystring will pass e_rect here is such that x=y=0 */
-      x = - e_rect->x;
-      y = - e_rect->y ;
-    }
-  /* if pixels != NULL then bitmap.buffer and pixels have already been initializes */
-  if ( pixels != NULL )
-    {
-      if ( bitmap.rows * bitmap.width > size )
-	bitmap.buffer = g_realloc (bitmap.buffer, bitmap.rows * bitmap.width);
-    }
-  else
-    {
-      bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
-    }
-  bitmap.num_grays = 256;
-  bitmap.pixel_mode = ft_pixel_mode_grays;
-
-  memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
-
-  // pango_ft2_render_layout (&bitmap, layout,x,y);
-
-  if ( pixels != NULL)
-    {
-      if ( bitmap.rows * bitmap.width > size )
-	pixels = g_realloc (pixels, bitmap.rows * bitmap.width*4);
-    }
-  else
-    {
-      pixels = g_malloc (bitmap.rows * bitmap.width * 4);
-    }
-  size = bitmap.rows * bitmap.width;
-  p = (guint32 *) pixels;
-
-  glGetFloatv (GL_CURRENT_COLOR, color);
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-  rgb =  ((guint32) (color[0] * 255.0))        |
-        (((guint32) (color[1] * 255.0)) << 8)  |
-        (((guint32) (color[2] * 255.0)) << 16);
-#else
-  rgb = (((guint32) (color[0] * 255.0)) << 24) |
-        (((guint32) (color[1] * 255.0)) << 16) |
-        (((guint32) (color[2] * 255.0)) << 8);
-#endif
-  a = color[3];
-
-  row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
-  row_end = bitmap.buffer;      /* beginning */
-
-  if (a == 1.0)
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) row[i]) << 24);
-#else
-            *p++ = rgb | ((guint32) row[i]);
-#endif
-        }
-      while (row != row_end);
-    }
-  else
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) (a * row[i])) << 24);
-#else
-            *p++ = rgb | ((guint32) (a * row[i]));
-#endif
-        }
-      while (row != row_end);
-    }
-
-  glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
-
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#if !defined(GL_VERSION_1_2)
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                pixels);
-#else
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
-                pixels);
-#endif
-
-  glDisable (GL_BLEND);
-  /*
-  g_free (bitmap.buffer);
-  g_free (pixels);
-  */
-}
-
-#endif
-
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
 {
 
@@ -2022,8 +1897,11 @@ static GLuint create_shader (int type, const char *src);
 static void gen_buffers()
 {
   glGenVertexArrays (1, &vao_triangles);
-  glGenBuffers (1, &vbo_triangle_coords);
-  glGenBuffers (1, &vbo_triangle_colors);
+  glGenVertexArrays (1, &vao_textriangles);
+  glGenBuffers(1, &vbo_triangle_coords);
+  glGenBuffers(1, &vbo_triangle_colors);
+  glGenBuffers(1,&vbo_textriangle_coords);
+  glGenBuffers(1,&vbo_textriangle_texcoords);
 }
 
 /* initialize a vao */
@@ -2054,6 +1932,37 @@ static void array_fill(void)
   glBindVertexArray (0);
 }
 
+/* initialize a vao for drawing text texture */
+
+static void array_texture_fill(void)
+{
+  GLfloat triangle_coords[] = {
+    0.0f, 0.0f, 0.f, 1.f,
+    0.0f, 0.0f, 0.f, 1.f,
+    0.0f, 0.0f, 0.f, 1.f,
+    0.0f, 0.0f, 0.f, 1.f,
+  };
+  GLfloat texcoords[] = {
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+  };
+  
+  glBindVertexArray (vao_textriangles);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_textriangle_coords);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_coords), triangle_coords, GL_STATIC_DRAW);
+  glVertexAttribPointer (attribute_coords, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_textriangle_texcoords);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords),
+	       texcoords, GL_STATIC_DRAW);
+  glVertexAttribPointer (attribute_texcoords, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(attribute_coords);
+  glEnableVertexAttribArray(attribute_texcoords);
+  glBindVertexArray (0);
+}
+
+
 /* we create two shaders */
 
 static const char *vertex_shader_code =
@@ -2061,19 +1970,35 @@ static const char *vertex_shader_code =
   "\n"						\
   "layout(location = 0) in vec4 position;\n"	\
   "layout(location = 1) in vec4 v_color;\n"	\
-  "varying vec4 f_color;\n"			\
+  "layout(location = 2) in vec2 texcoord;\n"	\
   "uniform mat4 mvp;\n"				\
+  "uniform vec4 c_color;\n"			\
+  "uniform int  c_flag;\n"			\
+  "out vec4 f_color;\n"				\
+  "out vec2 f_texcoord;\n"			\
+  "flat out int  use_texture;\n"		\
   "void main() {\n"				\
   "  gl_Position = mvp * position;\n"		\
-  "  f_color = v_color;\n"			\
+  "  if ( c_flag == 1 )\n"                      \
+  "    {use_texture=0;f_color = v_color;}\n"	\
+  "  else if ( c_flag == 0 )\n"			\
+  "    {use_texture=0;f_color = c_color;}\n"	\
+  "  else\n"					\
+  "    {use_texture=1;f_texcoord=texcoord;}\n"	\
   "}";
 
 static const char *fragment_shader_code =
-  "#version 330\n"				\
-  "\n"						\
-  "varying vec4 f_color;\n"			\
-  "void main() {\n"				\
-  "  gl_FragColor = f_color;"			\
+  "#version 330\n"						\
+  "\n"								\
+  "flat in int  use_texture;\n"					\
+  "in vec4 f_color;\n"						\
+  "in vec2 f_texcoord;\n"					\
+  "uniform sampler2D mytexture;\n"				\
+  "void main() {\n"						\
+  "  if ( use_texture == 1)\n"					\
+  "    gl_FragColor = texture2D(mytexture, f_texcoord);\n"	\
+  "  else\n"							\
+  "    gl_FragColor = f_color;\n"				\
   "}";
 
 static void init_shaders (GLuint *program_out, GLuint *mvp_out)
@@ -2115,7 +2040,7 @@ static void init_shaders (GLuint *program_out, GLuint *mvp_out)
       buffer = g_malloc (log_len + 1);
       glGetProgramInfoLog (program, log_len, NULL, buffer);
 
-      g_warning ("Linking failure:\n%s\n", buffer);
+      Sciprintf ("Linking failure:\n%s\n", buffer);
 
       g_free (buffer);
 
@@ -2126,7 +2051,9 @@ static void init_shaders (GLuint *program_out, GLuint *mvp_out)
     }
 
   mvp = glGetUniformLocation (program, "mvp");
-
+  c_color = glGetUniformLocation (program, "c_color");
+  c_flag = glGetUniformLocation (program, "c_flag");
+  mytexture = glGetUniformLocation (program, "mytexture");
   glDetachShader (program, vertex);
   glDetachShader (program, fragment);
 
@@ -2162,7 +2089,7 @@ create_shader (int type, const char *src)
 
       buffer = g_malloc (log_len + 1);
       glGetShaderInfoLog (shader, log_len, NULL, buffer);
-      g_warning ("Compile failure in %s shader:\n%s\n",
+      Sciprintf ("Compile failure in %s shader:\n%s\n",
                  type == GL_VERTEX_SHADER ? "vertex" : "fragment",
                  buffer);
       g_free (buffer);
@@ -2172,30 +2099,50 @@ create_shader (int type, const char *src)
   return shader;
 }
 
-static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[])
+static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors)
 {
   int nvertex = 3;
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
   glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
   if ( vertex_colors != NULL)
     {
-      glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
-      glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+      if ( ncolors == 1 )
+	{
+	  glUniform1i(c_flag, 0);
+	  glUniform4fv(c_color,1, vertex_colors);
+	}
+      else
+	{
+	  glUniform1i(c_flag, 1);
+	  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+	  glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+	}
     }
   glBindVertexArray (vao_triangles);
   glDrawArrays (GL_TRIANGLES, 0, nvertex);
   glBindVertexArray(0);
 }
 
-static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[])
+static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors)
 {
   int nvertex = 4;
+  glUniform1i(c_flag, 0);
+  glUniform4fv(c_color,1, vertex_colors);
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
   glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
   if ( vertex_colors != NULL)
     {
-      glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
-      glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+      if ( ncolors == 1 )
+	{
+	  glUniform1i(c_flag, 0);
+	  glUniform4fv(c_color,1, vertex_colors);
+	}
+      else
+	{
+	  glUniform1i(c_flag, 1);
+	  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+	  glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+	}
     }
   glBindVertexArray (vao_triangles);
   glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
@@ -2203,14 +2150,25 @@ static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[])
 }
 
 
-static void shader_draw_line(GLfloat vertex_data[],GLfloat vertex_colors[],int n, int closeflag)
+static void shader_draw_line(GLfloat vertex_data[],int n, int closeflag, GLfloat vertex_colors[],int ncolors)
 {
+  glUniform1i(c_flag, 0);
+  glUniform4fv(c_color,1, vertex_colors);
   glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_coords);
   glBufferData (GL_ARRAY_BUFFER, 4*n*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
   if ( vertex_colors != NULL)
     {
-      glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
-      glBufferData (GL_ARRAY_BUFFER, 4*n*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+      if ( ncolors == 1 )
+	{
+	  glUniform1i(c_flag, 0);
+	  glUniform4fv(c_color,1, vertex_colors);
+	}
+      else
+	{
+	  glUniform1i(c_flag, 1);
+	  glBindBuffer (GL_ARRAY_BUFFER, vbo_triangle_colors);
+	  glBufferData (GL_ARRAY_BUFFER, 4*n*sizeof(GLfloat), vertex_colors, GL_STATIC_DRAW);
+	}
     }
   glBindVertexArray (vao_triangles);
   glDrawArrays ((closeflag) ? GL_LINE_LOOP: GL_LINE_STRIP, 0, n);

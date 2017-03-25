@@ -2221,20 +2221,26 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 #endif
 
 #if defined(PERIGTK3GL) 
-
+static GLuint c_color, c_flag;
 static GLuint program;
 static GLuint mvp_location;
+static GLuint mytexture;
 static GLint attribute_coords=0;
 static GLint attribute_colors=1;
+static GLint attribute_texcoords=2;
 static GLuint vbo_triangle_coords, vbo_triangle_colors;
 static GLuint vao_triangles;
+static GLuint vbo_textriangle_coords, vbo_textriangle_texcoords;
+static GLuint vao_textriangles;
 static void gen_buffers(void);
 static GLuint create_shader (int type, const char *src);
 static void array_fill(void);
+static void array_texture_fill(void);
 static void init_shaders (GLuint *program_out, GLuint *mvp_out);
-static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[]);
-static void shader_draw_line(GLfloat vertex_data[],GLfloat vertex_colors[],int n, int closeflag);
-static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[]);
+
+static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors);
+static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors);
+static void shader_draw_line(GLfloat vertex_data[],int n, int closeflag, GLfloat vertex_colors[],int ncolors);
 
 static void realize_gtk3gl (GtkWidget *widget)
 {
@@ -2245,7 +2251,8 @@ static void realize_gtk3gl (GtkWidget *widget)
   /* gtk_gl_area_set_auto_render(GTK_GL_AREA (widget), FALSE); */
   gen_buffers ();
   init_shaders (&program, &mvp_location);
-  array_fill();	
+  array_fill();
+  array_texture_fill();	
 }
 
 static void unrealize_gtk3gl (GtkWidget *widget)
@@ -2253,6 +2260,8 @@ static void unrealize_gtk3gl (GtkWidget *widget)
   gtk_gl_area_make_current (GTK_GL_AREA (widget));
   glDeleteBuffers (1, &vbo_triangle_coords);
   glDeleteBuffers (1, &vbo_triangle_colors);
+  glDeleteBuffers(1,&vbo_textriangle_coords);
+  glDeleteBuffers(1,&vbo_textriangle_texcoords);
   glDeleteProgram (program);
  }
 
