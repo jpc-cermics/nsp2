@@ -680,22 +680,15 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
   int x_offset=0, y_offset=0, xpos, ypos;
-  /* create a layout with the str text */
-  cairo_t *cr = create_layout_context ();
-  PangoLayout *layout = pango_cairo_create_layout (cr);
-  pango_layout_set_text (layout, str, -1);
-  /* font */
-  pango_layout_set_font_description (layout, Xgc->private->desc);
+  pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
-  pango_cairo_update_layout (cr,layout);
-  pango_layout_get_pixel_size (layout, &width, &height);
-  
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
   if ( posy == GR_STR_YBASELINE )
     {
       /* we want to be able to set (x,y) to be at the baseline 
        * of the first layout line
        */
-      PangoLayoutLine *line = pango_layout_get_line(layout,0);
+      PangoLayoutLine *line = pango_layout_get_line(Xgc->private->layout,0);
       pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
     }
   /* offset to reposition the string */
@@ -723,12 +716,10 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
 				    height,
 				    &surface,
 				    &surface_data);
-  /* Render: we need here to set up the color 
-   * used for text 
-   */
+  /* Render */ 
   xget_color_rgb(Xgc, rgb);
   cairo_set_source_rgba (render_cr, rgb[0], rgb[1], rgb[2], 1);
-  pango_cairo_show_layout (render_cr, layout);
+  pango_cairo_show_layout (render_cr, Xgc->private->layout);
   if ( flag == TRUE ) /*  flag == 1)  */
     {
       /* add a rectangle in the render surface */
@@ -747,8 +738,6 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   glDeleteTextures(1,&texture_id);
   /* cleaning */
   free (surface_data);
-  g_object_unref (layout);
-  cairo_destroy (cr);
   cairo_destroy (render_cr);
   cairo_surface_destroy (surface);
 }
@@ -1170,7 +1159,7 @@ static void xget_color_rgb(BCG *Xgc,double *rgb)
 {
   if ( Xgc->private->a_colors == NULL)
     {
-      rgb[0]=rgb[1]=rgb[2]=1.0; return;
+      rgb[0]=rgb[1]=rgb[2]=0.0; return;
     }
   nsp_get_color_rgb(Xgc,Xgc->CurColor,rgb,Xgc->private->a_colors);
 }
@@ -1738,7 +1727,6 @@ static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL)
     {
-
       cairo_t *cr = create_layout_context ();
       PangoLayout *layout = pango_cairo_create_layout (cr);
       PangoLayout *mark_layout = pango_cairo_create_layout (cr);
