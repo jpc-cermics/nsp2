@@ -596,6 +596,35 @@ static void draw_texture (double xpos, double ypos, double width, double height,
   glDisable(GL_BLEND);
 }
 
+static void draw_rotated_texture (double xc, double yc,
+				  double xpos, double ypos, double width, double height,
+				  double angle,
+				  unsigned int texture_id)
+{
+#define ROTATE(x,y) cost*(x-xc) -sint*(y-yc)+xc, sint*(x-xc) +cost*(y-yc)+yc
+  double cost=cos(angle), sint=sin(angle);
+  int nvertex = 4;
+  double x=xpos, y = ypos + height;
+  GLfloat vertex_data[] = {
+    ROTATE(x,y-height) , 0.f, 1.f,
+    ROTATE(x+width, y-height), 0.f, 1.f,
+    ROTATE(x+width, y), 0.f, 1.f,
+    ROTATE(x , y), 0.f, 1.f
+  };
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glActiveTexture(GL_TEXTURE0);
+  glUniform1i(mytexture,/* GL_TEXTURE*/ 0);
+  glBindTexture (GL_TEXTURE_2D, texture_id);
+  glUniform1i(c_flag, 2);
+  glBindBuffer (GL_ARRAY_BUFFER, vbo_textriangle_coords);
+  glBufferData (GL_ARRAY_BUFFER, 4*nvertex*sizeof(GLfloat), vertex_data, GL_STATIC_DRAW);
+  glBindVertexArray (vao_textriangles);
+  glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
+  glBindVertexArray(0);
+  glDisable(GL_BLEND);
+}
+
 static cairo_t *create_cairo_context (int width, int height, cairo_surface_t** surf, unsigned char** buffer)
 {
   /* create a surface and a context to draw on that surface */
@@ -681,10 +710,7 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   texture_id = create_texture(width, height, surface_data);
   if ( Abs(angle) >= 0.1)
     {
-      /* 
-	 double rad_angle = angle * M_PI/180.0;
-	 draw_rotated_texture(xpos,ypos,width,height,texture_id);
-      */
+      draw_rotated_texture(x,y,xpos,ypos,width,height,angle * M_PI/180.0,texture_id);
     }
   else
     {
