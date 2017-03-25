@@ -2241,6 +2241,7 @@ static void init_shaders (GLuint *program_out, GLuint *mvp_out);
 static void shader_fill_triangle(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors);
 static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[],int ncolors);
 static void shader_draw_line(GLfloat vertex_data[],int n, int closeflag, GLfloat vertex_colors[],int ncolors);
+static void shader_draw_points(GLfloat vertex_data[],int n,  GLfloat vertex_colors[],int ncolors);
 
 static void realize_gtk3gl (GtkWidget *widget)
 {
