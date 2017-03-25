@@ -74,6 +74,10 @@ static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *re
 #endif 
 #endif 
 
+#ifdef PERIGL
+static void xget_color_rgb(BCG *Xgc,double *rgb);
+#endif
+
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
 /* defined only in periCairo and shared */

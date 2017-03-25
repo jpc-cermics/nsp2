@@ -47,22 +47,32 @@ static void clearwindow(BCG *Xgc)
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  int old;
+#if 0
+  int rect[4],color;
+  bool on;
   nsp_ogl_set_2dview(Xgc);
+  Sciprintf("Clear area\n");
   if ( r == NULL )
     {
       clearwindow(Xgc);
       return ;
     }
-  old = xset_color(Xgc,Xgc->NumBackground);
-  glBegin(GL_QUADS);
-  glVertex2i(r->x        ,r->y);
-  glVertex2i(r->x+r->width,r->y);
-  glVertex2i(r->x+r->width,r->y+r->height);
-  glVertex2i(r->x        ,r->y+r->height);
-  glEnd();
-  xset_color(Xgc,old);
-  glClear (GL_DEPTH_BUFFER_BIT);
+  if (( on = glIsEnabled(GL_SCISSOR_TEST))== true)
+    glGetIntegerv(GL_SCISSOR_BOX, rect);
+  color= xset_color(Xgc,Xgc->NumBackground);
+  glScissor(r->x, r->y, r->width, r->height);
+  glEnable(GL_SCISSOR_TEST);
+  glClear(GL_COLOR_BUFFER_BIT);
+  if ( on )
+    {
+      glScissor(rect[0], rect[1],rect[2], rect[3]);
+    }
+  else
+    {
+      glDisable(GL_SCISSOR_TEST);
+    }
+  xset_color(Xgc,color);
+#endif
 }
 
 /*
@@ -124,7 +134,6 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 
 static void drawrectangle(BCG *Xgc,const double rect[])
 {
-
   glBegin(GL_LINE_LOOP);
   glVertex2d(rect[0]        ,rect[1]);
   glVertex2d(rect[0]+rect[2],rect[1]);
@@ -449,214 +458,6 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
-static void draw_mark(BCG *Xgc, double *x, double *y)
-{
-  double dx,dy;
-  PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb];
-  gchar symbol_code[4], *iter = symbol_code;
-
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  Xgc->CurColor=1;
-  xset_color(Xgc,Xgc->CurColor);
-  glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
-  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-  if (0)
-    {
-      /* draw the ink_rectangle around the mark */
-      int i;
-      double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
-      double myrect[]={*x,*y,0,0};
-      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
-      drawrectangle(Xgc,myrect);
-    }
-}
-
-static void draw_mark3D(BCG *Xgc,double x, double y, double z)
-{
-  PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb];
-  gchar symbol_code[4], *iter = symbol_code;
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  Xgc->CurColor=1;
-  xset_color(Xgc,Xgc->CurColor);
-  /* XXX  we need here to move x,y,z to center the mark at (x,y,z)  */
-  /* double dx,dy;
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  */
-  /* glRasterPos3f(x- PANGO_PIXELS(dx),y + PANGO_PIXELS(-dy),z); */
-  glRasterPos3f(x,y,z);
-  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-}
-
-
-/* text and rotated text with pango
- */
-
-/* #define WITH_PANGO_FT2 */
-#ifdef WITH_PANGO_FT2
-
-static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
-				       const PangoMatrix *matrix, GdkRectangle *rect);
-
-/*
- * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c
- *        to deal with the case when string can be on multiple lines
- *        but pango could make this directly.
- * maybe we should change the display an consider that (x,y) is the baseline
- * of the string not its lower left boundary.
- * Note that if the string contains \n then the layout will have multiple lines
- *
- */
-
-static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag,double angle,
-			      gr_str_posx posx, gr_str_posy posy)
-{
-  PangoRectangle ink_rect,logical_rect;
-  int  height,width;
-
-  pango_layout_set_text (Xgc->private->layout, str, -1);
-  /*  PangoLayoutLine *line;
-   *  nline = pango_layout_get_line_count(Xgc->private->layout);
-   *  if ( nline == 1 )
-   *    {
-   *   / * we want (x,y) to be at the baseline of the first string position * /
-   *   line = pango_layout_get_line(Xgc->private->layout,0);
-   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
-   *   height = - logical_rect.y/PANGO_SCALE;
-   *   width = logical_rect.width/PANGO_SCALE;
-   */
-  /* used to position the descent of the last line of layout at y */
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
-  if ( Abs(angle) >= 0.1)
-    {
-      double xt,yt;
-      GdkRectangle rect;
-      PangoMatrix matrix = PANGO_MATRIX_INIT;
-      pango_matrix_rotate (&matrix, - angle );
-      pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
-      pango_layout_context_changed (Xgc->private->layout);
-      pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context,
-				 &matrix,&rect);
-      /* we want to change the transformation in order to have the upper left
-       * point of the enclosing box after rotation at (0,0) since
-       * gl_pango_ft2_render_layout seams not to work fine if it is not the case
-       */
-      matrix.x0= -rect.x; matrix.y0=-rect.y;
-      pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
-      pango_layout_context_changed (Xgc->private->layout);
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context,
-				 &matrix,&rect);
-      /* the down, left point of the enclosing rectangle is at position (x,y)
-       * we need to translate since we want the down left corner of the rotated rectangle
-       * to be at position (x,y)
-       */
-      xt = 0 * matrix.xx + height * matrix.xy + matrix.x0;
-      yt = 0 * matrix.yx + height * matrix.yy + matrix.y0;
-      glRasterPos2i(x-xt,y+rect.height  - yt);
-      gl_pango_ft2_render_layout (Xgc->private->layout,&rect);
-      if (0)
-	{
-	  /* draw the enclosing rectangle */
-	  double myrect[]={ x-xt,y-yt ,rect.width,rect.height};
-	  drawrectangle(Xgc,myrect);
-	  fprintf(stderr,"rect = %d %d %d %d\n",rect.x,rect.y,rect.width,rect.height);
-	}
-      pango_context_set_matrix (Xgc->private->ft2_context,NULL);
-      pango_layout_context_changed (Xgc->private->layout);
-      if (0)
-	{
-	  /* draw the rotated enclosing rectangle */
-	  double xx[]={0,width},yy[]={0,height};
-	  double vx[4],vy[4];
-	  int ik[]={0,1,3,2},i,j,k;
-	  double dx,dy;
-	  for ( i = 0 ; i < 2 ; i++)
-	    {
-	      for ( j=0; j < 2 ; j++)
-		{
-		  dx =  xx[i]* matrix.xx + yy[j] * matrix.xy + matrix.x0;
-		  dy =  xx[i]* matrix.yx + yy[j] * matrix.yy + matrix.y0;
-		  k = ik[i+2*j];
-		  vx[k]= x-(xt-dx), vy[k]= y-(yt-dy);
-		}
-	    }
-	  drawpolyline(Xgc,vx, vy,4,1);
-	}
-    }
-  else
-    {
-      /* horizontal string */
-      if (0)
-	{
-	  /* draw enclosing rectangle */
-	  double rect[]={ x,y - height,width,height};
-	  drawrectangle(Xgc,rect);
-	}
-      /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout); */
-      glRasterPos2i(x,y);
-      gl_pango_ft2_render_layout (Xgc->private->layout,NULL);
-    }
-}
-
-/* returns the enclosing rectangle of the pango layout transformed
- * by matrix transformation:
- */
-
-static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
-				       const PangoMatrix *matrix, GdkRectangle *rect)
-{
-  gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
-  PangoRectangle logical_rect;
-  gint i, j;
-  pango_layout_get_extents (layout, NULL, &logical_rect);
-  for (i = 0; i < 2; i++)
-    {
-      gdouble x = (i == 0) ? logical_rect.x : logical_rect.x + logical_rect.width;
-      for (j = 0; j < 2; j++)
-	{
-	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
-
-	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
-	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
-
-	  if (i == 0 && j == 0)
-	    {
-	      x_min = x_max = xt;
-	      y_min = y_max = yt;
-	    }
-	  else
-	    {
-	      if (xt < x_min)
-		x_min = xt;
-	      if (yt < y_min)
-		y_min = yt;
-	      if (xt > x_max)
-		x_max = xt;
-	      if (yt > y_max)
-		y_max = yt;
-	    }
-	}
-    }
-  rect->x = floor (x_min);
-  rect->width = ceil (x_max) - rect->x;
-  rect->y = floor (y_min);
-  rect->height = floor (y_max) - rect->y;
-}
-
-#else
 /* new method with pango/cairo surfaces without ft2 
  * we use a texture to draw the text 
  */
@@ -694,8 +495,10 @@ static void draw_texture (double xpos, double ypos, double width, double height,
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glBindTexture (GL_TEXTURE_2D, texture_id);
-  // textcolor can be set here
-  // glColor3f(1.0f,0.0f,0.0f);
+  /*
+   * textcolor can be set here
+   *  glColor3f(1.0f,0.0f,0.0f);
+   */
   glBegin (GL_QUADS);
   glTexCoord2f(0.0f, 0.0f);
   glVertex2d (x, y - height);
@@ -706,6 +509,35 @@ static void draw_texture (double xpos, double ypos, double width, double height,
   glTexCoord2f (0.0f, 1.0f);
   glVertex2d (x, y);
   glEnd ();
+  glDisable(GL_BLEND);
+}
+
+static void draw_rotated_texture (double xc, double yc,
+				  double xpos, double ypos, double width, double height,
+				  double angle,
+				  unsigned int texture_id)
+{
+#define ROTATE(x,y) cost*(x-xc) -sint*(y-yc)+xc, sint*(x-xc) +cost*(y-yc)+yc
+  double cost=cos(angle), sint=sin(angle);
+  double x=xpos, y = ypos + height;
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBindTexture (GL_TEXTURE_2D, texture_id);
+  /*
+   * textcolor can be set here
+   *  glColor3f(1.0f,0.0f,0.0f);
+   */
+  glBegin (GL_QUADS);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2d (ROTATE(x, y - height));
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2d (ROTATE(x+width, y-height));
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2d (ROTATE(x+width, y));
+  glTexCoord2f (0.0f, 1.0f);
+  glVertex2d (ROTATE(x, y));
+  glEnd ();
+  glDisable(GL_BLEND);
 }
 
 static cairo_t *create_cairo_context (int width, int height, cairo_surface_t** surf, unsigned char** buffer)
@@ -728,6 +560,7 @@ static cairo_t *create_layout_context (void)
 static void displaystring(BCG *Xgc,const char *str, double x, double y,
 			  int flag,double angle, gr_str_posx posx, gr_str_posy posy )
 {
+  double rgb[3];
   cairo_t *render_cr;
   unsigned int texture_id;
   cairo_surface_t *surface;
@@ -735,22 +568,15 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
   int x_offset=0, y_offset=0, xpos, ypos;
-  /* create a layout with the str text */
-  cairo_t *cr = create_layout_context ();
-  PangoLayout *layout = pango_cairo_create_layout (cr);
-  pango_layout_set_text (layout, str, -1);
-  /* font */
-  pango_layout_set_font_description (layout, Xgc->private->desc);
+  pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
-  pango_cairo_update_layout (cr,layout);
-  pango_layout_get_pixel_size (layout, &width, &height);
-  
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
   if ( posy == GR_STR_YBASELINE )
     {
       /* we want to be able to set (x,y) to be at the baseline 
        * of the first layout line
        */
-      PangoLayoutLine *line = pango_layout_get_line(layout,0);
+      PangoLayoutLine *line = pango_layout_get_line(Xgc->private->layout,0);
       pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
     }
   /* offset to reposition the string */
@@ -779,8 +605,9 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
 				    &surface,
 				    &surface_data);
   /* Render */
-  cairo_set_source_rgba (render_cr, 1, 1, 1, 1);
-  pango_cairo_show_layout (render_cr, layout);
+  xget_color_rgb(Xgc, rgb);
+  cairo_set_source_rgba (render_cr, rgb[0], rgb[1], rgb[2], 1);
+  pango_cairo_show_layout (render_cr, Xgc->private->layout);
   if ( flag == TRUE ) /*  flag == 1)  */
     {
       /* add a rectangle in the render surface */
@@ -790,10 +617,7 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   texture_id = create_texture(width, height, surface_data);
   if ( Abs(angle) >= 0.1)
     {
-      /* 
-	 double rad_angle = angle * M_PI/180.0;
-	 draw_rotated_texture(xpos,ypos,width,height,texture_id);
-      */
+      draw_rotated_texture(x,y,xpos,ypos,width,height,angle * M_PI/180.0,texture_id);
     }
   else
     {
@@ -802,12 +626,79 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y,
   glDeleteTextures(1,&texture_id);
   /* cleaning */
   free (surface_data);
-  g_object_unref (layout);
-  cairo_destroy (cr);
   cairo_destroy (render_cr);
   cairo_surface_destroy (surface);
 }
-#endif
+
+/* very similar to display string
+ */
+
+static void draw_mark(BCG *Xgc, double *x, double *y)
+{
+  double rgb[3];
+  int flag = 0;
+  cairo_t *render_cr;
+  unsigned int texture_id;
+  cairo_surface_t *surface;
+  unsigned char* surface_data = NULL;
+  int height,width, x_offset=0, y_offset=0, xpos, ypos;
+  /* we use a mark_layout that we already have 
+   * and fill that layout with the symbol 
+   */
+  int code = symbols[Xgc->CurHardSymb];
+  gchar symbol_code[4], *iter = symbol_code;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_pixel_size (Xgc->private->mark_layout, &width, &height);
+  /* the symbol must be centered */
+  x_offset = - width/2;
+  y_offset = - height/2;
+  /* (xpos,ypos) is the bottom left position 
+   * where the texture is to be drawn
+   */
+  xpos = *x + x_offset;
+  ypos = *y + y_offset;
+  /* create a surface to render the layout */
+  render_cr = create_cairo_context (width,
+				    height,
+				    &surface,
+				    &surface_data);
+  /* Render: we need here to set up the color 
+   * used for mark 
+   */
+  xget_color_rgb(Xgc, rgb);
+  cairo_set_source_rgba (render_cr, rgb[0], rgb[1], rgb[2], 1);
+  pango_cairo_show_layout (render_cr, Xgc->private->mark_layout);
+  if ( flag == TRUE ) /*  flag == 1)  */
+    {
+      /* add a rectangle in the render surface */
+      cairo_set_source_rgba (render_cr, 1, 0, 0, 1);
+      cairo_rectangle (render_cr,0,0,width,height);
+      cairo_stroke (render_cr);
+    }
+  texture_id = create_texture(width, height, surface_data);
+  draw_texture(xpos,ypos,width,height,texture_id);
+  glDeleteTextures(1,&texture_id);
+  /* cleaning */
+  free (surface_data);
+  cairo_destroy (render_cr);
+  cairo_surface_destroy (surface);
+}
+
+static void draw_mark3D(BCG *Xgc,double x, double y, double z)
+{
+  double xn,yn;
+  xn=TRX(Xgc->scales,x,y,z);
+  yn=TRY(Xgc->scales,x,y,z);
+  xn = XScale(Xgc->scales,xn);
+  yn = YScale(Xgc->scales,yn);
+  /* now (xn,yn) are 2d */
+  nsp_ogl_set_2dview(Xgc);
+  draw_mark(Xgc, &xn,&yn);
+  nsp_ogl_set_3dview(Xgc);
+}
 
 /* returns the bounding box for a non rotated string
  */
@@ -858,27 +749,42 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
  * Set a clip zone (rectangle)
  *
  **/
-
 static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
-  Xgc->ClipRegionSet = 1;
-  Xgc->CurClipRegion = *r;
 #if 0
   {
-    int bg = Xgc->NumBackground;
-    glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glColor3f(Xgc->private->colors[bg].red/65535.0,
-	      Xgc->private->colors[bg].green/65535.0,
-	      Xgc->private->colors[bg].blue/65535.0);
-    glBegin(GL_QUADS);
-    glVertex2i(clip_rect.x, clip_rect.y);
-    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-    glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-    glEnd();
+    int color;
+    static int i = 0;
+    const double rect[] ={ r->x, r->y, r->width, r->height};
+    Sciprintf("clip [%d,%d,%d,%d]\n", r->x, r->y, r->width, r->height);
+    color=xset_color(Xgc,4+(i % 30));i++;
+    drawrectangle(Xgc, rect);
+    drawline(Xgc,r->x,r->y,r->x+ r->width, r->y+ r->height);
+    xset_color(Xgc,color);
   }
 #endif
+  if ( Xgc->ClipRegionSet ==1 )
+    {
+#if 0
+      int on, irect[4];
+      Sciprintf("Already have a clip\n");
+      if (( on = glIsEnabled(GL_SCISSOR_TEST))== true)
+	{
+	  glGetIntegerv(GL_SCISSOR_BOX, irect);
+	  Sciprintf("-->Opengl clip [%d,%d,%d,%d]\n", irect[0], irect[1],irect[2], irect[3]);
+	}
+      Sciprintf("-->Xgc clip [%d,%d,%d,%d]\n", Xgc->CurClipRegion.x,
+		Xgc->CurClipRegion.y,
+		Xgc->CurClipRegion.width,
+		Xgc->CurClipRegion.height);
+#endif
+      glDisable(GL_SCISSOR_TEST);
+    }
+  Xgc->ClipRegionSet = 1;
+  Xgc->CurClipRegion = *r;
+  glEnable(GL_SCISSOR_TEST);
+  /* take care x,y are the bottom left */
+  glScissor(r->x,  Xgc->CWindowHeight - ( r->y + r->height) , r->width, r->height);
 }
 
 /**
@@ -892,18 +798,7 @@ static void xset_unclip(BCG *Xgc)
 {
   if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
-#if 0
-  {
-    glStencilFunc(GL_ALWAYS, 0x0, 0x0);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glBegin(GL_QUADS);
-    glVertex2i(clip_rect.x, clip_rect.y);
-    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-    glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-    glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-    glEnd();
-  }
-#endif
+  glDisable(GL_SCISSOR_TEST);
 }
 
 /**
@@ -1131,7 +1026,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
  * Returns:
  **/
 
-static int  xset_color(BCG *Xgc,int color)
+static int xset_color(BCG *Xgc,int color)
 {
   int old = Xgc->CurColor;
   double rgb[3];
@@ -1143,6 +1038,16 @@ static int  xset_color(BCG *Xgc,int color)
   glColor3d(rgb[0], rgb[1], rgb[2]);
   return old;
 }
+
+static void xget_color_rgb(BCG *Xgc,double *rgb)
+{
+  if ( Xgc->private->a_colors == NULL)
+    {
+      rgb[0]=rgb[1]=rgb[2]=0.0; return;
+    }
+  nsp_get_color_rgb(Xgc,Xgc->CurColor,rgb,Xgc->private->a_colors);
+}
+
 
 #if 0
 static void print_gl_config_attrib (GdkGLConfig *glconfig,
@@ -1670,11 +1575,6 @@ static void nsp_fonts_finalize(BCG *Xgc)
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
       pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
       pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
-#ifdef PANGO_VERSION_CHECK
-#if   PANGO_VERSION_CHECK(1,22,0)
-      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
-#endif
-#endif
     }
 }
 
@@ -1682,34 +1582,16 @@ static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL)
     {
-      PangoFT2FontMap* pango_fm;
+      cairo_t *cr = create_layout_context ();
+      PangoLayout *layout = pango_cairo_create_layout (cr);
+      PangoLayout *mark_layout = pango_cairo_create_layout (cr);
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
-      /* a revoir deprecated XXXX */
-#ifdef HAVE_FREETYPE
-      pango_fm = (PangoFT2FontMap *) pango_ft2_font_map_new();
-      pango_ft2_font_map_set_resolution (pango_fm,72,72);
-
-#ifdef PANGO_VERSION_CHECK
-#if   PANGO_VERSION_CHECK(1,22,0)
-      Xgc->private->ft2_context= pango_font_map_create_context((PangoFontMap *)pango_fm);
-#else
-      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);
-#endif
-#else
-      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);
-#endif
-      g_object_unref(pango_fm);
-      Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
-      Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
-#else
-      Xgc->private->layout = NULL;
-      Xgc->private->mark_layout = NULL;
-#endif
+      Xgc->private->layout = layout;
+      Xgc->private->mark_layout = mark_layout;
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }
 }
-
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 {
@@ -1788,155 +1670,6 @@ static void loadfamily(char *name, int *j)
 static void queryfamily(char *name, int *j,int *v3)
 {
 }
-
-/*
- * rendering text with PangoFT2
- * from: font-pangoft2.c written by Naofumi Yasufuku
- * <naofumi@users.sourceforge.net>
- * Note that if the layout uses a transformation matrix
- * the enclosing rectangle is given by e_rect
- */
-
-#ifndef HAVE_FREETYPE
-
-static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
-{
-  Sciprintf("Cannot render string in OpenGL missing pangoft2\n");
-}
-
-#else
-
-static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
-{
-  int x,y;
-  PangoRectangle logical_rect;
-  static FT_Bitmap bitmap;
-  static GLvoid *pixels=NULL;
-  guint32 *p;
-  GLfloat color[4];
-  guint32 rgb;
-  GLfloat a;
-  guint8 *row, *row_end;
-  int i;
-  static int size = 0;
-  pango_layout_get_extents (layout, NULL, &logical_rect);
-  if (logical_rect.width == 0 || logical_rect.height == 0)
-    return;
-
-  if ( e_rect == NULL )
-    {
-      bitmap.rows = PANGO_PIXELS (logical_rect.height);
-      bitmap.width = PANGO_PIXELS (logical_rect.width);
-      bitmap.pitch = bitmap.width;
-      x= PANGO_PIXELS(-logical_rect.x) ;
-      y= 0;
-    }
-  else
-    {
-      /* rotated string: we use the enclosing rectangle */
-      bitmap.rows = e_rect->height;
-      bitmap.width = e_rect->width;
-      bitmap.pitch = bitmap.width;
-      /* note that displaystring will pass e_rect here is such that x=y=0 */
-      x = - e_rect->x;
-      y = - e_rect->y ;
-    }
-  /* if pixels != NULL then bitmap.buffer and pixels have already been initialized */
-  if ( pixels != NULL )
-    {
-      if ( bitmap.rows * bitmap.width > size )
-	bitmap.buffer = g_realloc (bitmap.buffer, bitmap.rows * bitmap.width);
-    }
-  else
-    {
-      bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
-    }
-  bitmap.num_grays = 256;
-  bitmap.pixel_mode = ft_pixel_mode_grays;
-
-  memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
-
-  pango_ft2_render_layout (&bitmap, layout,x,y);
-
-  if ( pixels != NULL)
-    {
-      if ( bitmap.rows * bitmap.width > size )
-	pixels = g_realloc (pixels, bitmap.rows * bitmap.width*4);
-    }
-  else
-    {
-      pixels = g_malloc (bitmap.rows * bitmap.width * 4);
-    }
-  size = bitmap.rows * bitmap.width;
-  p = (guint32 *) pixels;
-
-  glGetFloatv (GL_CURRENT_COLOR, color);
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-  rgb =  ((guint32) (color[0] * 255.0))        |
-        (((guint32) (color[1] * 255.0)) << 8)  |
-        (((guint32) (color[2] * 255.0)) << 16);
-#else
-  rgb = (((guint32) (color[0] * 255.0)) << 24) |
-        (((guint32) (color[1] * 255.0)) << 16) |
-        (((guint32) (color[2] * 255.0)) << 8);
-#endif
-  a = color[3];
-
-  row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
-  row_end = bitmap.buffer;      /* beginning */
-
-  if (a == 1.0)
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) row[i]) << 24);
-#else
-            *p++ = rgb | ((guint32) row[i]);
-#endif
-        }
-      while (row != row_end);
-    }
-  else
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) (a * row[i])) << 24);
-#else
-            *p++ = rgb | ((guint32) (a * row[i]));
-#endif
-        }
-      while (row != row_end);
-    }
-
-  glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
-
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#if !defined(GL_VERSION_1_2)
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                pixels);
-#else
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
-                pixels);
-#endif
-
-  glDisable (GL_BLEND);
-  /*
-  g_free (bitmap.buffer);
-  g_free (pixels);
-  */
-}
-
-#endif
 
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
 {

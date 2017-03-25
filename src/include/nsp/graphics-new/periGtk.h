@@ -390,7 +390,6 @@ extern void start_sci_gtk(void);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 #if defined(PERIGL) 
-static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 #endif
 #ifdef LIGHTS
