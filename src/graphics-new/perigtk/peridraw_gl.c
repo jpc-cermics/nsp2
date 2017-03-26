@@ -746,21 +746,23 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
 			int dest_y,int width,int height)
 {
   guchar *texpix=NULL;
-  GdkPixbuf *pixbuf = pix;
-  gint w = gdk_pixbuf_get_width (pixbuf);
-  gint h = gdk_pixbuf_get_height (pixbuf);
-  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  GdkPixbuf *pixbuf_scaled =
+    gdk_pixbuf_scale_simple(pix, width, height,GDK_INTERP_BILINEAR);
+  gint w = gdk_pixbuf_get_width (pixbuf_scaled);
+  gint h = gdk_pixbuf_get_height (pixbuf_scaled);
+  int nChannels = gdk_pixbuf_get_n_channels(pixbuf_scaled);
   /* int rowstride = gdk_pixbuf_get_rowstride (pixbuf); */
-  texpix = gdk_pixbuf_get_pixels (pixbuf);
+  texpix = gdk_pixbuf_get_pixels (pixbuf_scaled);
   glShadeModel(GL_FLAT);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glPixelZoom ( ((double) width)/w,- ((double) height)/h);
+  glPixelZoom ( 1.0, -1.0);
   glRasterPos2i(dest_x, dest_y );
   if ( nChannels == 4 )
     glDrawPixels( w,h,GL_RGBA,GL_UNSIGNED_BYTE, texpix);
   else
     glDrawPixels( w,h,GL_RGB,GL_UNSIGNED_BYTE, texpix);
-  glPixelZoom (1.0,1.0);
+  gdk_pixbuf_unref (pixbuf_scaled);
+  glPixelZoom ( 1.0, 1.0);
   glShadeModel(GL_SMOOTH);
 }
 #endif
