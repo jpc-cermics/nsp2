@@ -759,6 +759,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
   else
     glDrawPixels( w,h,GL_RGB,GL_UNSIGNED_BYTE, texpix);
   glPixelZoom (1.0,1.0);
+  glShadeModel(GL_SMOOTH);
 }
 #endif
 
