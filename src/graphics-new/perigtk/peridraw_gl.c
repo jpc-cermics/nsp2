@@ -721,6 +721,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
 {
   GdkPixbuf *pixbuf = pix;
   int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  gboolean has_alpha = gdk_pixbuf_get_has_alpha (pixbuf);
   unsigned int texture_id=0;
   /* 
   gint w = gdk_pixbuf_get_width (pixbuf);
@@ -732,9 +733,10 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+  glTexImage2D(GL_TEXTURE_2D, 0, 3+ has_alpha /* GL_RGBA*/,
 	       gdk_pixbuf_get_width(pixbuf),
-	       gdk_pixbuf_get_height(pixbuf), 0, GL_BGRA, GL_UNSIGNED_BYTE,
+	       gdk_pixbuf_get_height(pixbuf), 0,
+	       (has_alpha) ? GL_BGRA : GL_RGB , GL_UNSIGNED_BYTE,
 	       gdk_pixbuf_get_pixels(pixbuf));
   draw_texture (dest_x,dest_y,width,height, texture_id);
   glDeleteTextures(1,&texture_id);
