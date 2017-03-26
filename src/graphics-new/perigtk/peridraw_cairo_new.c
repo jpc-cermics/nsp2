@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2017 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,7 +20,6 @@
  * jpc@cermics.enpc.fr
  *
  *--------------------------------------------------------------------------*/
-
 
 /*
  * Text and symbols with pango and cairo
@@ -56,7 +55,6 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
-
 /**
  * clearwindow:
  * @Xgc: a #BCG
@@ -90,7 +88,7 @@ static void clearwindow(BCG *Xgc)
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
+  cairo_t *cr= Xgc->private->cairo_drawable_cr;
   int old= xset_color(Xgc,Xgc->NumBackground);
   if ( r != NULL)
     cairo_rectangle (cr,r->x,r->y,r->width,r->height);
@@ -125,7 +123,6 @@ static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, in
   /* cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE); */
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,width);
 }
-
 
 /* Draw a set of arrows
  * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])

@@ -823,29 +823,30 @@ static void boundingbox(BCG *Xgc,const char *string, int x, int y, double *rect)
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
 
-/* pixbuf
+/* render a pixbuf
  *
  */
 
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
 			int dest_y,int width,int height)
 {
-  guchar *texpix=NULL;
+  unsigned int texture_id=0;
   GdkPixbuf *pixbuf = pix;
+  /* 
   gint w = gdk_pixbuf_get_width (pixbuf);
   gint h = gdk_pixbuf_get_height (pixbuf);
   int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
-  /* int rowstride = gdk_pixbuf_get_rowstride (pixbuf); */
-  texpix = gdk_pixbuf_get_pixels (pixbuf);
-  glShadeModel(GL_FLAT);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glPixelZoom ( ((double) width)/w,- ((double) height)/h);
-  glRasterPos2i(dest_x, dest_y );
-  if ( nChannels == 4 )
-    glDrawPixels( w,h,GL_RGBA,GL_UNSIGNED_BYTE, texpix);
-  else
-    glDrawPixels( w,h,GL_RGB,GL_UNSIGNED_BYTE, texpix);
-  glPixelZoom (1.0,1.0);
+  int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+  */
+  glGenTextures (1, &texture_id);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+	       gdk_pixbuf_get_width(pixbuf),
+	       gdk_pixbuf_get_height(pixbuf), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	       gdk_pixbuf_get_pixels(pixbuf));
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  draw_texture (dest_x,dest_y,width,height, texture_id);
+  glDeleteTextures(1,&texture_id);
 }
 
 static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
