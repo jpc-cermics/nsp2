@@ -832,17 +832,20 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
 {
   unsigned int texture_id=0;
   GdkPixbuf *pixbuf = pix;
+  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  GLenum format = (nChannels==4) ? GL_RGBA : GL_RGB;
   /* 
   gint w = gdk_pixbuf_get_width (pixbuf);
   gint h = gdk_pixbuf_get_height (pixbuf);
-  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+
   int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
   */
   glGenTextures (1, &texture_id);
   glBindTexture(GL_TEXTURE_2D, texture_id);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+  glTexImage2D(GL_TEXTURE_2D, 0, format,
 	       gdk_pixbuf_get_width(pixbuf),
-	       gdk_pixbuf_get_height(pixbuf), 0, GL_BGRA, GL_UNSIGNED_BYTE,
+	       gdk_pixbuf_get_height(pixbuf), 0,
+	       format, GL_UNSIGNED_BYTE,
 	       gdk_pixbuf_get_pixels(pixbuf));
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
