@@ -842,7 +842,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
 	       gdk_pixbuf_get_width(pixbuf),
-	       gdk_pixbuf_get_height(pixbuf), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	       gdk_pixbuf_get_height(pixbuf), 0, GL_BGRA, GL_UNSIGNED_BYTE,
 	       gdk_pixbuf_get_pixels(pixbuf));
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   draw_texture (dest_x,dest_y,width,height, texture_id);
