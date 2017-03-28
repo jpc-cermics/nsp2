@@ -732,6 +732,7 @@ static void ContourTrace(BCG *Xgc,double Cont, int style)
     sprintf(str,ContNumFormat,Cont);
   else
     sprintf(str,F,Cont);
+  
   Xgc->graphic_engine->displaystring(Xgc,str, xcont[cont_size / 2],ycont[cont_size /2],flag,angle,
 				     GR_STR_XLEFT, GR_STR_YBOTTOM);
 }

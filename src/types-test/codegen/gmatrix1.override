@@ -605,6 +605,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
 	Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
       }
+    Xgc->graphic_engine->xset_color(Xgc,c_color);
     return;
   }
 
