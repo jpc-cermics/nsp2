@@ -1637,7 +1637,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
    * second pass for the foreground 
    */
   nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
-		P->obj->grid, P->obj->background,FALSE);
+		P->obj->grid, P->obj->background,TRUE);
 
   /* title if present */
   nsp_graphic_titles(Xgc,P->obj->title,P->obj->x,P->obj->y);

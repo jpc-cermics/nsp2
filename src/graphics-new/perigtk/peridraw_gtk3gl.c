@@ -465,27 +465,19 @@ static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
 
 static void draw_mark3D(BCG *Xgc,double x, double y, double z);
 
-void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
+void drawpolymark3D(BCG *Xgc, float *vertex,int n)
 {
   if ( Xgc->CurHardSymb == 0 )
     {
-      int j,k;
+      int k;
       double rgb[3];
       /* need to draw by blocks of 100 */
       GLfloat vertex_colors[4];
-      GLfloat vertex_data[100*4];
       xget_color_rgb(Xgc, rgb);
       for (k=0 ; k < 3; k++)
 	vertex_colors[k]=rgb[k];
       vertex_colors[3]= 1.0f;
-      for ( j = 0 ; j < Min(100,n) ; j++)
-	{
-	  vertex_data[4*j]= vx[j];
-	  vertex_data[4*j+1]= vy[j];
-	  vertex_data[4*j+2]= vz[j];
-	  vertex_data[4*j+3]= 1.0f;
-	}
-      shader_draw_points(vertex_data,Min(100,n), vertex_colors,1);
+      shader_draw_points(vertex,n, vertex_colors,1);
     }
   else
     {
@@ -495,7 +487,7 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
       keepsize= Xgc->fontSize;
       hds= Xgc->CurHardSymbSize;
       xset_font(Xgc,i,hds, FALSE);
-      for ( i=0; i< n ;i++) draw_mark3D(Xgc,vx[i],vy[i],vz[i]);
+      for ( i=0; i< n ;i++) draw_mark3D(Xgc,vertex[4*i],vertex[4*i+1],vertex[4*i+2]);
       xset_font(Xgc,keepid,keepsize, FALSE);
     }
 }
@@ -1477,10 +1469,9 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
  * when we have one color for each node
  **/
 
-static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
+static void fillpolyline3D_shade(BCG *Xgc, float *vertex,int *colors, int n,int closeflag) ;
 
-void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
-			   double *vectsz, int *fillvect,int n, int p)
+void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 {
   int dash,color,i;
 
@@ -1495,11 +1486,11 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  /* fill + boundaries **/
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
+	  fillpolyline3D_shade(Xgc, vertex+4*(p)*i,fillvect+(p)*i,p,1);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  drawpolyline3D(Xgc, vertex +4*(p)*i,p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
 	}
       else  if (fillvect[i] == 0 )
@@ -1507,11 +1498,11 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  drawpolyline3D(Xgc, vertex + 4*(p)*i,p,1);
 	}
       else
 	{
-	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
+	  fillpolyline3D_shade(Xgc, vertex + 4*(p)*i, fillvect+(p)*i,p,1);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
@@ -1520,19 +1511,14 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 }
 
 
-static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag)
+static void fillpolyline3D_shade(BCG *Xgc, float *vertex, int *colors, int n,int closeflag)
 {
   double rgb[3];
   GLfloat vertex_colors[4*4];
-  GLfloat vertex_data[4*4];
   int i, k, j=0;
   if (!( n == 3 || n == 4) ) return;
   for ( i=0 ;  i< n ; i++)
     {
-      vertex_data[j]= vx[i];
-      vertex_data[j+1]= vy[i];
-      vertex_data[j+2]= vz[i];
-      vertex_data[j+3]= 1.0f;
       xset_color(Xgc,Abs(colors[i]));
       xget_color_rgb(Xgc, rgb);
       for (k=0 ; k < 3; k++)
@@ -1541,9 +1527,9 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
       j += 4;
     }
   if ( n == 3 )
-    shader_fill_triangle(vertex_data,vertex_colors,4);
+    shader_fill_triangle(vertex,vertex_colors,4);
   else
-    shader_fill_quad(vertex_data,vertex_colors,4);
+    shader_fill_quad(vertex,vertex_colors,4);
 }
 
 /**
@@ -1561,7 +1547,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
  **/
 
 
-void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
+void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 {
   int dash,color,i;
 
@@ -1576,23 +1562,23 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  fillpolyline3D(Xgc, vertex+ 4*(p)*i, p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  drawpolyline3D(Xgc, vertex + 4*(p)*i, p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  drawpolyline3D(Xgc, vertex + 4*(p)*i, p,1);
 	}
       else
 	{
 	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
-	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  fillpolyline3D(Xgc, vertex + 4*(p)*i, p,1);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
@@ -1600,58 +1586,40 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
-static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
+static void fillpolyline3D(BCG *Xgc, float *vertex, int n, int closeflag)
 {
   double rgb[3];
   GLfloat vertex_colors[4];
-  GLfloat vertex_data[4*4];
-  gint i, k, j=0;
+  gint k;
   if (!( n == 3 || n == 4) ) return;
   xget_color_rgb(Xgc, rgb);
-  for ( i=0 ;  i < n ; i++)
-    {
-      vertex_data[j]= vx[i];
-      vertex_data[j+1]= vy[i];
-      vertex_data[j+2]= vz[i];
-      vertex_data[j+3]= 1.0f;
-      j += 4;
-    }
   for (k=0 ; k < 3; k++)
     vertex_colors[k]=rgb[k];
   vertex_colors[3]= 1.0f;
   if ( n == 3 )
-    shader_fill_triangle(vertex_data, vertex_colors,1);
+    shader_fill_triangle(vertex, vertex_colors,1);
   else
-    shader_fill_quad(vertex_data,vertex_colors,1);
+    shader_fill_quad(vertex,vertex_colors,1);
 }
 
-static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
+static void drawpolyline3D(BCG *Xgc, float *vertex, int n,int closeflag)
 {
   double rgb[3];
   GLfloat vertex_colors[4];
-  GLfloat vertex_data[1000*4];
-  gint i=0, k, j = 0;
+  gint k;
   if ( n <= 1) return;
   xget_color_rgb(Xgc, rgb);
-  for ( i=0 ;  i < Min(1000,n) ; i++)
-    {
-      vertex_data[j]= vx[i];
-      vertex_data[j+1]= vy[i];
-      vertex_data[j+2]= vz[i];
-      vertex_data[j+3]= 1.0f;
-      j += 4;
-    }
   for (k=0 ; k < 3; k++)
     vertex_colors[k]=rgb[k];
   vertex_colors[3]= 1.0f;
-  shader_draw_line(vertex_data,Min(1000,n),closeflag,vertex_colors,1);
+  shader_draw_line(vertex,n,closeflag,vertex_colors,1);
 }
 
 /*
  *
  */
 
-void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
+void drawpolylines3D(BCG *Xgc, float *vertex, int *drawvect,int n, int p)
 {
   int symb[2],dash,color,i,close;
   /* store the current values */
@@ -1664,13 +1632,13 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
       if (drawvect[i] <= 0)
 	{ /* we use the markid : drawvect[i] : with current dash **/
 	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
-	  drawpolymark3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p);
+	  drawpolymark3D(Xgc, vertex + 4*(p)*i, p);
 	}
       else
 	{/* we use the line-style number abs(drawvect[i])  **/
 	  Xgc->graphic_engine->xset_line_style(Xgc,*(drawvect+i));
 	  close = 0;
-	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,close);
+	  drawpolyline3D(Xgc, vertex + 4*(p)*i, p,close);
 	}
     }
   /* back to default values **/

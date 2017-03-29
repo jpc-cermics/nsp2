@@ -2522,17 +2522,18 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
 #ifdef WITH_OPENGL
   if ( Xgc->graphic_engine == &GL_gengine )
     {
-      double xd[4],yd[4],zd[4];
+      float vertex[4*4];
       current_vertex = &(B->face[4*j]);
       for (i = 0 ; i < 4 ; i++)
 	{
 	  numpt = current_vertex[i];
-	  xd[i] = B->coord[3*numpt];
-	  yd[i] = B->coord[3*numpt+1];
-	  zd[i] = B->coord[3*numpt+2];
+	  vertex[4*i] = B->coord[3*numpt];
+	  vertex[4*i+1] = B->coord[3*numpt+1];
+	  vertex[4*i+2] = B->coord[3*numpt+2];
+	  vertex[4*i+3] = 1.0;
 	}
       Xgc->graphic_engine->xset_color(Xgc,foreground_color);
-      fillpolylines3D(Xgc, xd, yd,zd, &B->color, np, m);
+      fillpolylines3D(Xgc, vertex, &B->color, np, m);
       return;
     }
 #endif
@@ -3093,4 +3094,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3097 "objs3d.c"
+#line 3098 "objs3d.c"

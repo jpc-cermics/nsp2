@@ -1176,6 +1176,8 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 }
 
 #ifdef  WITH_OPENGL
+
+#if 0
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
@@ -1228,6 +1230,63 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       /* color = 0;  permet de voir uniquement le maillage */
       /* draw one face */
       fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
+    }
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
+}
+#endif
+
+static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
+{
+  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
+  int i,j, m;
+  float vertex_def[4*128];
+  float *vertex=vertex_def;
+  int numpt, *current_vertex, color;
+
+  int Q_nb_coords = Q->Mcoord->m;
+  double * Q_coord = Q->Mcoord->R;
+  int Q_nb_vertices_per_face = Q->Mface->m;
+  int Q_nb_faces = Q->Mface->n;
+  int * Q_face = Q->Mface->I;
+  int Q_nb_colors = Q->Mcolor->mn;
+  int * Q_color =  Q->Mcolor->I;
+  /*   int Q_nb_back_colors = Q->Mback_color->mn ; */
+  /* int * Q_back_color =  Q->Mback_color->I;*/
+  int foreground_color = -1,cpat;
+
+  m = Q_nb_vertices_per_face;
+
+  if ( m > 128 )
+    {
+      vertex = graphic_alloc(0,4*m,sizeof(float));
+    }
+
+  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
+  for ( j = 0 ; j < Q_nb_faces ; j++ )
+    {
+      double z;
+      int stop = FALSE;
+      current_vertex = &(Q_face[m*j]);
+      for (i = 0 ; i < m ; i++)
+	{
+	  numpt = current_vertex[i]-1;
+	  vertex[4*i]   = Q_coord[numpt];
+	  vertex[4*i+1] = Q_coord[numpt+Q_nb_coords];
+	  vertex[4*i+2] = z= Q_coord[numpt+2*Q_nb_coords];
+	  vertex[4*i+3] = 1.0;
+	  if ( ISNAN(z) || isinf(z))
+	    {
+	      stop= TRUE;
+	    }
+	}
+      if ( stop == TRUE ) continue;
+      color = ( Q_nb_colors == 1 ) ? Q_color[0]: Q_color[j];
+      /* le contour du polygone ne doit pas apparaitre */
+      if ( ! Q->mesh ) 	color = -color;
+      /* color = 0;  permet de voir uniquement le maillage */
+      /* draw one face */
+      fillpolylines3D(Xgc, vertex, &color, 1 , m);
     }
   Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
@@ -1600,4 +1659,4 @@ int nsp_obj3d_orientation(double x[], double y[], int n)
   return ( a*d - b*c >= 0) ? 1 : -1;
 }
 
-#line 1604 "polyhedron.c"
+#line 1663 "polyhedron.c"

@@ -249,13 +249,8 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
     }
 }
 
-/* A revoir car en procedant comme cela les
- * marques n'utilisent pas le zbuffer des
- * parties cachées. Il faut un drapolymark3d.
- */
-
 #ifdef  WITH_OPENGL
-void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
+void drawpolymark3D(BCG *Xgc, float *vertex,int n);
 #endif
 
 #ifdef  WITH_OPENGL
@@ -282,7 +277,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       int x,y;
       double Tp[3];
 #endif
-      double Vp[3];
+      float Vp[3];
       Vp[0] = V_coord[j];
       Vp[1] = V_coord[j+V->Mcoord->m];
       Vp[2] = V_coord[j+2*V->Mcoord->m];
@@ -296,7 +291,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
       nsp_ogl_set_3dview(Xgc);
 #else
-      drawpolymark3D(Xgc,&Vp[0],&Vp[1],&Vp[2],1);
+      drawpolymark3D(Xgc,Vp,1);
 #endif
     }
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);

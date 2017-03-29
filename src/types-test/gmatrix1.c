@@ -1459,6 +1459,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
 	Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
       }
+    Xgc->graphic_engine->xset_color(Xgc,c_color);
     return;
   }
 
@@ -1781,4 +1782,4 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-#line 1785 "gmatrix1.c"
+#line 1786 "gmatrix1.c"

@@ -29,8 +29,7 @@ extern Gengine GL_gengine;
 #include <nsp/graphics-new/periGtk.h>
 #endif
 
-extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,
-			    int *drawvect,int n, int p);
+extern void drawpolylines3D(BCG *Xgc, float *vertex,  int *drawvect,int n, int p);
 
 typedef void (level_f) (BCG *Xgc,int ival, double Cont, double xncont,
 			double yncont);
@@ -598,8 +597,7 @@ static double *xcont=NULL,*ycont=NULL;
 
 #ifdef WITH_OPENGL
 
-static double *xdcont=NULL,*ydcont=NULL,*zdcont=NULL;
-
+static float *vertex_dcont=NULL;
 
 static void
 G_Contstore_ogl(int ival, double xncont, double yncont, double zncont)
@@ -608,15 +606,13 @@ G_Contstore_ogl(int ival, double xncont, double yncont, double zncont)
   /* nouveau contour */
   if ( ival == 0) cont_size =0 ;
   n= cont_size + 1;
-  xdcont = graphic_alloc(3,n,sizeof(double));
-  ydcont = graphic_alloc(4,n,sizeof(double));
-  zdcont = graphic_alloc(5,n,sizeof(double));
-  if ( (xdcont == NULL) && n != 0) return ;
-  if ( (ydcont == NULL) && n != 0) return ;
-  if ( (zdcont == NULL) && n != 0) return ;
-  xdcont[cont_size]= xncont;
-  ydcont[cont_size]= yncont;
-  zdcont[cont_size++]= zncont;
+  vertex_dcont = graphic_alloc(3,4*n,sizeof(float));
+  if ( (vertex_dcont == NULL) && n != 0) return ;
+  vertex_dcont[4*cont_size]= xncont;
+  vertex_dcont[4*cont_size+1]= yncont;
+  vertex_dcont[4*cont_size+2]= zncont;
+  vertex_dcont[4*cont_size+3]= 1.0;
+  cont_size++;
 }
 
 #endif
@@ -749,12 +745,12 @@ static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc)
     {
-      drawpolylines3D(Xgc,xdcont,ydcont,zdcont,&style,1,cont_size);
+      drawpolylines3D(Xgc,vertex_dcont,&style,1,cont_size);
     }
   else {
     int st=0;
     old = Xgc->graphic_engine->xset_dash(Xgc,style);
-    drawpolylines3D(Xgc,xdcont,ydcont,zdcont,&st,1,cont_size);
+    drawpolylines3D(Xgc, vertex_dcont, &st,1,cont_size);
     Xgc->graphic_engine->xset_dash(Xgc,old);
   }
 
@@ -772,9 +768,9 @@ static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
    * but it should be better to have a 3D function.
    */
   nsp_ogl_set_2dview(Xgc);
-  xd=xdcont[cont_size / 2];
-  yd=ydcont[cont_size / 2];
-  zd=zdcont[cont_size / 2];
+  xd= vertex_dcont[4*(cont_size / 2)];
+  yd= vertex_dcont[4*(cont_size / 2)+1];
+  zd= vertex_dcont[4*(cont_size / 2)+2];
   x = XScale(Xgc->scales,TRX(Xgc->scales,xd,yd,zd));
   y = YScale(Xgc->scales,TRY(Xgc->scales,xd,yd,zd));
   Xgc->graphic_engine->displaystring(Xgc,str, x,y,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);

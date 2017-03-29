@@ -387,8 +387,8 @@ extern void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk(void);
 
 #if defined(PERIGL) || defined(PERIGTK3GL)
-static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
-static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+static void drawpolyline3D(BCG *Xgc, float *vertex, int n,int closeflag);
+static void fillpolyline3D(BCG *Xgc, float *vertex, int n,int closeflag);
 #if defined(PERIGL) 
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 #endif
