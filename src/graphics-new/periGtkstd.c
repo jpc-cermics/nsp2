@@ -2534,6 +2534,9 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
 
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 
+/* A set of predefined colors
+ */
+
 double nsp_predef_colors[] =
   {
     0,0,0,       /* black */

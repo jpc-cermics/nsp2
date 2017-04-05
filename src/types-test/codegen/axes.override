@@ -296,11 +296,26 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     }
   else
     {
-      /* bounds of the plot are given by rect
+      /* bounds of the plot are given by rect 
+       * except if rect contains infinite values 
        */
-      memcpy(P->obj->frect->R,P->obj->rect->R,4*sizeof(double));
+      if ( isinf(P->obj->rect->R[0]) ||
+	   isinf(P->obj->rect->R[1]) ||
+	   isinf(P->obj->rect->R[2]) ||
+	   isinf(P->obj->rect->R[3]) )
+	{
+	  double frect[4];
+	  int i;
+	  nsp_axes_compute_inside_bounds(Obj,frect);
+	  for ( i = 0 ; i < 4; i++)
+	    if (! isinf(P->obj->rect->R[i])) frect[i]= P->obj->rect->R[i];
+	  memcpy(P->obj->frect->R, frect,4*sizeof(double));
+	}
+      else
+	{
+	  memcpy(P->obj->frect->R,P->obj->rect->R,4*sizeof(double));
+	}
     }
-
   if ( P->obj->zoom == TRUE )
     {
       /* when zooming zrect is used

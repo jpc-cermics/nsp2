@@ -3,6 +3,7 @@
 include-start Figure
 /* inserted at the start of include file */
 #include <nsp/objects.h>
+#include <nsp/none.h>
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 
@@ -232,6 +233,23 @@ static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,
       MoveObj(stack,2,NSP_OBJECT(G));
     }
   return Max(lhs,1);
+}
+
+%%
+override nsp_get_current_axes kwargs
+
+static int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
+{
+  NspObject *ret;
+  CheckRhs(0,0);
+  ret = (NspObject *) nsp_get_current_axes();
+  if (ret == NULL )
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+    }
+  MoveObj(stack,1,ret);
+  return 1;
 }
 
 %%
@@ -698,18 +716,16 @@ static NspAxes *nsp_get_current_axes(void)
   NspObject *Obj;
   NspFigure *cf;
   NspList *L;
-  if ( nsp_current_axes != NULL)
+  if ( nsp_current_axes != NULL && nsp_current_axes->obj->ref_count > 1 )
     {
-      if ( nsp_current_axes->obj->ref_count > 1 )
-	return nsp_current_axes;
+      return nsp_current_axes;
     }
-  cf = nsp_get_current_figure();
-  if ( cf == NULL) return NULL;
+  if (( cf = nsp_get_current_figure())  == NULL) return NULL;
   L= cf->obj->children;
   /* return the first axes */
-  if ( (Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
+  if ( L == NULL || nsp_list_length(L) < 1) return NULL;
+  if ((Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
     {
-      /* maybe we could here build a current axes */
       return NULL;
     }
   nsp_current_axes= (NspAxes *) Obj;

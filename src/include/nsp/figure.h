@@ -24,10 +24,11 @@
 #line 4 "codegen/figure.override"
 /* inserted at the start of include file */
 #include <nsp/objects.h>
+#include <nsp/none.h>
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 
-#line 31 "./figure.h"
+#line 32 "./figure.h"
 /* NspFigure */
 
 #include <nsp/graphic.h>
@@ -112,7 +113,7 @@ extern int int_figure_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFigure *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M);
 extern int nsp_figure_xdr_save(XDR  *xdrs, NspFigure *M);
 
-#line 11 "codegen/figure.override"
+#line 12 "codegen/figure.override"
 
 /* inserted at the end of public part of include file
  * of figure.h
@@ -145,7 +146,7 @@ extern void nsp_figure_data_reset(NspFigure *F);
 /* compute the bounds of graphic objects stored in L */
 extern int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds);
 
-#line 149 "./figure.h"
+#line 150 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -160,7 +161,7 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type);
-#line 45 "codegen/figure.override"
+#line 46 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -183,6 +184,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 187 "./figure.h"
+#line 188 "./figure.h"
 #endif /* NspFigure_Private */
 
