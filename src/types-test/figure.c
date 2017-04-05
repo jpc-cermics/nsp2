@@ -2517,27 +2517,17 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
  * Returns: a #NspAxes or %NULL
  **/
 
-static NspAxes *nsp_current_axes=NULL;
-
 static NspAxes *nsp_get_current_axes(void)
 {
   NspObject *Obj;
   NspFigure *cf;
   NspList *L;
-  if ( nsp_current_axes != NULL && nsp_current_axes->obj->ref_count > 1 )
-    {
-      return nsp_current_axes;
-    }
   if (( cf = nsp_get_current_figure())  == NULL) return NULL;
   L= cf->obj->children;
   /* return the first axes */
   if ( L == NULL || nsp_list_length(L) < 1) return NULL;
-  if ((Obj = nsp_list_get_element(L,1)) ==  NULLOBJ )
-    {
-      return NULL;
-    }
-  nsp_current_axes= (NspAxes *) Obj;
-  return nsp_current_axes;
+  if ((Obj = nsp_list_get_element(L,1)) ==  NULLOBJ ) return NULL;
+  return IsAxes(Obj) ? (NspAxes *) Obj : NULL;
 }
 
 /**
@@ -3781,4 +3771,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3785 "figure.c"
+#line 3775 "figure.c"
