@@ -45,6 +45,7 @@
    '("int" "thickness" "std" "1")
    '("int" "use_color" "std" "1")
    '("gboolean" "auto_clear" "std" "FALSE")
+   '("int" "current_axe" "hidden" "0")
    )
   (gtype-id "FigureData")
 )

@@ -60,6 +60,7 @@ struct _NspFigureData {
   int thickness;
   int use_color;
   gboolean auto_clear;
+  int current_axe;
 };
 
 extern int nsp_type_figuredata_id;
@@ -80,7 +81,7 @@ NspFigureData *new_figuredata();
 
 #define NULLFIGUREDATA (NspFigureData*) 0
 
-extern NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type);
+extern NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,int current_axe,NspTypeBase *type);
 extern NspFigureData *nsp_figuredata_create_default(const char *name);
 
 /* from NspFigureDataObj.c */
