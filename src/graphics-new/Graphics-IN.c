@@ -1095,22 +1095,23 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   nsp_gwin_clear();
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1)
     {
-      NspMatrix *Icol = Mat2int(Mcolors);
+      NspMatrix *Icol = (Mcolors == NULL) ? NULL: Mat2int(Mcolors);
+      int *icol = (Icol == NULL) ? NULL : Icol->I;
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0)
 	{
-	  nsp_ret = (*func1)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,
+	  nsp_ret = (*func1)(x->R,y->R,z->R,izcol,icol,&z->m,&z->n,&theta,
 			     &alpha,leg1,iflag,ebox ,colormap,shade);
 	}
       else if (izcol == 2)
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
-	  nsp_ret = (*func3)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,&alpha,leg1,iflag,
+	  nsp_ret = (*func3)(x->R,y->R,z->R,izcol,icol,&z->m,&z->n,&theta,&alpha,leg1,iflag,
 			     ebox,colormap,shade);
 	}
       else
 	{
-	  nsp_ret = (*func2)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,&alpha,
+	  nsp_ret = (*func2)(x->R,y->R,z->R,izcol,icol,&z->m,&z->n,&theta,&alpha,
 			     leg1,iflag,ebox,colormap,shade);
 	}
     }
