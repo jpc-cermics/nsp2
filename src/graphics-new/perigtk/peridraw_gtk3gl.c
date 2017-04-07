@@ -1527,9 +1527,9 @@ static void fillpolyline3D_shade(BCG *Xgc, float *vertex, int *colors, int n,int
       j += 4;
     }
   if ( n == 3 )
-    shader_fill_triangle(vertex,vertex_colors,4);
+    shader_fill_triangle(vertex,vertex_colors,n);
   else
-    shader_fill_quad(vertex,vertex_colors,4);
+    shader_fill_quad(vertex,vertex_colors,n);
 }
 
 /**
@@ -2146,8 +2146,23 @@ static void shader_fill_quad(GLfloat vertex_data[],GLfloat vertex_colors[],int n
 	}
     }
   glBindVertexArray (vao_triangles);
+#if 1
   glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
   glBindVertexArray(0);
+#else
+  {
+    float back_colors[4]={1.0,0.0,0.0,1.0};
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
+    glCullFace(GL_FRONT);
+    glUniform1i(c_flag, 0);
+    glUniform4fv(c_color,1, back_colors);
+    glDrawArrays (GL_TRIANGLE_FAN, 0, nvertex);
+    glDisable(GL_CULL_FACE);
+    glBindVertexArray(0);
+  }
+#endif
 }
 
 

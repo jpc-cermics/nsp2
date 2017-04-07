@@ -1744,12 +1744,13 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
     }
   else if ( ncol == C->m )
     {
-      /* colors are selected accordind to col array */
-      memcpy(col,C->R+2*C->m,C->m*sizeof(double));
+      memcpy(Val->R,col, C->m*sizeof(double));
     }
   else if ( ncol == m )
     {
-      /* one color by face from col array XXXXX */
+      /* WIP: one color by face from col array 
+       * we use Z-values 
+       */
       memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
     }
 
@@ -1882,4 +1883,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1886 "spolyhedron.c"
+#line 1887 "spolyhedron.c"

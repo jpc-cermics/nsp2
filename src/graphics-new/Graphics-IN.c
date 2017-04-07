@@ -922,7 +922,8 @@ static int int_geom3d( Stack stack, int rhs, int opt, int lhs)
  *-----------------------------------------------------------*/
 
 typedef NspGraphic *(*f3d) (double *,double *,double *,int *p,int *q,double *,
-			    double *,const char *,int *,double *,  NspMatrix *,int shade);
+			    double *,const char *,int *,double *,  NspMatrix *,int shade,
+			    double *, int ncol);
 typedef NspGraphic *(*f3d1)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *,
 			    double *,const char *,int *,double *,NspMatrix *,int shade);
 typedef NspGraphic *(*f3d2)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *,
@@ -939,7 +940,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   double alpha=35.0,theta=45.0,*ebox ;
   const char *leg=NULL, *leg1=NULL,*box_style_str=NULL;
   NspMatrix *x,*y,*z,*zloc=NULL,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL, *colormap=NULL;
-  int izcol=0, *zcol=NULL,*iflag, ret=0;
+  int izcol=0, *iflag, ret=0;
   NspGraphic *nsp_ret;
   int box_style = 2; /* matlab mode by default */
   int surface_color= -1; /* blue in the default colormap */
@@ -949,7 +950,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   nsp_option opts[] ={{ "args",list,NULLOBJ,-1},
 		      { "alpha",s_double,NULLOBJ,-1},
 		      { "colormap",realmat,NULLOBJ,-1},
-		      { "colors",matcopy_int,NULLOBJ,-1},
+		      { "colors", matcopy,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
 		      { "flag",realmat,NULLOBJ,-1},
 		      { "leg", string,NULLOBJ,-1},
@@ -1007,7 +1008,6 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   else
     {
       izcol = 1;
-      zcol  = Mcolors->I;
       CheckDimProp(NspFname(stack),3,opts[3].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
       /*
        *   Added by E Segre 4/5/4000. In the case where zcol is a
@@ -1095,29 +1095,34 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   nsp_gwin_clear();
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1)
     {
+      NspMatrix *Icol = Mat2int(Mcolors);
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0)
 	{
-	  nsp_ret = (*func1)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,
+	  nsp_ret = (*func1)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,
 			     &alpha,leg1,iflag,ebox ,colormap,shade);
 	}
       else if (izcol == 2)
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
-	  nsp_ret = (*func3)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,
+	  nsp_ret = (*func3)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,&alpha,leg1,iflag,
 			     ebox,colormap,shade);
 	}
       else
 	{
-	  nsp_ret = (*func2)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,
+	  nsp_ret = (*func2)(x->R,y->R,z->R,izcol,Icol->I,&z->m,&z->n,&theta,&alpha,
 			     leg1,iflag,ebox,colormap,shade);
 	}
     }
   else
     {
       /*  Here we are in the standard case  */
-      nsp_ret = (*func)(x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,
-			iflag,ebox,colormap,shade);
+      if ( izcol== 2)
+	nsp_ret = (*func)(x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,
+			  iflag,ebox,colormap,shade, Mcolors->R, Mcolors->mn);
+      else
+	nsp_ret = (*func)(x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,
+			  iflag,ebox,colormap,shade, NULL, 0);
     }
   if ( nsp_ret == NULL)
     {
@@ -1209,7 +1214,8 @@ static void nsp_set_box_parameters(NspObjs3d *objs3d,int flag)
 
 static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *q,
 				  double *teta, double *alpha,const char *legend, int *flag,
-				  double *bbox, NspMatrix *colormap, int shade)
+				  double *bbox, NspMatrix *colormap, int shade, double *colors,
+				  int ncol)
 {
   NspPolyhedron *pol;
   NspObjs3d *objs3d;
@@ -1335,7 +1341,8 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
 
 static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int *q,
 				   double *teta, double *alpha,const char *legend, int *flag,
-				   double *bbox, NspMatrix *colormap,int shade)
+				   double *bbox, NspMatrix *colormap,int shade,
+				   double *colors, int ncolor)
 {
   NspSPolyhedron *pol;
   NspObjs3d *objs3d;
@@ -1351,7 +1358,7 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
       objs3d->obj->colormap=colormap;
     }
   /* create a polyhedron and insert it in objs3d */
-  pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q,NULL,0);
+  pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q,colors,ncolor);
   if ( pol == NULL) return NULL;
 
   /* fix the mesh according to flag
