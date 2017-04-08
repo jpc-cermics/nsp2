@@ -2,6 +2,7 @@
 
 (register "graphic-types.defs")
 (register "axes-types.defs")
+(register "objs3d-types.defs")
 
 (define-objectref Figure
   (in-module "Figure")
@@ -46,6 +47,8 @@
    '("int" "use_color" "std" "1")
    '("gboolean" "auto_clear" "std" "FALSE")
    '("int" "current_axe" "hidden" "0")
+   '("int" "current_objs3d" "hidden" "0")
+   '("int" "current_axe_or_objs3d" "hidden" "0")
    )
   (gtype-id "FigureData")
 )
@@ -147,10 +150,19 @@
   (return-type "NspObject*")
 )
 
-
 (define-function get_current_axes
-  (c-name "nsp_get_current_axes")
+  (c-name "nsp_check_for_current_axes")
   (return-type "NspAxes*")
+)
+
+(define-function get_current_objs3d
+  (c-name "nsp_check_for_current_objs3d")
+  (return-type "NspObjs3d*")
+  )
+
+(define-function get_current_axes_or_objs3d
+  (c-name "nsp_check_for_current_axes_or_objs3d")
+  (return-type "NspObject*")
 )
 
 ;; just for the name, the code is overriten 

@@ -176,7 +176,6 @@ static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspList *nsp_figure_children(NspGraphic *Obj);
-static NspAxes *nsp_get_current_axes(void);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
@@ -184,6 +183,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 188 "./figure.h"
+#line 187 "./figure.h"
 #endif /* NspFigure_Private */
 

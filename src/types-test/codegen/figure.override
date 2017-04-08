@@ -57,7 +57,6 @@ static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspList *nsp_figure_children(NspGraphic *Obj);
-static NspAxes *nsp_get_current_axes(void);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
@@ -701,28 +700,6 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
 }
 
 /**
- * nsp_get_current_axes:
- * @void:
- *
- * returns the current axe
- *
- * Returns: a #NspAxes or %NULL
- **/
-
-static NspAxes *nsp_get_current_axes(void)
-{
-  NspObject *Obj;
-  NspFigure *cf;
-  NspList *L;
-  if (( cf = nsp_get_current_figure())  == NULL) return NULL;
-  L= cf->obj->children;
-  /* return the first axes */
-  if ( L == NULL || nsp_list_length(L) < 1) return NULL;
-  if ((Obj = nsp_list_get_element(L,1)) ==  NULLOBJ ) return NULL;
-  return IsAxes(Obj) ? (NspAxes *) Obj : NULL;
-}
-
-/**
  * nsp_create_default_figure:
  * @Xgc: a graphic context
  *
@@ -797,7 +774,6 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
  * @Xgc:
  * @wrect:
  *
- *
  * checks for a figure and an axes in Xgc
  * create one if not present.
  * Xgc should not be null here.
@@ -852,15 +828,16 @@ NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect)
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
       F->obj->gc->current_axe = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Axes =(NspObject *) axe;
     }
   else
     {
       F->obj->gc->current_axe = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
   return (NspAxes *) Axes;
 }
-
 
 /**
  * nsp_check_for_objs3d:
@@ -956,12 +933,14 @@ NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
 	}
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
+      F->obj->gc->current_objs3d = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Objs3d =(NspObject *) obj3d;
     }
   else
     {
-      F->obj->gc->current_axe = i;
+      F->obj->gc->current_objs3d = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
   return (NspObjs3d *) Objs3d;
 }
@@ -976,6 +955,7 @@ NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
  *
  * Returns:
  **/
+
 NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
 {
   int i,l, created=FALSE;
@@ -1047,11 +1027,13 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
       F->obj->gc->current_axe = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Res =(NspObject *) axe;
     }
   else
     {
       F->obj->gc->current_axe = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
         
   if ( created==TRUE) nsp_figure_destroy(F);
@@ -1777,9 +1759,6 @@ NspAxes *nsp_check_for_current_axes(void)
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
   /* return current axes if already set */
   if ( F->obj->gc->current_axe >= 1 && F->obj->gc->current_axe <= l)
@@ -1834,45 +1813,45 @@ NspObjs3d *nsp_check_for_current_objs3d(void)
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
+  /* return current objs3d if already set */
+  if ( F->obj->gc->current_objs3d >= 1 && F->obj->gc->current_objs3d <= l)
+    {
+      Obj = nsp_list_get_element(L,F->obj->gc->current_objs3d);
+      if ( Obj != NULLOBJ && IsObjs3d(Obj) )
+	{
+	  return (NspObjs3d *) Obj;
+	}
+    }
+  /* returns the first objs3d found */
   for ( i= 1; i <= l ; i++)
     {
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ && IsObjs3d(Obj) )
 	{
-	  Objs3d=(NspObjs3d *) Obj;
-	  break;
+	  F->obj->gc->current_objs3d = i;
+	  return (NspObjs3d *) Obj;
 	}
     }
-  if ( Objs3d == NULLOBJS3D )
+  /* create a new Objs3d */
+  if ((Objs3d= nsp_objs3d_create_default("objs3d")) == NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
     {
-      /* create a new axes */
-      Objs3d= nsp_objs3d_create_default("objs3d");
-      if ( Objs3d == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
-	{
-	  nsp_objs3d_destroy(Objs3d);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
+      nsp_objs3d_destroy(Objs3d);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_axe = i;
-    }
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_objs3d = 1;
   return Objs3d;
 }
+
 /**
  * nsp_check_for_current_axes_or_objs3d:
  * @void:
  *
- * returns the current objs3d and create one
+ * returns the current axes or objs3d and create one
  * if necessary.
  *
  * Returns: a new #NspObjs3d or %NULL.
@@ -1884,44 +1863,43 @@ NspObject *nsp_check_for_current_axes_or_objs3d(void)
   NspObject *Obj;
   NspList *L;
   NspFigure *F;
-  NspObject *Ret = NULL;
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
+  /* return current if already set */
+  if ( F->obj->gc->current_axe_or_objs3d >= 1 && F->obj->gc->current_axe_or_objs3d <= l)
+    {
+      Obj = nsp_list_get_element(L,F->obj->gc->current_axe_or_objs3d);
+      if ( Obj != NULLOBJ && ( IsObjs3d(Obj) || IsAxes(Obj) ))
+	{
+	  return Obj;
+	}
+    }
+  /* returns the first axes or objs3d found */ 
   for ( i= 1; i <= l ; i++)
     {
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ && ( IsObjs3d(Obj) || IsAxes(Obj)) )
 	{
-	  Ret = Obj;
-	  break;
+	  F->obj->gc->current_axe_or_objs3d = i;
+	  return Obj;
 	}
     }
-  if ( Ret == NULLOBJ )
+  /* create a new axes */
+  NspAxes *Axes =  nsp_axes_create_default("axe");
+  if ( Axes == NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
     {
-      /* create a new axes */
-      NspAxes *Axes =  nsp_axes_create_default("axe");
-      if ( Axes == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
-	{
-	  nsp_axes_destroy(Axes);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
-      Ret = (NspObject *) Axes;
+      nsp_axes_destroy(Axes);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_axe = i;
-    }
-  return Ret;
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_axe = 1;
+  F->obj->gc->current_axe_or_objs3d = 1;
+  return (NspObject *) Axes;
 }
 
 

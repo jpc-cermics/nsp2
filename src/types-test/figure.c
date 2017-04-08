@@ -24,7 +24,7 @@
 
 
 
-#line 70 "codegen/figure.override"
+#line 69 "codegen/figure.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/graphics-new/Graphics.h>
@@ -106,7 +106,7 @@ NspTypeFigure *new_type_figure(type_mode mode)
 
   type->init = (init_func *) init_figure;
 
-#line 85 "codegen/figure.override"
+#line 84 "codegen/figure.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -292,7 +292,7 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
   if ( nsp_figure_create_partial(H) == FAIL) return NULLFIGURE;
   if ((H  = nsp_figure_xdr_load_partial(xdrs,H))== NULLFIGURE) return H;
   if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
-#line 103 "codegen/figure.override"
+#line 102 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
@@ -310,7 +310,7 @@ void nsp_figure_destroy_partial(NspFigure *H)
    H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 98 "codegen/figure.override"
+#line 97 "codegen/figure.override"
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
@@ -584,7 +584,7 @@ NspFigure *nsp_figure_create(const char *name,char* fname,char* driver,int id,Ns
   H->obj->gc= gc;
   H->obj->Xgc = Xgc;
   if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
-#line 103 "codegen/figure.override"
+#line 102 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
@@ -674,7 +674,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   NspFigure *H  =nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure);
   if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
-#line 103 "codegen/figure.override"
+#line 102 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
@@ -698,7 +698,7 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
     if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
-  #line 103 "codegen/figure.override"
+  #line 102 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
@@ -761,7 +761,7 @@ static int _wrap_nsp_set_current_figure(NspFigure *self,Stack stack,int rhs,int 
   return 0;
 }
 
-#line 188 "codegen/figure.override"
+#line 187 "codegen/figure.override"
 
 static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -774,7 +774,7 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
 #line 775 "figure.c"
 
 
-#line 199 "codegen/figure.override"
+#line 198 "codegen/figure.override"
 
 static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -786,7 +786,7 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 #line 787 "figure.c"
 
 
-#line 209 "codegen/figure.override"
+#line 208 "codegen/figure.override"
 
 static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -807,7 +807,7 @@ static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 219 "codegen/figure.override"
+#line 218 "codegen/figure.override"
 
 static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -999,7 +999,7 @@ static int _wrap_figure_set_position(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 124 "codegen/figure.override"
+#line 123 "codegen/figure.override"
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -1208,6 +1208,8 @@ static int init_figuredata(NspFigureData *Obj,NspTypeFigureData *type)
   Obj->use_color = 1;
   Obj->auto_clear = FALSE;
   Obj->current_axe = 0;
+  Obj->current_objs3d = 0;
+  Obj->current_axe_or_objs3d = 0;
  return OK;
 }
 
@@ -1281,6 +1283,8 @@ static int nsp_figuredata_eq(NspFigureData *A, NspObject *B)
   if ( A->use_color != loc->use_color) return FALSE;
   if ( A->auto_clear != loc->auto_clear) return FALSE;
   if ( A->current_axe != loc->current_axe) return FALSE;
+  if ( A->current_objs3d != loc->current_objs3d) return FALSE;
+  if ( A->current_axe_or_objs3d != loc->current_axe_or_objs3d) return FALSE;
    return TRUE;
 }
 
@@ -1442,6 +1446,8 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
   Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
+  Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
+  Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1477,6 +1483,8 @@ int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
   Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
+  Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
+  Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1557,7 +1565,7 @@ int nsp_figuredata_check_values(NspFigureData *H)
   return OK;
 }
 
-NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,int current_axe,NspTypeBase *type)
+NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,int current_axe,int current_objs3d,int current_axe_or_objs3d,NspTypeBase *type)
 {
   NspFigureData *H  = nsp_figuredata_create_void(name,type);
   if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
@@ -1579,6 +1587,8 @@ NspFigureData *nsp_figuredata_create(const char *name,int color,int background,N
   H->use_color=use_color;
   H->auto_clear=auto_clear;
   H->current_axe=current_axe;
+  H->current_objs3d=current_objs3d;
+  H->current_axe_or_objs3d=current_axe_or_objs3d;
   if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
   return H;
 }
@@ -1621,6 +1631,8 @@ NspFigureData *nsp_figuredata_copy_partial(NspFigureData *H,NspFigureData *self)
   H->use_color=self->use_color;
   H->auto_clear=self->auto_clear;
   H->current_axe=self->current_axe;
+  H->current_objs3d=self->current_objs3d;
+  H->current_axe_or_objs3d=self->current_axe_or_objs3d;
   return H;
 }
 
@@ -1661,6 +1673,8 @@ NspFigureData *nsp_figuredata_full_copy_partial(NspFigureData *H,NspFigureData *
   H->use_color=self->use_color;
   H->auto_clear=self->auto_clear;
   H->current_axe=self->current_axe;
+  H->current_objs3d=self->current_objs3d;
+  H->current_axe_or_objs3d=self->current_axe_or_objs3d;
   return H;
 }
 
@@ -1730,7 +1744,7 @@ static int _wrap_figuredata_set_background(void *self,const char *attr, NspObjec
   return OK;
 }
 
-#line 257 "codegen/figure.override"
+#line 256 "codegen/figure.override"
 
 static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
 {
@@ -1781,7 +1795,7 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1785 "figure.c"
+#line 1799 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
@@ -2041,26 +2055,37 @@ MoveObj(stack,1,ret);
   return 1;
 }
 
-#line 240 "codegen/figure.override"
-
-static int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
+int _wrap_nsp_check_for_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
 {
-  NspObject *ret;
+  NspAxes *ret;
   CheckRhs(0,0);
-  ret = (NspObject *) nsp_get_current_axes();
-  if (ret == NULL )
-    {
-      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
-	return RET_BUG;
-    }
-  MoveObj(stack,1,ret);
+    ret =nsp_check_for_current_axes();
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
-#line 2061 "figure.c"
+int _wrap_nsp_check_for_current_objs3d(Stack stack, int rhs, int opt, int lhs) /* get_current_objs3d */
+{
+  NspObjs3d *ret;
+  CheckRhs(0,0);
+    ret =nsp_check_for_current_objs3d();
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
 
+int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, int lhs) /* get_current_axes_or_objs3d */
+{
+  NspObject *ret;
+  CheckRhs(0,0);
+    ret =nsp_check_for_current_axes_or_objs3d();
+  if (ret == NULLOBJ ) return RET_BUG;
+MoveObj(stack,1,ret);
+  return 1;
+}
 
-#line 168 "codegen/figure.override"
+#line 167 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -2069,10 +2094,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2073 "figure.c"
+#line 2098 "figure.c"
 
 
-#line 178 "codegen/figure.override"
+#line 177 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -2081,7 +2106,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2085 "figure.c"
+#line 2110 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2092,7 +2117,9 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
 static OpTab Figure_func[]={
   { "get_current_figure", _wrap_nsp_check_for_current_figure},
   { "get_figure", _wrap_nsp_get_wid_figure},
-  { "get_current_axes", _wrap_nsp_get_current_axes},
+  { "get_current_axes", _wrap_nsp_check_for_current_axes},
+  { "get_current_objs3d", _wrap_nsp_check_for_current_objs3d},
+  { "get_current_axes_or_objs3d", _wrap_nsp_check_for_current_axes_or_objs3d},
   { "extractelts_figure", _wrap_nsp_extractelts_figure},
   { "setrowscols_figure", _wrap_nsp_setrowscols_figure},
   { "figure_create", int_figure_create},
@@ -2120,7 +2147,7 @@ void nsp_initialize_Figure_types(void)
   new_type_figuredata(T_BASE);
 }
 
-#line 309 "codegen/figure.override"
+#line 308 "codegen/figure.override"
 
 /**
  * nsp_draw_figure:
@@ -2516,28 +2543,6 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
 }
 
 /**
- * nsp_get_current_axes:
- * @void:
- *
- * returns the current axe
- *
- * Returns: a #NspAxes or %NULL
- **/
-
-static NspAxes *nsp_get_current_axes(void)
-{
-  NspObject *Obj;
-  NspFigure *cf;
-  NspList *L;
-  if (( cf = nsp_get_current_figure())  == NULL) return NULL;
-  L= cf->obj->children;
-  /* return the first axes */
-  if ( L == NULL || nsp_list_length(L) < 1) return NULL;
-  if ((Obj = nsp_list_get_element(L,1)) ==  NULLOBJ ) return NULL;
-  return IsAxes(Obj) ? (NspAxes *) Obj : NULL;
-}
-
-/**
  * nsp_create_default_figure:
  * @Xgc: a graphic context
  *
@@ -2612,7 +2617,6 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
  * @Xgc:
  * @wrect:
  *
- *
  * checks for a figure and an axes in Xgc
  * create one if not present.
  * Xgc should not be null here.
@@ -2667,15 +2671,16 @@ NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect)
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
       F->obj->gc->current_axe = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Axes =(NspObject *) axe;
     }
   else
     {
       F->obj->gc->current_axe = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
   return (NspAxes *) Axes;
 }
-
 
 /**
  * nsp_check_for_objs3d:
@@ -2771,12 +2776,14 @@ NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
 	}
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
+      F->obj->gc->current_objs3d = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Objs3d =(NspObject *) obj3d;
     }
   else
     {
-      F->obj->gc->current_axe = i;
+      F->obj->gc->current_objs3d = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
   return (NspObjs3d *) Objs3d;
 }
@@ -2791,6 +2798,7 @@ NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
  *
  * Returns:
  **/
+
 NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
 {
   int i,l, created=FALSE;
@@ -2862,11 +2870,13 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
       /* set figure informations in axe */
       nsp_figure_children_link_figure(F);
       F->obj->gc->current_axe = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
       Res =(NspObject *) axe;
     }
   else
     {
       F->obj->gc->current_axe = i;
+      F->obj->gc->current_axe_or_objs3d = i;
     }
         
   if ( created==TRUE) nsp_figure_destroy(F);
@@ -3592,9 +3602,6 @@ NspAxes *nsp_check_for_current_axes(void)
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
   /* return current axes if already set */
   if ( F->obj->gc->current_axe >= 1 && F->obj->gc->current_axe <= l)
@@ -3649,45 +3656,45 @@ NspObjs3d *nsp_check_for_current_objs3d(void)
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
+  /* return current objs3d if already set */
+  if ( F->obj->gc->current_objs3d >= 1 && F->obj->gc->current_objs3d <= l)
+    {
+      Obj = nsp_list_get_element(L,F->obj->gc->current_objs3d);
+      if ( Obj != NULLOBJ && IsObjs3d(Obj) )
+	{
+	  return (NspObjs3d *) Obj;
+	}
+    }
+  /* returns the first objs3d found */
   for ( i= 1; i <= l ; i++)
     {
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ && IsObjs3d(Obj) )
 	{
-	  Objs3d=(NspObjs3d *) Obj;
-	  break;
+	  F->obj->gc->current_objs3d = i;
+	  return (NspObjs3d *) Obj;
 	}
     }
-  if ( Objs3d == NULLOBJS3D )
+  /* create a new Objs3d */
+  if ((Objs3d= nsp_objs3d_create_default("objs3d")) == NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
     {
-      /* create a new axes */
-      Objs3d= nsp_objs3d_create_default("objs3d");
-      if ( Objs3d == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
-	{
-	  nsp_objs3d_destroy(Objs3d);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
+      nsp_objs3d_destroy(Objs3d);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_axe = i;
-    }
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_objs3d = 1;
   return Objs3d;
 }
+
 /**
  * nsp_check_for_current_axes_or_objs3d:
  * @void:
  *
- * returns the current objs3d and create one
+ * returns the current axes or objs3d and create one
  * if necessary.
  *
  * Returns: a new #NspObjs3d or %NULL.
@@ -3699,44 +3706,43 @@ NspObject *nsp_check_for_current_axes_or_objs3d(void)
   NspObject *Obj;
   NspList *L;
   NspFigure *F;
-  NspObject *Ret = NULL;
   F = nsp_check_for_current_figure();
   if ( F == NULL) return NULL;
   L= F->obj->children;
-  /* return the first axes found
-   * Note that the children of a Figure should be axes or 3daxes (obj3d)
-   */
   l= nsp_list_length(L);
+  /* return current if already set */
+  if ( F->obj->gc->current_axe_or_objs3d >= 1 && F->obj->gc->current_axe_or_objs3d <= l)
+    {
+      Obj = nsp_list_get_element(L,F->obj->gc->current_axe_or_objs3d);
+      if ( Obj != NULLOBJ && ( IsObjs3d(Obj) || IsAxes(Obj) ))
+	{
+	  return Obj;
+	}
+    }
+  /* returns the first axes or objs3d found */ 
   for ( i= 1; i <= l ; i++)
     {
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ && ( IsObjs3d(Obj) || IsAxes(Obj)) )
 	{
-	  Ret = Obj;
-	  break;
+	  F->obj->gc->current_axe_or_objs3d = i;
+	  return Obj;
 	}
     }
-  if ( Ret == NULLOBJ )
+  /* create a new axes */
+  NspAxes *Axes =  nsp_axes_create_default("axe");
+  if ( Axes == NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
     {
-      /* create a new axes */
-      NspAxes *Axes =  nsp_axes_create_default("axe");
-      if ( Axes == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
-	{
-	  nsp_axes_destroy(Axes);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
-      Ret = (NspObject *) Axes;
+      nsp_axes_destroy(Axes);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_axe = i;
-    }
-  return Ret;
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_axe = 1;
+  F->obj->gc->current_axe_or_objs3d = 1;
+  return (NspObject *) Axes;
 }
 
 
@@ -3813,4 +3819,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3817 "figure.c"
+#line 3823 "figure.c"
