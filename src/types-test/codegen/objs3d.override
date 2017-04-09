@@ -332,8 +332,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
    */
 }
 
-/* compute the bounds of the set of objects countained in the
- * objs3d
+/* compute the bounds of the set of objects contained in the
+ * objs3d object
  */
 
 static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
@@ -2007,49 +2007,31 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
   nsp_scale_default(scale);
 }
 
-
-
-/* set up the bounds of objs3d according to objects
- * already inserted and ebox (ebox can be NULL when unused)
+/* set up the bounds of objs3d according to inserted data or 
+ * to given ebox argument (ebox can be NULL when unused).
+ * the fixed parameter of NspObjs3d is also updated.
  */
 
 void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
 {
   NspGraphic *G= (NspGraphic *) A;
-  /* use strf argument to change the objs3d */
   switch (scale)
     {
-    case 0: /* no computation, the plot use the previus (or default) scale */
+    case 0: /* do not update */
       break;
-    case 1: /* from the ebox arg */
+    case 1: /* use objs3d data to compute bounds */
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
       break;
-    case 7: /* backward compatibility  */
+    case 3: /* use ebox set fixed to TRUE */
+    case 5: 
+    case 7: 
       memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
       A->obj->fixed = TRUE;
       break;
-    case 5: /* enlarged for pretty objs3d from the ebox arg */
-      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
-      A->obj->fixed = TRUE;
-      break;
-    case 3: /* built for an isometric scale from the ebox arg */
-      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
-      A->obj->fixed = TRUE;
-      break;
-    case 2: /* from the min/max of the x, y datas */
-      /* could be stored in a cache */
-      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE;
-      break;
-    case 8: /* backward compatibility  */
-      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE;
-      break;
-    case 6: /* enlarged for pretty objs3d from the min/max of the x, y datas */
-      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE;
-      break;
-    case 4: /* built for an isometric plot from the min/max of the x, y datas */
+    case 2: /* use objs3d data to compute bounds set fixed to FALSE */
+    case 4: 
+    case 6: 
+    case 8: 
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
       A->obj->fixed = FALSE;
       break;

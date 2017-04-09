@@ -770,7 +770,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   int *iflag;
   NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
   double alpha=35.0,theta=45.0,*ebox ;
-  const char *leg=NULL,*legend=NULL;
+  const char *leg=NULL,*legend=NULL, *box_style_str=NULL;
+  int box_style = 2; /* matlab mode by default */
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -779,6 +780,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "leg",string,NULLOBJ,-1}, /* XXXX string matrix ? */
 		      { "style",mat_int,NULLOBJ,-1},
 		      { "theta",s_double,NULLOBJ,-1},
+		      { "box_style",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   /* keep same order as in opts */
@@ -789,7 +791,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       return nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1);
     }
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL)
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta,&box_style_str) == FAIL)
     return RET_BUG;
 
   if ( x->mn == 0 ) return 0;
@@ -810,6 +812,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
+  
   /*
    * check that iflag[1] and leg are compatible
    * i.e force visibility of axes names if they are given
@@ -823,7 +826,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
     {
       nsp_set_box_parameters(objs3d, iflag[1]);
     }
-
+  
   if ( opts[alpha_opts].obj != NULLOBJ)
     {
       objs3d->obj->alpha=alpha;
@@ -833,6 +836,20 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       objs3d->obj->theta=theta;
     }
 
+  /* use the box_style parameter if given */
+  if ( box_style_str != NULL)
+    {
+      const char *box_style_table[] = {"none", "scilab", "matlab", NULL};
+      box_style = is_string_in_array(box_style_str,box_style_table,1);
+      if ( box_style < 0 )
+	{
+	  string_not_in_array(stack, box_style_str, box_style_table, "optional argument mode");
+	  return RET_BUG;
+	}
+      objs3d->obj->with_box = ( box_style == 0 ) ? FALSE : TRUE;
+      objs3d->obj->box_style = (box_style == 1 ) ? SCILAB : MATLAB;
+    }
+    
   /* Loop on the number of polylines */
   nb_poly = (x->m == 1) ? 1 : x->n;
   psize= (x->m==1) ? x->n : x->m;
@@ -1085,7 +1102,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
    * i.e force visibility of axes names if they are given
    */
   if ( surface_color > 0 ) iflag[0] = surface_color;
-  if (leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
+  if ( leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
   if ( mesh == FALSE && iflag[0] > 0) iflag[0]= -iflag[0];
   if ( mesh_only == TRUE ) iflag[0] =0;
   if ( box_style_str != NULL) iflag[2]= box_style;
