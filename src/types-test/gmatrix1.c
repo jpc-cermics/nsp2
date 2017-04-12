@@ -1298,7 +1298,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      */
 
 #ifdef  WITH_OPENGL
-    /* the opengl version does not work it should be revisited */
+    /* XXX the opengl version does not work it should be revisited */
     if ( 0 && Xgc->graphic_engine == &GL_gengine )
       {
 	for ( i = 0 ; i < nx -1 ; i++ )

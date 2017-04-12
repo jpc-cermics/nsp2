@@ -1849,11 +1849,14 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 
   if ( nsp_facets_to_faces(xx,yy,zz,colors,ncol,m,n,&C,&F,&Val)== FAIL) goto bug;
 
-  if ( colors == NULL )
+  /* when colors are given by zz we remap the colors 
+   * when colors are given by colors we do not remap ( this could be an option )
+   */
+    
+  if ( colors == NULL ) 
     {
-      /* when colors is not given zz is used and mapped to colors we have
-       * to compute vmin and vmax in that case to
-       * properly remap zz to the range of the colormap
+      /* Val is filled with colors when colors is non null or with zz 
+       * 
        */
       int i=0,j;
       vmin=vmax=0;
@@ -1883,4 +1886,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1887 "spolyhedron.c"
+#line 1890 "spolyhedron.c"

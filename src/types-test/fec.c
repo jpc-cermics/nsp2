@@ -1215,22 +1215,26 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   dz = (zmax - zmin)/nz;
   for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
   zlevel[nz] = zmax;
-
+  
   /* finaly compute the zone of each point */
-  for ( i = 0 ; i < (Nnode) ; i++ ) {
-    if ( isnan(func[i]) ||  func[i] > zmax )
-      zone[i] = nz+1;
-    else if ( func[i] < zmin )
-      zone[i] = 0;
-    else
-      zone[i] = floor( (func[i] - zmin)/dz ) + 1;
-  };
-
+  for ( i = 0 ; i < (Nnode) ; i++ )
+    {
+      if ( isnan(func[i]) ||  func[i] > zmax )
+	zone[i] = nz+1;
+      else if ( func[i] < zmin )
+	zone[i] = 0;
+      else
+	zone[i] = Min(floor( (func[i] - zmin)/dz ) + 1,nz+1);
+    };
+  
   /*
    *  2/ loop on the triangles : each triangle is finally decomposed
    *     into its differents zones (polygons) by the function PaintTriangle
+   *
+   *  XXX when using opengl fillpolyline2D_shade should replace PaintTriangle
+   *      see gmatrix.c
    */
-  switch ( TRUE ) /* P->obj->shade */
+  switch ( TRUE ) /* TRUE for shading or FALSE */
     {
     case TRUE :
       cpat = Xgc->graphic_engine->xget_color(Xgc);
@@ -1322,8 +1326,13 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     {
       nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);
     }
+  /* 
+   * If set to true levels are drawn 
+   */
   if ( FALSE )
-    nsp_draw_fec_levels(Xgc,Obj,rect,data);
+    {
+      nsp_draw_fec_levels(Xgc,Obj,rect,data);
+    }
 }
 
 
@@ -1557,4 +1566,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,sx,sy,3,1);
 }
 
-#line 1561 "fec.c"
+#line 1570 "fec.c"
