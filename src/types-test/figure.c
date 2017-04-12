@@ -3414,6 +3414,8 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
+  /* check if Obj is an axes or objs3d inside figure */
+  nsp_list_delete_graphic_obj(F,F->obj->children,Obj);
   return FAIL;
 }
 
@@ -3879,4 +3881,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3883 "figure.c"
+#line 3885 "figure.c"

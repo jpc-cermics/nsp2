@@ -1576,6 +1576,8 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
+  /* check if Obj is an axes or objs3d inside figure */
+  nsp_list_delete_graphic_obj(F,F->obj->children,Obj);
   return FAIL;
 }
 
