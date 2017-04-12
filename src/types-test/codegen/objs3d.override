@@ -27,6 +27,7 @@ extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, Vision
 extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],
 				  const double lim[], int ncoord);
 
+extern int nsp_objs3d_remove_children(NspObjs3d *O);
 
 %%
 include-private Objs3d
@@ -200,6 +201,30 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
 last
 
 /* inserted verbatim at the end */
+
+/**
+ * nsp_objs3d_remove_children:
+ * @F:
+ *
+ *
+ *
+ * Returns:
+ **/
+
+extern int nsp_objs3d_remove_children(NspObjs3d *O)
+{
+  if (O->obj->children != NULL )
+    {
+      int l,i;
+      NspGraphic *G= (NspGraphic *) O;
+      /* unlink children */
+      nsp_list_unlink_figure(O->obj->children, G->obj->Fig);
+      l = nsp_list_length(O->obj->children);
+      for (i=1 ; i <= l ; i++)
+	nsp_list_remove_first(O->obj->children);
+    }
+  return OK;
+}
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {

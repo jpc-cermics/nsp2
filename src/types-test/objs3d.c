@@ -24,7 +24,7 @@
 
 
 
-#line 71 "codegen/objs3d.override"
+#line 72 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 #include <nsp/graphics-new/Graphics.h>
 #ifdef  WITH_OPENGL
@@ -104,7 +104,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 84 "codegen/objs3d.override"
+#line 85 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -812,7 +812,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 107 "codegen/objs3d.override"
+#line 108 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -925,7 +925,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 123 "codegen/objs3d.override"
+#line 124 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj
  * we want get to be followed by a set to check that
@@ -1179,7 +1179,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 181 "codegen/objs3d.override"
+#line 182 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1191,7 +1191,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1192 "objs3d.c"
 
 
-#line 191 "codegen/objs3d.override"
+#line 192 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1235,9 +1235,33 @@ void nsp_initialize_Objs3d_types(void)
   new_type_objs3d(T_BASE);
 }
 
-#line 201 "codegen/objs3d.override"
+#line 202 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
+
+/**
+ * nsp_objs3d_remove_children:
+ * @F:
+ *
+ *
+ *
+ * Returns:
+ **/
+
+extern int nsp_objs3d_remove_children(NspObjs3d *O)
+{
+  if (O->obj->children != NULL )
+    {
+      int l,i;
+      NspGraphic *G= (NspGraphic *) O;
+      /* unlink children */
+      nsp_list_unlink_figure(O->obj->children, G->obj->Fig);
+      l = nsp_list_length(O->obj->children);
+      for (i=1 ; i <= l ; i++)
+	nsp_list_remove_first(O->obj->children);
+    }
+  return OK;
+}
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -3076,4 +3100,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3080 "objs3d.c"
+#line 3104 "objs3d.c"

@@ -2510,9 +2510,25 @@ static void  nsp_gwin_clear(void)
   if ( F == NULL ) return;
   if ( F->obj->gc->auto_clear == TRUE)
     {
+#if 1
+      NspObject *Obj =nsp_check_for_current_axes_or_objs3d(FALSE);
+      if ( Obj != NULL )
+	{
+	  if ( IsAxes(Obj) )
+	    {
+	      nsp_axes_remove_children((NspAxes*) Obj);
+	    }
+	  else
+	    {
+	      nsp_objs3d_remove_children((NspObjs3d*) Obj);
+	    }
+	}
+      nsp_figure_invalidate((NspGraphic *) F);
+#else	
       nsp_figure_remove_children(F);
       nsp_figure_data_reset(F);
       nsp_figure_invalidate((NspGraphic *) F);
+#endif
     }
 }
 

@@ -1484,6 +1484,32 @@ void nsp_initialize_Axes_types(void)
 #line 202 "codegen/axes.override"
 
 /* inserted verbatim at the end */
+
+/**
+ * nsp_axes_remove_children:
+ * @F:
+ *
+ *
+ *
+ * Returns:
+ **/
+
+extern int nsp_axes_remove_children(NspAxes *A)
+{
+  if (A->obj->children != NULL )
+    {
+      int i,l;
+      NspGraphic *G= (NspGraphic *) A;
+      /* unlink children */
+      nsp_list_unlink_figure(A->obj->children, G->obj->Fig);
+      l = nsp_list_length(A->obj->children);
+      for (i=1; i <= l ; i++)
+	nsp_list_remove_first(A->obj->children);
+    }
+  return OK;
+}
+
+
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
@@ -2539,4 +2565,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2543 "axes.c"
+#line 2569 "axes.c"

@@ -155,8 +155,8 @@ extern void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, in
 extern int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads);
 extern NspAxes *nsp_check_for_current_axes(int create);
 extern NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect);
-
-
+extern int nsp_axes_remove_children(NspAxes *A);
+  
 #line 161 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
