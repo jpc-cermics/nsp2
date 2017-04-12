@@ -1720,7 +1720,7 @@ int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int
 {
   NspObjs3d *Obj3d;
   if ( pt == NULL)
-    Obj3d = (NspObjs3d *) nsp_check_for_current_objs3d();
+    Obj3d = (NspObjs3d *) nsp_check_for_current_objs3d(TRUE);
   else
     Obj3d = (NspObjs3d *) nsp_check_pt_axes_or_objs3d(Xgc,pt);
   if ( Obj3d == NULL) return FALSE;

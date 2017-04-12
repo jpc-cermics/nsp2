@@ -140,7 +140,7 @@ extern NspObject *nsp_get_wid_figure(int wid);
 extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
 extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
 extern int nsp_figure_remove_children(NspFigure *F);
-extern NspObject *nsp_check_for_current_axes_or_objs3d(void);
+extern NspObject *nsp_check_for_current_axes_or_objs3d(int create);
 extern NspFigure *nsp_check_for_current_figure(void);
 extern void nsp_figure_data_reset(NspFigure *F);
 /* compute the bounds of graphic objects stored in L */

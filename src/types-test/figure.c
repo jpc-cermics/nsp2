@@ -296,7 +296,8 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
-#line 300 "figure.c"
+
+#line 301 "figure.c"
   return H;
 }
 
@@ -314,7 +315,7 @@ void nsp_figure_destroy_partial(NspFigure *H)
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 318 "figure.c"
+#line 319 "figure.c"
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
     if ( H->obj->dims != NULL ) 
@@ -588,7 +589,8 @@ NspFigure *nsp_figure_create(const char *name,char* fname,char* driver,int id,Ns
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
-#line 592 "figure.c"
+
+#line 594 "figure.c"
   return H;
 }
 
@@ -678,7 +680,8 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   /* verbatim in create/load/full_copy interface use NULL for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
-#line 682 "figure.c"
+
+#line 685 "figure.c"
   return H;
 }
 
@@ -702,7 +705,8 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
-#line 706 "figure.c"
+
+#line 710 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -761,7 +765,7 @@ static int _wrap_nsp_set_current_figure(NspFigure *self,Stack stack,int rhs,int 
   return 0;
 }
 
-#line 187 "codegen/figure.override"
+#line 189 "codegen/figure.override"
 
 static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -771,10 +775,10 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 775 "figure.c"
+#line 779 "figure.c"
 
 
-#line 198 "codegen/figure.override"
+#line 200 "codegen/figure.override"
 
 static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -783,10 +787,10 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 787 "figure.c"
+#line 791 "figure.c"
 
 
-#line 208 "codegen/figure.override"
+#line 210 "codegen/figure.override"
 
 static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -795,7 +799,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   MoveObj(stack,1,NSP_OBJECT(C));
   return 1;
 }
-#line 799 "figure.c"
+#line 803 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -807,7 +811,7 @@ static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 218 "codegen/figure.override"
+#line 220 "codegen/figure.override"
 
 static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -827,7 +831,7 @@ static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,
   return Max(lhs,1);
 }
 
-#line 831 "figure.c"
+#line 835 "figure.c"
 
 
 static NspMethods figure_methods[] = {
@@ -999,7 +1003,7 @@ static int _wrap_figure_set_position(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 123 "codegen/figure.override"
+#line 125 "codegen/figure.override"
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -1042,7 +1046,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 1046 "figure.c"
+#line 1050 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1744,7 +1748,7 @@ static int _wrap_figuredata_set_background(void *self,const char *attr, NspObjec
   return OK;
 }
 
-#line 256 "codegen/figure.override"
+#line 309 "codegen/figure.override"
 
 static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
 {
@@ -1795,7 +1799,7 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1799 "figure.c"
+#line 1803 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
@@ -2055,37 +2059,81 @@ MoveObj(stack,1,ret);
   return 1;
 }
 
-int _wrap_nsp_check_for_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
-{
-  NspAxes *ret;
-  CheckRhs(0,0);
-    ret =nsp_check_for_current_axes();
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
+#line 241 "codegen/figure.override"
 
-int _wrap_nsp_check_for_current_objs3d(Stack stack, int rhs, int opt, int lhs) /* get_current_objs3d */
+static int _wrap_nsp_check_for_current_axes(Stack stack, int rhs, int opt, int lhs) 
 {
-  NspObjs3d *ret;
-  CheckRhs(0,0);
-    ret =nsp_check_for_current_objs3d();
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, int lhs) /* get_current_axes_or_objs3d */
-{
+  int create=TRUE;
   NspObject *ret;
-  CheckRhs(0,0);
-    ret =nsp_check_for_current_axes_or_objs3d();
-  if (ret == NULLOBJ ) return RET_BUG;
-MoveObj(stack,1,ret);
+  int_types T[] = {new_opts,t_end} ;
+  nsp_option opts_2d[] ={{ "create",s_bool,NULLOBJ,-1},
+			 { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&opts_2d,&create) == FAIL)
+    return RET_BUG;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  ret = (NspObject *) nsp_check_for_current_axes(create);
+  if (ret == NULL )
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+    }
+  MoveObj(stack,1,ret);
   return 1;
 }
 
-#line 167 "codegen/figure.override"
+#line 2086 "figure.c"
+
+
+#line 265 "codegen/figure.override"
+
+static int _wrap_nsp_check_for_current_objs3d(Stack stack, int rhs, int opt, int lhs) 
+{
+  int create=TRUE;
+  NspObject *ret;
+  int_types T[] = {new_opts,t_end} ;
+  nsp_option opts_2d[] ={{ "create",s_bool,NULLOBJ,-1},
+			 { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&opts_2d,&create) == FAIL)
+    return RET_BUG;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  ret = (NspObject *) nsp_check_for_current_objs3d(create);
+  if (ret == NULL )
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+    }
+  MoveObj(stack,1,ret);
+  return 1;
+}
+
+#line 2112 "figure.c"
+
+
+#line 289 "codegen/figure.override"
+
+int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, int lhs)
+{
+  int create=TRUE;
+  NspObject *ret;
+  int_types T[] = {new_opts,t_end} ;
+  nsp_option opts_2d[] ={{ "create",s_bool,NULLOBJ,-1},
+			 { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&opts_2d,&create) == FAIL)
+    return RET_BUG;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  ret =nsp_check_for_current_axes_or_objs3d(create);
+  if (ret == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+
+#line 2134 "figure.c"
+
+
+#line 169 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -2094,10 +2142,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2098 "figure.c"
+#line 2146 "figure.c"
 
 
-#line 177 "codegen/figure.override"
+#line 179 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -2106,7 +2154,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2110 "figure.c"
+#line 2158 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2147,7 +2195,7 @@ void nsp_initialize_Figure_types(void)
   new_type_figuredata(T_BASE);
 }
 
-#line 308 "codegen/figure.override"
+#line 361 "codegen/figure.override"
 
 /**
  * nsp_draw_figure:
@@ -3584,7 +3632,7 @@ NspFigure *nsp_check_for_current_figure(void)
 
 /**
  * nsp_check_for_current_axes:
- * @void:
+ * @create: integer 
  *
  * returns the current axe and create one
  * if necessary.
@@ -3592,7 +3640,7 @@ NspFigure *nsp_check_for_current_figure(void)
  * Returns: a new #NspAxes or %NULL.
  **/
 
-NspAxes *nsp_check_for_current_axes(void)
+NspAxes *nsp_check_for_current_axes(int create)
 {
   int l,i;
   NspObject *Obj;
@@ -3622,23 +3670,27 @@ NspAxes *nsp_check_for_current_axes(void)
 	  return  (NspAxes *) Obj;
 	}
     }
-  /* create a new axes */
-  if (( Axes= nsp_axes_create_default("axe")) == NULL) return NULL;
-  /* store in Figure */
-  if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
+  if (create)
     {
-      nsp_axes_destroy(Axes);
-      return NULL;
+      /* create a new axes */
+      if (( Axes= nsp_axes_create_default("axe")) == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
+	{
+	  nsp_axes_destroy(Axes);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      F->obj->gc->current_axe = 1;
+      return Axes;
     }
-  /* set figure informations in axe */
-  nsp_figure_children_link_figure(F);
-  F->obj->gc->current_axe = 1;
-  return Axes;
+  return NULL;
 }
 
 /**
  * nsp_check_for_current_objs3d:
- * @void:
+ * @create: integer 
  *
  * returns the current objs3d and create one
  * if necessary.
@@ -3646,7 +3698,7 @@ NspAxes *nsp_check_for_current_axes(void)
  * Returns: a new #NspObjs3d or %NULL.
  **/
 
-NspObjs3d *nsp_check_for_current_objs3d(void)
+NspObjs3d *nsp_check_for_current_objs3d(int create)
 {
   int l,i;
   NspObject *Obj;
@@ -3676,23 +3728,27 @@ NspObjs3d *nsp_check_for_current_objs3d(void)
 	  return (NspObjs3d *) Obj;
 	}
     }
-  /* create a new Objs3d */
-  if ((Objs3d= nsp_objs3d_create_default("objs3d")) == NULL) return NULL;
-  /* store in Figure */
-  if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
+  if (create)
     {
-      nsp_objs3d_destroy(Objs3d);
-      return NULL;
+      /* create a new Objs3d */
+      if ((Objs3d= nsp_objs3d_create_default("objs3d")) == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL)
+	{
+	  nsp_objs3d_destroy(Objs3d);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      F->obj->gc->current_objs3d = 1;
+      return Objs3d;
     }
-  /* set figure informations in axe */
-  nsp_figure_children_link_figure(F);
-  F->obj->gc->current_objs3d = 1;
-  return Objs3d;
+  return NULL;
 }
 
 /**
  * nsp_check_for_current_axes_or_objs3d:
- * @void:
+ * @create: integer 
  *
  * returns the current axes or objs3d and create one
  * if necessary.
@@ -3700,7 +3756,7 @@ NspObjs3d *nsp_check_for_current_objs3d(void)
  * Returns: a new #NspObjs3d or %NULL.
  **/
 
-NspObject *nsp_check_for_current_axes_or_objs3d(void)
+NspObject *nsp_check_for_current_axes_or_objs3d(int create)
 {
   int l,i;
   NspObject *Obj;
@@ -3729,20 +3785,24 @@ NspObject *nsp_check_for_current_axes_or_objs3d(void)
 	  return Obj;
 	}
     }
-  /* create a new axes */
-  NspAxes *Axes =  nsp_axes_create_default("axe");
-  if ( Axes == NULL) return NULL;
-  /* store in Figure */
-  if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
+  if ( create )
     {
-      nsp_axes_destroy(Axes);
-      return NULL;
+      /* create a new axes */
+      NspAxes *Axes =  nsp_axes_create_default("axe");
+      if ( Axes == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL)
+	{
+	  nsp_axes_destroy(Axes);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      F->obj->gc->current_axe = 1;
+      F->obj->gc->current_axe_or_objs3d = 1;
+      return (NspObject *) Axes;
     }
-  /* set figure informations in axe */
-  nsp_figure_children_link_figure(F);
-  F->obj->gc->current_axe = 1;
-  F->obj->gc->current_axe_or_objs3d = 1;
-  return (NspObject *) Axes;
+  return NULL;
 }
 
 
@@ -3819,4 +3879,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3823 "figure.c"
+#line 3883 "figure.c"
