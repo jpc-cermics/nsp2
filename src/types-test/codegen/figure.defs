@@ -49,6 +49,7 @@
    '("int" "current_axe" "hidden" "0")
    '("int" "current_objs3d" "hidden" "0")
    '("int" "current_axe_or_objs3d" "hidden" "0")
+   '("int" "mtlb_mode" "std" "-1");
    )
   (gtype-id "FigureData")
 )

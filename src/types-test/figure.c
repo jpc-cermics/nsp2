@@ -1214,6 +1214,7 @@ static int init_figuredata(NspFigureData *Obj,NspTypeFigureData *type)
   Obj->current_axe = 0;
   Obj->current_objs3d = 0;
   Obj->current_axe_or_objs3d = 0;
+  Obj->mtlb_mode = -1;
  return OK;
 }
 
@@ -1289,6 +1290,7 @@ static int nsp_figuredata_eq(NspFigureData *A, NspObject *B)
   if ( A->current_axe != loc->current_axe) return FALSE;
   if ( A->current_objs3d != loc->current_objs3d) return FALSE;
   if ( A->current_axe_or_objs3d != loc->current_axe_or_objs3d) return FALSE;
+  if ( A->mtlb_mode != loc->mtlb_mode) return FALSE;
    return TRUE;
 }
 
@@ -1329,6 +1331,7 @@ int nsp_figuredata_xdr_save(XDR *xdrs, NspFigureData *M)
   if (nsp_xdr_save_i(xdrs, M->thickness) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->use_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->auto_clear) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->mtlb_mode) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1355,6 +1358,7 @@ NspFigureData  *nsp_figuredata_xdr_load_partial(XDR *xdrs, NspFigureData *M)
   if (nsp_xdr_load_i(xdrs, &M->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->use_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->auto_clear) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->mtlb_mode) == FAIL) return NULL;
  return M;
 }
 
@@ -1452,6 +1456,7 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
   Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
   Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
+  Sciprintf1(indent+2,"mtlb_mode=%d\n", M->mtlb_mode);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1489,6 +1494,7 @@ int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
   Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
   Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
+  Sciprintf1(indent+2,"mtlb_mode=%d\n", M->mtlb_mode);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1569,7 +1575,7 @@ int nsp_figuredata_check_values(NspFigureData *H)
   return OK;
 }
 
-NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,int current_axe,int current_objs3d,int current_axe_or_objs3d,NspTypeBase *type)
+NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,int current_axe,int current_objs3d,int current_axe_or_objs3d,int mtlb_mode,NspTypeBase *type)
 {
   NspFigureData *H  = nsp_figuredata_create_void(name,type);
   if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
@@ -1593,6 +1599,7 @@ NspFigureData *nsp_figuredata_create(const char *name,int color,int background,N
   H->current_axe=current_axe;
   H->current_objs3d=current_objs3d;
   H->current_axe_or_objs3d=current_axe_or_objs3d;
+  H->mtlb_mode=mtlb_mode;
   if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
   return H;
 }
@@ -1637,6 +1644,7 @@ NspFigureData *nsp_figuredata_copy_partial(NspFigureData *H,NspFigureData *self)
   H->current_axe=self->current_axe;
   H->current_objs3d=self->current_objs3d;
   H->current_axe_or_objs3d=self->current_axe_or_objs3d;
+  H->mtlb_mode=self->mtlb_mode;
   return H;
 }
 
@@ -1679,6 +1687,7 @@ NspFigureData *nsp_figuredata_full_copy_partial(NspFigureData *H,NspFigureData *
   H->current_axe=self->current_axe;
   H->current_objs3d=self->current_objs3d;
   H->current_axe_or_objs3d=self->current_axe_or_objs3d;
+  H->mtlb_mode=self->mtlb_mode;
   return H;
 }
 
@@ -1799,7 +1808,7 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1803 "figure.c"
+#line 1812 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
@@ -2012,6 +2021,21 @@ static int _wrap_figuredata_set_auto_clear(void *self,const char *attr, NspObjec
   return OK;
 }
 
+static NspObject *_wrap_figuredata_get_mtlb_mode(void *self,const char *attr)
+{
+  int ret;
+  ret = ((NspFigureData *) self)->mtlb_mode;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_figuredata_set_mtlb_mode(void *self,const char *attr, NspObject *O)
+{
+  int mtlb_mode;
+  if ( IntScalar(O,&mtlb_mode) == FAIL) return FAIL;
+  ((NspFigureData *) self)->mtlb_mode= mtlb_mode;
+  return OK;
+}
+
 static AttrTab figuredata_attrs[] = {
   { "color", (attr_get_function * )_wrap_figuredata_get_color, (attr_set_function * )_wrap_figuredata_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "background", (attr_get_function * )_wrap_figuredata_get_background, (attr_set_function * )_wrap_figuredata_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
@@ -2030,6 +2054,7 @@ static AttrTab figuredata_attrs[] = {
   { "thickness", (attr_get_function * )_wrap_figuredata_get_thickness, (attr_set_function * )_wrap_figuredata_set_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "use_color", (attr_get_function * )_wrap_figuredata_get_use_color, (attr_set_function * )_wrap_figuredata_set_use_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "auto_clear", (attr_get_function * )_wrap_figuredata_get_auto_clear, (attr_set_function * )_wrap_figuredata_set_auto_clear, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mtlb_mode", (attr_get_function * )_wrap_figuredata_get_mtlb_mode, (attr_set_function * )_wrap_figuredata_set_mtlb_mode, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -2082,7 +2107,7 @@ static int _wrap_nsp_check_for_current_axes(Stack stack, int rhs, int opt, int l
   return 1;
 }
 
-#line 2086 "figure.c"
+#line 2111 "figure.c"
 
 
 #line 265 "codegen/figure.override"
@@ -2108,7 +2133,7 @@ static int _wrap_nsp_check_for_current_objs3d(Stack stack, int rhs, int opt, int
   return 1;
 }
 
-#line 2112 "figure.c"
+#line 2137 "figure.c"
 
 
 #line 289 "codegen/figure.override"
@@ -2130,7 +2155,7 @@ int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, in
   return 1;
 }
 
-#line 2134 "figure.c"
+#line 2159 "figure.c"
 
 
 #line 169 "codegen/figure.override"
@@ -2142,7 +2167,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2146 "figure.c"
+#line 2171 "figure.c"
 
 
 #line 179 "codegen/figure.override"
@@ -2154,7 +2179,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2158 "figure.c"
+#line 2183 "figure.c"
 
 
 /*----------------------------------------------------
@@ -3881,4 +3906,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3885 "figure.c"
+#line 3910 "figure.c"
