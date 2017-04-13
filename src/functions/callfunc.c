@@ -114,10 +114,6 @@ extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_In
 #endif
 
 #ifdef WITH_PORTAUDIO
-#undef WITH_PORTAUDIO
-#endif
-
-#ifdef WITH_PORTAUDIO
 extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info ;
 #endif
 
