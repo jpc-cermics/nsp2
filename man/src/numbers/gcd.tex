@@ -8,8 +8,8 @@
 \begin{calling_sequence}
 \begin{verbatim}
  [g]=gcd(p,q)  
- [g]=lcm(p,q)  
- [g,a,b]=euclide(p,q)
+ [l]=lcm(p,q)  
+ [g,U,v]=euclide(p,q)
 
  [z,f1,f2,res]= gcd(u,v,delta=1.e-9)
 \end{verbatim}
@@ -24,9 +24,15 @@
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  \verb+gcd(p,q)+, \verb+lcm(p,q)+, \verb+euclide(p,q)+ respectively compute 
-  the gcd, the lcm and the \verb+(g,a,b)+ integers which are solutions of the 
-  Bezout's identity \verb+ap + bq = g = gcd(p, q)+.
+  \noindent\verb+gcd(p,q)+ and \verb+lcm(p,q)+ respectively compute 
+  the gcd and the lcm of \verb+p+ and \verb+q+. 
+
+  \noindent\verb+[g,U,v]=euclide(p,q)+ returns results from the extended 
+  euclide algorithm. The integer \verb+g+ is the gcd of \verb+p+ and \verb+q+. 
+  More precisely, When \verb+p+ and \verb+q+ are scalar vectors, then \verb+U{1,i}+ is a matrix and 
+  \verb+v(i)+ is a scalar such that \verb-[p(i),q(i)]*U{1,i} + v(i)*[g(i),0]=[0,0]-. When 
+  \verb+p+ and \verb+q+ are both polynomials the \verb+U+ is a polynomial matrix 
+  such that \verb-[p,q]*U{1,1} + v*[g,0]=[0,0]-.
   
   \verb+[z,f1,f2,res]= gcd(u,v,delta=1.e-9)+ computes an epsilon-gcd of 
   two polynomials \verb+u+ and \verb+v+ (epsilon given by the delta parameter). 
