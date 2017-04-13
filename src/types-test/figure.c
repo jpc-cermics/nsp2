@@ -1757,7 +1757,7 @@ static int _wrap_figuredata_set_background(void *self,const char *attr, NspObjec
   return OK;
 }
 
-#line 309 "codegen/figure.override"
+#line 313 "codegen/figure.override"
 
 static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
 {
@@ -2150,12 +2150,16 @@ int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, in
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   ret =nsp_check_for_current_axes_or_objs3d(create);
-  if (ret == NULLOBJ ) return RET_BUG;
+  if (ret == NULL )
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+    }
   MoveObj(stack,1,ret);
   return 1;
 }
 
-#line 2159 "figure.c"
+#line 2163 "figure.c"
 
 
 #line 169 "codegen/figure.override"
@@ -2167,7 +2171,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2171 "figure.c"
+#line 2175 "figure.c"
 
 
 #line 179 "codegen/figure.override"
@@ -2179,7 +2183,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2183 "figure.c"
+#line 2187 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2220,7 +2224,7 @@ void nsp_initialize_Figure_types(void)
   new_type_figuredata(T_BASE);
 }
 
-#line 361 "codegen/figure.override"
+#line 365 "codegen/figure.override"
 
 /**
  * nsp_draw_figure:
@@ -3906,4 +3910,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3910 "figure.c"
+#line 3914 "figure.c"

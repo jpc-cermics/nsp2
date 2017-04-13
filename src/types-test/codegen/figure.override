@@ -299,7 +299,11 @@ int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, in
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   ret =nsp_check_for_current_axes_or_objs3d(create);
-  if (ret == NULLOBJ ) return RET_BUG;
+  if (ret == NULL )
+    {
+      if ((ret= (NspObject *) nsp_none_create(NVOID,NULL))  == NULL)
+	return RET_BUG;
+    }
   MoveObj(stack,1,ret);
   return 1;
 }
