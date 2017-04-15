@@ -1182,7 +1182,7 @@ if test xx"$with_gtk" = xx; then
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS epoxy"
          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
          GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
- 	 PERIGLEXT="periGTK3GL.o graphene-matrix.o 	graphene-simd4f.o"
+ 	 PERIGLEXT="periGTK3GL.o graphene-matrix.o "
 	else
          AC_MSG_WARN([you should install epoxy library to enable opengl support with gtk3])
        fi 

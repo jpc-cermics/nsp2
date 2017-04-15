@@ -22,7 +22,13 @@ typedef struct _graphene_box_t          graphene_box_t;
 typedef struct _graphene_triangle_t     graphene_triangle_t;
 typedef struct _graphene_ray_t          graphene_ray_t;
 
-#include "graphene-simd4f.h"
+typedef struct {
+  float x, y, z, w;
+} graphene_simd4f_t;
+
+typedef struct {
+  graphene_simd4f_t x, y, z, w;
+} graphene_simd4x4f_t;
 
 #define GRAPHENE_PI_2           1.5707963267948966192313217f
 #define GRAPHENE_PI M_PI
@@ -70,8 +76,6 @@ graphene_vec4_init (graphene_vec4_t *v,
                     float            z,
                     float            w);
 
-void
-graphene_simd4x4f_transpose_in_place (graphene_simd4x4f_t *s);
 
 void
 graphene_matrix_to_float (const graphene_matrix_t *m,

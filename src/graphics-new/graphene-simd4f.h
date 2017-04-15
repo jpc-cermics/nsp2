@@ -24,151 +24,76 @@
 #ifndef __GRAPHENE_SIMD4F_H__
 #define __GRAPHENE_SIMD4F_H__
 
-/* graphene-config.h */
-
-typedef struct {
-  float x, y, z, w;
-} graphene_simd4f_t;
-
-typedef struct {
-  graphene_simd4f_t x, y, z, w;
-} graphene_simd4x4f_t;
-
-
-
-/* needed for memcpy() */
 #include <string.h>
 #include <math.h>
 
-/*
-#include "graphene-config.h"
-#include "graphene-macros.h"
-#include "graphene-version-macros.h"
-*/
+static void                    graphene_simd4x4f_transpose_in_place (graphene_simd4x4f_t *s);
 
-/* Platform specific operations */
 
-graphene_simd4f_t       graphene_simd4f_init            (float                   x,
-                                                         float                   y,
-                                                         float                   z,
-                                                         float                   w);
-graphene_simd4f_t       graphene_simd4f_init_zero       (void);
-graphene_simd4f_t       graphene_simd4f_init_4f         (const float            *v);
-graphene_simd4f_t       graphene_simd4f_init_3f         (const float            *v);
-graphene_simd4f_t       graphene_simd4f_init_2f         (const float            *v);
+static graphene_simd4f_t       graphene_simd4f_init            (float                   x,
+								float                   y,
+								float                   z,
+								float                   w);
+static graphene_simd4f_t       graphene_simd4f_init_zero       (void);
 
-void                    graphene_simd4f_dup_4f          (const graphene_simd4f_t s,
-                                                         float                  *v);
-void                    graphene_simd4f_dup_3f          (const graphene_simd4f_t s,
-                                                         float                  *v);
-void                    graphene_simd4f_dup_2f          (const graphene_simd4f_t s,
+static void                    graphene_simd4f_dup_4f          (const graphene_simd4f_t s,
                                                          float                  *v);
 
-float                   graphene_simd4f_get             (const graphene_simd4f_t s,
-                                                         unsigned int            i);
+static float                   graphene_simd4f_get_x           (const graphene_simd4f_t s);
 
-float                   graphene_simd4f_get_x           (const graphene_simd4f_t s);
+static float                   graphene_simd4f_get_y           (const graphene_simd4f_t s);
 
-float                   graphene_simd4f_get_y           (const graphene_simd4f_t s);
+static float                   graphene_simd4f_get_z           (const graphene_simd4f_t s);
 
-float                   graphene_simd4f_get_z           (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_splat           (float                   v);
 
-float                   graphene_simd4f_get_w           (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_splat_x         (const graphene_simd4f_t s);
 
+static graphene_simd4f_t       graphene_simd4f_splat_y         (const graphene_simd4f_t s);
 
-graphene_simd4f_t       graphene_simd4f_splat           (float                   v);
+static graphene_simd4f_t       graphene_simd4f_splat_z         (const graphene_simd4f_t s);
 
-graphene_simd4f_t       graphene_simd4f_splat_x         (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_splat_y         (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_splat_z         (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_splat_w         (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_splat_w         (const graphene_simd4f_t s);
 
 
-graphene_simd4f_t       graphene_simd4f_add             (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_add             (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_sub             (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_sub             (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_mul             (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_mul             (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_div             (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_sqrt            (const graphene_simd4f_t s);
+
+static graphene_simd4f_t       graphene_simd4f_rsqrt           (const graphene_simd4f_t s);
+
+
+static graphene_simd4f_t       graphene_simd4f_cross3          (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-
-graphene_simd4f_t       graphene_simd4f_sqrt            (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_reciprocal      (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_rsqrt           (const graphene_simd4f_t s);
-
-
-graphene_simd4f_t       graphene_simd4f_cross3          (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_dot3            (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_dot3            (const graphene_simd4f_t a,
+static float                   graphene_simd4f_dot3_scalar     (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-float                   graphene_simd4f_dot3_scalar     (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_min             (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_min             (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-graphene_simd4f_t       graphene_simd4f_max             (const graphene_simd4f_t a,
+static graphene_simd4f_t       graphene_simd4f_max             (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
 
-graphene_simd4f_t       graphene_simd4f_shuffle_wxyz    (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_shuffle_wxyz    (const graphene_simd4f_t s);
 
-graphene_simd4f_t       graphene_simd4f_shuffle_zwxy    (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_shuffle_zwxy    (const graphene_simd4f_t s);
 
-graphene_simd4f_t       graphene_simd4f_shuffle_yzwx    (const graphene_simd4f_t s);
-
-
-graphene_simd4f_t       graphene_simd4f_zero_w          (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_zero_zw         (const graphene_simd4f_t s);
-
-
-graphene_simd4f_t       graphene_simd4f_merge_high      (const graphene_simd4f_t a,
+static bool                    graphene_simd4f_cmp_eq          (const graphene_simd4f_t a,
                                                          const graphene_simd4f_t b);
 
-graphene_simd4f_t       graphene_simd4f_merge_low       (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-graphene_simd4f_t       graphene_simd4f_merge_w         (const graphene_simd4f_t s,
-                                                         float                   v);
-
-
-graphene_simd4f_t       graphene_simd4f_flip_sign_0101  (const graphene_simd4f_t s);
-
-graphene_simd4f_t       graphene_simd4f_flip_sign_1010  (const graphene_simd4f_t s);
-
-
-bool                    graphene_simd4f_cmp_eq          (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-bool                    graphene_simd4f_cmp_neq         (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-bool                    graphene_simd4f_cmp_lt          (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-bool                    graphene_simd4f_cmp_le          (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-bool                    graphene_simd4f_cmp_ge          (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-bool                    graphene_simd4f_cmp_gt          (const graphene_simd4f_t a,
-                                                         const graphene_simd4f_t b);
-
-graphene_simd4f_t       graphene_simd4f_neg             (const graphene_simd4f_t s);
+static graphene_simd4f_t       graphene_simd4f_neg             (const graphene_simd4f_t s);
 
 
 /* Fallback implementation using scalar types */
