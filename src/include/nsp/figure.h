@@ -145,8 +145,9 @@ extern NspFigure *nsp_check_for_current_figure(void);
 extern void nsp_figure_data_reset(NspFigure *F);
 /* compute the bounds of graphic objects stored in L */
 extern int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds);
-
-#line 150 "./figure.h"
+extern int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
+  
+#line 151 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -161,7 +162,7 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type);
-#line 46 "codegen/figure.override"
+#line 47 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -178,7 +179,6 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
-static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);

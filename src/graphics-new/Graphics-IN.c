@@ -2501,7 +2501,7 @@ static int int_driver(Stack stack, int rhs, int opt, int lhs)
  * nsp_gwin_clear:
  *
  * remove the children of the current figure
- *
+ * when auto_clear mode is active
  **/
 
 static void  nsp_gwin_clear(void)
@@ -5693,16 +5693,11 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       NspObjs3d *objs3d;
       NspFigure *F = nsp_check_for_current_figure();
       if ( F == NULL) return RET_BUG;
-      objs3d = nsp_check_for_objs3d_in_figure(F,wrect);
+      objs3d = nsp_check_for_objs3d_in_figure(F,wrect,TRUE);
       if (objs3d == NULL) return RET_BUG;
       if ( wrect != NULL)   memcpy(objs3d->obj->wrect->R,wrect,4*sizeof(double));
       if ( arect != NULL)   memcpy(objs3d->obj->arect->R,arect,4*sizeof(double));
       if ( frect != NULL)   memcpy(objs3d->obj->frect->R,frect,4*sizeof(double));
-      /*
-	objs3d->obj->clip = clip;
-	objs3d->obj->axes = axesflag;
-	objs3d->obj->iso = iso;
-      */
       nsp_objs3d_invalidate((NspGraphic *) objs3d);
       ret = (NspObject *) objs3d ;
     }
@@ -5711,7 +5706,7 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       NspAxes *axe;
       NspFigure *F = nsp_check_for_current_figure();
       if ( F == NULL) return RET_BUG;
-      axe = nsp_check_for_axes_in_figure(F,wrect);
+      axe = nsp_check_for_axes_in_figure(F,wrect,TRUE);
       if ( axe ==  NULL) return RET_BUG;
 
       if ( wrect != NULL)

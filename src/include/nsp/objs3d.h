@@ -132,7 +132,7 @@ extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ng
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 extern NspObjs3d *nsp_check_for_current_objs3d(int create);
-extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect);
+extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect,int create);
 extern void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale);
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
 			  int Mm,int ncoord);

@@ -2683,7 +2683,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
-  Axes = nsp_check_for_axes_in_figure(F,wrect);
+  Axes = nsp_check_for_axes_in_figure(F,wrect,TRUE);
   if ( created==TRUE) nsp_figure_destroy(F);
   return Axes;
 }
@@ -2693,20 +2693,20 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
  * nsp_check_for_axes_in_figure:
  * @Xgc:
  * @wrect:
+ * @create: integer 
  *
  * checks for a figure and an axes in Xgc
- * create one if not present.
- * Xgc should not be null here.
- * this is not a definitive function just a hack.
- * since graphic should be driven by Figure Not by Xgc
+ * create one if not present and @create is %TRUE
+ * If create is %TRUE, the id of the current_axe is 
+ * changed to the id of the found or created #NspAxes
  *
- * Returns:
+ * Returns: a new #NspAxes or %NULL
  **/
 
-NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect)
+NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect, int create)
 {
   int i,l;
-  NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
+  NspObject *Obj=NULLOBJ;
   NspList *L;
   if ( F == NULL) return NULL;
   L= F->obj->children;
@@ -2719,44 +2719,37 @@ NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect)
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ && IsAxes(Obj) )
 	{
-	  Axes= Obj;
-	  if ( wrect == NULL)
+	  double *wrectA = ((NspAxes *) Obj)->obj->wrect->R;
+	  if ( wrect == NULL ||
+	       ( Abs(wrectA[0]-wrect[0])< 1.e-4
+		 && Abs(wrectA[1]-wrect[1])< 1.e-4
+		 && Abs(wrectA[2]-wrect[2])< 1.e-4
+		 && Abs(wrectA[3]-wrect[3])< 1.e-4 ))
 	    {
-	      break;
+	      if ( create )
+		{
+		  F->obj->gc->current_axe = i;
+		  F->obj->gc->current_axe_or_objs3d = i;
+		}
+	      return (NspAxes *) Obj;
 	    }
-	  if ( Abs(((NspAxes *)Axes)->obj->wrect->R[0]-wrect[0])< 1.e-4
-	       && Abs(((NspAxes *)Axes)->obj->wrect->R[1]-wrect[1])< 1.e-4
-	       && Abs(((NspAxes *)Axes)->obj->wrect->R[2]-wrect[2])< 1.e-4
-	       && Abs(((NspAxes *)Axes)->obj->wrect->R[3]-wrect[3])< 1.e-4 )
-	    {
-	      break;
-	    }
-	  Axes = NULL;
 	}
     }
-  if ( Axes == NULLOBJ)
+  /* here Axes is NULL */
+  if ( create == FALSE ) return NULL;
+  /* create a new axes */
+  if (( Obj = (NspObject *) nsp_axes_create_default("axe"))==NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L, Obj)== FAIL)
     {
-      /* create a new axes */
-      NspAxes *axe= nsp_axes_create_default("axe");
-      if ( axe == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) axe)== FAIL)
-	{
-	  nsp_axes_destroy(axe);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_axe = 1;
-      F->obj->gc->current_axe_or_objs3d = 1;
-      Axes =(NspObject *) axe;
+      nsp_axes_destroy( (NspAxes *) Obj);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_axe = i;
-      F->obj->gc->current_axe_or_objs3d = i;
-    }
-  return (NspAxes *) Axes;
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_axe = 1;
+  F->obj->gc->current_axe_or_objs3d = 1;
+  return (NspAxes *) Obj;
 }
 
 /**
@@ -2787,7 +2780,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
-  Objs3d = nsp_check_for_objs3d_in_figure(F,wrect);
+  Objs3d = nsp_check_for_objs3d_in_figure(F,wrect,TRUE);
   if ( created==TRUE) nsp_figure_destroy(F);
   return  Objs3d;
 }
@@ -2797,21 +2790,21 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
  * nsp_check_for_objs3d_in_figure:
  * @Xgc:
  * @wrect:
+ * @create: integer 
  *
  *
  * checks for a figure and a 3dobj-axes in Xgc
- * create one if not present.
- * Xgc should not be null here.
- * this is not a definitive function just a hack.
- * since graphic should be driven by Figure Not by Xgc
+ * create one if not present and @create is %TRUE
+ * If create is %TRUE, the id of the current_axe is 
+ * changed to the id of the found or created #NspAxes
  *
- * Returns:
+ * Returns: a new #NspObjs3d or %NULL
  **/
 
-NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
+NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect,int create)
 {
   int i,l ;
-  NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
+  NspObject *Obj=NULLOBJ;
   NspList *L;
   if ( F == NULL) return NULL;
   L= F->obj->children;
@@ -2824,45 +2817,37 @@ NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
       Obj = nsp_list_get_element(L,i);
       if ( Obj != NULLOBJ &&  IsObjs3d(Obj))
 	{
-	  Objs3d=Obj;
-	  if ( wrect == NULL)
+	  double *wrectO3 = ((NspObjs3d *) Obj)->obj->wrect->R;
+	  if ( wrect == NULL ||
+	       ( Abs(wrectO3[0]-wrect[0])< 1.e-4
+		 && Abs(wrectO3[1]-wrect[1])< 1.e-4
+		 && Abs(wrectO3[2]-wrect[2])< 1.e-4
+		 && Abs(wrectO3[3]-wrect[3])< 1.e-4 ))
 	    {
-	      break;
+	      if (create )
+		{
+		  F->obj->gc->current_objs3d = i;
+		  F->obj->gc->current_axe_or_objs3d = i;
+		}
+	      return (NspObjs3d *) Obj;
 	    }
-	  if ( Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[0]-wrect[0])< 1.e-4
-	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[1]-wrect[1])< 1.e-4
-	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[2]-wrect[2])< 1.e-4
-	       && Abs(((NspObjs3d *)Objs3d)->obj->wrect->R[3]-wrect[3])< 1.e-4 )
-	    {
-	      break;
-	    }
-	  Objs3d = NULL;
 	  break;
 	}
     }
-  if ( Objs3d == NULLOBJ)
+  if ( create == FALSE ) return NULL;
+  /* create a new obj3d */
+  if (( Obj= (NspObject *) nsp_objs3d_create_default("axe3d")) == NULL) return NULL;
+  /* store in Figure */
+  if ( nsp_list_begin_insert(L, Obj)== FAIL)
     {
-      /* create a new obj3d */
-      NspObjs3d *obj3d= nsp_objs3d_create_default("axe3d");
-      if ( obj3d == NULL) return NULL;
-      /* store in Figure */
-      if ( nsp_list_begin_insert(L,(NspObject *) obj3d)== FAIL)
-	{
-	  nsp_objs3d_destroy(obj3d);
-	  return NULL;
-	}
-      /* set figure informations in axe */
-      nsp_figure_children_link_figure(F);
-      F->obj->gc->current_objs3d = 1;
-      F->obj->gc->current_axe_or_objs3d = 1;
-      Objs3d =(NspObject *) obj3d;
+      nsp_objs3d_destroy((NspObjs3d *) Obj);
+      return NULL;
     }
-  else
-    {
-      F->obj->gc->current_objs3d = i;
-      F->obj->gc->current_axe_or_objs3d = i;
-    }
-  return (NspObjs3d *) Objs3d;
+  /* set figure informations in axe */
+  nsp_figure_children_link_figure(F);
+  F->obj->gc->current_objs3d = 1;
+  F->obj->gc->current_axe_or_objs3d = 1;
+  return (NspObjs3d *) Obj;
 }
 
 
@@ -3419,7 +3404,7 @@ static int nsp_list_delete_graphic_obj(NspFigure *F,NspList *L, NspGraphic *Obj)
  * Returns:
  **/
 
-static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
+int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 {
   NspList *L= F->obj->children;
   Cell *cloc  = L->first ;
@@ -3910,4 +3895,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3914 "figure.c"
+#line 3899 "figure.c"
