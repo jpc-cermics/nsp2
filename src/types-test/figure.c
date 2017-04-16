@@ -3570,6 +3570,10 @@ void nsp_figure_data_reset(NspFigure *F)
   Gc->thickness=  1;
   Gc->use_color=  1;
   Gc->auto_clear= FALSE;
+  Gc->current_axe = 0;
+  Gc->current_objs3d = 0;
+  Gc->current_axe_or_objs3d = 0;
+  Gc->mtlb_mode = -1;
 }
 
 
@@ -3895,4 +3899,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3899 "figure.c"
+#line 3903 "figure.c"

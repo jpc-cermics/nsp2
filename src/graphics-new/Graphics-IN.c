@@ -5698,6 +5698,7 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       if ( wrect != NULL)   memcpy(objs3d->obj->wrect->R,wrect,4*sizeof(double));
       if ( arect != NULL)   memcpy(objs3d->obj->arect->R,arect,4*sizeof(double));
       if ( frect != NULL)   memcpy(objs3d->obj->frect->R,frect,4*sizeof(double));
+      
       nsp_objs3d_invalidate((NspGraphic *) objs3d);
       ret = (NspObject *) objs3d ;
     }
@@ -5731,8 +5732,14 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       if ( clip != -1) axe->obj->clip = clip;
       if ( axesflag != -1) axe->obj->axes = axesflag;
       if ( iso != -1) axe->obj->iso = iso;
-      if ( fixed != -1) axe->obj->fixed = fixed;
-
+      if ( fixed != -1)
+	{
+	  if ( frect == NULL)
+	    {
+	      memcpy(axe->obj->rect->R,axe->obj->frect->R,4*sizeof(double));
+	    }
+	  axe->obj->fixed = fixed;
+	}
       nsp_axes_invalidate((NspGraphic *) axe);
       ret =  (NspObject *) axe;
     }

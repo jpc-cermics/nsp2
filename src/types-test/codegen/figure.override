@@ -1707,6 +1707,10 @@ void nsp_figure_data_reset(NspFigure *F)
   Gc->thickness=  1;
   Gc->use_color=  1;
   Gc->auto_clear= FALSE;
+  Gc->current_axe = 0;
+  Gc->current_objs3d = 0;
+  Gc->current_axe_or_objs3d = 0;
+  Gc->mtlb_mode = -1;
 }
 
 
