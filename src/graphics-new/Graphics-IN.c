@@ -765,6 +765,8 @@ static int int_c2dex( Stack stack, int rhs, int opt, int lhs)
 
 static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 {
+  int nb_polylines;
+  int iso=FALSE;
   int i,color,nb_poly,psize;
   NspObjs3d *objs3d;
   int *iflag;
@@ -772,6 +774,9 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   double alpha=35.0,theta=45.0,*ebox ;
   const char *leg=NULL,*legend=NULL, *box_style_str=NULL;
   int box_style = 2; /* matlab mode by default */
+  NspMatrix *Mopts[5]={NULL,NULL,NULL,NULL,NULL};
+  char *Mopt_names[]={"mark","mark_size","mark_color", "line_color", "line_thickness" };
+  enum { mark_opt, mark_size_opt, mark_color_opt, line_color_opt, line_thickness_opt};
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -781,38 +786,70 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "style",mat_int,NULLOBJ,-1},
 		      { "theta",s_double,NULLOBJ,-1},
 		      { "box_style",string,NULLOBJ,-1},
+		      { "iso",s_bool,NULLOBJ,-1},
+		      { "mark",realmat,NULLOBJ,-1},
+		      { "mark_size",realmat,NULLOBJ,-1},
+		      { "mark_color",realmat,NULLOBJ,-1},
+		      { "line_color",realmat,NULLOBJ,-1},
+		      { "line_thickness",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   /* keep same order as in opts */
-  enum  {alpha_opts, ebox_opts, flag_opts, leg_opts, style_opts, theta_opts};
+  enum  {alpha_opts, ebox_opts, flag_opts, leg_opts, style_opts, theta_opts, bow_style_opts, iso_opts };
 
   if ( rhs <= 0)
     {
       return nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1);
     }
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta,&box_style_str) == FAIL)
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,
+	       &theta,&box_style_str,&iso,&Mopts[0],&Mopts[1],&Mopts[2],&Mopts[3],&Mopts[4])== FAIL) 
     return RET_BUG;
-
+  
   if ( x->mn == 0 ) return 0;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckSameDims(NspFname(stack),1,3,x,z);
 
   if (( iflag = check_param_iflag(stack,NspFname(stack),"flag",flag,2))==NULL) return RET_BUG;
+
+  iflag[0]=Max(Min(iflag[0],8),0);
+  if ( Mebox != NULLMAT)
+    {
+      /* ebox is given then iflag[0] must be 1 or 3 or 5 or 7*/
+      if ( iflag[0] == 2 ||  iflag[0] == 4 ||  iflag[0] == 6 || iflag[0] == 8 ) iflag[0]--;
+    }
+  else
+    {
+      /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
+      if ( iflag[0] == 1 ||  iflag[0] == 3 ||  iflag[0] == 5 || iflag[0] == 7 ) iflag[0]++;
+    }
+  
   if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
   if (( legend = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
 
+  nb_polylines = (x->m == 1) ? 1 : x->n;
+  
   if ( Mstyle != NULLMAT )
     {
-      if ( Mstyle->mn != z->n)
+      if ( Mstyle->mn !=  nb_polylines || Mstyle->mn != 1 )
 	{
 	  Scierror("%s: style argument has wrong size (%d), %d values expected \n",
-		   NspFname(stack),Mstyle->mn, z->n);
+		   NspFname(stack),Mstyle->mn, nb_polylines);
 	  return RET_BUG;
 	}
     }
-  
+  for( i = 0 ; i < 5 ; i++)
+    {
+      if ( Mopts[i] == NULLMAT) continue;
+      if ( Mopts[i]->mn !=  nb_polylines || Mopts[i]->mn != 1 )
+	{
+	  Scierror("%s: %s argument has wrong size (%d), %d values expected \n",
+		   NspFname(stack),Mopt_names[i],Mopts[i]->mn, nb_polylines);
+	  return RET_BUG;
+	}
+    }
+    
   /*
    * check that iflag[1] and leg are compatible
    * i.e force visibility of axes names if they are given
@@ -831,11 +868,17 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
     {
       objs3d->obj->alpha=alpha;
     }
-  if ( opts[alpha_opts].obj != NULLOBJ)
+
+  if ( opts[theta_opts].obj != NULLOBJ)
     {
       objs3d->obj->theta=theta;
     }
 
+  if ( opts[iso_opts].obj != NULLOBJ &&  iso == TRUE)
+    {
+      iflag[0]= (Mebox == NULL) ? 4: 3;
+    }
+  
   /* use the box_style parameter if given */
   if ( box_style_str != NULL)
     {
@@ -855,6 +898,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   psize= (x->m==1) ? x->n : x->m;
   for ( i = 0 ; i < nb_poly ; i++)
     {
+      int mark,mark_color,mark_size, use_line, use_mark;
+      int line_color, line_thickness;
       NspObject *gobj;
       NspMatrix *M1;
       if ((M1 = nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return RET_BUG;
@@ -862,31 +907,47 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       memcpy(M1->R+psize,y->R + i*(psize),psize*sizeof(double));
       memcpy(M1->R+2*psize,z->R + i*(psize),psize*sizeof(double));
       /* check the color */
-      if ( Mstyle == NULL)
-	color=-1;
-      else if ( Mstyle->mn == 1)
-	color= Mstyle->R[0];
-      else
-	color= Mstyle->R[i];
-      if ( Mstyle == NULL || color >= 0)
+      color = ( Mstyle == NULL) ? 1 : (( Mstyle->mn == 1) ? Mstyle->R[0] : Mstyle->R[i]);
+      mark = (Mopts[mark_opt]==NULL) ? -2 : Mopts[mark_opt]->R[i];
+      mark = (( Mstyle != NULL) && color < 0 ) ? -color : mark;
+      mark_size = (Mopts[mark_size_opt]==NULL) ? -1: Mopts[mark_size_opt]->R[i];
+      mark_color = (Mopts[mark_color_opt]==NULL) ? -1: Mopts[mark_color_opt]->R[i];
+      line_color =  (Mopts[line_color_opt]==NULL) ? -2 : Mopts[line_color_opt]->R[i];
+      line_color = (( Mstyle != NULL) && color >= 0 ) ? color : line_color;
+      use_line = line_color != -2 || ( Mstyle == NULL && mark == -2 );
+      use_mark = mark != -2;
+      if ( use_mark )
+	{
+	  NspMatrix *M1c = M1;
+	  if ( use_line )
+	    {
+	      /* we have both mark and line we must copy */
+	      if ((M1c =  nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return RET_BUG;
+	      memcpy(M1c->R,M1->R,M1c->mn*sizeof(double));
+	    }
+	  gobj = (NspObject *)nsp_points3d_create("pts",M1c,NULL,mark_color,mark,mark_size,NULL,0,-1,NULL);
+	  if ( gobj == NULL)  return RET_BUG;
+	  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)
+	    {
+	      Scierror("Error: failed to insert contour in Figure\n");
+	      return RET_BUG;
+	    }
+	}
+      if ( use_line )
 	{
 	  NspMatrix *Mcol;
 	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return RET_BUG;
-	  Mcol->R[0]=color;
+	  Mcol->R[0]= line_color;
 	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,-1,NULL);
 	  if ( gobj == NULL)  return RET_BUG;
-	}
-      else
-	{
-	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,-1,NULL);
-	  if ( gobj == NULL)  return RET_BUG;
-	}
-      if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)
-	{
-	  Scierror("Error: failed to insert contour in Figure\n");
-	  return RET_BUG;
+	  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)
+	    {
+	      Scierror("Error: failed to insert contour in Figure\n");
+	      return RET_BUG;
+	    }
 	}
     }
+  if (iflag[0] != 0 ) objs3d->obj->scale_flag = iflag[0];
   nsp_strf_objs3d( objs3d , ebox , iflag[0]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return 0;
@@ -952,6 +1013,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 
 static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d2 func2,f3d3 func3)
 {
+  int iso=FALSE;
   int mesh=TRUE,mesh_only=FALSE, shade=TRUE;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
@@ -977,10 +1039,16 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 		      { "shade", s_bool,NULLOBJ,-1},
 		      { "box_style",string,NULLOBJ,-1},
 		      { "surface_color",s_int,NULLOBJ,-1},
+		      { "iso",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
+  /* keep same order as in opts */
+  enum { args_opts, alpha_opts, colormap_opts, colors_opts, ebox_opts, flag_opts, 
+	 leg_opts, theta_opts, mesh_opts, mesh_only_opts, shade_opts, box_style_opts, 
+	 surface_color_opts, iso_opts};
+  
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts,&args,&alpha,&colormap,
-	       &Mcolors,&Mebox,&Mflag,&leg,&theta,&mesh,&mesh_only,&shade,&box_style_str,&surface_color) == FAIL)
+	       &Mcolors,&Mebox,&Mflag,&leg,&theta,&mesh,&mesh_only,&shade,&box_style_str,&surface_color,&iso) == FAIL)
     return RET_BUG;
 
   if (x->mn == 0) { return 0;}
@@ -1064,8 +1132,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
     {
       ret= RET_BUG; goto end;
     }
-
-
+    
   if ( x->mn == z->mn && x->mn == z->mn && x->mn != 1)
     {
       if (! ( x->m == y->m && y->m == z->m && x->n == y->n && y->n == z->n)) {
@@ -1088,7 +1155,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   /* check that iflag[1] and ebox are compatible */
   if ( Mebox != NULLMAT)
     {
-      /* ebox is given then iflag[1] must be 1 or 3 or 5 */
+      /* ebox is given then iflag[1] must be 1 or 3 or 5 or 7*/
       if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 || iflag[1] == 8 ) iflag[1]--;
     }
   else
@@ -1096,7 +1163,12 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
       if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
     }
-
+  
+  if ( opts[iso_opts].obj != NULLOBJ &&  iso == TRUE)
+    {
+      iflag[1]= (Mebox == NULL) ? 4: 3;
+    }
+  
   /* change iflag according to other options
    * check that iflag[2] and leg are compatible
    * i.e force visibility of axes names if they are given
