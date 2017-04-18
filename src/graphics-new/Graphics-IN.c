@@ -832,9 +832,9 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   
   if ( Mstyle != NULLMAT )
     {
-      if ( Mstyle->mn !=  nb_polylines || Mstyle->mn != 1 )
+      if ( Mstyle->mn !=  nb_polylines && Mstyle->mn != 1 )
 	{
-	  Scierror("%s: style argument has wrong size (%d), %d values expected \n",
+	  Scierror("%s: style argument has wrong size (%d), %d values or 1 value expected\n",
 		   NspFname(stack),Mstyle->mn, nb_polylines);
 	  return RET_BUG;
 	}
@@ -842,9 +842,9 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   for( i = 0 ; i < 5 ; i++)
     {
       if ( Mopts[i] == NULLMAT) continue;
-      if ( Mopts[i]->mn !=  nb_polylines || Mopts[i]->mn != 1 )
+      if ( Mopts[i]->mn !=  nb_polylines && Mopts[i]->mn != 1 )
 	{
-	  Scierror("%s: %s argument has wrong size (%d), %d values expected \n",
+	  Scierror("%s: %s argument has wrong size (%d), %d values or 1 value expected\n",
 		   NspFname(stack),Mopt_names[i],Mopts[i]->mn, nb_polylines);
 	  return RET_BUG;
 	}
@@ -899,7 +899,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < nb_poly ; i++)
     {
       int mark,mark_color,mark_size, use_line, use_mark;
-      int line_color, line_thickness;
+      int line_color;
       NspObject *gobj;
       NspMatrix *M1;
       if ((M1 = nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return RET_BUG;
@@ -910,9 +910,12 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       color = ( Mstyle == NULL) ? 1 : (( Mstyle->mn == 1) ? Mstyle->R[0] : Mstyle->R[i]);
       mark = (Mopts[mark_opt]==NULL) ? -2 : Mopts[mark_opt]->R[i];
       mark = (( Mstyle != NULL) && color < 0 ) ? -color : mark;
-      mark_size = (Mopts[mark_size_opt]==NULL) ? -1: Mopts[mark_size_opt]->R[i];
-      mark_color = (Mopts[mark_color_opt]==NULL) ? -1: Mopts[mark_color_opt]->R[i];
-      line_color =  (Mopts[line_color_opt]==NULL) ? -2 : Mopts[line_color_opt]->R[i];
+      mark_size = (Mopts[mark_size_opt]==NULL) ? -1:
+	((Mopts[mark_size_opt]->mn == 1 ) ? Mopts[mark_size_opt]->R[0]: Mopts[mark_size_opt]->R[i]);
+      mark_color = (Mopts[mark_color_opt]==NULL) ? -1:
+	((Mopts[mark_color_opt]->mn == 1 ) ? Mopts[mark_color_opt]->R[0]: Mopts[mark_color_opt]->R[i]);
+      line_color =  (Mopts[line_color_opt]==NULL) ? -2 :	
+	((Mopts[line_color_opt]->mn == 1 ) ? Mopts[line_color_opt]->R[0]: Mopts[line_color_opt]->R[i]);
       line_color = (( Mstyle != NULL) && color >= 0 ) ? color : line_color;
       use_line = line_color != -2 || ( Mstyle == NULL && mark == -2 );
       use_mark = mark != -2;
