@@ -1,5 +1,11 @@
 ;; -*- scheme -*-
 
+;; a polyline describe by Mcoord=[x;y;z];
+;; color can be a scalar or a matrix
+;; giving the the color for each point of the
+;; polyline.
+;; thickness is a scalar
+
 (define-objectref Polyline3d
   (in-module "Polyline3d")
   (parent "Graphic")
@@ -7,9 +13,10 @@
   (fields
     '("NspMatrix*" "Mcoord")
     '("void*"      "Mcoord_l"  "hidden" "NULL" )
-    '("NspMatrix*" "Mcolor")
+    '("NspMatrix*" "Mcolor") ;; color 1 for all points or 1 for each point
+    '("int" "thickness" "std" "-1")
     '("int*" "pos" "hidden" )
-    '("int"  "max" "hidden" "-1" ) ; do not draw points after max 
+    '("int"  "max" "hidden" "-1" );; do not draw points for indices after max 
     )
   (gtype-id "Polyline3d")
 )

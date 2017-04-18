@@ -48,6 +48,7 @@ struct _nsp_polyline3d {
   NspMatrix* Mcoord;
   void* Mcoord_l;
   NspMatrix* Mcolor;
+  int thickness;
   int* pos;  int pos_length;
   int max;
   int ref_count;
@@ -79,7 +80,7 @@ NspPolyline3d *new_polyline3d();
 
 #define NULLPOLYLINE3D (NspPolyline3d*) 0
 
-extern NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,int max,NspTypeBase *type);
+extern NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int thickness,int* pos, int pos_length,int max,NspTypeBase *type);
 extern NspPolyline3d *nsp_polyline3d_create_default(const char *name);
 
 /* from NspPolyline3dObj.c */
@@ -110,7 +111,7 @@ extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int nsp_polyline3d_add_pts(NspGraphic *P,int k);
 
-#line 114 "./polyline3d.h"
+#line 115 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -144,6 +145,6 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 148 "./polyline3d.h"
+#line 149 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

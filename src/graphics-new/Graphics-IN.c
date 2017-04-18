@@ -775,8 +775,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   const char *leg=NULL,*legend=NULL, *box_style_str=NULL;
   int box_style = 2; /* matlab mode by default */
   NspMatrix *Mopts[5]={NULL,NULL,NULL,NULL,NULL};
-  char *Mopt_names[]={"mark","mark_size","mark_color", "line_color", "line_thickness" };
-  enum { mark_opt, mark_size_opt, mark_color_opt, line_color_opt, line_thickness_opt};
+  char *Mopt_names[]={"mark","mark_size","mark_color", "line_thickness", "line_color" };
+  enum { mark_opt, mark_size_opt, mark_color_opt, line_thickness_opt, line_color_opt, };
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -790,8 +790,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "mark",realmat,NULLOBJ,-1},
 		      { "mark_size",realmat,NULLOBJ,-1},
 		      { "mark_color",realmat,NULLOBJ,-1},
-		      { "line_color",realmat,NULLOBJ,-1},
 		      { "line_thickness",realmat,NULLOBJ,-1},
+		      { "line_color",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   /* keep same order as in opts */
@@ -839,17 +839,29 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  for( i = 0 ; i < 5 ; i++)
+  for( i = 0 ; i < 4 ; i++)
     {
       if ( Mopts[i] == NULLMAT) continue;
-      if ( Mopts[i]->mn !=  nb_polylines && Mopts[i]->mn != 1 )
+      if ( Mopts[i]->mn !=  nb_polylines &&  Mopts[i]->mn != 1 )
 	{
 	  Scierror("%s: %s argument has wrong size (%d), %d values or 1 value expected\n",
 		   NspFname(stack),Mopt_names[i],Mopts[i]->mn, nb_polylines);
 	  return RET_BUG;
 	}
     }
-    
+  
+  /* special case for line_color */
+  i = line_color_opt;
+  if ( Mopts[i] != NULLMAT)
+    {
+      if ( Mopts[i]->mn !=  nb_polylines &&  Mopts[i]->mn != 1 &&  Mopts[i]->mn != x->mn )
+	{
+	  Scierror("%s: %s argument has wrong size (%d), 1 value or %d or %d values expected\n",
+		   NspFname(stack),Mopt_names[i],Mopts[i]->mn, nb_polylines, x->mn);
+	  return RET_BUG;
+	}
+    }
+  
   /*
    * check that iflag[1] and leg are compatible
    * i.e force visibility of axes names if they are given
@@ -899,7 +911,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < nb_poly ; i++)
     {
       int mark,mark_color,mark_size, use_line, use_mark;
-      int line_color;
+      int line_color, line_thickness;
       NspObject *gobj;
       NspMatrix *M1;
       if ((M1 = nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return RET_BUG;
@@ -917,6 +929,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       line_color =  (Mopts[line_color_opt]==NULL) ? -2 :	
 	((Mopts[line_color_opt]->mn == 1 ) ? Mopts[line_color_opt]->R[0]: Mopts[line_color_opt]->R[i]);
       line_color = (( Mstyle != NULL) && color >= 0 ) ? color : line_color;
+      line_thickness = (Mopts[line_thickness_opt]==NULL) ? -1 :
+	((Mopts[line_thickness_opt]->mn == 1 ) ? Mopts[line_thickness_opt]->R[0] : Mopts[line_thickness_opt]->R[i]);
       use_line = line_color != -2 || ( Mstyle == NULL && mark == -2 );
       use_mark = mark != -2;
       if ( use_mark )
@@ -939,9 +953,17 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       if ( use_line )
 	{
 	  NspMatrix *Mcol;
-	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return RET_BUG;
-	  Mcol->R[0]= line_color;
-	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,-1,NULL);
+	  if ( Mopts[line_color_opt]->mn == x->mn )
+	    {
+	      if ((Mcol = nsp_matrix_create("col",'r',1,x->mn))== NULLMAT) return RET_BUG;
+	      memcpy(Mcol->R,Mopts[line_color_opt]->R + i*x->m,x->m*sizeof(double));
+	    }
+	  else
+	    {
+	      if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return RET_BUG;
+	      Mcol->R[0]= line_color;
+	    }
+	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,line_thickness,NULL,0,-1,NULL);
 	  if ( gobj == NULL)  return RET_BUG;
 	  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)
 	    {
