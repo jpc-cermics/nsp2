@@ -817,8 +817,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
-#line 822 "polyline.c"
+#line 821 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -853,7 +852,7 @@ void nsp_initialize_Polyline_types(void)
   new_type_polyline(T_BASE);
 }
 
-#line 78 "codegen/polyline.override"
+#line 77 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1066,4 +1065,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1070 "polyline.c"
+#line 1069 "polyline.c"

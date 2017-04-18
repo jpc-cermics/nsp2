@@ -103,6 +103,77 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
+%%
+override-attr Polyline3d.Mcoord
+
+static NspObject *_wrap_polyline3d_get_Mcoord(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspPolyline3d *) self)->obj->Mcoord;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_polyline3d_get_obj_Mcoord(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspPolyline3d *) self)->obj->Mcoord);
+  return (NspObject *) ret;
+}
+
+static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O)
+{
+  nsp_polyline3d *L = ((NspPolyline3d *) self)->obj;
+  NspMatrix *Mcoord = (NspMatrix *) O;
+  if ( ! IsMat(O) ) return FAIL;
+  if ( Mcoord->m != L->Mcoord->m || Mcoord->n != L->Mcoord->n ) 
+    {
+      Scierror("Error: Mcoord attribute has wrong size expecting %dx%d\n",
+               L->Mcoord->m,L->Mcoord->n);
+      return FAIL;
+    }
+  if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+    if (((NspPolyline3d *) self)->obj->Mcoord != NULL ) 
+    nsp_matrix_destroy(((NspPolyline3d *) self)->obj->Mcoord);
+  ((NspPolyline3d *) self)->obj->Mcoord= Mcoord;
+  return OK;
+}
+
+%%
+override-attr Polyline3d.Mcolor
+
+static NspObject *_wrap_polyline3d_get_Mcolor(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspPolyline3d *) self)->obj->Mcolor;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_polyline3d_get_obj_Mcolor(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspPolyline3d *) self)->obj->Mcolor);
+  return (NspObject *) ret;
+}
+
+static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *Mcolor = (NspMatrix *)O;
+  nsp_polyline3d *L = ((NspPolyline3d *) self)->obj;
+  if ( ! IsMat(O) ) return FAIL;
+  if ( !( Mcolor->mn == 1 || Mcolor->mn ==  L->Mcoord->m))
+    {
+      Scierror("Error: Mcolor attribute should be of length 1 or %d\n",
+	       L->Mcoord->m);
+      return FAIL;
+    }
+  if ((Mcolor = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspPolyline3d *) self)->obj->Mcolor != NULL ) 
+    nsp_matrix_destroy(((NspPolyline3d *) self)->obj->Mcolor);
+  ((NspPolyline3d *) self)->obj->Mcolor= Mcolor;
+  return OK;
+}
 
 %%
 last

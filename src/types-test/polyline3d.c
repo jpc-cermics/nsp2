@@ -627,6 +627,8 @@ static NspMethods *polyline3d_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
+#line 108 "codegen/polyline3d.override"
+
 static NspObject *_wrap_polyline3d_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -644,14 +646,24 @@ static NspObject *_wrap_polyline3d_get_obj_Mcoord(void *self,const char *attr, i
 
 static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
-  NspMatrix *Mcoord;
+  nsp_polyline3d *L = ((NspPolyline3d *) self)->obj;
+  NspMatrix *Mcoord = (NspMatrix *) O;
   if ( ! IsMat(O) ) return FAIL;
+  if ( Mcoord->m != L->Mcoord->m || Mcoord->n != L->Mcoord->n ) 
+    {
+      Scierror("Error: Mcoord attribute has wrong size expecting %dx%d\n",
+               L->Mcoord->m,L->Mcoord->n);
+      return FAIL;
+    }
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspPolyline3d *) self)->obj->Mcoord != NULL ) 
+    if (((NspPolyline3d *) self)->obj->Mcoord != NULL ) 
     nsp_matrix_destroy(((NspPolyline3d *) self)->obj->Mcoord);
   ((NspPolyline3d *) self)->obj->Mcoord= Mcoord;
   return OK;
 }
+
+#line 666 "polyline3d.c"
+#line 144 "codegen/polyline3d.override"
 
 static NspObject *_wrap_polyline3d_get_Mcolor(void *self,const char *attr)
 {
@@ -670,8 +682,15 @@ static NspObject *_wrap_polyline3d_get_obj_Mcolor(void *self,const char *attr, i
 
 static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O)
 {
-  NspMatrix *Mcolor;
+  NspMatrix *Mcolor = (NspMatrix *)O;
+  nsp_polyline3d *L = ((NspPolyline3d *) self)->obj;
   if ( ! IsMat(O) ) return FAIL;
+  if ( !( Mcolor->mn == 1 || Mcolor->mn ==  L->Mcoord->m))
+    {
+      Scierror("Error: Mcolor attribute should be of length 1 or %d\n",
+	       L->Mcoord->m);
+      return FAIL;
+    }
   if ((Mcolor = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyline3d *) self)->obj->Mcolor != NULL ) 
     nsp_matrix_destroy(((NspPolyline3d *) self)->obj->Mcolor);
@@ -679,6 +698,7 @@ static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O
   return OK;
 }
 
+#line 702 "polyline3d.c"
 static NspObject *_wrap_polyline3d_get_thickness(void *self,const char *attr)
 {
   int ret;
@@ -714,7 +734,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 718 "polyline3d.c"
+#line 738 "polyline3d.c"
 
 
 #line 98 "codegen/polyline3d.override"
@@ -726,8 +746,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
-#line 731 "polyline3d.c"
+#line 750 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -762,7 +781,7 @@ void nsp_initialize_Polyline3d_types(void)
   new_type_polyline3d(T_BASE);
 }
 
-#line 109 "codegen/polyline3d.override"
+#line 180 "codegen/polyline3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1049,4 +1068,4 @@ extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1053 "polyline3d.c"
+#line 1072 "polyline3d.c"

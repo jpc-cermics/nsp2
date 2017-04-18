@@ -953,7 +953,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       if ( use_line )
 	{
 	  NspMatrix *Mcol;
-	  if ( Mopts[line_color_opt]->mn == x->mn )
+	  if ( Mopts[line_color_opt] != NULL && Mopts[line_color_opt]->mn == x->mn )
 	    {
 	      if ((Mcol = nsp_matrix_create("col",'r',1,x->mn))== NULLMAT) return RET_BUG;
 	      memcpy(Mcol->R,Mopts[line_color_opt]->R + i*x->m,x->m*sizeof(double));
