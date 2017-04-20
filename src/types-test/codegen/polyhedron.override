@@ -388,10 +388,12 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   if ( color != 0 &&  nsp_obj3d_orientation(x, y, m) != -1 )
     {
+      int back_color;
       /* le repère de la caméra est indirect ! */
-      color = ( Q_nb_back_colors == 1 ) ? Q_back_color[0] :  Q_back_color[j];
+      back_color = ( Q_nb_back_colors == 1 ) ? Q_back_color[0] :  Q_back_color[j];
+      if ( back_color != -2 ) color= back_color;
     }
-
+  
   if ( ! Q->mesh )
     {
       /* do not draw the mesh */
@@ -409,64 +411,6 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 }
 
 #ifdef  WITH_OPENGL
-
-#if 0
-static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
-{
-  nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
-  int i,j, m;
-  double x_def[128], y_def[128], z_def[128];
-  double *x=x_def, *y=y_def, *z = z_def;
-  int numpt, *current_vertex, color;
-
-  int Q_nb_coords = Q->Mcoord->m;
-  double * Q_coord = Q->Mcoord->R;
-  int Q_nb_vertices_per_face = Q->Mface->m;
-  int Q_nb_faces = Q->Mface->n;
-  int * Q_face = Q->Mface->I;
-  int Q_nb_colors = Q->Mcolor->mn;
-  int * Q_color =  Q->Mcolor->I;
-  /*   int Q_nb_back_colors = Q->Mback_color->mn ; */
-  /* int * Q_back_color =  Q->Mback_color->I;*/
-  int foreground_color = -1,cpat;
-
-  m = Q_nb_vertices_per_face;
-
-  if ( m > 128 )
-    {
-      x = graphic_alloc(0,m,sizeof(double));
-      y = graphic_alloc(1,m,sizeof(double));
-      z = graphic_alloc(2,m,sizeof(double));
-    }
-
-  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
-  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
-  for ( j = 0 ; j < Q_nb_faces ; j++ )
-    {
-      int stop = FALSE;
-      current_vertex = &(Q_face[m*j]);
-      for (i = 0 ; i < m ; i++)
-	{
-	  numpt = current_vertex[i]-1;
-	  x[i] = Q_coord[numpt];
-	  y[i] = Q_coord[numpt+Q_nb_coords];
-	  z[i] = Q_coord[numpt+2*Q_nb_coords];
-	  if ( ISNAN(z[i]) || isinf(z[i]))
-	    {
-	      stop= TRUE;
-	    }
-	}
-      if ( stop == TRUE ) continue;
-      color = ( Q_nb_colors == 1 ) ? Q_color[0]: Q_color[j];
-      /* le contour du polygone ne doit pas apparaitre */
-      if ( ! Q->mesh ) 	color = -color;
-      /* color = 0;  permet de voir uniquement le maillage */
-      /* draw one face */
-      fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
-    }
-  Xgc->graphic_engine->xset_color(Xgc,cpat);
-}
-#endif
 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
