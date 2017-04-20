@@ -2557,7 +2557,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
 	  vertex[4*i+3] = 1.0;
 	}
       Xgc->graphic_engine->xset_color(Xgc,foreground_color);
-      fillpolylines3D(Xgc, vertex, &B->color, np, m);
+      fillpolylines3D(Xgc, vertex, &B->color, B->color, np, m);
       return;
     }
 #endif

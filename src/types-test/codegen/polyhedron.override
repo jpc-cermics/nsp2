@@ -463,7 +463,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       if ( ! Q->mesh ) 	color = -color;
       /* color = 0;  permet de voir uniquement le maillage */
       /* draw one face */
-      fillpolylines3D(Xgc, vertex, &color, 1 , m);
+      fillpolylines3D(Xgc, vertex, &color, Q->Mback_color->I[0] , 1 , m);
     }
   Xgc->graphic_engine->xset_color(Xgc,cpat);
 }

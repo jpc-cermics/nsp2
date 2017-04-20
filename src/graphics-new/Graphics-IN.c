@@ -1398,7 +1398,9 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   /* fix the color according to flag */
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
-
+  /* back color 
+   */
+  pol->obj->Mback_color->I[0]=back_color;
   /* parameters for box drawing */
   nsp_set_box_parameters(objs3d, flag[2]);
 
@@ -1447,6 +1449,8 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
   /* parameters for box drawing */
   nsp_set_box_parameters(objs3d, flag[2]);
 
+  pol->obj->back_color= back_color;
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
@@ -1491,6 +1495,8 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
     }
 
   pol->obj->shade = shade;
+
+  pol->obj->back_color= back_color;
 
   /* parameters for box drawing */
   nsp_set_box_parameters(objs3d, flag[2]);

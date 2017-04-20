@@ -475,7 +475,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  color = Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh == FALSE  ) color = - color;
 	  if ( Q->mesh_only == TRUE ) color = 0;
-	  fillpolylines3D(Xgc, vertex , &color, np, m);
+	  fillpolylines3D(Xgc, vertex , &color, Q->back_color, np, m);
 	}
       else
 	{
@@ -486,7 +486,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	    }
 	  if ( Q->mesh == FALSE  ) colors[0] = - colors[0];
 	  /* colors are given by cvect of size (*p) times (*q) */
-	  fillpolylines3D_shade(Xgc,vertex,colors, np,m);
+	  fillpolylines3D_shade(Xgc,vertex,colors, Q->back_color, np,m);
 	}
     }
   Xgc->graphic_engine->xset_color(Xgc,cpat);

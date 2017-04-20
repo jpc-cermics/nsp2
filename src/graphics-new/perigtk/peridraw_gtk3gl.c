@@ -1469,9 +1469,9 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
  * when we have one color for each node
  **/
 
-static void fillpolyline3D_shade(BCG *Xgc, float *vertex,int *colors, int n,int closeflag) ;
+static void fillpolyline3D_shade(BCG *Xgc, float *vertex,int *colors,int back_color, int n,int closeflag) ;
 
-void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
+void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int back_color, int n, int p)
 {
   int dash,color,i;
 
@@ -1486,7 +1486,7 @@ void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 	  /* fill + boundaries **/
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D_shade(Xgc, vertex+4*(p)*i,fillvect+(p)*i,p,1);
+	  fillpolyline3D_shade(Xgc, vertex+4*(p)*i,fillvect+(p)*i,back_color, p,1);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
@@ -1502,7 +1502,7 @@ void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 	}
       else
 	{
-	  fillpolyline3D_shade(Xgc, vertex + 4*(p)*i, fillvect+(p)*i,p,1);
+	  fillpolyline3D_shade(Xgc, vertex + 4*(p)*i, fillvect+(p)*i, back_color,p,1);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
@@ -1511,7 +1511,7 @@ void fillpolylines3D_shade(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 }
 
 
-static void fillpolyline3D_shade(BCG *Xgc, float *vertex, int *colors, int n,int closeflag)
+static void fillpolyline3D_shade(BCG *Xgc, float *vertex, int *colors, int back_color, int n,int closeflag)
 {
   double rgb[3];
   GLfloat vertex_colors[4*4];
@@ -1547,7 +1547,7 @@ static void fillpolyline3D_shade(BCG *Xgc, float *vertex, int *colors, int n,int
  **/
 
 
-void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
+void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect, int back_color, int n, int p)
 {
   int dash,color,i;
 
@@ -1562,7 +1562,7 @@ void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
 	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
-	  fillpolyline3D(Xgc, vertex+ 4*(p)*i, p,1);
+	  fillpolyline3D(Xgc, vertex+ 4*(p)*i, back_color, p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -1578,7 +1578,7 @@ void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
       else
 	{
 	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
-	  fillpolyline3D(Xgc, vertex + 4*(p)*i, p,1);
+	  fillpolyline3D(Xgc, vertex + 4*(p)*i, back_color, p,1);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
@@ -1586,7 +1586,7 @@ void fillpolylines3D(BCG *Xgc, float *vertex, int *fillvect,int n, int p)
   Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
-static void fillpolyline3D(BCG *Xgc, float *vertex, int n, int closeflag)
+static void fillpolyline3D(BCG *Xgc, float *vertex, int back_color, int n, int closeflag)
 {
   double rgb[3];
   GLfloat vertex_colors[4];
