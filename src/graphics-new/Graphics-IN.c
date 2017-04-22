@@ -3060,7 +3060,7 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   if ( Mstyle != NULL)
     {
       if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
-	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",
+	Scierror("%s: style has a wrong length (%d), expecting (%d) or (1)\n",
 		 NspFname(stack),Mstyle->mn,x->mn/2);
 	return RET_BUG;
       }
@@ -3069,7 +3069,7 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   if ( Mcolor != NULL)
     {
       if ( Mcolor->mn != x->mn/2 && Mcolor->mn != 1 ) {
-	Scierror("%s: color has a wrong size (%d), expecting (%d) or (1)\n",
+	Scierror("%s: color has a wrong length (%d), expecting (%d) or (1)\n",
 		 NspFname(stack),Mcolor->mn,x->mn/2);
 	return RET_BUG;
       }
@@ -3078,12 +3078,12 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   if ( Mthickness != NULL)
     {
       if ( Mthickness->mn != x->mn/2 && Mthickness->mn != 1 ) {
-	Scierror("%s: thickness has a wrong size (%d), expecting (%d) or (1)\n",
+	Scierror("%s: thickness has a wrong length (%d), expecting (%d) or (1)\n",
 		 NspFname(stack),Mthickness->mn,x->mn/2);
 	return RET_BUG;
       }
     }
-
+  
   if (( axe=  nsp_check_for_current_axes(TRUE))== NULL) return RET_BUG;
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;

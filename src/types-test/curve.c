@@ -1055,7 +1055,6 @@ static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M)
 
 static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
-  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double *xm=NULL,*ym=NULL;
   int n= M->m+2;
   if (M->m == 0) return ;
@@ -1074,7 +1073,8 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   ym[M->m+1]=0.0;
   if ( C->obj->color >= -1 )
     {
-      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
+      int c_color;
+      if ( C->obj->color >= 0 ) c_color= Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
       if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
@@ -1149,8 +1149,10 @@ static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,dou
   /* */
   if ( C->obj->color >= -1 )
     {
-      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
+      int c_color=0;
+      if ( C->obj->color >= 0 ) c_color= Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,p,1);
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,p,0);
   return P;
@@ -1252,4 +1254,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1256 "curve.c"
+#line 1258 "curve.c"

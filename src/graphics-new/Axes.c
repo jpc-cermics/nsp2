@@ -38,6 +38,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
                           int grid_color, char logflag, int seg_flag);
 static double axes_number2str(char dir,char xy_type,char *res,char **str,const char *format,const char *c_format,const double *x,int i);
 static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
+static void draw_segment(BCG *Xgc, double *vx, double *vy, int color);
 
 /**
  * nsp_graphic_titles:
@@ -403,9 +404,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  xd = x_convert(xy_type, x , Nx-1);
 	  vx[1] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
 	  vy[1] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_color(Xgc,ticscolor);
-	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,NULL,NULL);
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+	  draw_segment(Xgc,vx,vy, ticscolor);
 	}
       /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)
@@ -529,9 +528,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  yd = y_convert(xy_type, y , Ny-1);
 	  vx[1] =  inint(XScaleR_d(Xgc->scales,x[0],yd));
 	  vy[1] = xm[0]= inint(YScaleR_d(Xgc->scales,x[0],yd));
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_color(Xgc,ticscolor);
-	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,NULL,NULL);
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+	  draw_segment(Xgc,vx,vy, ticscolor);
 	}
       /* loop on the ticks */
       for (i=0 ; i < Ny ; i++)
@@ -570,7 +567,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 
-	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_color(Xgc,textcolor);
+	  if ( textcolor != -1 ) color_kp=Xgc->graphic_engine->xset_color(Xgc,textcolor);
 	  if ( logflag == 'l' )
 	    {
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, auto_size);
@@ -648,10 +645,9 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,
 			  int grid_color, char logflag, int seg_flag)
 {
-  int Nx=0,Ny=0;
+  int Nx=0, Ny=0, i;
   double vxx,xd,yd,d_barlength;
   double vx[2],vy[2];
-  int i, ns=2, color_kp=0;
 
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
@@ -674,11 +670,6 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
       break;
     default:
       Sciprintf("nsp_axis_grid: wrong type argument xy_type\r\n");
-    }
-
-  if ( grid_color != -1 )
-    {
-      color_kp = Xgc->graphic_engine->xget_color(Xgc);
     }
 
   if ( grid_color == 0)
@@ -713,9 +704,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  yd = y[0] + d_barlength;
 	  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,grid_color);
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
-	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+	  draw_segment(Xgc,vx,vy, grid_color);
 	  /* loop on subtics for log only  */
 	  if ( i < Nx-1 && logflag == 'l')
 	    {
@@ -732,9 +721,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	      for ( j = 2 ; j < 10; j++)
 		{
 		  vx[0]=vx[1]= xi +  (xl-xi)*log(j)/log(10.0);
-		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,grid_color);
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
-		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+		  draw_segment(Xgc,vx,vy, grid_color);
 		}
 	    }
 	}
@@ -752,9 +739,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  xd = x[0] + d_barlength;
 	  vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
 	  vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
-	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,grid_color);
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
-	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+	  draw_segment(Xgc,vx,vy, grid_color);
 	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Ny-1 && logflag == 'l' )
 	    {
@@ -771,18 +756,11 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	      for ( j = 2 ; j < 10; j++)
 		{
 		  vy[0]=vy[1]= yi -  (yi-yl)*log(j)/log(10.0);
-		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,grid_color);
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
-		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+		  draw_segment(Xgc,vx,vy, grid_color);
 		}
 	    }
 	}
       break;
-    }
-  /* reset to current color */
-  if ( grid_color != -1 )
-    {
-      Xgc->graphic_engine->xset_color(Xgc,color_kp);
     }
 }
 
@@ -860,9 +838,9 @@ static void nsp_draw_frame_rectangle(BCG *Xgc)
 
 static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
 {
-  int ccolor  = Xgc->graphic_engine->xget_color(Xgc);
+  int c_color;
   if (bg <= 0) return;
-  Xgc->graphic_engine->xset_color(Xgc,bg);
+  c_color= Xgc->graphic_engine->xset_color(Xgc,bg);
   if ( Xgc->scales->cosa == 1.0 )
     {
       double rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
@@ -883,7 +861,7 @@ static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
       Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,4,1);
       /*Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,4,1);*/
     }
-  Xgc->graphic_engine->xset_color(Xgc,ccolor);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
 }
 
 static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str)
@@ -982,7 +960,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 			    const int *mark,const int *mark_size,
 			    const int *mark_color,const int *width,const int *color,
 			    char **legends,double box[4],
-			    int get_box,double xoffset,double yoffset,int c_color,int fg,const char *sep);
+			    int get_box,double xoffset,double yoffset,int fg,const char *sep);
 
 /*----------------------------------------------------
  *  legend="leg1@leg2@leg3@...."
@@ -995,7 +973,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
 		 const int *mark,const int *mark_size, const int *mark_color,const int *width,const int *color,
 		 char **legend,const char *sep)
 {
-  int fg,old_dash,pat;
+  int fg, c_color;
   double rect[4];
   int xx=0,yy=0;
   double box[4];
@@ -1019,15 +997,14 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
 
   Xgc->graphic_engine->boundingbox(Xgc,"pl",xx,yy,rect);
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
-  old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
-  pat = Xgc->graphic_engine->xset_color(Xgc,fg);
+  c_color= Xgc->graphic_engine->xset_color(Xgc,fg);
 
   /* length for the tick zone associated to the legend */
   xoffset= (Xgc->scales->Irect.width)/20.0;
   /* y offset between legends */
   yoffset= rect[3];
   box[0]=box[1]=0;
-  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,TRUE,xoffset,yoffset,pat,fg,sep);
+  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,TRUE,xoffset,yoffset,fg,sep);
 
   switch (pos)
     {
@@ -1037,7 +1014,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y;
       box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
       box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     case legend_urm:
       /* upper right margin */
@@ -1045,7 +1022,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y;
       box[0] += xoffset/2.0;
       box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     case  legend_ul:
       /* upper left position  of the legend box */
@@ -1053,7 +1030,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y;
       box[0] += xoffset/2.0;
       box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     case legend_dr :
       /* down right position  of the legend box */
@@ -1061,7 +1038,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y + Xgc->scales->Irect.height;;
       box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
       box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     case legend_drm:
       /* down right margin */
@@ -1069,7 +1046,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y + Xgc->scales->Irect.height;;
       box[0] += xoffset/2.0;
       box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     case legend_dl:
       /* down left  position  of the legend box */
@@ -1077,14 +1054,13 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
       box[1] = Xgc->scales->Irect.y  + Xgc->scales->Irect.height;;
       box[0] += xoffset/2.0;
       box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,legend,box,FALSE,xoffset,yoffset,fg,sep);
       break;
     default:
       Sciprintf("Error: unknow position\n");
       break;
     }
-
-  Xgc->graphic_engine->xset_dash(Xgc,old_dash);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0], fontsize_kp, FALSE);
 }
 
@@ -1100,8 +1076,9 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 			    const int *mark,const int *mark_size,
 			    const int *mark_color,const int *width,const int *color,
 			    char **legends,double box[4],
-			    int get_box,double xoffset,double yoffset,int c_color,int fg,const char *sep)
+			    int get_box,double xoffset,double yoffset, int fg,const char *sep)
 {
+  int c_color;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int bg= Xgc->graphic_engine->xget_background(Xgc);
   int xmark[2]={-1,-1};
@@ -1125,7 +1102,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,
       nbox[1] -= rect[3]/2;
       nbox[2] += rect[2];
       nbox[3] += rect[3];
-      Xgc->graphic_engine->xset_color(Xgc,bg);
+      c_color= Xgc->graphic_engine->xset_color(Xgc,bg);
       Xgc->graphic_engine->fillrectangle(Xgc,nbox);
       Xgc->graphic_engine->xset_color(Xgc,c_color);
     }
@@ -1151,7 +1128,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 	    }
 	  else
 	    {
-	      Xgc->graphic_engine->xset_color(Xgc,fg);
+	      c_color= Xgc->graphic_engine->xset_color(Xgc,fg);
 	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle
 						 ,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	      Xgc->graphic_engine->xset_color(Xgc,c_color);
@@ -1172,7 +1149,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 		  polyx[0]=inint(box[0]+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
 		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark_size[i]);
-		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_color(Xgc, mark_color[i] );
+		  if ( mark_color[i] >= 0) c_color= Xgc->graphic_engine->xset_color(Xgc, mark_color[i] );
 		  nsp_draw_legend_polymark(Xgc,polyx,polyy,mark[i],1);
 		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_color(Xgc, c_color);
 		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
@@ -1201,14 +1178,15 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 
 static void nsp_draw_legend_polyline(BCG *Xgc, double *vectsx, double *vectsy, int color, int p)
 {
+  int c_color = 0;
   if ( color >= 0 ) 
     {
-      Xgc->graphic_engine->xset_line_style(Xgc, color);
+      c_color = Xgc->graphic_engine->xset_color(Xgc, color);
     }
   Xgc->graphic_engine->drawpolyline(Xgc,vectsx,vectsy,p,0);
   if ( color >= 0) 
     {
-      Xgc->graphic_engine->xset_line_style(Xgc, color);
+      Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
 }
 
@@ -1226,3 +1204,13 @@ static void nsp_draw_legend_polymark(BCG *Xgc, double *vectsx, double *vectsy, i
       Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
     }
 }
+
+static void draw_segment(BCG *Xgc, double *vx, double *vy, int color)
+{
+  int ns= 2, color_kp = 0;
+  if ( color != -1 )  color_kp= Xgc->graphic_engine->xset_color(Xgc, color);
+  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,NULL,NULL);
+  if ( color != -1 )  Xgc->graphic_engine->xset_color(Xgc,color_kp);
+}
+
+

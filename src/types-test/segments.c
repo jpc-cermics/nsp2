@@ -813,8 +813,10 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
   for (i=0 ; i < P->obj->x->mn/2 ; i++)
     {
-      int segment_color= (colors != NULL) ? P->obj->color->I[0] : color;
-      int segment_width= (widths != NULL) ? P->obj->thickness->I[0]: width;
+      int s_col = Min(i,P->obj->color->mn-1);
+      int s_thick = Min(i,P->obj->thickness->mn-1);
+      int segment_color= (colors != NULL) ? P->obj->color->I[s_col] : color;
+      int segment_width= (widths != NULL) ? P->obj->thickness->I[s_thick]: width;
       double cx[]={ P->obj->x->R[2*i], P->obj->x->R[2*i+1]};
       double cy[]={ P->obj->y->R[2*i],P->obj->y->R[2*i+1]};
       double vx[2],vy[2];
@@ -906,4 +908,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 910 "segments.c"
+#line 912 "segments.c"
