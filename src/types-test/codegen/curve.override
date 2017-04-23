@@ -135,14 +135,12 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 last
 
 /* inserted verbatim at the end */
-/*
-    '("int" "color"); curve color
-    '("int" "mark") ; mark to be used
-    '("double" "width"); line width
-    '("int" "style"); line style
-    '("int" "mode"); mode: std, step, stem, arrow, fill.
-    '("NspMatrix*" "Pts")
-*/
+
+/* nsp_draw_curve: drawing function for a curve 
+ * WIP: dashed line style to be used 
+ *      make a colored line with colors along the curve 
+ *      or arrow color along the line 
+ */
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {

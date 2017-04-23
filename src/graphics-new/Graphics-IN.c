@@ -4862,7 +4862,6 @@ typedef enum  {
   , xset_pixmap ,xset_recording, xset_thickness, xset_use_color, xset_viewport, xset_wdim , xset_white , xset_window
   , xset_wpdim , xset_wpos, xset_wresize, xset_wshow, xset_wwpc, xset_fpf, xset_auto_clear, xset_clipgrf
   , xset_process_updates
-
 } xset_enum ;
 
 static const char *xset_Table[] = {
@@ -4928,13 +4927,22 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       Gc->color = val;
       break;
     case xset_colormap:
-      CheckRhs(2,2);
-      if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-      CheckCols(NspFname(stack),2,M,3);
-      if (( Mc  = nsp_matrix_create("cmap",'r',M->m,M->n))== NULLMAT) return RET_BUG;
-      memcpy(Mc->R, M->R, M->mn*sizeof(double));
-      nsp_figure_data_set_colormap(F,Mc);
-      /* need to invalidate */
+      {
+      	NspObjs3d *objs3d = NULL;
+	CheckRhs(2,2);
+	if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+	CheckCols(NspFname(stack),2,M,3);
+	if (( Mc  = nsp_matrix_create("cmap",'r',M->m,M->n))== NULLMAT) return RET_BUG;
+	memcpy(Mc->R, M->R, M->mn*sizeof(double));
+	objs3d = nsp_check_for_current_objs3d(FALSE);
+	if ( objs3d == NULL )
+	  nsp_figure_data_set_colormap(F,Mc);
+	else
+	  {
+	    if (objs3d->obj->colormap != NULL ) nsp_matrix_destroy(objs3d->obj->colormap);
+	    objs3d->obj->colormap = Mc;
+	  }
+      }
       nsp_figure_invalidate((NspGraphic *) F);
       break;
     case xset_dashes:
