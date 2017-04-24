@@ -842,14 +842,12 @@ void nsp_initialize_Curve_types(void)
 #line 136 "codegen/curve.override"
 
 /* inserted verbatim at the end */
-/*
-    '("int" "color"); curve color
-    '("int" "mark") ; mark to be used
-    '("double" "width"); line width
-    '("int" "style"); line style
-    '("int" "mode"); mode: std, step, stem, arrow, fill.
-    '("NspMatrix*" "Pts")
-*/
+
+/* nsp_draw_curve: drawing function for a curve 
+ * WIP: dashed line style to be used 
+ *      make a colored line with colors along the curve 
+ *      or arrow color along the line 
+ */
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -1073,7 +1071,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   ym[M->m+1]=0.0;
   if ( C->obj->color >= -1 )
     {
-      int c_color;
+      int c_color=0;
       if ( C->obj->color >= 0 ) c_color= Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
       if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
@@ -1254,4 +1252,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1258 "curve.c"
+#line 1256 "curve.c"

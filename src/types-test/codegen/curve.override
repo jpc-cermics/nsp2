@@ -364,7 +364,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   ym[M->m+1]=0.0;
   if ( C->obj->color >= -1 )
     {
-      int c_color;
+      int c_color=0;
       if ( C->obj->color >= 0 ) c_color= Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
       if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
