@@ -1,5 +1,5 @@
 // -*- Mode:scilab -*- 
-// Copyright (C) 2005-2015 J.P Chancelier Cermics/Enpc
+// Copyright (C) 2005-2017 J.P Chancelier Cermics/Enpc
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ if max(abs(V.i_get_value[I] - sin(Pt))) > 10*%eps then pause;end
 // grid functions dimension 2 
 //---------------------------
 
-// the grid contains 11 points in the range [0,100] (regular grid)
+// the grid contains 10x20 points in the range [1,10]x[1,20] (regular grid)
 n1=10;n2=20;
 V=gridfn([n1,n2],[1,1],[10,20]);
 // fill the function looping on possible indices 1:10
