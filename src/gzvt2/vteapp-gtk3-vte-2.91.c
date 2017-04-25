@@ -660,6 +660,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 int
 main(int argc, char **argv)
 {
+  GtkStyleContext *style_context;
   GdkPixbuf *pixbuf;
   GtkWidget *socket_button;
   GdkScreen *screen;
@@ -679,9 +680,9 @@ main(int argc, char **argv)
     debug = FALSE, no_builtin_dingus = FALSE, dbuffer = TRUE,
     console = FALSE, keep = FALSE,
     icon_title = FALSE, shell = TRUE,
-    reverse = FALSE, use_geometry_hints = TRUE,
+    reverse = -3,  use_geometry_hints = TRUE,
     use_scrolled_window = FALSE,
-    show_object_notifications = FALSE, rewrap = TRUE;
+    show_object_notifications = FALSE, rewrap = TRUE, dark_theme = FALSE;
   char *geometry = NULL;
   gint lines = -1;
   const char *message = "Launching interactive shell...\r\n";
@@ -699,6 +700,8 @@ main(int argc, char **argv)
   char *highlight_background_color_string = NULL;
   char **dingus = NULL;
   GdkRGBA fore, back;
+  GdkRGBA theme_fg, theme_bg;
+    
   const GOptionEntry options[]={
     {
       "console", 'C', 0,
@@ -934,13 +937,6 @@ main(int argc, char **argv)
     g_free(pty_flags_string);
   }
 
-  if (!reverse) {
-    back.red = back.green = back.blue = 1.0; back.alpha = 1.0;
-    fore.red = fore.green = fore.blue = 0.0; fore.alpha = 1.0;
-  } else {
-    back.red = back.green = back.blue = 0.0; back.alpha = 1.0;
-    fore.red = fore.green = fore.blue = 1.0; fore.alpha = 1.0;
-  }
 
   gdk_window_set_debug_updates(debug);
 
@@ -1095,6 +1091,42 @@ main(int argc, char **argv)
   vte_terminal_set_scrollback_lines(terminal, lines);
   vte_terminal_set_mouse_autohide(terminal, TRUE);
 
+
+  /* check if we are using a dark theme */
+    
+  style_context = gtk_widget_get_style_context (widget);
+  gtk_style_context_get_color ( style_context, gtk_style_context_get_state ( style_context), &theme_fg);
+  gtk_style_context_get_background_color ( style_context, gtk_style_context_get_state ( style_context), &theme_bg);
+
+  /* The GTK-default Raleigh theme in 3.12 ends up assigning
+   * black background and black foreground, which is clearly not
+   * useful. */
+  if (theme_fg.red == 0.0 && theme_fg.green == 0.0 && theme_fg.blue == 0.0 &&
+      theme_bg.red == 0.0 && theme_bg.green == 0.0 && theme_bg.blue == 0.0)
+    {
+      theme_bg.red = 1.0;
+      theme_bg.green = 1.0;
+      theme_bg.blue = 1.0;
+    }
+
+  /* mix between dark_theme (TRUE|FALSE) and reverse (TRUE|FALSE) */
+  
+  dark_theme = ( theme_bg.red == 1.0 && theme_bg.green == 1.0 && theme_bg.blue == 1.0 ) ?
+    FALSE : TRUE ;
+  reverse = (dark_theme) ? ((reverse == -3) ? TRUE : !reverse)
+    : ((reverse == -3) ? FALSE : reverse);
+  
+  if (!reverse)
+    {
+      back.red = back.green = back.blue = 1.0; back.alpha = 1.0;
+      fore.red = fore.green = fore.blue = 0.0; fore.alpha = 1.0;
+    }
+  else
+    {
+      back.red = back.green = back.blue = 0.0; back.alpha = 1.0;
+      fore.red = fore.green = fore.blue = 1.0; fore.alpha = 1.0;
+    }
+  
   if (transparent != NULL) {
     back.alpha = g_ascii_strtod (transparent, NULL);
     g_free (transparent);
