@@ -19,8 +19,7 @@ function []=Sgrayplot(x,y,z, varargopt)
 	     "xset(''colormap'',jetcolormap(64))";
 	     "Sgrayplot(t,t,m,colorbar=%t,zminmax=[-1,1])";
 	     "xtitle(''Sgrayplot demo f(x,y)=sin(x)*cos(y) on [-pi,pi]x[-pi,pi]'')"]
-    printf("%s",catenate(s_mat,sep="\n"));
-    printf("\n");
+    printf("%s\n",s_mat);
     execstr(s_mat);
     return
   end

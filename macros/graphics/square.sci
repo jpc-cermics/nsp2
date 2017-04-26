@@ -12,6 +12,6 @@ function []=square(xmin,ymin,xmax,ymax)
 // Copyright INRIA
   if nargin <=0 then xmin=-2;ymin=-2;xmax=2;ymax=2;end
   wdim=xget("wdim");
-  xset("wdim",maxi(wdim),maxi(wdim));
-  xsetech(rect=[xmin,ymin,xmax,ymax],fixed=%t);
+  xset("wdim",max(wdim),max(wdim));
+  xsetech(frect=[xmin,ymin,xmax,ymax],fixed=%t);
 endfunction

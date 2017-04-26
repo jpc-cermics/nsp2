@@ -17,8 +17,7 @@ function []=Sfgrayplot(x, y, f, varargopt)
 	'xset(""colormap"",jetcolormap(64))';
 	'Sfgrayplot(-1:0.1:1,-1:0.1:1,Surf,colorbar=%t);';
 	'xtitle(''Sfgrayplot demo: f(x,y)=x^3+y'')'];
-    printf("%s",catenate(s_mat,sep="\n"));
-    printf("\n");
+    printf("%s\n",s_mat);
     execstr(s_mat);
     return
   end
