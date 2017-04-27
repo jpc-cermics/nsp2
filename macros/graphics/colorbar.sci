@@ -30,30 +30,29 @@ function colorbar(umin, umax, colminmax)
 //  EXAMPLES
 //     see the help page
   
-  if ~exists("colminmax","local") then 
+  if nargin <= 0 then 
+    colorbar(0,10,[0,10]);
+    return;
+  end
+  
+  
+  if nargin <= 2 then 
     nb_colors = xget("lastpattern")
-    colminmax = [1 nb_colors]
+    colminmax = [1, nb_colors]
   else
     nb_colors = colminmax(2) - colminmax(1) + 1
   end
 
-  fg_color = xget("foreground")
+  fg_color = xget("foreground");
   
-  if new_graphics();
-    F=get_current_figure();
-    A=F(1);
-    wr = A.wrect;
-    wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
-    A.wrect = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
-    A.invalidate[];
-    A1=xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1],fixed=%t,...
-	       axesflag=0,iso =%f, clip=%f);
-  else
-    wr = xgetech()
-    wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
-    wrect_pl = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
-    xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1])
-  end
+  F=get_current_figure();
+  A=F.children(1);
+  wr = A.wrect;
+  wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
+  A.wrect = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
+  A.invalidate[];
+  A1=xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1],fixed=%t,...
+	     axesflag=0,iso =%f, clip=%f);
   
   nb_grad = 4
   uval = getticks(umin,umax,anum=nb_grad)'
@@ -83,7 +82,4 @@ function colorbar(umin, umax, colminmax)
   end
   xsegs([xtics ; xtics+dx_tics ],[ytics ; ytics+dy_tics],style=fg_color)
   
-  if ~new_graphics() then
-    xsetech(wrect=wrect_pl)
-  end
 endfunction

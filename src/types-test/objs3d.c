@@ -24,7 +24,7 @@
 
 
 
-#line 72 "codegen/objs3d.override"
+#line 73 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 #include <nsp/graphics-new/Graphics.h>
 #ifdef  WITH_OPENGL
@@ -104,7 +104,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 85 "codegen/objs3d.override"
+#line 86 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -812,7 +812,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 108 "codegen/objs3d.override"
+#line 109 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -925,7 +925,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 124 "codegen/objs3d.override"
+#line 125 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj
  * we want get to be followed by a set to check that
@@ -1179,7 +1179,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 182 "codegen/objs3d.override"
+#line 183 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1191,7 +1191,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1192 "objs3d.c"
 
 
-#line 192 "codegen/objs3d.override"
+#line 193 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1235,7 +1235,7 @@ void nsp_initialize_Objs3d_types(void)
   new_type_objs3d(T_BASE);
 }
 
-#line 202 "codegen/objs3d.override"
+#line 203 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -3100,4 +3100,101 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3104 "objs3d.c"
+
+static int getticks(double xmin,double xmax,double *grads,int *start)
+{
+  int ngrads, n1, n2;
+  gr_compute_ticks(&xmin, &xmax, grads, &ngrads);
+  n1 = 0; n2 = ngrads-1;
+  if ( grads[n1] < xmin ) n1++;
+  if ( grads[n2] > xmax ) n2--;
+  ngrads = n2 - n1 + 1;
+  *start = n1;
+  return ngrads;
+}
+
+void nsp_draw_objs3d_colorbar(BCG *Xgc,nsp_objs3d *P,double vmin , double vmax, int *colminmax)
+{
+  double grads[20], axrect[4], hr, rect[4], rrect[4];
+  int ntags,start, color,i,cpat, wdim[2];
+  int nb_colors;
+  int last = Xgc->graphic_engine->xget_last(Xgc);
+  int clip[5];
+  GdkRectangle rclip;
+
+  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+  nb_colors = colminmax[1] - colminmax[0]+1;
+
+  /* frame rectangle */
+  axrect[0]=P->wrect->R[0]*wdim[0];
+  axrect[1]=P->wrect->R[1]*wdim[1];
+  axrect[2]=P->wrect->R[2]*wdim[0];
+  axrect[3]=P->wrect->R[3]*wdim[1];
+  /* right margin rectangle */
+  rrect[0]= axrect[0]+axrect[2]*(1-P->arect->R[1]);
+  rrect[1]= axrect[1]+axrect[3]*(P->arect->R[2]);
+  rrect[2]= axrect[2]*(P->arect->R[1]);
+  rrect[3]= axrect[3]*(1 - P->arect->R[2] -P->arect->R[3]);
+
+  Xgc->graphic_engine->xget_clip(Xgc,clip);
+  rclip.x = rrect[0];
+  rclip.y = rrect[1]-10;
+  rclip.width = rrect[2];
+  rclip.height = rrect[3]+20;
+  Xgc->graphic_engine->xset_clip(Xgc,&rclip);
+
+  /* colorbar rectangle */
+  cpat = Xgc->graphic_engine->xset_color(Xgc,last+1);
+  rect[0]=rrect[0]+4;
+  rect[1]=rrect[1];
+  rect[2]=rrect[2]/4;
+  hr= rrect[3]/(double) nb_colors;
+  rect[3]=hr;
+  color= colminmax[1];
+  for (i = 0 ; i < nb_colors ; i++)
+    {
+      rect[1] = rrect[1]+ i*hr ;
+      rect[3] = rrect[1]+ (i+1)*hr - rect[1];
+      Xgc->graphic_engine->xset_color(Xgc,color);
+      Xgc->graphic_engine->fillrectangle(Xgc,rect);
+      color--;
+    }
+
+  /* switch to black */
+  Xgc->graphic_engine->xset_color(Xgc,last+1);
+  rect[1]=rrect[1];
+  rect[3]=(nb_colors)*hr;
+  Xgc->graphic_engine->drawrectangle(Xgc,rect);
+
+  ntags = getticks(vmin,vmax,grads,&start);
+
+  for ( i = 0 ; i < ntags ; i++ )
+    {
+      double srect[4];
+      int y;
+      double uval;
+      char str[256];
+      uval = grads[start+i];
+      sprintf(str,"%g",uval);
+      Xgc->graphic_engine->boundingbox(Xgc,str,0,0,srect);
+      y = rect[1] + rect[3]*(1-((uval-vmin)/(vmax - vmin)));
+      Xgc->graphic_engine->drawline(Xgc,rect[0]+rect[2],y,rect[0]+rect[2]+5,y);
+      y += srect[3]/2;
+      Xgc->graphic_engine->displaystring(Xgc,str,rect[0]+rect[2]+8,y,FALSE,0,
+					 GR_STR_XLEFT, GR_STR_YBOTTOM);
+    }
+
+  if ( clip[0]== 1 )
+    {
+      rclip.x = clip[1];
+      rclip.y = clip[2];
+      rclip.width = clip[3];
+      rclip.height = clip[4];
+      Xgc->graphic_engine->xset_clip(Xgc,&rclip);
+    }
+
+  /* back to current value*/
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
+}
+
+#line 3201 "objs3d.c"

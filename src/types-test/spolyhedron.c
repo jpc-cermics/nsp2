@@ -1127,8 +1127,13 @@ static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *r
       for ( i= 0 ; i < P->obj->Mface->n ; i++)
 	draw_spolyhedron_face(Xgc,Obj,i);
     }
+  /* 
+  {
+    int colors[2]={1,32};
+    nsp_draw_objs3d_colorbar(Xgc,((NspGraphic *) P)->obj->Axe, 0, 10, colors);
+  }
+  */
 }
-
 
 static void nsp_translate_spolyhedron(NspGraphic *Obj,const double *tr)
 {
@@ -1886,4 +1891,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1890 "spolyhedron.c"
+#line 1895 "spolyhedron.c"
