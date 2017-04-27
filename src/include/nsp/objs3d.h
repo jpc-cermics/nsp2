@@ -140,8 +140,9 @@ extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, Visio
 				  const double lim[], int ncoord);
 
 extern int nsp_objs3d_remove_children(NspObjs3d *O);
+extern void nsp_draw_objs3d_colorbar(BCG *Xgc,nsp_objs3d *P,double vmin , double vmax, int *colminmax);
 
-#line 145 "./objs3d.h"
+#line 146 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -156,7 +157,7 @@ static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type);
-#line 34 "codegen/objs3d.override"
+#line 35 "codegen/objs3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -193,6 +194,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 197 "./objs3d.h"
+#line 198 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 
