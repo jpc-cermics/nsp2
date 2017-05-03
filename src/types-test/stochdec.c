@@ -24,7 +24,7 @@
 
 
 
-#line 41 "codegen/stochdec.override"
+#line 42 "codegen/stochdec.override"
 /* headers */
 
 #line 31 "stochdec.c"
@@ -248,7 +248,7 @@ static NspStochdec  *nsp_stochdec_xdr_load(XDR *xdrs)
 
 void nsp_stochdec_destroy_partial(NspStochdec *H)
 {
-#line 62 "codegen/stochdec.override"
+#line 63 "codegen/stochdec.override"
    /* verbatim in destroy */
 
 #line 255 "stochdec.c"
@@ -1130,8 +1130,8 @@ static int init_gridvaluefn(NspGridValueFn *Obj,NspTypeGridValueFn *type)
   Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  Obj->nx = NULLMAT;
-  Obj->pasx = NULLMAT;
+  Obj->n = NULLMAT;
+  Obj->step = NULLMAT;
   Obj->values = NULLMAT;
  return OK;
 }
@@ -1188,8 +1188,8 @@ static int nsp_gridvaluefn_eq(NspGridValueFn *A, NspObject *B)
 {
   NspGridValueFn *loc = (NspGridValueFn *) B;
   if ( check_cast(B,nsp_type_gridvaluefn_id) == FALSE) return FALSE ;
-  if ( NSP_OBJECT(A->nx)->type->eq(A->nx,loc->nx) == FALSE ) return FALSE;
-  if ( NSP_OBJECT(A->pasx)->type->eq(A->pasx,loc->pasx) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->n)->type->eq(A->n,loc->n) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->step)->type->eq(A->step,loc->step) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->values)->type->eq(A->values,loc->values) == FALSE ) return FALSE;
    return TRUE;
 }
@@ -1255,10 +1255,10 @@ static NspGridValueFn  *nsp_gridvaluefn_xdr_load(XDR *xdrs)
 void nsp_gridvaluefn_destroy_partial(NspGridValueFn *H)
 {
   nsp_valuefn_destroy_partial((NspValueFn * ) H);
-  if ( H->nx != NULL ) 
-    nsp_matrix_destroy(H->nx);
-  if ( H->pasx != NULL ) 
-    nsp_matrix_destroy(H->pasx);
+  if ( H->n != NULL ) 
+    nsp_matrix_destroy(H->n);
+  if ( H->step != NULL ) 
+    nsp_matrix_destroy(H->step);
   if ( H->values != NULL ) 
     nsp_matrix_destroy(H->values);
 }
@@ -1313,11 +1313,11 @@ int nsp_gridvaluefn_print(NspGridValueFn *M, int indent,const char *name, int re
         }
       Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  if ( M->nx != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->nx),indent+2,"nx", rec_level+1)== FALSE ) return FALSE ;
+  if ( M->n != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->n),indent+2,"n", rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->pasx != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->pasx),indent+2,"pasx", rec_level+1)== FALSE ) return FALSE ;
+  if ( M->step != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->step),indent+2,"step", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->values != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
@@ -1338,11 +1338,11 @@ int nsp_gridvaluefn_latex(NspGridValueFn *M, int indent,const char *name, int re
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->nx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->nx),indent+2,"nx", rec_level+1)== FALSE ) return FALSE ;
+  if ( M->n != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->n),indent+2,"n", rec_level+1)== FALSE ) return FALSE ;
     }
-  if ( M->pasx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->pasx),indent+2,"pasx", rec_level+1)== FALSE ) return FALSE ;
+  if ( M->step != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->step),indent+2,"step", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->values != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
@@ -1419,15 +1419,15 @@ int nsp_gridvaluefn_create_partial(NspGridValueFn *H)
 
 int nsp_gridvaluefn_check_values(NspGridValueFn *H)
 {
-  if ( H->nx == NULLMAT) 
+  if ( H->n == NULLMAT) 
     {
-       if (( H->nx = nsp_matrix_create("nx",'r',0,0)) == NULLMAT)
+       if (( H->n = nsp_matrix_create("n",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
-  if ( H->pasx == NULLMAT) 
+  if ( H->step == NULLMAT) 
     {
-       if (( H->pasx = nsp_matrix_create("pasx",'r',0,0)) == NULLMAT)
+       if (( H->step = nsp_matrix_create("step",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
@@ -1441,12 +1441,12 @@ int nsp_gridvaluefn_check_values(NspGridValueFn *H)
   return OK;
 }
 
-NspGridValueFn *nsp_gridvaluefn_create(const char *name,NspMatrix* nx,NspMatrix* pasx,NspMatrix* values,NspTypeBase *type)
+NspGridValueFn *nsp_gridvaluefn_create(const char *name,NspMatrix* n,NspMatrix* step,NspMatrix* values,NspTypeBase *type)
 {
   NspGridValueFn *H  = nsp_gridvaluefn_create_void(name,type);
   if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
-  H->nx= nx;
-  H->pasx= pasx;
+  H->n= n;
+  H->step= step;
   H->values= values;
   if ( nsp_gridvaluefn_check_values(H) == FAIL) return NULLGRIDVALUEFN;
   return H;
@@ -1468,17 +1468,17 @@ NspGridValueFn *nsp_gridvaluefn_create_default(const char *name)
 NspGridValueFn *nsp_gridvaluefn_copy_partial(NspGridValueFn *H,NspGridValueFn *self)
 {
   if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
-  if ( self->nx == NULL )
-    { H->nx = NULL;}
+  if ( self->n == NULL )
+    { H->n = NULL;}
   else
     {
-      if ((H->nx = (NspMatrix *) nsp_object_copy_and_name("nx", NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
+      if ((H->n = (NspMatrix *) nsp_object_copy_and_name("n", NSP_OBJECT(self->n))) == NULLMAT) return NULL;
     }
-  if ( self->pasx == NULL )
-    { H->pasx = NULL;}
+  if ( self->step == NULL )
+    { H->step = NULL;}
   else
     {
-      if ((H->pasx = (NspMatrix *) nsp_object_copy_and_name("pasx", NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
+      if ((H->step = (NspMatrix *) nsp_object_copy_and_name("step", NSP_OBJECT(self->step))) == NULLMAT) return NULL;
     }
   if ( self->values == NULL )
     { H->values = NULL;}
@@ -1504,17 +1504,17 @@ NspGridValueFn *nsp_gridvaluefn_copy(NspGridValueFn *self)
 NspGridValueFn *nsp_gridvaluefn_full_copy_partial(NspGridValueFn *H,NspGridValueFn *self)
 {
   if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
-  if ( self->nx == NULL )
-    { H->nx = NULL;}
+  if ( self->n == NULL )
+    { H->n = NULL;}
   else
     {
-      if ((H->nx = (NspMatrix *) nsp_object_full_copy_and_name("nx", NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
+      if ((H->n = (NspMatrix *) nsp_object_full_copy_and_name("n", NSP_OBJECT(self->n))) == NULLMAT) return NULL;
     }
-  if ( self->pasx == NULL )
-    { H->pasx = NULL;}
+  if ( self->step == NULL )
+    { H->step = NULL;}
   else
     {
-      if ((H->pasx = (NspMatrix *) nsp_object_full_copy_and_name("pasx", NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
+      if ((H->step = (NspMatrix *) nsp_object_full_copy_and_name("step", NSP_OBJECT(self->step))) == NULLMAT) return NULL;
     }
   if ( self->values == NULL )
     { H->values = NULL;}
@@ -1556,7 +1556,7 @@ int int_gridvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 83 "codegen/stochdec.override"
+#line 89 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 and we want 1 at nsp level
@@ -1581,7 +1581,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1582 "stochdec.c"
 
 
-#line 106 "codegen/stochdec.override"
+#line 112 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1592,23 +1592,26 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
   NspValueFn *Vf = (NspValueFn *) self;
   int_types T[] = {realmat,t_end};
   NspMatrix *pts,*Ret;
-  int ret;
+  int i;
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
   if ( pts->m != Vf->xdim) 
     {
       Scierror("Error: first argument should be a %dxn matrix\n",Vf->xdim);
       return RET_BUG;
     }
-  ret = 1+ nsp_gvf_point_to_ind(self, pts->R);
-  if ((Ret = (NspMatrix *)nsp_create_object_from_double(NVOID,ret)) == NULLMAT) return RET_BUG;
+  if ((Ret = nsp_matrix_create(NVOID,'r', 1 , pts->n)) == NULLMAT) return RET_BUG;
+  for ( i = 0 ; i < pts->n ; i++)
+    {
+      Ret->R[i] = 1+ nsp_gvf_point_to_ind(self, pts->R+ i*pts->m);
+    }
   MoveObj(stack,1, NSP_OBJECT(Ret));
   return 1;
 }
 
-#line 1609 "stochdec.c"
+#line 1612 "stochdec.c"
 
 
-#line 160 "codegen/stochdec.override"
+#line 169 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1621,10 +1624,10 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
     nsp_gvf_set_i_value(self, ((int) ind->R[i]) - 1, val->R[i]);
   return 0;
 }
-#line 1625 "stochdec.c"
+#line 1628 "stochdec.c"
 
 
-#line 131 "codegen/stochdec.override"
+#line 140 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1652,10 +1655,10 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 1656 "stochdec.c"
+#line 1659 "stochdec.c"
 
 
-#line 198 "codegen/stochdec.override"
+#line 207 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1671,10 +1674,10 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   MoveObj(stack,1, NSP_OBJECT(ret));
   return 1;
 }
-#line 1675 "stochdec.c"
+#line 1678 "stochdec.c"
 
 
-#line 174 "codegen/stochdec.override"
+#line 183 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1697,7 +1700,7 @@ static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1701 "stochdec.c"
+#line 1704 "stochdec.c"
 
 
 static int _wrap_nsp_gvf_get_nx(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -2233,7 +2236,7 @@ int int_cutsvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 243 "codegen/stochdec.override"
+#line 252 "codegen/stochdec.override"
 
 /* method overriden */
 
@@ -2255,10 +2258,10 @@ static int _wrap_nsp_cvf_add_slopes(NspCutsValueFn *self,Stack stack,int rhs,int
   return 0;
 }
 
-#line 2259 "stochdec.c"
+#line 2262 "stochdec.c"
 
 
-#line 266 "codegen/stochdec.override"
+#line 275 "codegen/stochdec.override"
 
 static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2281,7 +2284,7 @@ static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int 
   return 1;
 }
 
-#line 2285 "stochdec.c"
+#line 2288 "stochdec.c"
 
 
 static int _wrap_nsp_cvf_get_slopes(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -2322,26 +2325,31 @@ static AttrTab cutsvaluefn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 66 "codegen/stochdec.override"
+#line 67 "codegen/stochdec.override"
 
 int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs) 
 {
+  int use_values = TRUE;
   NspMatrix *xmin, *xmax,*nx;
   NspGridValueFn *H;
-  int_types T[] = {realmat,realmat,realmat,t_end};
-  if ( GetArgs(stack,rhs,opt,T,&nx, &xmin, &xmax) == FAIL) return RET_BUG;
+  int_types T[] = {realmat,realmat,realmat,new_opts, t_end};
+
+  nsp_option opts[] ={{ "values",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  
+  if ( GetArgs(stack,rhs,opt,T,&nx, &xmin, &xmax,&opts, &use_values) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,3, nx->mn != xmin->mn);
   CheckDimProp(NspFname(stack),2,3, xmin->mn != xmax->mn);
-  if ((H=nsp_gvf_create(nx,xmin,xmax)) == NULL)
+  if ((H=nsp_gvf_create(NVOID,nx,xmin,xmax, use_values)) == NULL)
     return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
 
-#line 2342 "stochdec.c"
+#line 2350 "stochdec.c"
 
 
-#line 215 "codegen/stochdec.override"
+#line 224 "codegen/stochdec.override"
 
 int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -2368,7 +2376,7 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2372 "stochdec.c"
+#line 2380 "stochdec.c"
 
 
 /*----------------------------------------------------
@@ -2406,7 +2414,7 @@ void nsp_initialize_Stochdec_types(void)
   new_type_cutsvaluefn(T_BASE);
 }
 
-#line 290 "codegen/stochdec.override"
+#line 299 "codegen/stochdec.override"
 
 /***************************************
  * a set of functions for GridValueFn 
@@ -2456,15 +2464,15 @@ int nsp_gvf_ind_to_point(NspGridValueFn *Gvf,double pt[], int i)
   if(i < 0) return FAIL;
   for ( k=0 ; k < Vf->xdim; k++)
     {
-      int inx = (int) Gvf->nx->R[k];
+      int inx = (int) Gvf->n->R[k];
       ind = i % inx ; /*  i - (i/nx)*nx; remainder */
-      pt[k] = Vf->xmin->R[k] + Gvf->pasx->R[k]*ind;
+      pt[k] = Vf->xmin->R[k] + Gvf->step->R[k]*ind;
       i = (i-ind)/inx;
     }
   return OK;
 }
 
-int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t)
+int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *step, int t)
 {
   int k, ind;
   /* Case where x is out of bounds */
@@ -2473,7 +2481,7 @@ int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatr
     {
       int inx = (int) nx->R[k];
       ind = i % inx ; /*  i - (i/nx)*nx; remainder */
-      pt->R[k] = min->R[k] + pasx->R[k]*ind;
+      pt->R[k] = min->R[k] + step->R[k]*ind;
       i = (i-ind)/inx;
     }
   return OK;
@@ -2496,10 +2504,10 @@ int nsp_gvf_point_to_ind(NspGridValueFn *Gvf,const double pt[])
 	}
       else
 	{
-	  ik = (int) floor((pt[k]-Vf->xmin->R[k])/Gvf->pasx->R[k]+0.5);
+	  ik = (int) floor((pt[k]-Vf->xmin->R[k])/Gvf->step->R[k]+0.5);
 	}
       ind += cumprod * ik;
-      cumprod *= (int) Gvf->nx->R[k];
+      cumprod *= (int) Gvf->n->R[k];
     }
   return ind;
 }
@@ -2606,29 +2614,46 @@ NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self)
 
 NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf)
 {
-  return (NspMatrix *) nsp_object_copy(NSP_OBJECT(Gvf->nx));
+  return (NspMatrix *) nsp_object_copy(NSP_OBJECT(Gvf->n));
 }
 
+/* if use_values is FALSE the values field is not allocated and the 
+ * the GridValueFn is only used to perform points to/from integer operations
+ */
 
-NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
+NspGridValueFn *nsp_gvf_create(const char *name,NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax, int use_values)
 {
   NspGridValueFn *H;
   NspValueFn *F;
-  NspMatrix *pasx=NULL, *values = NULL, *nx_c=NULL, *xmin_c=NULL,*xmax_c=NULL;
+  NspMatrix *step=NULL, *values = NULL, *nx_c=NULL, *xmin_c=NULL,*xmax_c=NULL;
   if (nsp_gvf_check_nx(nx) == FAIL) 
     {
       Scierror("Error: first argument should contain values greater than 1\n");
       return NULL;
     }
-  if ( (pasx=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
+  if ( (step=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
     {
       Scierror("Error: unable to create steps\n");
       return NULL;
     }
-  if ((values=nsp_gvf_create_values(nx)) == NULL )
+  if (  use_values )
     {
-      Scierror("Error: unable to allocate space for values \n");
-      return NULL;
+      values = nsp_gvf_create_values(nx);
+      if ( values == NULL )
+	{
+	  Scierror("Error: unable to allocate space for values \n");
+	  return NULL;
+	}
+    }
+  else
+    {
+      values = nsp_matrix_create("values",'r',1,1);
+      if ( values == NULL )
+	{
+	  Scierror("Error: unable to allocate space for values \n");
+	  return NULL;
+	}
+      values->R[0]=0.0;
     }
   if ((nx_c = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(nx))) == NULLMAT) 
     return NULL;
@@ -2638,7 +2663,7 @@ NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
     return NULL;
   /* want to be sure that type gridvaluefn is initialized */
   nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
-  H = nsp_gridvaluefn_create(NVOID, nx_c, pasx, values,(NspTypeBase *) nsp_type_gridvaluefn);
+  H = nsp_gridvaluefn_create(name , nx_c, step, values,(NspTypeBase *) nsp_type_gridvaluefn);
   if ( H == NULL) return NULL;
   F= (NspValueFn *)H;
   nsp_matrix_destroy(F->xmin);  F->xmin = xmin_c;
@@ -2648,4 +2673,4 @@ NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
 }
 
 
-#line 2652 "stochdec.c"
+#line 2677 "stochdec.c"

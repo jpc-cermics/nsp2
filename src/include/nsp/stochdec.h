@@ -109,17 +109,18 @@ extern void nsp_gvf_set_i_value(NspGridValueFn *Gvf, int i,const double val);
 extern double nsp_gvf_get_pt_value(NspGridValueFn *Gvf,const double pt[]) ;
 extern void nsp_gvf_set_pt_value(NspGridValueFn *Gvf,const double pt[],const double val) ;
 extern NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf);
-extern NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax);
+extern NspMatrix *nsp_gvf_get_imax(NspGridValueFn *Gvf);
+extern NspGridValueFn *nsp_gvf_create(const char *name, NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax, int use_values);
 
 
 extern int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes);
 extern double nsp_cvf_get_value(NspCutsValueFn *Cvf,const double pt[]) ;
 extern int nsp_cvf_add_slope(NspCutsValueFn *Cvf,double height,double slope[]);
-extern int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t);
+extern int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *step, int t);
 extern NspMatrix *nsp_cvf_get_slopes(NspCutsValueFn *self);
 extern NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self);
 
-#line 123 "./stochdec.h"
+#line 124 "./stochdec.h"
 #endif /* NSP_INC_NspStochdec */ 
 
 #ifdef NspStochdec_Private 
@@ -134,11 +135,11 @@ static AttrTab stochdec_attrs[];
 static NspMethods *stochdec_get_methods(void);
 /* static int int_stochdec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspStochdec *nsp_stochdec_create_void(const char *name,NspTypeBase *type);
-#line 35 "codegen/stochdec.override"
+#line 36 "codegen/stochdec.override"
 /* inserted in the private part of include file
  * of ldfaure.h
  */
 
-#line 143 "./stochdec.h"
+#line 144 "./stochdec.h"
 #endif /* NspStochdec_Private */
 

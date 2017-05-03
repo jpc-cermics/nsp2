@@ -10,6 +10,11 @@
   (gtype-id "Stochdec")
 )
 
+
+;; store a value function
+;; defined on a grid  GridValueFn or
+;; defined by a set of cuts  CutsValueFn
+
 (define-object ValueFn
   (in-module "Stochdec")
   (parent "Object")
@@ -27,8 +32,8 @@
   (parent "ValueFn")
   (c-name "NspGridValueFn")
   (fields
-   '("NspMatrix*" "nx" "hidden" )
-   '("NspMatrix*" "pasx" "hidden" )
+   '("NspMatrix*" "n" "hidden" )
+   '("NspMatrix*" "step" "hidden" )
    '("NspMatrix*" "values" "hidden" )
    )
   (gtype-id "GridValueFn")

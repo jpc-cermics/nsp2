@@ -43,8 +43,8 @@ struct _NspGridValueFn {
   NspValueFn father;
   NspTypeGridValueFn*type;
   /*< public >*/
-    NspMatrix* nx;
-  NspMatrix* pasx;
+    NspMatrix* n;
+  NspMatrix* step;
   NspMatrix* values;
 };
 
@@ -66,7 +66,7 @@ NspGridValueFn *new_gridvaluefn();
 
 #define NULLGRIDVALUEFN (NspGridValueFn*) 0
 
-extern NspGridValueFn *nsp_gridvaluefn_create(const char *name,NspMatrix* nx,NspMatrix* pasx,NspMatrix* values,NspTypeBase *type);
+extern NspGridValueFn *nsp_gridvaluefn_create(const char *name,NspMatrix* n,NspMatrix* step,NspMatrix* values,NspTypeBase *type);
 extern NspGridValueFn *nsp_gridvaluefn_create_default(const char *name);
 
 /* from NspGridValueFnObj.c */

@@ -71,6 +71,8 @@
     )
   )
 
+;; get number of points for each coordinates 
+
 (define-method get_nx
   (of-object "GridValueFn")
   (c-name "nsp_gvf_get_nx")

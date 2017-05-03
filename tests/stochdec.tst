@@ -22,6 +22,14 @@
 // when we have too many points indices could be turned to 
 // array of int64 
 
+// grid function without values i.e only used to convert points to 
+// indices 
+
+V=gridfn([11],[0],[100],values=%f);
+I=1:V.get_nx[];
+// convert indices to points 
+Pt=V.i2p[I];
+
 // grid functions dimension 1
 //---------------------------
 
@@ -140,9 +148,10 @@ end
 
 if max(abs(values-vref))> 1.e+6*%eps then pause;end 
 
-// dynamic prog using bellman functions stored as grid functions
-//-------------------------------------------------------------
+// dynamic programming using bellman functions stored as grid functions
+//---------------------------------------------------------------------
 
+timer();
 T=24
 B=cell(1,T);
 
@@ -173,7 +182,7 @@ for t=T-1:-1:1
   end
   B{t}=Vt;
 end
-
+Time=timer();
 // plots 
 
 if %f then 
@@ -184,6 +193,7 @@ if %f then
 end
 
 // doing the same with linear programming 
+//---------------------------------------------------------------------
 
 T=24
 B1=cell(1,T);
