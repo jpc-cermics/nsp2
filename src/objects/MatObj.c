@@ -5147,15 +5147,21 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, char ind_type);
+
 static int int_unique( Stack stack, int rhs, int opt, int lhs)
-{ 
+{
+  int mtlb = FALSE;
   Boolean first_ind;
   NspMatrix *x, *occ, **Occ=NULL;
   NspObject *ind, **Ind=NULL;
+  NspObject *ind1, **Ind1=NULL;
   int_types T[] = {realmatcopy,new_opts,t_end} ;
   nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
 		      { "ind_type",string,NULLOBJ,-1},
                       { "which",string,NULLOBJ,-1},
+		      { "mtlb_mode",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   char *ind_type=NULL, itype='d';
   const char *ind_type_possible_choices[]={ "double", "int",  NULL };
@@ -5163,7 +5169,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   const char *which_possible_choices[]={ "elements", "rows", "columns", NULL };
   int rep_ind_type, rep_which;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind, &ind_type, &which) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind, &ind_type, &which, &mtlb) == FAIL ) 
     return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
@@ -5193,7 +5199,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 2 )
     {
       Ind = &ind;
-      if ( lhs == 3 ) Occ = &occ;
+      if ( lhs == 3 ) { Occ = &occ;Ind1=&ind1;}
     }
 
   if ( iwhich == 'e' )
@@ -5203,8 +5209,16 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
     }
   else if ( iwhich == 'r' )
     {
-      if ( nsp_mat_unique_rows(x, Ind, Occ, itype) == FAIL )
-	return RET_BUG;
+      if ( mtlb )
+	{
+	  if ( nsp_mat_unique_rows_mtlb(x, Ind, Ind1, itype) == FAIL )
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( nsp_mat_unique_rows(x, Ind, Occ, itype) == FAIL )
+	    return RET_BUG;
+	}
     }
   else /*  iwhich == 'c'  */
     {
@@ -5217,7 +5231,9 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
     {
       MoveObj(stack,2,NSP_OBJECT(ind));
       if ( lhs >= 3 )
-	MoveObj(stack,3,NSP_OBJECT(occ));
+	{
+	  MoveObj(stack,3,(mtlb) ? NSP_OBJECT(ind1) : NSP_OBJECT(occ));
+	}
     }
 
   return Max(lhs,1);
