@@ -5148,7 +5148,9 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, char ind_type);
+extern int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, char ind_type);
+extern int nsp_mat_unique_columns_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, char ind_type);
+extern int nsp_mat_unique_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, Boolean first_ind, char ind_type);
 
 static int int_unique( Stack stack, int rhs, int opt, int lhs)
 {
@@ -5204,8 +5206,16 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 
   if ( iwhich == 'e' )
     {
-      if ( nsp_mat_unique(x, Ind, Occ, first_ind, itype) == FAIL )
-	return RET_BUG;
+      if ( mtlb )
+	{
+	  if ( nsp_mat_unique_mtlb(x, Ind, Ind1, first_ind, itype) == FAIL )
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( nsp_mat_unique(x, Ind, Occ, first_ind, itype) == FAIL )
+	    return RET_BUG;
+	}
     }
   else if ( iwhich == 'r' )
     {
@@ -5220,12 +5230,21 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
 	}
     }
-  else /*  iwhich == 'c'  */
+  else
     {
-      if ( nsp_mat_unique_columns(x, Ind, Occ, itype) == FAIL )
-	return RET_BUG;
+      /*  iwhich == 'c'  */
+      if ( mtlb )
+	{
+	  if ( nsp_mat_unique_columns_mtlb(x, Ind, Ind1, itype) == FAIL )
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( nsp_mat_unique_columns(x, Ind, Occ, itype) == FAIL )
+	    return RET_BUG;
+	}
     }
-
+  
   NSP_OBJECT(x)->ret_pos = 1; 
   if ( lhs >= 2 ) 
     {

@@ -6169,6 +6169,7 @@ int nsp_mat_nnz(NspMatrix *A)
  * Return value: %OK or %FAIL
  **/
 
+
 int nsp_mat_unique(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type)
 {
   int i0, i, i_old, *index;
@@ -6247,6 +6248,104 @@ int nsp_mat_unique(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first
 	}
 
       if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}
+
+int nsp_mat_unique_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, Boolean first_ind, char ind_type)
+{
+  int i0, i, *index;
+  double val;
+
+  if ( Ind == NULL )
+    {
+      if ( x->mn <= 1 ) return OK;
+      nsp_qsort_double( x->R, NULL, 0, x->mn, 'i');
+      i0 = 0; val = x->R[0];
+      for ( i = 1 ; i < x->mn ; i++ )
+	if ( x->R[i] != val )
+	  {
+	    i0++;
+	    val = x->R[i0] = x->R[i];
+	  }
+      if ( x->m == 1 )
+	nsp_matrix_resize(x, 1, i0+1);
+      else
+	nsp_matrix_resize(x, i0+1, 1);
+      return OK;
+    }
+
+  else
+    {
+      NspObject *Ind2;
+      int  *index1,*index2;
+      
+      if ( (*Ind = nsp_alloc_mat_or_imat(x->m, x->n, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+      if ( Ind1 != NULL)
+	{
+	  if ( (*Ind1 = nsp_alloc_mat_or_imat(x->m, x->n, ind_type, &index1)) == NULLOBJ )
+	    return FAIL;
+	  if ( (Ind2 = nsp_alloc_mat_or_imat(x->m, x->n, ind_type, &index2)) == NULLOBJ )
+	    return FAIL;
+	}
+      if ( x->mn > 0 )
+	{
+	  if ( first_ind )
+	    nsp_sqsort_bp_double( x->R, x->mn, index, 'i');
+	  else
+	    nsp_qsort_double( x->R, index, 1, x->mn, 'i');
+      
+	  i0 = 0; val = x->R[0];
+
+	  if ( Ind1 != NULL)
+	    {
+	      memcpy(index2,index,x->mn*sizeof(int));
+	      index1[index2[i0]-1]= 1;
+	    }
+	  	  
+	  for ( i = 1 ; i < x->mn ; i++ )
+	    {
+	      if ( x->R[i] != val )
+		{
+		  i0++;
+		  val = x->R[i0] = x->R[i];
+		  index[i0] = index[i];
+		  if ( Ind1 != NULL) index1[index2[i]-1]= i0+1;
+		}
+	      else
+		{
+		  if ( Ind1 != NULL) index1[index2[i]-1]= i0+1;
+		}
+	    }
+	  
+	  if ( x->m == 1 )
+	    {
+	      nsp_matrix_resize(x, 1, i0+1);
+	      if ( ind_type == 'd' )
+		nsp_matrix_resize((NspMatrix *) *Ind, 1, i0+1);
+	      else
+		nsp_imatrix_resize((NspIMatrix *) *Ind, 1, i0+1);
+	    }
+	  else
+	    {
+	      nsp_matrix_resize(x, i0+1, 1);
+	      if ( ind_type == 'd' )
+		nsp_matrix_resize((NspMatrix *) *Ind, i0+1, 1);
+	      else
+		nsp_imatrix_resize((NspIMatrix *) *Ind, i0+1, 1);
+	    }
+	  
+	  
+	  if ( ind_type == 'd' )
+	    {
+	      *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	      if ( Ind1 != NULL)
+		*Ind1 = (NspObject *) Mat2double((NspMatrix *) *Ind1);
+	    }
+	  if ( Ind1 != NULL)  nsp_matrix_destroy((NspMatrix *) Ind2);
+	}
+
       return OK;
     }
 }
@@ -6377,17 +6476,23 @@ int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, ch
       int  *index1,*index2;
       if ( (*Ind = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index)) == NULLOBJ )
 	return FAIL;
-      if ( (*Ind1 = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index1)) == NULLOBJ )
-	return FAIL;
-      if ( (Ind2 = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index2)) == NULLOBJ )
-	return FAIL;
+      if ( Ind1 != NULL)
+	{
+	  if ( (*Ind1 = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index1)) == NULLOBJ )
+	    return FAIL;
+	  if ( (Ind2 = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index2)) == NULLOBJ )
+	    return FAIL;
+	}
       
       if ( x->m > 0 )
 	{
 	  nsp_qsort_gen_lexirow_double( x->R, index, 1, x->m, x->n,'i');
-	  memcpy(index2,index,x->m*sizeof(int));
 	  i0 = 0;
-	  index1[index2[i0]-1]= 1;
+	  if ( Ind1 != NULL)
+	    {
+	      memcpy(index2,index,x->m*sizeof(int));
+	      index1[index2[i0]-1]= 1;
+	    }
 	  for ( i = 1 ; i < x->m ; i++ )
 	    {
 	      for ( j = 0, equal = TRUE ; equal && j < x->n ; j++ )
@@ -6398,11 +6503,11 @@ int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, ch
 		  for ( j= 0 ; j < x->n ; j++ )
 		    x->R[i0 + j*x->m] = x->R[i + j*x->m];
 		  index[i0] = index[i];
-		  index1[index2[i]-1]= i0+1;
+		  if ( Ind1 != NULL) index1[index2[i]-1]= i0+1;
 		}
 	      else
 		{
-		  index1[index2[i]-1]= i0+1;
+		  if ( Ind1 != NULL) index1[index2[i]-1]= i0+1;
 		  if ( index[i] < index[i0] )
 		    index[i0] = index[i];
 		}
@@ -6420,9 +6525,10 @@ int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, ch
 	  if ( ind_type == 'd' )
 	    {
 	      *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
-	      *Ind1 = (NspObject *) Mat2double((NspMatrix *) *Ind1);
+	      if ( Ind1 != NULL)
+		*Ind1 = (NspObject *) Mat2double((NspMatrix *) *Ind1);
 	    }
-	  nsp_matrix_destroy((NspMatrix *) Ind2);
+	  if ( Ind1 != NULL)  nsp_matrix_destroy((NspMatrix *) Ind2);
 	}
 
       return OK;
@@ -6512,6 +6618,90 @@ int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char 
       return OK;
     }
 }
+
+int nsp_mat_unique_columns_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, char ind_type)
+{
+  int j0, i, j, *index, pj0, pj;
+  Boolean equal;
+
+  if ( Ind == NULL )
+    {
+      if ( x->n <= 1 ) return OK;
+      nsp_qsort_gen_lexicol_double( x->R, NULL, 0, x->m, x->n,'i');
+      j0 = 0;
+      for ( j = 1 ; j < x->n ; j++ )
+	{
+	  for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )
+	    equal = x->R[pj0] ==  x->R[pj];
+	  if ( ! equal )
+	    {
+	      j0++;
+	      if ( j0 != j) memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+	    }
+	}
+      nsp_matrix_resize(x, x->m, j0+1);
+      return OK;
+    }
+  else
+    {
+      NspObject *Ind2;
+      int  *index1,*index2;
+      if ( (*Ind = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+      if ( Ind1 != NULL)
+	{
+	  if ( (*Ind1 = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index1)) == NULLOBJ )
+	    return FAIL;
+	  if ( (Ind2 = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index2)) == NULLOBJ )
+	    return FAIL;
+	}
+      
+      if ( x->n > 0 )
+	{
+	  nsp_qsort_gen_lexicol_double( x->R, index, 1, x->m, x->n,'i');
+	  j0 = 0; 
+	  if ( Ind1 != NULL)
+	    {
+	      memcpy(index2,index,x->n*sizeof(int));
+	      index1[index2[j0]-1]= 1;
+	    }
+	  for ( j = 1 ; j < x->n ; j++ )
+	    {
+	      for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )
+		equal = x->R[pj0] ==  x->R[pj];
+	      if ( ! equal )
+		{
+		  j0++;
+		  if ( j0 != j) memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+		  index[j0] = index[j];
+		  if ( Ind1 != NULL) index1[index2[j]-1]= j0+1;
+		}
+	      else
+		{
+		  if ( Ind1 != NULL) index1[index2[j]-1]= j0+1;
+		  if ( index[j] < index[j0] )  index[j0] = index[j];
+		}
+	    }
+	  nsp_matrix_resize(x, x->m, j0+1);
+
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, 1, j0+1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, 1, j0+1);
+	  
+	  if ( ind_type == 'd' )
+	    {
+	      *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	      if ( Ind1 != NULL)
+		*Ind1 = (NspObject *) Mat2double((NspMatrix *) *Ind1);
+	    }
+	  if ( Ind1 != NULL)  nsp_matrix_destroy((NspMatrix *) Ind2);
+	}
+
+      return OK;
+    }
+}
+
 
 
 /**
