@@ -67,7 +67,7 @@ static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M);
 static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
-
+static NspMatrix *nsp_objs3d_get_ebox(NspObjs3d *self);
 %%
 headers
 #include <gtk/gtk.h>
@@ -2159,4 +2159,24 @@ void nsp_draw_objs3d_colorbar(BCG *Xgc,nsp_objs3d *P,double vmin , double vmax, 
 
   /* back to current value*/
   Xgc->graphic_engine->xset_color(Xgc,cpat);
+}
+
+static NspMatrix *nsp_objs3d_get_ebox(NspObjs3d *self)
+{
+  NspMatrix *ret;
+  if ( self->obj->fixed == TRUE )
+    {
+      /* if fixed return current value */
+      ret = self->obj->ebox;
+    }
+  else
+    {
+      /* compute the ebox value */
+      ret = nsp_matrix_create (NVOID, 'r', 1, 6);
+      if ( ret != NULLMAT)
+	{
+	  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *)self,ret->R);
+	}
+    }
+  return ret;
 }

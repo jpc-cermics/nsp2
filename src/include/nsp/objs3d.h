@@ -193,7 +193,7 @@ static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M);
 static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
-
+static NspMatrix *nsp_objs3d_get_ebox(NspObjs3d *self);
 #line 198 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

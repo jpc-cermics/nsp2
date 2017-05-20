@@ -781,7 +781,22 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static NspMethods *objs3d_get_methods(void) { return NULL;};
+static int _wrap_nsp_objs3d_get_ebox(NspObjs3d *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+  CheckRhs(0,0);
+    ret =nsp_objs3d_get_ebox(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static NspMethods objs3d_methods[] = {
+  {"get_ebox",(nsp_method *) _wrap_nsp_objs3d_get_ebox},
+  { NULL, NULL}
+};
+
+static NspMethods *objs3d_get_methods(void) { return objs3d_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -827,7 +842,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 831 "objs3d.c"
+#line 846 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -982,7 +997,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 986 "objs3d.c"
+#line 1001 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1188,7 +1203,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1192 "objs3d.c"
+#line 1207 "objs3d.c"
 
 
 #line 193 "codegen/objs3d.override"
@@ -1200,7 +1215,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1204 "objs3d.c"
+#line 1219 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -3197,4 +3212,24 @@ void nsp_draw_objs3d_colorbar(BCG *Xgc,nsp_objs3d *P,double vmin , double vmax, 
   Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
-#line 3201 "objs3d.c"
+static NspMatrix *nsp_objs3d_get_ebox(NspObjs3d *self)
+{
+  NspMatrix *ret;
+  if ( self->obj->fixed == TRUE )
+    {
+      /* if fixed return current value */
+      ret = self->obj->ebox;
+    }
+  else
+    {
+      /* compute the ebox value */
+      ret = nsp_matrix_create (NVOID, 'r', 1, 6);
+      if ( ret != NULLMAT)
+	{
+	  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *)self,ret->R);
+	}
+    }
+  return ret;
+}
+
+#line 3236 "objs3d.c"

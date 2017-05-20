@@ -15,5 +15,14 @@
   (return-type "none")
 )
 
+;; returns the ebox value
+
+(define-method get_ebox
+  (of-object "Objs3d")
+  (c-name "nsp_objs3d_get_ebox")
+  (return-type "NspMatrix*")
+  )
+
+
 
 
