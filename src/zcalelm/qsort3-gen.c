@@ -122,8 +122,8 @@ void XCNAME(nsp_sqsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],char dir )
 	      /* at this point we have  x[i=ia+1] <= pivot (=x[ia]) <= x[j=ib]  */
 	      while (1)
 		{
-		  do i++;  while ( ! qs_cmp_pivot(i) );
-		  do j--;  while ( qs_cmp_pivot(j) );
+		  do i++;  while ( i< n && ! qs_cmp_pivot(i) );
+		  do j--;  while ( j >= 0 && qs_cmp_pivot(j) );
 		  if (i >= j) break;
 		  SWAP(i, j);
 		}
