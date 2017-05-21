@@ -204,7 +204,6 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name, NspMatrix *RC, NspMatrix *Val
 
   if ( do_ij_sort )
     {
-      Sciprintf("Enter nsp_sqsort_bp_couple %d\n",RC->m);
       /* sort ij (a kind of lexical sort) */
       nsp_sqsort_bp_couple(ij, RC->m, p, 'i');
       for ( k = 0 ; k < RC->m ; k++ ) p[k]--;
