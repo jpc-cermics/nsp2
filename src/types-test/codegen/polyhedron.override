@@ -13,7 +13,10 @@ extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,do
 extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
 extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn) ;
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
-			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
+			const char *Cr_name, NspMatrix **Cr,
+			const char *Fr_name,NspMatrix **Fr,
+			const char *Colr_name,NspMatrix **Colr);
+
 extern int nsp_obj3d_orientation(double x[], double y[], int n);
 
 %%
@@ -154,7 +157,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( lhs == 3 ) hcol= &retcol;
-  if ( nsp_facets_to_faces(x->R, y->R, z->R,colors->I,colors->mn,x->m,x->n,&retc,&retf,hcol)== FAIL)
+  if ( nsp_facets_to_faces(x->R, y->R, z->R,colors->I,colors->mn,x->m,x->n,NVOID,&retc,NVOID,&retf,NVOID,hcol)== FAIL)
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(retc));
   if ( lhs >= 2 )
@@ -599,7 +602,7 @@ NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *y
 {
   NspPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL ;
-  if ( nsp_facets_to_faces(xx,yy,zz,NULL,0,m,n,&C,&F,NULL)== FAIL) goto bug;
+  if ( nsp_facets_to_faces(xx,yy,zz,NULL,0,m,n,"C",&C,"F",&F,NVOID,NULL)== FAIL) goto bug;
   if ((pol = nsp_polyhedron_create(name,C,NULL,F,NULL,NULL,TRUE,NULL,0,NULL))==NULL)  goto bug;
   if ( nsp_check_polyhedron(pol)== FAIL) goto bug;
   return pol;
@@ -700,7 +703,9 @@ NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,dou
  */
 
 int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
-			NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr)
+			const char *Cr_name, NspMatrix **Cr,
+			const char *Fr_name,NspMatrix **Fr,
+			const char *Colr_name,NspMatrix **Colr)
 {
   int switch_orient= TRUE;
   index_vector index={0};
@@ -708,7 +713,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   NspMatrix *C,*Fs,*Fc,*Fsc,*Index=NULL,*Col=NULL;
   NspObject *OIndex=NULL;
   NspBMatrix *B;
-  if ((C = nsp_matrix_create("C",'r',m*n,3))==NULL) return FAIL;
+  if ((C = nsp_matrix_create(Cr_name,'r',m*n,3))==NULL) return FAIL;
   for ( i=0 ; i < C->m; i++)
     {
       C->R[i]= x[i];
@@ -729,7 +734,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
        */
       if ( ncol == m*n )
 	{
-	  if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
+	  if ((Col = nsp_matrix_create(Colr_name,'r',m*n,1))==NULL) return FAIL;
 	  for ( i = 0 ; i < m*n ; i++)
 	    Col->R[i]=colors[Index->I[i]-1];
 	}
@@ -737,13 +742,13 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 	{
 	  /* colors given by colors: one for each facet
 	   */
-	  if ((Col = nsp_matrix_create("Col",'r',n,1))==NULL) return FAIL;
+	  if ((Col = nsp_matrix_create(Colr_name,'r',n,1))==NULL) return FAIL;
 	  for ( i = 0 ; i < n ; i++)
 	    Col->R[i] = colors[i];
 	}
       else
 	{
-	  if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
+	  if ((Col = nsp_matrix_create(Colr_name,'r',m*n,1))==NULL) return FAIL;
 	  /* z is used for colors */
 	  for ( i = 0 ; i < m*n ; i++)
 	    Col->R[i]=C->R[i+2*C->m];
@@ -795,7 +800,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 	  k++; Fc->I[i]=k;
 	}
     }
-  if ((Fsc = nsp_matrix_create("F",'r',m,n))==NULL) return FAIL;
+  if ((Fsc = nsp_matrix_create(Fr_name,'r',m,n))==NULL) return FAIL;
   Fsc->convert = 'i';
   for ( i=0 ; i < Fsc->mn; i++)
     Fsc->I[i]= Fc->I[Fs->I[i]-1];

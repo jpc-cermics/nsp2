@@ -42,8 +42,11 @@ extern int nsp_spolyhedron_update_from_triplet(NspSPolyhedron *pol,double *x,dou
 
 extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn)  ;
 extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
-extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol,int m,int n,
-			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr );
+
+extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
+			const char *Cr_name, NspMatrix **Cr,
+			const char *Fr_name,NspMatrix **Fr,
+			const char *Colr_name,NspMatrix **Colr);
 
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
 				 int Mm,int ncoord);

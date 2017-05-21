@@ -109,10 +109,13 @@ extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,do
 extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
 extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn) ;
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
-			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
+			const char *Cr_name, NspMatrix **Cr,
+			const char *Fr_name,NspMatrix **Fr,
+			const char *Colr_name,NspMatrix **Colr);
+
 extern int nsp_obj3d_orientation(double x[], double y[], int n);
 
-#line 116 "./polyhedron.h"
+#line 119 "./polyhedron.h"
 #endif /* NSP_INC_NspPolyhedron */ 
 
 #ifdef NspPolyhedron_Private 
@@ -127,7 +130,7 @@ static AttrTab polyhedron_attrs[];
 static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyhedron *nsp_polyhedron_create_void(const char *name,NspTypeBase *type);
-#line 21 "codegen/polyhedron.override"
+#line 24 "codegen/polyhedron.override"
 /* inserted in the private part of include file */
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);
@@ -142,6 +145,6 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 146 "./polyhedron.h"
+#line 149 "./polyhedron.h"
 #endif /* NspPolyhedron_Private */
 
