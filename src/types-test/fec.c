@@ -1231,8 +1231,6 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
    *  2/ loop on the triangles : each triangle is finally decomposed
    *     into its differents zones (polygons) by the function PaintTriangle
    *
-   *  XXX when using opengl fillpolyline2D_shade should replace PaintTriangle
-   *      see gmatrix.c
    */
   switch ( TRUE ) /* TRUE for shading or FALSE */
     {
@@ -1267,7 +1265,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  /* call the "painting" function */
 	  if ( P->obj->paint == TRUE )
 	    {
-	      /*   zxy[2]= zxy[0] = (zxy[0]+zxy[1]+zxy[2])/3.0; */
+	      /* XXX: when using opengl we could use gouraud shading 
+	       * to be faster than PaintTriangle 
+	       */
 	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 	    }
 	  if ( mesh == TRUE )
@@ -1282,34 +1282,32 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       cpat = Xgc->graphic_engine->xget_color(Xgc);
       for ( j = 0 ; j < Ntr ; j++)
 	{
-	  int ii[3];
-	  double isx[3],isy[3];
+	  int ii[3], stop = FALSE;
 	  /* retrieve node numbers and functions values */
 	  for ( k = 0 ; k < 3 ; k++ ) {
 	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	    zxy[k] = zone[ii[k]];
-	    isx[k]  = xm[ii[k]];
-	    isy[k]  = ym[ii[k]];
+	    sx[k]  = xm[ii[k]];
+	    sy[k]  = ym[ii[k]];
+	  };
+	  
+	  for ( k = 0 ; k < 3 ; k++ )
+	    stop |=  ( isnan(func[ii[k]]));
+	  if ( stop == TRUE ) continue;
+	  
+	  for ( k = 0 ; k < 3 ; k++ ) {
 	    /* using ii for colors */
 	    ii[k]= - fill[zxy[k]];
 	  };
+	  
 	  /* call the "painting" function */
 	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 )
 	    {
 	      if ( P->obj->paint == TRUE  )
 		{
-#ifdef  WITH_OPENGL
-		  /* when using opengl we use gouraud shading ?
-		   */
-		  if ( Xgc->graphic_engine == &GL_gengine )
-		    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1);
-		  else
-#endif
-		    {
-		      int color = (ii[0]+ii[1]+ii[2])/3.0;
-		      Xgc->graphic_engine->xset_color(Xgc,color);
-		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1,-1);
-		    }
+		  int color = (ii[0]+ii[1]+ii[2])/3.0;
+		  Xgc->graphic_engine->xset_color(Xgc,color);
+		  Xgc->graphic_engine->fillpolyline(Xgc,sx,sy,3,1,-1); 
 		}
 	      if ( mesh == TRUE )
 		{
@@ -1566,4 +1564,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,sx,sy,3,1);
 }
 
-#line 1570 "fec.c"
+#line 1568 "fec.c"
