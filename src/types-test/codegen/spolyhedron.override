@@ -878,7 +878,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   NspSPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL, *Val=NULL;
 
-  if ( nsp_facets_to_faces(xx,yy,zz,colors,ncol,m,n,&C,&F,&Val)== FAIL) goto bug;
+  if ( nsp_facets_to_faces(xx,yy,zz,colors,ncol,m,n,"C",&C,"F",&F,"V",&Val)== FAIL) goto bug;
 
   /* when colors are given by zz we remap the colors 
    * when colors are given by colors we do not remap ( this could be an option )
