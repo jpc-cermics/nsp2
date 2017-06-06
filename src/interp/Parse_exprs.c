@@ -2001,10 +2001,11 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
   /*   check for quote (transpose) */
   if ( ( op=T->IsTranspose(T)) == QUOTE_OP || op == DOTPRIM )
     {
+      PList plist2 = NULLPLIST ;
       if (debug) Sciprintf("{%d}",op);
-      if (nsp_parse_add(&plist1,op,1,T->tokenv.Line) == FAIL) return(FAIL);
-      if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
-      if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return FAIL;
+      if (nsp_parse_add(&plist2,op,1,T->tokenv.Line) == FAIL) return FAIL;
+      if (nsp_parse_add_list(plist,&plist2)==FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
     }
   else
