@@ -1998,13 +1998,18 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
   PList plist1 = NULLPLIST ;
   if (debug) scidebug(debugI++,"[fact2>");
   if (parse_fact3(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   /*   check for quote (transpose) */
   if ( ( op=T->IsTranspose(T)) == QUOTE_OP || op == DOTPRIM )
     {
       if (debug) Sciprintf("{%d}",op);
-      if (nsp_parse_add(plist,op,1,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,1,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
+    }
+  else
+    {
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
     }
   if (debug) scidebug(--debugI,"<fact2]");
   return(OK);
