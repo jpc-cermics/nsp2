@@ -21,12 +21,9 @@
 #include <nsp/objects.h>
 
 #define PList_Private
-#include <nsp/object.h>
 #include <nsp/type.h>
-#include <nsp/hobj.h>
 #include <nsp/plist.h>
 #include <nsp/plistc.h>
-#include <nsp/smatrix.h>
 #include <nsp/ivect.h>
 #include <nsp/file.h>
 #include <nsp/list.h>
