@@ -16,7 +16,8 @@ rect=[-1.2,-1.2,1.2,1.2];
 z=(1:N+1)';
 if new_graphics() then z(1:4)=%nan;end
 xset('colormap',jetcolormap(32));
-fec(noeul(:,2),noeul(:,3),triangles,z,strf='030',axesflag=2,rect=rect,mesh=%t);
+fec(noeul(:,2),noeul(:,3),triangles,0*z,strf='030',axesflag=2,rect=rect,mesh=%t);
+
 
 
 
