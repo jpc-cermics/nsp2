@@ -1436,7 +1436,7 @@ static OpTab Spmf_func[]={
   {"factor_m", int_nsp_primefactors},
   {"isprime_m", int_nsp_isprime},
   {"primes_m", int_nsp_primes},
-  {"convhull_m_m", int_convhull2d},
+  {"convhull2d_m_m", int_convhull2d},
   {"pdf", int_nsp_pdf},
 #ifdef __linux__ 
   {"switch_precision", int_set_double_extended},
