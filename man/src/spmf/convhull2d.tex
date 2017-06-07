@@ -1,12 +1,12 @@
 % -*- mode: latex -*-
-\mansection{convhull}
+\mansection{convhull2d}
 \begin{mandesc}
-  \short{convhull}{convex hull of a set of 2d-points}\\
+  \short{convhull2d}{convex hull of a set of 2d-points}\\
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  I=convhull(x,y);
+  I=convhull2d(x,y);
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -18,7 +18,7 @@
 \end{parameters}
 
 \begin{mandescription}
-  The function \verb+convhull+ computes the convex hull of 
+  The function \verb+convhull2d+ computes the convex hull of 
   a set of 2d points given by \verb!(x(.),y(.))!. The convex 
   hull is returned as a vector of indices to be used to extract 
   the convex hull from the given points. That is, the convex hull 
@@ -29,7 +29,7 @@
   \begin{Verbatim}
     x=rand(1,50);
     y=rand(1,50);
-    I=convhull(x,y);
+    I=convhull2d(x,y);
     rect=[-0.2,-0.2,1.2,1.2]
     plot2d(x(I),y(I),line_color=3,rect=rect);
     plot2d(x,y,line_color=-2,mark=1,rect=rect);
