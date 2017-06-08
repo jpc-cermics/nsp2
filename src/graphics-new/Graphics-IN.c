@@ -320,7 +320,9 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 
   if ( IsNspPList(fobj) )
     {
-      /* third argument can be a macro */
+      /* Note: here we are always in the case where 
+       * x and y are vectors, thus z is of size  (x->mn,y->mn)
+       */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
 	{
@@ -502,7 +504,9 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 
   if ( IsNspPList(fobj) )
     {
-      /* third argument can be a macro */
+      /* Note: here we are always in the case where 
+       * x and y are vectors, thus z is of size  (x->mn,y->mn)
+       */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       z_allocated= TRUE;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
@@ -1083,13 +1087,25 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 
   if ( IsNspPList(fobj) )
     {
-      /* third argument can be a macro */
-      if ((z = zloc= nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
-      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+      int std=(x->m == 1 || x->n==1) && (x->mn == y->mn);
+      if (std)
 	{
-	  ret= RET_BUG;
-	  goto end;
+	  if ((z = zloc= nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
+	  if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+	    {
+	      ret= RET_BUG;
+	      goto end;
+	    }
 	}
+      else
+	{
+	  if ((z = zloc= nsp_matrix_create(NVOID,'r',x->m,x->n))== NULL) return RET_BUG;
+	  if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+	    {
+	      ret= RET_BUG;
+	      goto end;
+	    }
+ 	}
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
@@ -1271,6 +1287,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   NspMatrix *xi,*yj;
   NspObject *func, *args = NULL;
   int ret = FAIL,i,j;
+  int std=(x->m == 1 || x->n==1) && (x->mn == y->mn);
   if (( func =nsp_object_copy(f)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"plot3d_build")== FAIL)) return RET_BUG;
   /** extra arguments **/
@@ -1288,31 +1305,62 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
       nargs= 3;
     }
 
-  for ( i= 0 ; i < x->mn ; i++)
-    for ( j= 0 ; j < y->mn; j++)
-      {
-	xi->R[0]= x->R[i];
-	yj->R[0]= y->R[j];
-	targs[0] =(NspObject *) xi;
-	targs[1] = (NspObject *) yj;
-	if ( targs[0]== NULL ||targs[1]== NULL )  goto end;
-	/* FIXME : a changer pour metre une fonction eval standard */
-	if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL)
-	  goto end;
-	if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r'
-	    && ((NspMatrix *) nsp_ret)->mn==1 )
+  if (std)
+    {
+      for ( i= 0 ; i < x->mn ; i++)
+	for ( j= 0 ; j < y->mn; j++)
 	  {
-	    Mat2double((NspMatrix *) nsp_ret);
-	    z->R[i+z->m*j]= ((NspMatrix *) nsp_ret)->R[0];
-	    nsp_matrix_destroy((NspMatrix *) nsp_ret);
+	    xi->R[0]= x->R[i];
+	    yj->R[0]= y->R[j];
+	    targs[0] =(NspObject *) xi;
+	    targs[1] = (NspObject *) yj;
+	    if ( targs[0]== NULL ||targs[1]== NULL )  goto end;
+	    /* FIXME : a changer pour metre une fonction eval standard */
+	    if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL)
+	      goto end;
+	    if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r'
+		&& ((NspMatrix *) nsp_ret)->mn==1 )
+	      {
+		Mat2double((NspMatrix *) nsp_ret);
+		z->R[i+z->m*j]= ((NspMatrix *) nsp_ret)->R[0];
+		nsp_matrix_destroy((NspMatrix *) nsp_ret);
+	      }
+	    else
+	      {
+		if ( nret == 1) nsp_object_destroy(&nsp_ret);
+		Scierror("%s: evaluation failed for z(%d,%d)\n",NspFname(stack),i+1,j+1);
+		goto end;
+	      }
 	  }
-	else
+    }
+  else
+    {
+      for ( i= 0 ; i < x->m ; i++)
+	for ( j= 0 ; j < x->n; j++)
 	  {
-	    if ( nret == 1) nsp_object_destroy(&nsp_ret);
-	    Scierror("%s: evaluation failed for z(%d,%d)\n",NspFname(stack),i+1,j+1);
-	    goto end;
+	    xi->R[0]= x->R[i+x->m*j];
+	    yj->R[0]= y->R[i+x->m*j];
+	    targs[0] =(NspObject *) xi;
+	    targs[1] = (NspObject *) yj;
+	    if ( targs[0]== NULL ||targs[1]== NULL )  goto end;
+	    /* FIXME : a changer pour metre une fonction eval standard */
+	    if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL)
+	      goto end;
+	    if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r'
+		&& ((NspMatrix *) nsp_ret)->mn==1 )
+	      {
+		Mat2double((NspMatrix *) nsp_ret);
+		z->R[i+z->m*j]= ((NspMatrix *) nsp_ret)->R[0];
+		nsp_matrix_destroy((NspMatrix *) nsp_ret);
+	      }
+	    else
+	      {
+		if ( nret == 1) nsp_object_destroy(&nsp_ret);
+		Scierror("%s: evaluation failed for z(%d,%d)\n",NspFname(stack),i+1,j+1);
+		goto end;
+	      }
 	  }
-      }
+    }
   ret = OK;
  end:
   {
