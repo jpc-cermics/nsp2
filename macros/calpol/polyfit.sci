@@ -62,12 +62,12 @@
 
 function [p, s, mu] = polyfit (x, y, n)
 
-  if (nargin < 3 || nargin > 4)
+  if (nargin < 3 || nargin > 4) then
     error("polyfit requires three input arguments\n");
     return;
   end
   
-  if (nargout > 2)
+  if (nargout > 2) then
     // Normalized the x values.
     mu = [mean(x), std(x)];
     x = (x - mu(1)) / mu(2);
@@ -91,7 +91,7 @@ function [p, s, mu] = polyfit (x, y, n)
     
   function M=vander(x, p)
     M=ones(size(x,1),p); M(:,2)=x;
-    for i=3:p, M(:,i)= M(:,i-1).* x; end;
+    for i=3:p do M(:,i)= M(:,i-1).* x; end;
   endfunction
 
   // Construct the Vandermonde matrix.
@@ -105,10 +105,10 @@ function [p, s, mu] = polyfit (x, y, n)
   p = r \ (q' * y);
   p(k) = p;
   
-  if (nargout > 1)
+  if (nargout > 1) then
     yf = v*p;
     s= hash(10);
-    if (y_is_row_vector)
+    if (y_is_row_vector) then
       s.yf = yf.';
     else
       s.yf = yf;

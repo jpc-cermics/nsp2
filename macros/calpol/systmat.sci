@@ -1,4 +1,4 @@
-function [Sm]=systmat(Sl);
+function Sm=systmat(Sl)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque et all (INRIA)
 //

@@ -1,4 +1,4 @@
-function [d]=detr(h)
+function d=detr(h)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque et all (INRIA)
 //
@@ -25,7 +25,7 @@ function [d]=detr(h)
     [m,n]=size(h);
     if m<>n then error("Error: matrix should be square\n");return;end
     f=eye(n,n);
-    for k=1:n-1,
+    for k=1:n-1 do
       b=h*f
       d=-sum(diag(b)) ./ k
       f=b+eye(n,n)*d,

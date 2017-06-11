@@ -21,7 +21,7 @@ function [r,q]=monodiv_p(a,alpha)
   ca = a.coeffs{1};
   na=size(ca,'*');
   b(na-1)=ca(na);
-  for i=na-2:-1:1
+  for i=na-2:-1:1 do
     b(i) = alpha*b(i+1) + ca(i+1);
   end
   gamma= ca(1)+alpha*b(1)
@@ -53,7 +53,7 @@ function [r,q]=pdiv_soft_p_p(a,b)
   q=[];
   cb = b.coeffs{1};
   nb=size(cb,'*');
-  while %t 
+  while %t do
     ca = a.coeffs{1};
     na=size(ca,'*');
     if (na < nb ) then r = a; break;end
@@ -96,7 +96,7 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
   // we start with [f1;f2]= M*v 
   // and along the iterations we will have 
   // [f1;f2]= Mn*vn 
-  while %t then 
+  while %t do 
     // update the matrix M
     // note that M is unimodular 
     // and detM is the value of det(M)
@@ -116,7 +116,7 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
     if norm(M(1,2)*v(2),1) < eps && norm(M(2,2)*v(2),1) < eps then 
       break;
     end
-    if v(1).degree[]== 0 && v(2).degree[]== 0 then ;
+    if v(1).degree[]== 0 && v(2).degree[]== 0 then
       break;
     end 
   end
@@ -163,7 +163,7 @@ if %f then
 	 x^4*(1+x);
 	 x^3*(1+x)];
   g = pp1(1);
-  for i=1:size(pp1,'*'); g=euclide(g,pp1(i),monic=%t);  end
+  for i=1:size(pp1,'*') do g=euclide(g,pp1(i),monic=%t);  end
   g.normalize[];
   if norm( g - x*(1+x)) > 100*%eps then pause;end
   
@@ -171,7 +171,7 @@ if %f then
   x=poly(0);
   qq = [3*(x^2-4);3*x*(x^2-4)];
   g = qq(1);
-  for i=1:size(qq,'*'); g=euclide(g,qq(i),monic=%t);  end
+  for i=1:size(qq,'*') do g=euclide(g,qq(i),monic=%t);  end
   g.normalize[];
   if norm( g - (x^2-4)) > 100*%eps then pause;end
 end 
@@ -185,7 +185,7 @@ if %f then
     x= poly(0);
     p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
     n=1000 ; T= ones(1,n) > 0; N= zeros(1,n);
-    for i=1:n
+    for i=1:n do
       cp=grand(1,4,'uin',0,5);
       p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
       cq=grand(1,4,'uin',0,5);
@@ -211,18 +211,18 @@ if %f then
     x= poly(0);
     r= -5:4;
     n= 10000;
-    veps= 10.^(-[0:14]);
-    for k=1:size(veps,'*')
+    veps= 10E .^(-[0:14]);
+    for k=1:size(veps,'*') do
       T= ones(1,n);
-      for i=1:n 
+      for i=1:n do
 	cp=grand(1,10,'uin',0,1);
-	p = m2p(1); for j=1:10 ; p= p*(r(j)+x)^cp(j);end 
+	p = m2p(1); for j=1:10 do p= p*(r(j)+x)^cp(j);end 
 	cq=grand(1,10,'uin',0,1);
-	q = m2p(1); for j=1:10 ; q= q*(r(j)+x)^cq(j);end 
+	q = m2p(1); for j=1:10 do q= q*(r(j)+x)^cq(j);end 
 	eps = veps(k);
 	[gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
 	cpq = min(cq,cp);
-	pq = m2p(1); for j=1:10 ; pq= pq*(r(j)+x)^cpq(j);end 
+	pq = m2p(1); for j=1:10 do pq= pq*(r(j)+x)^cpq(j);end 
 	gcpq1 = pq;
 	gcpq.normalize[];
 	T(i)=norm(gcpq1 -gcpq,1);

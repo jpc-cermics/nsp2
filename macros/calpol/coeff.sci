@@ -26,13 +26,13 @@ function y=coeff(p,num)
     d=max(p.degree[]);
     y=[];
     if isempty(d) then return;end
-    for i=1:d+1 
+    for i=1:d+1 do
       y.concatr[ce2m(C,indice=i,noti=0)];
     end
   else
     C=p.coeffs;
     y=[];
-    for i=num 
+    for i=num do
       y.concatr[ce2m(C,indice=i+1,noti=0)];
     end
   end

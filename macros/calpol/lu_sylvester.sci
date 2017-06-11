@@ -1,4 +1,3 @@
-
 function [Pr,P2r,L,U]=lu_sylvester(pf,pg) 
 // Copyright  2010-2015 Paola Boito 
 //
@@ -87,7 +86,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
     // test the new displacement function 
     // Fm=Fmat(N);
     Fm=ones(N,N);
-    for i=1:N; Fm(i,1:N)=exp(2*%pi*%i*(i-1)*((1:N)-1)/N)/sqrt(N);end 
+    for i=1:N do Fm(i,1:N)=exp(2*%pi*%i*(i-1)*((1:N)-1)/N)/sqrt(N);end 
     Fm=Fm';
     C = Fm'*Ms*inv(D0)*Fm ;
     if norm(diag(D1)*C -C*diag(D2) - G1_c*G2_c) > 10000*%eps then pause;end 
@@ -101,7 +100,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
   //P2=eye(N);
   P2r=1:N;
 
-  for k=1:N
+  for k=1:N do
     // the first generator is made orthogonal
     [Q,R]=qr(G1_c,mode="e");
     G1_c=Q;
@@ -201,7 +200,7 @@ if %f then
   function M=Fmat(n)
   // Fourier matrix 
     M=ones(n,n);
-    for i=1:n 
+    for i=1:n do
       M(i,1:n)=exp(2*%pi*%i*(i-1)*((1:n)-1)/n)/sqrt(n);
     end
     M=M';

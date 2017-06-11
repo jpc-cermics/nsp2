@@ -26,7 +26,7 @@ function [x,err]=diophant(p1p2,b)
 // 
   p1=p1p2(1);p2=p1p2(2)
   [x,u]=bezout(p1,p2)
-  p1=u(2,2);p2=u(1,2)//
+  p1=u(2,2);p2=u(1,2)
   if x.degree[] ==0 then
     x=b*u(:,1)
     err=0

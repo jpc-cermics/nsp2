@@ -21,7 +21,7 @@ function r=pow_p(p,n)
     
   r=m2p([1]);
   q=p;
-  while  n > 1 
+  while  n > 1 do
     if modulo(n,2) == 1 then 
       r = r * q;
     end

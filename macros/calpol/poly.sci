@@ -30,7 +30,7 @@ function y=poly(x,varargin,varargopt)
   end
   if opts.roots then 
     y=m2p(1,var=opts.var);
-    for i=1:size(x,'*')
+    for i=1:size(x,'*') do
       yp=m2p([0,1],var=opts.var);
       y = y*(yp-x(i));
     end

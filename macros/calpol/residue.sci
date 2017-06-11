@@ -1,4 +1,4 @@
-function [T_pa]=taylor(p,a)
+function T_pa=taylor(p,a)
 // Copyright  2010-2015 Francois Delebecque
 //
 // This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ function [T_pa]=taylor(p,a)
   a=a(:);
   curd=p;
   T_pa=horner(p,a){1};
-  for k=1:p.degree[]
+  for k=1:p.degree[] do
     curd= curd.derivative[];
     T_pa=[T_pa,horner(curd,a){1}/prod(1:k)];
   end
@@ -34,7 +34,7 @@ endfunction
 
 if %f then 
   function ok=check_taylor(p,a)
-    [T]= taylor(p,a);
+    T= taylor(p,a);
     q=m2p(T);
     pc = compose(q,m2p([-a,1]));
     ok=  p == pc 
@@ -49,7 +49,7 @@ if %f then
   if ~check_taylor(p,a,taylor(p,a)) then pause;end 
 end
 
-function [T_pdivq]=rtaylor(p,q,a,n)
+function T_pdivq=rtaylor(p,q,a,n)
 // Copyright  2010-2015 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
@@ -139,7 +139,7 @@ function [res,L_c,T,p_a]=residue(p,q,a,tol=%eps)
   wtmp=roots(q);
 
   // k = estimated multiplicity of a
-  for K=1:20
+  for K=1:20 do
     [pp,qq]=find(abs(wtmp-a) < tol);
     k=length(pp);
     if k==0 then tol=(tol)^(3/4);else break;end
@@ -176,10 +176,10 @@ if %f then
   x=poly(0,'x');
   p=(x-3)*(x+5);
   q=((x-1)^3)*(x^2-5*x+2); 
-  [res]=residue(p,q,1)   //res=19;
+  res=residue(p,q,1);   //res=19;
   p=(x-3)*(x+5)*(x-2);
   q=((x-1)^4)*(x^9-5*x+2);
-  [res]=residue(p,q,1) //  (res=-559.5)
+  res=residue(p,q,1); //  (res=-559.5)
 end
 
 

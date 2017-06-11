@@ -23,7 +23,7 @@ function y=horner_r(r,a,ttmode=%f,vdim=%t)
     y = C1 ./ C2 
   else
     y={};
-    for i=1:size(C1,'*')
+    for i=1:size(C1,'*') do
       y{i}= C1{i}./C2{i};
     end
   end
@@ -58,7 +58,7 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
     y= c($);
     // force y to have x type when d==0
     if d== 0 then y = y+0 *x;end
-    for i=d:-1:1
+    for i=d:-1:1 do
       y = x.*y + c(i);
     end
   endfunction
@@ -72,7 +72,7 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
     y= ce2m(c,indice=d+1,noti=0)
     // force y to have x type when d==0
     if d== 0 then y = y+0 *x;end
-    for i=d:-1:1
+    for i=d:-1:1 do
       y = x*y + ce2m(c,indice=i,noti=0)
     end
   endfunction
@@ -97,7 +97,7 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
       vname = p.get_var[];
       y=m2p([],var= vname);
     end
-    for i=1:max(mnp,mnq)
+    for i=1:max(mnp,mnq) do
       // need here vdim= %f for ce elements to have 
       // the same type as x 
       ce = horner(p(min(i,mnp)),x(min(i,mnq)));
@@ -108,13 +108,13 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
     if vdim then 
       // y has x dimension 
       y=cell(size(x,1),size(x,2))
-      for i = 1: size(y,'*')
+      for i = 1: size(y,'*') do
 	y{i} = horner_gen_p_scalar(p,x(i));
       end
     else
       // y has the dimension of p 
       y=cell(size(p,1),size(p,2))
-      for i = 1: size(y,'*')
+      for i = 1: size(y,'*') do
 	y{i} = horner_gen_polynom(p(i),x)
       end
     end

@@ -31,10 +31,10 @@ function [resn,g]=pfactors(pol,flag)
   resn=list();
   
   if nargin==1 then flag=[];end
-  if  flag==[] then nargin=1;end
+  if isempty(flag) then nargin=1;end
   if nargin==1 then
     kk=1;k=1;
-    while %t
+    while %t do
       if abs(imag(w(kk)))<=%eps then
 	resn(k)=poly(w(kk), pol.get_var[]);
 	kk=kk+1;k=k+1;
@@ -46,11 +46,11 @@ function [resn,g]=pfactors(pol,flag)
 	if kk>n then return;end
       end
     end
-  end   //nargin=1
+  end; //nargin=1
   if nargin==2 then
     kk=1;k=1;
     if flag=='c' then
-      while %T
+      while %t do
 	if abs(imag(w(kk)))<=%eps then
 	  resn(k)=poly(-abs(w(kk)), pol.get_var[]);
 	  kk=kk+1;k=k+1;
@@ -59,16 +59,16 @@ function [resn,g]=pfactors(pol,flag)
 	if abs(imag(w(kk)))>%eps then 
 	  if real(w(kk))<0 then
 	    resn(k)=real(poly([w(kk),w(kk+1)],pol.get_var[]));
-	  else ;
+	  else
 	    resn(k)=real(poly([-w(kk),-w(kk+1)],pol.get_var[]));
 	  end
 	  kk=kk+2;k=k+1;
 	  if kk>n then return;end
 	end
       end
-    end    //'c'
+    end ;   //'c'
     if flag=='d' then
-      while %T
+      while %t do
 	wkk=w(kk);
 	if abs(imag(wkk))<=%eps then
 	  [themin,which]=mini([abs(wkk),1/(abs(wkk))]);
@@ -80,7 +80,7 @@ function [resn,g]=pfactors(pol,flag)
 	if abs(imag(wkk))>%eps then 
 	  if abs(wkk)<1 then
 	    resn(k)=real(poly([wkk,w(kk+1)],pol.get_var[]));
-	  else ;
+	  else
 	    //   g=g*wkk*w(kk+1); w(kk+1)= conj(wkk)
 	    g=g*abs(wkk)^2;
 	    zp=[wkk,w(kk+1)];resn(k)=real(poly(ones(zp)./zp,pol.get_var[]));
@@ -89,6 +89,6 @@ function [resn,g]=pfactors(pol,flag)
 	  if kk>n then return;end
 	end
       end
-    end    //'d'
-  end   //nargin=2
+    end;   //'d'
+  end;   //nargin=2
 endfunction

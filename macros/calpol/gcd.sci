@@ -32,14 +32,14 @@ function [g,uu]=gcd_i(p)
   p.redim[1,-1]; // resize to row vector
   g=p(1);
   if nargout <= 1 then 
-    for l=2:mn, [g]=euclide(g,p(l));end
+    for l=2:mn do g=euclide(g,p(l));end
     return;
   end
 
   uu=m2i(1,it);
-  for l=2:mn,
+  for l=2:mn do
     [g,U]=euclide(g,p(l));u=U{1,1};
-    uu=[uu(:,1:l-2) uu(:,l-1)*u(1,[2 1])];uu(l,l-1:l)=u(2,[2 1]);
+    uu=[uu(:,1:l-2), uu(:,l-1)*u(1,[2 1])];uu(l,l-1:l)=u(2,[2 1]);
   end
 endfunction
 
@@ -62,11 +62,11 @@ function [g,uu]=gcd_m(p)
   p.redim[1,-1]; // resize to row vector
   g=p(1);
   if nargout <= 1 then 
-    for l=2:mn, [g]=euclide(g,p(l));end
+    for l=2:mn do g=euclide(g,p(l));end
     return;
   end
   uu=1;
-  for l=2:mn,
+  for l=2:mn do
     [g,U]=euclide(g,p(l));u=U{1,1};
     uu=[uu(:,1:(l-2)),uu(:,l-1)*u(1,[2 1])];
     uu(l,(l-1):l)=u(2,[2 1]);

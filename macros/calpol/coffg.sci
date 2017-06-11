@@ -30,7 +30,7 @@ function [Ns,d]=coffg(Fs)
 
   [n,np]=size(Fs);
   if n<>np then error('First argument to coffg must be square!');end
-  d=det(Fs) // common denominator
+  d=det(Fs); // common denominator
   // create an empty variable similar to Fs
   // should work also for standard matrices
   // XXX: need to extends zeros(0,0,like=..)
@@ -43,8 +43,8 @@ function [Ns,d]=coffg(Fs)
   if n1 == 1 then 
     Ns= 1 ./ Fs; d= Ns.den ; Ns=Ns.num;
   else
-    for kk=1:n1 
-      for l=1:n1
+    for kk=1:n1 do
+      for l=1:n1 do
 	signe=(-1)^(kk+l);
 	col=[1:kk-1,kk+1:n1];row=[1:l-1,l+1:n1];
 	Ns(kk,l)=-signe*det(Fs(row,col))

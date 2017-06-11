@@ -53,7 +53,7 @@ function res=det_p(P,k=[])
   e=zeros(k,1);
   e(2)=1;
   // parameters for clean.
-  epsa=1.d-10;
+  epsa=1.E-10;
   epsr=0;//no relative rounding
   if k==1 then
     ksi=1;
@@ -64,14 +64,14 @@ function res=det_p(P,k=[])
   if ~isreal(P,%t) then
     // Cas Complexe
     C=horner(P,ksi,vdim=%t);
-    for kk=1:k,  fi=[fi,det(C{kk})]; end
+    for kk=1:k do fi=[fi,det(C{kk})]; end
     F= ifft(fi);
     Temp1 = m2p(clean(real(F),epsa,epsr))+%i*m2p(clean(imag(F),epsa,epsr));
   else
     // Cas Réel
     C=horner(P,ksi,vdim=%t);
     //for kk=1:k,fi=[fi,det(freq(P,ones(P),ksi(kk)))];end
-    for kk=1:k,fi=[fi,det(C{kk})];end 
+    for kk=1:k do fi=[fi,det(C{kk})];end 
     Temp1 = m2p(clean(real(ifft(fi)),epsa,epsr));
   end
   if isempty(k) then
@@ -93,7 +93,7 @@ if %f then
   Q=det(P);
   H=horner(Q,linspace(-1,1,30));
   H2=horner(P,linspace(-1,1,30),vdim=%t);
-  d=[];for k=1:size(H2,'*'), d(k)=det(H2{k});end
+  d=[];for k=1:size(H2,'*') do d(k)=det(H2{k});end
   if norm(d-H{1}) > 100*%eps then pause;end 
 end
 

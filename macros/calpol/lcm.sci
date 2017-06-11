@@ -48,7 +48,7 @@ function [q,fact]=lcm_i(p)
   if isempty(p) then q=p;fact=p;return;end 
   q=p(1);
   fact=m2i(1,p(1).itype[][1]);
-  for k=2:size(p,'*')
+  for k=2:size(p,'*') do
     [q,U,idet]=lcm(q,p(k)); u = U{1,1};   
     f = [ u(2,2), - u(1,2)]*idet;
     fact=[fact * f(2), f(1)];
@@ -83,7 +83,7 @@ function [q,fact]=lcm_m(p)
   if isempty(p) then q=p;fact=p;return;end 
   q=p(1);
   fact=[1];
-  for k=2:size(p,'*')
+  for k=2:size(p,'*') do
     [q,U,idet]=lcm(q,p(k)); u = U{1,1};   
     f = [ u(2,2), - u(1,2)]*idet;
     fact=[fact * f(2), f(1)];

@@ -77,9 +77,9 @@ function [f,d]=inv_p(h,flag)
   end;
   //     GENERAL POLYNOMIAL MATRIX 
   select flag
-   case 'L'
+   case 'L' then
     f=eye(n,n);
-    for k=1:n-1,
+    for k=1:n-1 do
       b=h*f,
       d=-sum(diag(b))/k
       f=b+eye(n,n)*d,
@@ -88,7 +88,7 @@ function [f,d]=inv_p(h,flag)
     if d.degree[]==0 then d=coeff(d),end,
     if nargout <=1 then f=f ./ d;end
     return;
-   case 'C'
+   case 'C' then
     [f,d]=coffg(h);
     if d.degree[]==0 then d=coeff(d),end
     if nargout <=1 then f=f ./ d;end
@@ -121,18 +121,18 @@ function [f,d]=inv_r(h,flag)
   [m,n]=size(h);
   if m<>n then error("Error: matrix should be square");return;end
   select flag
-   case 'L'
+   case 'L' then
     //  Leverrier 
     f=eye(n,n);
-    for k=1:n-1,
+    for k=1:n-1 do
       b=h*f,
-      d=0;for l=1:n,d=d+b(l,l),end,d=-d ./ k;
+      d=0;for l=1:n do d=d+b(l,l),end,d=-d ./ k;
       f=b+eye(n,n)*d,
     end;
-    b=h*f;d=0;for l=1:n,d=d+b(l,l),end;d=d ./ n,
+    b=h*f;d=0;for l=1:n do d=d+b(l,l),end;d=d ./ n,
     if nargout <=1 then f=f ./ d;end
     return;
-   case 'A'
+   case 'A' then
     // lcm of all denominator entries
     denh=lcm(h.den);
     Num=h*denh;Num=Num.num;
@@ -140,14 +140,14 @@ function [f,d]=inv_r(h,flag)
     f=N*denh; 
     if nargout <=1 then f=f/d;end
     return;
-   case 'C'
+   case 'C' then
     // default method by polynomial inverse
     [Nh,Dh]=lcmdiag(h); //h=Nh*inv(Dh); Dh diagonal;
     [N,d]=coffg(Nh);
     f=Dh*N;
     if nargout <=1 then f=f/d;end
     return;
-   case 'Cof'
+   case 'Cof' then
     // cofactors method
     [f,d]=coffg(h);
     if nargout <=1 then f= f ./ d;end

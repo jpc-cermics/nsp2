@@ -29,14 +29,14 @@ function [N,D]=lcmdiag(H,flag)
   D=m2p([],var=H.get_var[]);N=D;
   if nargin==1 then flag='col';end
   select flag
-   case 'row'
-    for k=1:m
+   case 'row' then
+    for k=1:m do
       [pgcd,fact]=lcm(Den(k,:)); 
       D=diag([diag(D);pgcd]);
       N=[N;Num(k,:).*fact];
     end
-   case 'col'
-    for k=1:n
+   case 'col' then
+    for k=1:n do
       [pgcd,fact]=lcm(Den(:,k)); 
       D=diag([diag(D);pgcd]);
       N=[N,Num(:,k).*fact];  

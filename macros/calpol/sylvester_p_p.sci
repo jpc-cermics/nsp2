@@ -19,11 +19,11 @@ function M=sylvester_p_p(p,q)
 // given two polynomials p and q 
   
   if size(p,'*')<>1 || size(q,'*') <> 1 then 
-    error('polynomial matrices should be of size 1x1\n");
+    error('polynomial matrices should be of size 1x1\n');
     return;
   end
   if p.degree[]== 0 || q.degree[]== 0 then 
-    error('polynomial should not be of degree zero\n");
+    error('polynomial should not be of degree zero\n');
   end
   cp = p.coeffs{1}; cp = cp($:-1:1); p0 = zeros(1,max(p.degree[]-1,0))
   cq = q.coeffs{1}; cq = cq($:-1:1); q0 = zeros(1,max(q.degree[]-1,0))

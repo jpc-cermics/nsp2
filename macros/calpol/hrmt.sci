@@ -26,7 +26,7 @@ function [pg,U]=hrmt(v)
   if n>1 then error("Error: argument should be a row vector");end
   pg=v(1)
   U= m2p(eye(m,m),var=v.get_var[],dim=".");
-  for k=2:m
+  for k=2:m do
     [pg,uk]=bezout(pg,v(k))
     //[pg,uk]=euclide(pg,v(k))
     U(:,k-1:k)=U(:,k-1:k)*uk(:,[2 1])
@@ -42,16 +42,16 @@ function [x,U]=gcd_p(p)
   mn=m*n
   x=p(1);
   U= m2p(eye(m,m),var=p.get_var[],dim=".");
-  for l=2:mn,
+  for l=2:mn do
     [x,u]=bezout(x,p(l)),
     if nargout ==2 then
-      U=[U(:,1:l-2) U(:,l-1)*u(1,[2 1])];U(l,l-1:l)=u(2,[2 1]);
+      U=[U(:,1:l-2), U(:,l-1)*u(1,[2 1])];U(l,l-1:l)=u(2,[2 1]);
     end
   end,
   if nargout ==1 then return,end;
-  for l=mn:-1:2
+  for l=mn:-1:2 do
     pivot=U(l,l-1);
-    for k=l:mn
+    for k=l:mn do
       [r,q]=pdiv(U(l,k),pivot)
       if coeff(q)<>0 then
 	U(1:l-1,k)=U(1:l-1,k)-q*U(1:l-1,l-1)

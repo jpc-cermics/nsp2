@@ -25,7 +25,7 @@ function [p,fact]=lcm_p(p)
   [m,n]=size(p),
   p=matrix(p,m*n,1),
   p0=p(1);fact=1;
-  for l=2:m*n,
+  for l=2:m*n do
     [u,v]=simp(p0,p(l)),
     p0=p0*v,
     fact=[v*fact,u],

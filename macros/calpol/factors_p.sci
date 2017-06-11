@@ -76,7 +76,7 @@ function [resn,g]=factors_p(pol,flag)
   select flag 
    case 'v' then 
     // void version 
-    while %t
+    while %t do
       if abs(imag(w(kk)))<=%eps then
 	resn(k)=poly(w(kk), pol.get_var[]);
 	kk=kk+1;k=k+1;
@@ -89,7 +89,7 @@ function [resn,g]=factors_p(pol,flag)
       end
     end
    case 'c' then 
-    while %t
+    while %t do
       if abs(imag(w(kk)))<=%eps then
 	resn(k)=poly(-abs(w(kk)), pol.get_var[]);
 	kk=kk+1;k=k+1;
@@ -98,7 +98,7 @@ function [resn,g]=factors_p(pol,flag)
       if abs(imag(w(kk)))>%eps then 
 	if real(w(kk))<0 then
 	  resn(k)=real(poly([w(kk),w(kk+1)],pol.get_var[]));
-	else ;
+	else
 	  resn(k)=real(poly([-w(kk),-w(kk+1)],pol.get_var[]));
 	end
 	kk=kk+2;k=k+1;
@@ -106,7 +106,7 @@ function [resn,g]=factors_p(pol,flag)
       end
     end
    case 'd' then
-    while %t
+    while %t do
       wkk=w(kk);
       if abs(imag(wkk))<=%eps then
 	[themin,which]=min([abs(wkk),1/(abs(wkk))]);
@@ -118,7 +118,7 @@ function [resn,g]=factors_p(pol,flag)
       if abs(imag(wkk))>%eps then 
 	if abs(wkk)<1 then
 	  resn(k)=real(poly([wkk,w(kk+1)],pol.get_var[]));
-	else ;
+	else
 	  //   g=g*wkk*w(kk+1); w(kk+1)= conj(wkk)
 	  g=g*abs(wkk)^2;
 	  zp=[wkk,w(kk+1)];resn(k)=real(poly(ones(zp)./zp,pol.get_var[]));

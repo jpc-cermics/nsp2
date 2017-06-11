@@ -1,4 +1,4 @@
-function [P]=inv_coeff(A,d=[],name='x')
+function P=inv_coeff(A,d=[],name='x')
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 2016-2016 - Jean-Philippe Chancelier (Enpc)
 //
@@ -25,7 +25,7 @@ function [P]=inv_coeff(A,d=[],name='x')
   end
   ce= m2ce(A,[1,m+1],[1:n/nc:n+1]);
   P=m2p(ce{$},var=name,dim=".");
-  for i=(size(ce,'*')-1):-1:1
+  for i=(size(ce,'*')-1):-1:1 do
     P= poly(0,name)*P + m2p(ce{i},var=name,dim=".");
   end
 endfunction

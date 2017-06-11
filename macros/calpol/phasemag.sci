@@ -11,9 +11,10 @@ function [phi,db]=phasemag(z,mod)
   //compute phase increments in (-pi, pi]
   z=z(:,2:$)./z(:,1:$-1)
   dphi=atan(imag(z),real(z))
-  phi=cumsum([phi1 dphi],2)
-  if part(mod,1)<>'c' then  // reset modulo 360
+  phi=cumsum([phi1, dphi],2)
+  if part(mod,1)<>'c' then  
+    // reset modulo 360
     phi=modulo(phi,2*%pi)
   end
-  phi=phi*180/%pi //transform in degree
+  phi=phi*180/%pi; //transform in degree
 endfunction

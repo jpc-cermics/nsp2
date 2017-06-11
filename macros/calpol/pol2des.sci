@@ -25,6 +25,6 @@ function [N,B,C]=pol2des(Ds)
   if type(Ds,'short')=='m' then Ds=Ds+0*poly(0,'s');end
   dg=max(Ds.degree[])+1;
   [nout,nin]=size(Ds);
-  [Sl]=markp2ss(coeff(Ds),dg,nout,nin);
+  Sl=markp2ss(coeff(Ds),dg,nout,nin);
   N=Sl(2);B=-Sl(3);C=Sl(4)
 endfunction

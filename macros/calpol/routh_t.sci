@@ -34,7 +34,7 @@ function r=routh_t(h,k)
     nd=max([d.degree[],n.degree[]])+1;
     cod=coeff(d,0:nd-1);//coeff du denominateur
     con=coeff(n,0:nd-1);//coeff du numerateur
-    cobf=cod+k*con //coeff de la boucle fermee
+    cobf=cod+k*con;//coeff de la boucle fermee
   else
     if type(h,'short')<>'p' then error('argument must be polynomial'),end
     nd=h.degree[]+1;
@@ -50,11 +50,11 @@ function r=routh_t(h,k)
 
   if ncol<2 then r=[],return,end;
   if nargin==2 then
-    for i=3:nd,
+    for i=3:nd do
       r(i,1:ncol-1)=[r(i-1,1),-r(i-2,1)]*[r(i-2,2:ncol);r(i-1,2:ncol)]
     end;
   else
-    for i=3:nd,
+    for i=3:nd do
       if r(i-1,1)==0 then 
 	r(i,1:ncol-1)=[1.,-r(i-2,1)*%inf]*[r(i-2,2:ncol);r(i-1,2:ncol)]
       else

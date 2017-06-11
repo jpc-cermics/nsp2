@@ -70,12 +70,12 @@ function [z,f1,f2,res] = gcd_p_p(u,v, delta=1.e-9)
   // compute cofactors and 
   // perform iterative refinement
   [z,f1,f2]=cofactors(f,g,tdeg, ftol = ftol)
-  res = [norm(f- f1*z) norm(g - f2*z)];
+  res = [norm(f- f1*z), norm(g - f2*z)];
 
-  if and( res < [delta,delta])
+  if and( res < [delta,delta]) then
     // try to increase degree
     if debug then printf(" (+) ");tref=tdeg;end 
-    while %t 
+    while %t do
       tdeg=tdeg+1;
       if tdeg > min(m,n) then 
 	if debug then 
@@ -84,7 +84,7 @@ function [z,f1,f2,res] = gcd_p_p(u,v, delta=1.e-9)
 	break;
       end 
       [newz,f1,f2]=cofactors(f,g,tdeg, ftol = ftol);
-      newres = [norm(f- f1*z) norm(g - f2*z)];
+      newres = [norm(f- f1*z), norm(g - f2*z)];
       if ((newres(1)>delta)||(newres(2)>delta)) then 
 	if debug then 
 	  printf(" stop %d (%d) norm=(%g,%g)\n", tdeg-1,tdeg-1-tref, res(1),res(2));
@@ -96,11 +96,11 @@ function [z,f1,f2,res] = gcd_p_p(u,v, delta=1.e-9)
     end
   else
     if debug then printf(" (-) ");  tref=tdeg;end 
-    while ((res(1)>delta)||(res(2)>delta))
+    while ((res(1)>delta)||(res(2)>delta)) do
       tdeg=tdeg-1;
       if tdeg < 0 then tdeg=0; break;end 
       [z,f1,f2]=cofactors(f,g,tdeg, ftol = ftol);
-      res = [norm(f- f1*z) norm(g - f2*z)];
+      res = [norm(f- f1*z), norm(g - f2*z)];
     end
     if debug then printf(" stop %d (%d) norm=(%g,%g)\n",tdeg,tdeg-tref,res(1),res(2));end
   end
@@ -112,7 +112,7 @@ function gcd_test(delta=1.e-9)
   x= poly(0);
   p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
   n=100 ; T= ones(1,n) > 0; N= zeros(1,n);
-  for i=1:n
+  for i=1:n do
     cp=grand(1,4,'uin',0,5);
     p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
     cq=grand(1,4,'uin',0,5);
@@ -138,9 +138,9 @@ if %f then
   x= poly(0);
   r = ((-1).^(1:10)).*(1:10)/2;
   u =poly(r,'x',roots=%t);
-  r = r - 10.^(-(1:10));
+  r = r - 10E .^(-(1:10));
   v =poly(r,'x',roots=%t);
-  for i=1:12 
+  for i=1:12 do
     [g,p,q,res] = gcd_jpc(u,v,delta=10^(-i));
     dr(1,i)=i;
     dr(2,i)=g.degree[];

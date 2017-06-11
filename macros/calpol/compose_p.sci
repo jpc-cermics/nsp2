@@ -34,7 +34,7 @@ function res=compose_fft_p(p,q)
   D=horner(p,C{1});
   F= ifft(D{1});
   // Paramètres de clean
-  epsa=1.d-10;
+  epsa=1.E-10;
   epsr=0;
   if ~flag then
     // Cas Complexe
@@ -71,7 +71,7 @@ function res=compose_p(p,q)
 // 
   pc = p.coeffs{1};
   res = pc(1)*m2p([1],var=q.get_var[]);
-  for i=2:size(pc,'*') 
+  for i=2:size(pc,'*') do
     res = res + pc(i)*q^(i-1);
   end
 endfunction

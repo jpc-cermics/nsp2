@@ -41,11 +41,11 @@ function u=epdiv_fft(p,q)
   k=n-m+1; // length(u)
   c=ceil(n/k);
   r=k*c;
-  fpad=[zeros(1,max(r-n,0)) f];
-  gpad=[zeros(1,max(r-m,0)) g];
+  fpad=[zeros(1,max(r-n,0)), f];
+  gpad=[zeros(1,max(r-m,0)), g];
   fval=fft(fpad);
   gval=fft(gpad);
-  if min(abs(gval))>tol
+  if min(abs(gval))>tol then 
     uval=fval(1:c:r)./gval(1:c:r);
     uu=ifft(uval);
     u=[uu(2:k), uu(1)];
@@ -59,11 +59,11 @@ function u=epdiv_fft(p,q)
   scale=(1+1/n).^(0:n-1);
   fs=f.*scale;
   gs=g.*scale(1:m);
-  fpad=[zeros(1,r-n) fs];
-  gpad=[zeros(1,r-m) gs];
+  fpad=[zeros(1,r-n), fs];
+  gpad=[zeros(1,r-m), gs];
   fval=fft(fpad);
   gval=fft(gpad);
-  if min(abs(gval))>tol
+  if min(abs(gval))>tol then
     uval=fval(1:c:r)./gval(1:c:r);
     uu=ifft(uval);
     u=[uu(2:k), uu(1)]./scale(1:k);
@@ -178,7 +178,7 @@ function u=epdiv_gko(p,q)
   P=eye(N);
   P2=eye(M);
 
-  for k=1:M
+  for k=1:M do
     // the first generator is made orthogonal
     [Q,R]=qr(G1_c,mode="e");
     G1_c=Q;
@@ -229,7 +229,7 @@ function u=epdiv_gko(p,q)
 
   // detect nullity 
   nullity=0;
-  while abs(U(M-nullity,M-nullity))<threshold
+  while abs(U(M-nullity,M-nullity))<threshold do
     nullity=nullity+1;
   end
   //  nullity = M- (max(find([threshold;abs(diag(U))] >= threshold ))-1);
@@ -254,7 +254,7 @@ function [ok,T,no]=epdiv_test(n,fn)
   p3=(3+x);
   p4=(x);
   timer();
-  for i=1:n
+  for i=1:n do
     cp=grand(1,4,'uin',0,5);
     p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
     cq=grand(1,4,'uin',0,5);

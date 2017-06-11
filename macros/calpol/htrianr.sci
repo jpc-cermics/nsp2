@@ -29,14 +29,14 @@ function [A,U,rk]=htrianr(A)
   [m,n]=size(A);
   U=m2p(eye(n,n),var=A.get_var[],dim=".");
   l1=n+1;
-  for l=m:-1:max((m-n),1)
+  for l=m:-1:max((m-n),1) do
     l1=l1-1;
     if l1<>0 then
       Al=A(l,1:l1);
-      if norm(coeff(Al),1) > 1.d-10 then
+      if norm(coeff(Al),1) > 1.E-10 then
 	[pg,Ul]=hrmt(Al);
-	Ul=clean(Ul,1.d-10);
-	A(l,1:l1)=[0*ones(1,l1-1) pg];
+	Ul=clean(Ul,1.E-10);
+	A(l,1:l1)=[0*ones(1,l1-1),pg];
 	U(:,1:l1)=U(:,1:l1)*Ul;
 	if l>1 then
           A(1:l-1,1:l1)=A(1:l-1,1:l1)*Ul;
@@ -46,10 +46,10 @@ function [A,U,rk]=htrianr(A)
       end
     end
   end
-  U=clean(U,1.d-10);
+  U=clean(U,1.E-10);
   k0=0;k1=0;tol=norm(coeff(A),1);
   v=[];w=[];
-  for k=1:n
+  for k=1:n do
     if max(abs(coeff(A(:,k)))) <= sqrt(%eps)*tol then
       k0=k0+1;v=[v,k];        
     else

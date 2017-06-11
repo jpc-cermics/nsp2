@@ -1,4 +1,4 @@
-function [f]=polfact(p)
+function f=polfact(p)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque et all (INRIA)
 //
@@ -30,7 +30,7 @@ function [f]=polfact(p)
   var=p.get_var[];
   r=roots(p);[s,k]=sort(abs(r));r=r(k)
   k=1;
-  while k<=n do,
+  while k<=n do
     if imag(r(k))<>0 then
       f=[f,real(poly(r(k:k+1),var))]
       k=k+2
