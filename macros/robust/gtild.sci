@@ -53,7 +53,6 @@ function Gt=gtild(G,flag)
   if isempty(flag) then flag='u';end 
   
   select typ_G
-   
    case 'p' then 
     select flag 
      case 'c' then Gt=cp_tilde(G);
