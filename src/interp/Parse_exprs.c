@@ -1218,20 +1218,28 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (debug) scidebug(debugI++,"[case_exp >"); 
   plist1=NULLPLIST;
   if (parse_expr(T,symb_table,&plist1,'f') == FAIL ) return(FAIL);
-  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
-  /* then part */
-  plist1=NULLPLIST;
-  if (parse_bkey(T,THEN,THEN,"select/case",&plist1) == FAIL) return(FAIL);
+  if ( plist1->type == COMMENT)
+    {
+      nsp_plist_destroy(&plist1);
+      goto CaseLoop;
+    }
+  else
+    {
+      if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
+      /* then part */
+      plist1=NULLPLIST;
+      if (parse_bkey(T,THEN,THEN,"select/case",&plist1) == FAIL) return(FAIL);
 
-  if (debug) scidebug(--debugI,"<case_exp]"); 
-  if (debug) scidebug(debugI++,"[case>"); 
+      if (debug) scidebug(--debugI,"<case_exp]"); 
+      if (debug) scidebug(debugI++,"[case>"); 
   
-  plist1=NULLPLIST;
-  if (parse_exprs(T,symb_table,&plist1,0,parse_stopselect ) == FAIL) return(FAIL);
-  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
-  if (nsp_parse_add(&plist3,CASE,2,T->tokenv.Line) == FAIL) return(FAIL);
-  if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
-  kount++;
+      plist1=NULLPLIST;
+      if (parse_exprs(T,symb_table,&plist1,0,parse_stopselect ) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist3,CASE,2,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
+      kount++;
+    }
   switch ( T->tokenv.id ) 
     {
     case END : 
