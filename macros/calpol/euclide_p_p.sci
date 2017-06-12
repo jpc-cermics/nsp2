@@ -101,8 +101,7 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
     // note that M is unimodular 
     // and detM is the value of det(M)
     [r,q]=pdiv_soft(v(1),v(2));
-    M = [ q*M(1,1)+ M(1,2), M(1,1); 
-	  q*M(2,1)+ M(2,2), M(2,1)];
+    M = [ q*M(1,1)+ M(1,2), M(1,1);q*M(2,1)+ M(2,2), M(2,1)];
     detM=-detM;
     v  = [ v(2); r];
     // at this step we should have M*v == [f1;f2]
@@ -155,13 +154,7 @@ if %f then
   
   // test 
   x=poly(0);
-  pp1= [ x*(1+x)^4;
-	 x^3*(1+x)^3;
-	 x^3*(1+x)^2;
-	 x^3*(1+x)^2;
-	 x^4*(1+x)^2
-	 x^4*(1+x);
-	 x^3*(1+x)];
+  pp1= [ x*(1+x)^4; x^3*(1+x)^3; x^3*(1+x)^2; x^3*(1+x)^2; x^4*(1+x)^2; x^4*(1+x); x^3*(1+x)];
   g = pp1(1);
   for i=1:size(pp1,'*') do g=euclide(g,pp1(i),monic=%t);  end
   g.normalize[];

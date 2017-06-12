@@ -29,7 +29,7 @@ function [pg,U]=hrmt(v)
   for k=2:m do
     [pg,uk]=bezout(pg,v(k))
     //[pg,uk]=euclide(pg,v(k))
-    U(:,k-1:k)=U(:,k-1:k)*uk(:,[2 1])
+    U(:,k-1:k)=U(:,k-1:k)*uk(:,[2,1])
   end
 endfunction
 
@@ -45,7 +45,7 @@ function [x,U]=gcd_p(p)
   for l=2:mn do
     [x,u]=bezout(x,p(l)),
     if nargout ==2 then
-      U=[U(:,1:l-2), U(:,l-1)*u(1,[2 1])];U(l,l-1:l)=u(2,[2 1]);
+      U=[U(:,1:l-2), U(:,l-1)*u(1,[2,1])];U(l,l-1:l)=u(2,[2,1]);
     end
   end,
   if nargout ==1 then return,end;

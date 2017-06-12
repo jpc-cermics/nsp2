@@ -58,8 +58,7 @@ function [g,p,q]=cofactors(u,v, td, iter = %t , ftol = 1.e-14 )
     Cg1 = toeplitz([gc;zeros(n,1)],[gc(1),zeros(1,n)]);
     // The convolution matrix associated to g (dim q)
     Cg2 = toeplitz([gc;zeros(m,1)],[gc(1),zeros(1,m)]);
-    J = [Cp,Cg1,zeros(r+n+1 ,m+1)
-	 Cq,zeros(r+m+1,n+1),Cg2];
+    J = [Cp,Cg1,zeros(r+n+1 ,m+1); Cq,zeros(r+m+1,n+1),Cg2];
   endfunction
 
   n=p.degree[];
