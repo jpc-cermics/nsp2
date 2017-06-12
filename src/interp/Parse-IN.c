@@ -888,7 +888,7 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
       /* now we need to set the arity accordingly */
       arity =  nsp_list_length((NspList *)args);
     }
-  if ((ast=nsp_ast_create(NVOID,code,arity,NULL,NULL,args,NULL,NULL))==NULL)
+  if ((ast=nsp_ast_create(NVOID,code,arity,NULL,NULL,args,NULL,-1,NULL))==NULL)
     return RET_BUG;
   if ( str != NULL) 
     {

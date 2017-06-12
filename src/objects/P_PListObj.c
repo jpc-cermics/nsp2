@@ -339,7 +339,8 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 	{
 	case 'S' :
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_string(plist,buf) == FAIL) goto fail;
+	  /* type of string should be saved/loaded */
+	  if (nsp_parse_add_string(plist,buf,0) == FAIL) goto fail;
 	  break;
 	case 'C' :
 	  nsp_xdr_load_string(xdrs,buf,TBUF);

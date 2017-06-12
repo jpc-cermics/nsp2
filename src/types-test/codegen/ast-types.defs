@@ -30,6 +30,7 @@
    '("NspObject*" "xobj" "hidden" ); /* used to store a relevant objects */ 
    '("NspList*" "args" "hidden"); /* store arguments */
    '("NspObject*" "user_data" "hidden"); /* store user_data */
+   '("int" "line" "hidden");  /* store a line number */
    )
   (gtype-id "Ast")
 )

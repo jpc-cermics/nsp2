@@ -53,7 +53,7 @@ extern void nsp_pr_any_float (const char *fmt, double d, int fw);
 extern int  nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print);
 extern void nsp_init_pr_format (nsp_num_formats *fmt);
 extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);
-extern void nsp_print_string_as_read(const char *str);
+extern void nsp_print_string_as_read(const char *str,char string_delim);
 
 extern int nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
 extern int nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);

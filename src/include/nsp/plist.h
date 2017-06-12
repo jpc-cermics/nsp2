@@ -149,7 +149,7 @@ extern int nsp_parse_add(PList *plist, int op, int arity, int line);
 extern int nsp_parse_add_last(PList *plist, int op, int arity, int line);
 extern int nsp_parse_add_name(PList *plist, char *str);
 extern int nsp_parse_add_name1(PList *plist, char *str, int arity);
-extern int nsp_parse_add_string(PList *plist, char *str);
+extern int nsp_parse_add_string(PList *plist, char *str, int tag);
 extern int nsp_parse_add_comment(PList *plist, char *str);
 extern int nsp_parse_add_list(PList *plist, PList *l);
 extern int nsp_parse_append(PList *plist, PList *l);
@@ -179,6 +179,6 @@ extern int nsp_plist_equal(PList L1,PList L2);
 extern int nsp_plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
 extern void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec);
 extern void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec, int action);
-
+extern void nsp_plist_generic_pretty_printer(PList L, int indent, int color,int html,int gtk, int space);
 #endif /*  PLIST_H  */
 

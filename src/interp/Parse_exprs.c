@@ -411,7 +411,7 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->tokenv.buf[0] != '\0') 
 	{
-	  if (nsp_parse_add_string(&plist1,T->tokenv.buf) == FAIL) return(FAIL);
+	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,1) == FAIL) return(FAIL);
 	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
@@ -440,7 +440,7 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->tokenv.buf[0] != '\0') 
 	{
-	  if (nsp_parse_add_string(&plist1,T->tokenv.buf) == FAIL) return(FAIL);
+	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,1) == FAIL) return(FAIL);
 	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
@@ -2096,7 +2096,9 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case '"'  :
       /*  *************     get a string */
       T->ParseString(T);
-      if (nsp_parse_add_string(plist,T->tokenv.buf) == FAIL) return(FAIL);
+      if (nsp_parse_add_string(plist,T->tokenv.buf,
+			       (T->tokenv.id== QUOTE_OP) ? 0 : 1 ) == FAIL)
+	return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
     case NUMBER  :
@@ -2249,7 +2251,7 @@ static int parse_listeval(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	    return FAIL;
 	  }
 	if ( T->NextToken(T) == FAIL) return FAIL;
-	if (nsp_parse_add_string(&plist1,T->tokenv.syn) == FAIL) return(FAIL);
+	if (nsp_parse_add_string(&plist1,T->tokenv.syn,1) == FAIL) return(FAIL);
 	if (nsp_parse_add(&plist1,DOTARGS,1,T->tokenv.Line)== FAIL) return FAIL;
 	if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	if ( T->NextToken(T) == FAIL) return(FAIL);

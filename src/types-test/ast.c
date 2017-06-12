@@ -24,7 +24,7 @@
 
 
 
-#line 41 "codegen/ast.override"
+#line 33 "codegen/ast.override"
 #include <ctype.h>
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
@@ -90,7 +90,7 @@ NspTypeAst *new_type_ast(type_mode mode)
   top->info = (info_func *) nsp_ast_info;
   /* top->is_true = (is_true_func  *) nsp_ast_is_true; */
   /* top->loop =(loop_func *) nsp_ast_loop;*/
-#line 341 "codegen/ast.override"
+#line 333 "codegen/ast.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
 #line 97 "ast.c"
@@ -149,6 +149,7 @@ static int init_ast(NspAst *Obj,NspTypeAst *type)
   Obj->xobj = NULLOBJ;
   Obj->args = NULLLIST;
   Obj->user_data = NULLOBJ;
+  Obj->line = 0;
  return OK;
 }
 
@@ -196,7 +197,7 @@ static char *nsp_ast_type_short_string(NspObject *v)
   return(ast_short_type_name);
 }
 
-#line 441 "codegen/ast.override"
+#line 433 "codegen/ast.override"
 
 /*
  * A == B 
@@ -223,7 +224,7 @@ static int nsp_ast_neq(NspAst *A, NspObject *B)
 }
 
 
-#line 227 "ast.c"
+#line 228 "ast.c"
 int nsp_ast_xdr_save(XDR *xdrs, NspAst *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -252,9 +253,9 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
   if ( nsp_ast_create_partial(H) == FAIL) return NULLAST;
   if ((H  = nsp_ast_xdr_load_partial(xdrs,H))== NULLAST) return H;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 62 "codegen/ast.override"
+#line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 258 "ast.c"
+#line 259 "ast.c"
   return H;
 }
 
@@ -264,10 +265,10 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
 
 void nsp_ast_destroy_partial(NspAst *H)
 {
-#line 65 "codegen/ast.override"
+#line 57 "codegen/ast.override"
 /* verbatim in destroy */
 
-#line 271 "ast.c"
+#line 272 "ast.c"
   nsp_string_destroy(&(H->str));
   if (H->xobj != NULL)
     nsp_object_destroy(&H->xobj);
@@ -284,7 +285,7 @@ void nsp_ast_destroy(NspAst *H)
   FREE(H);
 }
 
-#line 345 "codegen/ast.override"
+#line 337 "codegen/ast.override"
 /*
  * info overriden 
  */
@@ -309,8 +310,8 @@ int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
   return TRUE;
 }
 
-#line 313 "ast.c"
-#line 371 "codegen/ast.override"
+#line 314 "ast.c"
+#line 363 "codegen/ast.override"
 /*
  * print overriden 
  */
@@ -379,7 +380,7 @@ static void nsp_ast_print_node(NspAst *ast)
     }
 }
 
-#line 383 "ast.c"
+#line 384 "ast.c"
 /*
  * latex print 
  */
@@ -398,6 +399,7 @@ int nsp_ast_latex(NspAst *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->args),indent+2,"args", rec_level+1)== FALSE ) return FALSE ;
     }
         if ( M->user_data->type->pr(M->user_data,indent+2,"user_data",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(indent+2,"line=%d\n", M->line);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -492,7 +494,7 @@ int nsp_ast_check_values(NspAst *H)
   return OK;
 }
 
-NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,NspTypeBase *type)
+NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,int line,NspTypeBase *type)
 {
   NspAst *H  = nsp_ast_create_void(name,type);
   if ( H ==  NULLAST) return NULLAST;
@@ -502,10 +504,11 @@ NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xo
   H->xobj= xobj;
   H->args= args;
   H->user_data= user_data;
+  H->line=line;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 62 "codegen/ast.override"
+#line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 509 "ast.c"
+#line 512 "ast.c"
   return H;
 }
 
@@ -545,6 +548,7 @@ NspAst *nsp_ast_copy_partial(NspAst *H,NspAst *self)
     {
       if ((H->user_data = (NspObject *) nsp_object_copy_and_name("user_data",NSP_OBJECT(self->user_data))) == NULLOBJ) return NULL;
     }
+  H->line=self->line;
   return H;
 }
 
@@ -583,6 +587,7 @@ NspAst *nsp_ast_full_copy_partial(NspAst *H,NspAst *self)
     {
       if ((H->user_data = (NspObject *) nsp_object_full_copy_and_name("user_data",NSP_OBJECT(self->user_data))) == NULLOBJ) return NULL;
     }
+  H->line=self->line;
   return H;
 }
 
@@ -592,9 +597,9 @@ NspAst *nsp_ast_full_copy(NspAst *self)
   if ( H ==  NULLAST) return NULLAST;
   if ( nsp_ast_full_copy_partial(H,self)== NULL) return NULLAST;
 
-#line 62 "codegen/ast.override"
+#line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 598 "ast.c"
+#line 603 "ast.c"
   return H;
 }
 
@@ -613,9 +618,9 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
     if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
-  #line 62 "codegen/ast.override"
+  #line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 619 "ast.c"
+#line 624 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -623,7 +628,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 95 "codegen/ast.override"
+#line 87 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -656,10 +661,10 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 660 "ast.c"
+#line 665 "ast.c"
 
 
-#line 129 "codegen/ast.override"
+#line 121 "codegen/ast.override"
 static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,t_end};
@@ -672,10 +677,10 @@ static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 676 "ast.c"
+#line 681 "ast.c"
 
 
-#line 143 "codegen/ast.override"
+#line 135 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -689,10 +694,10 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
   return Max(lhs,1);
 }
 
-#line 693 "ast.c"
+#line 698 "ast.c"
 
 
-#line 158 "codegen/ast.override"
+#line 150 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -714,10 +719,10 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 718 "ast.c"
+#line 723 "ast.c"
 
 
-#line 181 "codegen/ast.override"
+#line 173 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -743,10 +748,10 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 747 "ast.c"
+#line 752 "ast.c"
 
 
-#line 223 "codegen/ast.override"
+#line 215 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -765,10 +770,10 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 769 "ast.c"
+#line 774 "ast.c"
 
 
-#line 243 "codegen/ast.override"
+#line 235 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -783,10 +788,10 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
   return Max(lhs,1);
 }
 
-#line 787 "ast.c"
+#line 792 "ast.c"
 
 
-#line 277 "codegen/ast.override"
+#line 269 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -801,10 +806,10 @@ static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return Max(lhs,1);
 }
 
-#line 805 "ast.c"
+#line 810 "ast.c"
 
 
-#line 259 "codegen/ast.override"
+#line 251 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -821,10 +826,10 @@ static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return 0;
 }
 
-#line 825 "ast.c"
+#line 830 "ast.c"
 
 
-#line 293 "codegen/ast.override"
+#line 285 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -834,10 +839,10 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 838 "ast.c"
+#line 843 "ast.c"
 
 
-#line 69 "codegen/ast.override"
+#line 61 "codegen/ast.override"
 /* a method can be overriden by giving its name or 
  * class.name 
  */
@@ -862,10 +867,10 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return RET_BUG;
 }
 
-#line 866 "ast.c"
+#line 871 "ast.c"
 
 
-#line 208 "codegen/ast.override"
+#line 200 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -879,20 +884,20 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
   return Max(lhs,1);
 }
 
-#line 883 "ast.c"
+#line 888 "ast.c"
 
 
-#line 313 "codegen/ast.override"
+#line 305 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   return meth_ast_sprint(self,stack,rhs,opt,lhs);
 }
-#line 893 "ast.c"
+#line 898 "ast.c"
 
 
-#line 321 "codegen/ast.override"
+#line 313 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -900,10 +905,10 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_fprint(self,stack,rhs,opt,lhs);
 }
 
-#line 904 "ast.c"
+#line 909 "ast.c"
 
 
-#line 304 "codegen/ast.override"
+#line 296 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -911,10 +916,10 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_print(self,stack,rhs,opt,lhs);
 }
 
-#line 915 "ast.c"
+#line 920 "ast.c"
 
 
-#line 330 "codegen/ast.override"
+#line 322 "codegen/ast.override"
 static int _wrap_ast_print_length(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -924,7 +929,7 @@ static int _wrap_ast_print_length(NspAst *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 928 "ast.c"
+#line 933 "ast.c"
 
 
 static NspMethods ast_methods[] = {
@@ -987,16 +992,7 @@ void nsp_initialize_Ast_types(void)
   new_type_ast(T_BASE);
 }
 
-#line 469 "codegen/ast.override"
-
-/* pretty print of the ast i.e ast -> code */
-
-static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret);
-static int _nsp_ast_pprint_arg(NspAst *ast,int elt, int i, int pos, int posret);
-static int nsp_ast_pprint_opname(int type, int indent, int pos);
-static int _nsp_ast_pprint_args(NspAst *ast, int start, int last, int indent, int pos,
-				int posret, char *sep, int breakable,const char *breakstr);
-static int _nsp_ast_equalop_mlhs_length(NspAst *ast);
+#line 461 "codegen/ast.override"
 
 /* very similar to the generic function for printing objects and 
  * redirection of output to string, file or stdout
@@ -1080,10 +1076,7 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   /* print object */
   user_pref.pr_depth= depth;
   user_pref.color=color;
-
-  set_use_html_color_class(html);
-  set_use_gtk_color_class(gtk);
-
+  
   if ( gtk == TRUE )
     {
       user_pref.color= color = TRUE;
@@ -1117,18 +1110,15 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
       Sciprintf2(indent," ","-->\n");
       Sciprintf2(indent," ","%s\n","<div class=\"nsp_code\">");
       Sciprintf2(indent+2," ","%s\n","<pre class=\"code\">");
-      nsp_ast_pprint(self, indent + 2);
+      nsp_ast_pprint(self, indent + 2, user_pref.color,html , gtk, TRUE);
       Sciprintf2(indent+2," ","\n");
       Sciprintf2(indent+2," ","%s\n","</pre>");
       Sciprintf2(indent," ","%s\n","</div>");
     }
   else
     {
-      nsp_ast_pprint(self, indent);
+      nsp_ast_pprint(self, indent, user_pref.color,html , gtk, FALSE);
     }
-
-
-  
   user_pref.color=cr;
   user_pref.pr_depth= dp;
   /* restore to default values */
@@ -1162,855 +1152,10 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
  * 
  **/
 
-static void nsp_ast_pprint(NspAst * L, int indent)
+static void nsp_ast_pprint(NspAst * L, int indent, int color,int html,int gtk, int space)
 {
-  _nsp_ast_pprint(L,indent,0,indent);
+  nsp_ast_generic_pretty_printer(L,indent,color, html,gtk,space);
 }
-
-/* set of tools for colorizing */
-
-static int use_html_color_class = FALSE;
-
-static void set_use_html_color_class(int flag)
-{
-  use_html_color_class=flag;
-}
-
-static int use_gtk_color_class = FALSE;
-
-static void set_use_gtk_color_class(int flag)
-{
-  use_gtk_color_class=flag;
-}
-
-
-
-/* set of colors that can be used in a terminal 
- * if 3 is replaced by 9 we obtain light colors.
- */
-
-typedef enum { p_black =30, 
-               p_red =31,
-               p_green=32,
-               p_yellow=33,
-               p_blue=34,
-               p_purple=35,
-               p_cyan=36,
-               p_white=37} nsp_term_colors;
-
-typedef enum { type_comment,
-	       type_string,
-	       type_keyword,
-	       type_number,
-	       type_fname,
-             } nsp_colorized_types;
-
-static int color_from_key( nsp_colorized_types key)
-{
-  switch (key)
-    {
-    case type_comment: return p_red;break;
-    case type_string:  return p_cyan;break;
-    case type_keyword: return p_purple;break;
-    case type_number:  return p_green;break;
-    case type_fname:   return p_blue;break;
-    }
-  return p_black;
-}
-
-static char* colorname_from_key( nsp_colorized_types key)
-{
-  switch (key)
-    {
-    case type_comment: return "red";break;
-    case type_string:  return "cyan";break;
-    case type_keyword: return "purple";break;
-    case type_number:  return "green";break;
-    case type_fname:   return "blue";break;
-    }
-  return "black";
-}
-
-static char *colortag_from_key( nsp_colorized_types key)
-{
-  switch (key)
-    {
-    case type_comment: return "comment";break;
-    case type_string:  return "string";break;
-    case type_keyword: return "keyword";break;
-    case type_number:  return "number";break;
-    case type_fname:   return "function";break;
-    }
-  return "undefined";
-}
-
-static int nsp_ast_pprint_pre_tag_color( nsp_colorized_types key)
-{
-  if (user_pref.color == TRUE )
-    {
-      if (use_html_color_class == TRUE)
-	Sciprintf("<span class=\"%s\">",colortag_from_key(key));
-      else if (use_gtk_color_class == TRUE)
-	Sciprintf("<span color=\"%s\">",colorname_from_key(key));
-      else
-	Sciprintf("\033[%dm",color_from_key(key));
-    }
-  return 0;
-}
-
-static int nsp_ast_pprint_post_tag_color(void)
-{
-  if (user_pref.color == TRUE )
-    {
-      if (use_html_color_class == TRUE ||
-	  use_gtk_color_class == TRUE)
-	Sciprintf("</span>");
-      else
-	Sciprintf("\033[0m");
-    }
-  return 0;
-}
-
-static int nsp_ast_pprint_comment(int indent,const char *str)
-{
-  int pos=0;
-  pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-  pos += nsp_ast_pprint_pre_tag_color(type_comment);
-  if  (use_html_color_class == TRUE ||
-       use_gtk_color_class == TRUE )
-    {
-      nsp_print_comment_for_html(str);
-      pos += strlen(str)+2;
-    }
-  else
-    {
-      pos += Sciprintf("//%s",str);
-    }
-  pos += nsp_ast_pprint_post_tag_color();
-  return pos;
-}
-
-static void nsp_print_comment_for_html(const char *str)
-{
-  Sciprintf("//");
-  while ( *str != '\0') 
-    {
-      switch (*str) 
-	{
-	case '<' : Sciprintf("%s","&lt;");break;
-	case '>' : Sciprintf("%s","&gt;");break;
-	case '&' : Sciprintf("%s","&amp;");break;
-	default :  Sciprintf("%c",*str);
-	}
-      str++;
-    }
-}
-
-static int nsp_ast_pprint_string(int indent,const char *str)
-{
-  int pos=0;
-  pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-  pos += nsp_ast_pprint_pre_tag_color(type_string);
-  pos += 2 + strlen(str);
-  if  (use_html_color_class == TRUE ||
-       use_gtk_color_class == TRUE )
-    {
-      nsp_print_string_as_read_for_html(str);
-    }
-  else
-    {
-      nsp_print_string_as_read(str);
-    }
-  pos += nsp_ast_pprint_post_tag_color();
-  return pos;
-}
-
-static void nsp_print_string_as_read_for_html(const char *str)
-{
-  Sciprintf("\"");
-  while ( *str != '\0') 
-    {
-      switch (*str) 
-	{
-	case '\'' :  Sciprintf("%s","''");break;
-	case '\"' :  Sciprintf("%s","\"\"");break;
-	case '\\' :  
-	  switch (*(str+1)) 
-	    {
-	    case 'a':
-	    case 'b' : 
-	    case 'f' :  
-	    case 'n' :  
-	    case 'r' :  
-	    case 't' :  
-	    case 'v' :  
-	    case '\a' :  
-	    case '\b' :  
-	    case '\f' :  
-	    case '\n' :  
-	    case '\r' :  
-	    case '\t' :  
-	    case '\v' : Sciprintf("%s","\\\\");break;
-	    default: Sciprintf("%s","\\");break;
-	    }
-	  break;
-	case '\a' :  Sciprintf("%s","\\a"); break;
-	case '\b' :  Sciprintf("%s","\\b"); break;
-	case '\f' :  Sciprintf("%s","\\f"); break;
-	case '\n' :  Sciprintf("%s","\\n");break;
-	case '\r' :  Sciprintf("%s","\\r"); break;
-	case '\t' :  Sciprintf("%s","\\t"); break;
-	case '\v' :  Sciprintf("%s","\\v"); break;
-	default: 
-	  if (isprint(*str)) 
-	    {
-	      switch (*str ) {
-	      case '<' : Sciprintf("%s","&lt;");break;
-	      case '>' : Sciprintf("%s","&gt;");break;
-	      default:
-		Sciprintf("%c",*str);
-	      }
-	    }
-	  else 
-	    {
-	      unsigned char c = *str;
-	      Sciprintf("\\%0.3o",c);
-	    }
-	}
-      str++;
-    }
-  Sciprintf("\"");
-}
-
-
-
-
-static int nsp_ast_pprint_number(int indent,const char *str)
-{
-  int pos=0;
-  pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-  pos += nsp_ast_pprint_pre_tag_color(type_number);
-  pos += Sciprintf("%s",str);
-  pos += nsp_ast_pprint_post_tag_color();
-  return pos;
-}
-
-static int nsp_ast_pprint_keyword(int indent,const char *str)
-{
-  int pos=0;
-  pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-  pos += nsp_ast_pprint_pre_tag_color(type_keyword);
-  pos += Sciprintf("%s",str);
-  pos += nsp_ast_pprint_post_tag_color();
-  return pos;
-}
-
-/* print operator name after @indent blank characters 
- * and return the new position.
- * pos is giving the current position.
- */
-
-static int nsp_ast_pprint_opname(int type, int indent, int pos)
-{
-  const char *s = nsp_astcode_to_name(type);
-  const char *s1= s;
-  if (use_html_color_class == TRUE ||
-      use_gtk_color_class == TRUE )
-    {
-      if ( strcmp(s,">") == 0)
-	s1 = "&gt;";
-      else if ( strcmp(s,"<") == 0)
-	s1 = "&lt;";
-      else if ( strcmp(s,"<=") == 0)
-	s1 = "&lt;=";
-      else if ( strcmp(s,">=") == 0)
-	s1 = "&gt;=";
-      else if ( strcmp(s,"<>") == 0)
-	s1 = "&lt;&gt";
-      else s1 = s;
-    }
-  if (  use_gtk_color_class == TRUE )
-    {
-      if ( strcmp(s,"&") == 0) s1 ="&amp;";
-      else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
-    }
-  Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","%s",s1);
-  return pos + indent + strlen(s);
-}
-
-#define NSP_PRINTF1_COLOR(posret,col,str) nsp_ast_pprint_str(posret,col,str)
-
-#define CMAX 90
-
-/* posret: indentation to use if line-break. 
- *
- */
-
-static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
-{
-  const char *s;
-  int j,newpos=0;
-
-  /* be sure that we are starting to print at least at column postret */
-  if ( pos < posret ) 
-    {
-#ifdef WITH_SYMB_TABLE_DEBUG
-      pos=Sciprintf2(posret-pos,(use_html_color_class == TRUE) ? "&nbsp;": " ","");
-#else
-      if ( ast->op != OBJECT ) pos=Sciprintf2(posret-pos, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-#endif
-    }
-  /* select print operation */
-  if ( ast->op > 0 ) 
-    {
-      int len;
-      /* operators **/
-      switch ( ast->arity ) 
-	{
-	case 0: /* 0-ary operators */
-	  return nsp_ast_pprint_opname(ast->op,indent,pos);
-	  break;
-	case 1:
-	  switch ( ast->op ) 
-	    {
-	    case  COMMA_OP : 
-	    case  SEMICOLON_OP  :
-	      newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_pprint_opname(ast->op,0,newpos);
-	      return newpos;
-	      break;
-	    case  COMMA_RET_OP : 
-	    case  SEMICOLON_RET_OP  :
-	      newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_pprint_opname(ast->op,0,newpos);
-	      Sciprintf("%s","\n");newpos=0;
-	      return newpos;
-	      break;
-	    case QUOTE_OP : 
-	    case DOTPRIM:
-	      newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_pprint_opname(ast->op,0,newpos);
-	      return  newpos;
-	      break;
-	    case RETURN_OP : 
-	      _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      Sciprintf("%s","\n");newpos=0;
-	      return newpos;
-	      break;
-	    case TILDE_OP : 
-	    default:
-	      newpos =nsp_ast_pprint_opname(ast->op,indent,pos);
-	      newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret);
-	      return newpos;
-	    }
-	  break;
-	case 2:
-	  newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	  newpos =nsp_ast_pprint_opname(ast->op,1,newpos);
-	  newpos += Sciprintf(" ");
-	  len =  _nsp_ast_printlength_arg(ast,2,0,newpos,posret);
-	  if ( newpos > CMAX || len > CMAX)
-	    {
-	      /* we have the right to break line here 
-	       * we indent on the next line with posret 
-	       */
-	      Sciprintf("%s"," ...\n");newpos= Sciprintf2(posret, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-	    }
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret);
-	  return newpos;
-	  break;
-	default :
-	  /* XXX make breaks as in the 2-ary ops */
-	  newpos = pos;
-	  for ( j = 0 ; j <  ast->arity ; j++ )
-	    {
-	      newpos =_nsp_ast_pprint_arg(ast,j+1,(j == 0) ? indent : 1,
-					   newpos,posret);
-	      if ( j != ast->arity -1 ) 
-		{
-		  newpos =nsp_ast_pprint_opname(ast->op,1,newpos);
-		  newpos += Sciprintf(" ");
-		}
-	    }
-	  return newpos;
-	  break;
-	}
-    }
-  else 
-    {
-      switch ( ast->op ) 
-	{
-	case OPT:
-	  /* val = value in a calling list */
-	  newpos = _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	  newpos += Sciprintf(" = ");
-	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos,posret);
-	  return newpos;
-	  break;
-	case EQUAL_OP:
-	  /* affectations */
-	  newpos = _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	  if (  _nsp_ast_equalop_mlhs_length(ast) > 0 ) 
-	    newpos += Sciprintf("=");
-	  /* fix new return position after = */
-	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos, newpos);
-	  return newpos;
-	  break;
-	case MLHS  :
-	  /* left hand side of an equality 
-	   * we do not display the left and right bracket 
-	   *  if arity is one 
-	   */
-	  newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ",
-				     ( ast->arity > 1) ? "[" : "");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  if ( ast->arity > 1) newpos += Sciprintf("]");
-	  return newpos;
-	  break;
-	case ARGS :
-	  /* a sequence of expressions inside () for x()*/
-	  newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","(");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf(")");
-	  return newpos;
-	  break;
-	case CELLARGS :
-	  /* a sequence of expressions inside {} for x{} */
-	  newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","{");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf("}");
-	  return newpos;
-	  break;
-	case METARGS :
-	  /* a sequence of expressions inside [] for x[] */
-	  newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","[");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf("]");
-	  return newpos;
-	  break;
-	case DOTARGS :
-	  {
-	    NspAst *ast1;
-	    if ((ast1 =(NspAst*) nsp_list_get_element(ast->args,1)) == NULL) return newpos;
-	    if (ast1->op != STRING ) return newpos;
-	    newpos = pos + Sciprintf2(0,(use_html_color_class == TRUE) ? "&nbsp;": " ",".%s",(char *) ast1->str);
-	    return newpos;
-	  }
-	case CALLEVAL:
-	case LISTEVAL :
-	  newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,"",FALSE,"");
-	  return newpos;
-	  break;
-	case FEVAL :
-	  newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	  newpos += Sciprintf("(");
-	  newpos = _nsp_ast_pprint_args(ast,2,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf(")");
-	  return newpos;
-	  break;
-	case PLIST :
-	  /* such node should not appear here */
-	  return newpos;
-	  break;
-	case COMMENT:
-	  return pos+ nsp_ast_pprint_comment(indent,(const char *) ast->str);
-	  break;
-	case NAME :
-#ifdef WITH_SYMB_TABLE_DEBUG
-	  return pos+Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","%s<%d>",(char *) ast->str,ast->arity);
-#else 
-	  return pos+Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","%s",(char *) ast->str);
-#endif 
-	  break;
-	case OPNAME :
-	  return pos+Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","'%s'",(char *) ast->str);
-	  break;
-	case NUMBER:
-	  return pos + nsp_ast_pprint_number(indent,(const char *) ast->str);
-	  break;
-	case STRING:
-	  return pos + nsp_ast_pprint_string(indent,(const char *) ast->str);
-	  break;
-	case INUMBER32 :
-	case INUMBER64 :
-	case UNUMBER32 :
-	case UNUMBER64 :
-	  return pos+  nsp_ast_pprint_number(indent,(const char *) ast->str);
-	  break;
-	case OBJECT: 
-#ifdef WITH_SYMB_TABLE_DEBUG      
-	  n = pos+Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","{object:Ox%x}\n",(unsigned int) ast->xobj);
-	  nsp_object_print(ast->xobj,0,0,0);
-	  return n;
-#else 
-	  return pos;
-#endif
-	  break;
-	case EMPTYMAT:  return pos+Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","[]");break;
-	case EMPTYCELL: return pos+Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","{}");break;
-	case P_MATRIX :
-	  newpos = pos + Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","[");
-	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1);
-	  newpos += Sciprintf("]");
-	  return newpos;
-	  break;
-	case P_CELL :
-	  newpos = pos + Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","{");
-	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1);
-	  newpos += Sciprintf("}");
-	  return newpos;
-	  break;
-	case ROWCONCAT:
-	case COLCONCAT:
-	case DIAGCONCAT:
-	case CELLROWCONCAT:
-	case CELLCOLCONCAT:
-	case CELLDIAGCONCAT:
-	  newpos = posret = pos;
-	  for ( j = 0 ; j < ast->arity ; j++)
-	    {
-	      int is_comment,len;
-	      /* get the length of child if the child is not cut 
-	       * to decide if it's better to break here
-	       */
-	      len =  _nsp_ast_printlength_arg(ast,j+1,0,newpos,posret);
-	      if ( ( j > 0) && ( newpos > CMAX || len > CMAX))
-		{
-		  if ( ast->op == ROWCONCAT || ast->op == CELLROWCONCAT)
-		    Sciprintf("\n");
-		  else
-		    Sciprintf(" ...\n");
-		  newpos= Sciprintf2(posret, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-		}
-	      newpos =_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret);
-	      /* some child can be comment-ended, in that case a newline is requested */
-	      is_comment =_nsp_ast_pprint_op_comment_ended(ast,j+1);
-	      if ( j < ast->arity-1)
-		{
-		  if ( is_comment ) 
-		    {
-		      Sciprintf("\n");Sciprintf2(posret,(use_html_color_class == TRUE) ? "&nbsp;": " ","");
-		      newpos = posret;
-		    }
-		  else
-		    {
-		      newpos =nsp_ast_pprint_opname(ast->op,0,newpos);
-		    }
-		}
-	    }
-	  return newpos;
-	  break;
-	case WHILE:
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"while");
-	  newpos =_nsp_ast_pprint_arg(ast,1,1,newpos,posret);
-	  newpos += nsp_ast_pprint_keyword(1,"do");
-	  newpos =_nsp_ast_pprint_check_newline(ast,2,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
-	  newpos = nsp_ast_pprint_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case FUNCTION:
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"function");
-	  newpos = _nsp_ast_pprint_arg(ast,1,1,newpos,newpos);
-	  newpos =_nsp_ast_pprint_check_newline(ast,2,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
-	  if ( ast->arity == 3 ) 
-	    {
-	      newpos =_nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
-	    }
-	  newpos= nsp_ast_pprint_keyword(Max(posret-newpos,0),"endfunction");
-	  return newpos;
-	  break;
-	case FOR:
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"for");
-	  newpos = _nsp_ast_pprint_arg(ast,1,1,newpos,posret);
-	  newpos += Sciprintf("=") ;
-	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos,newpos);
-	  newpos += nsp_ast_pprint_keyword(1,"do");
-	  newpos = _nsp_ast_pprint_check_newline(ast,3,newpos);
-	  newpos = _nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
-	  newpos += nsp_ast_pprint_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case IF:
-	  /* a sequence of if elseif etc.... */
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"if");
-	  for ( j = 0 ; j < ast->arity  ; j += 2 )
-	    {
-	      if ( j == ast->arity-1 ) 
-		{
-		  /* we have reached the last else **/
-		  newpos +=  nsp_ast_pprint_keyword(Max(posret-newpos,0),"else");
-		  newpos =_nsp_ast_pprint_check_newline(ast,j+1,newpos);
-		  newpos =_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2);
-		}
-	      else 
-		{ 
-		  if ( j != 0) 
-		    {
-		      newpos +=nsp_ast_pprint_keyword(Max(posret-newpos,0),"elseif");
-		    }
-		  newpos =_nsp_ast_pprint_arg(ast,j+1,1,newpos,posret+2);
-		  newpos += nsp_ast_pprint_keyword(1,"then");
-		  newpos =_nsp_ast_pprint_check_newline(ast,j+2,newpos);
-		  newpos =_nsp_ast_pprint_arg(ast,j+2,0,newpos,posret+2);
-		}
-	    }
-	  newpos +=  nsp_ast_pprint_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case TRYCATCH :
-	  /* try catch sequence */
-	  newpos = pos+ nsp_ast_pprint_keyword(Max(posret-pos,0),"try");
-	  newpos =_nsp_ast_pprint_check_newline(ast,1,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+2);
-	  newpos += nsp_ast_pprint_keyword(Max(posret-newpos,0),"catch");
-	  newpos =_nsp_ast_pprint_check_newline(ast,2,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
-	  if ( ast->arity == 3 ) 
-	    {
-	      newpos += nsp_ast_pprint_keyword(Max(posret-newpos,0),"finally");
-	      newpos =_nsp_ast_pprint_check_newline(ast,3,newpos);
-	      newpos =_nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
-	    }
-	  newpos = nsp_ast_pprint_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case SELECT :
-	  /* first argument is the test.
-	   * next ones are cases 
-	   */
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"select");
-	  for ( j = 0 ; j < ast->arity ; j++)
-	    {
-	      if ( j==0) 
-		{
-		  _nsp_ast_pprint_arg(ast,j+1,1,newpos,posret);
-		  Sciprintf("\n");newpos= 0;
-		}
-	      else
-		{
-		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2);
-		}
-	    }
-	  newpos = nsp_ast_pprint_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case STATEMENTS :
-	  newpos=pos;
-	  //newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
-	  return newpos;
-	  break;
-	case STATEMENTS1 :
-	  newpos=pos;
-	  //newpos = pos +  Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
-	  return newpos;
-	  break;
-	case PARENTH :
-	  newpos = pos + Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","(") ;
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf(")");
-	  return newpos;
-	  break;
-	case CASE : 
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"case");
-	  newpos =_nsp_ast_pprint_arg(ast,1,1,newpos,posret+2);
-	  newpos += nsp_ast_pprint_keyword(1,"then");
-	  newpos =_nsp_ast_pprint_check_newline(ast,2,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
-	  return newpos;
-	  break;
-	case LASTCASE :
-	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),"else");
-	  newpos =_nsp_ast_pprint_check_newline(ast,1,newpos);
-	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+2);
-	  return newpos;
-	  break;
-	case GLOBAL:
-	  /* n-ary global */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"global");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CLEAR:
-	  /* n-ary clear */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"clear");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CLEARGLOBAL:
-	  /* n-ary global */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"clearglobal");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case PAUSE:
-	  /* can be 0 or 1-ary pause */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"pause");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case HELP:
-	  /* 0 or  1-ary help */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"help");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case WHO:
-	  /* 0 or 1-ary who */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"who");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case EXEC:
-	  /* 1-ary exec */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"exec");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case APROPOS:
-	  /* 1-ary apropos */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"apropos");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CD_COMMAND:
-	  /* 1-ary cd */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"cd");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case LS_COMMAND:
-	  /* 1-ary ls */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"ls");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case PWD_COMMAND:
-	  /* 1-ary pwd */
-	  newpos = nsp_ast_pprint_keyword(Max(posret-pos,0),"pwd");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-
-	case BREAK: return pos+nsp_ast_pprint_keyword(indent,"break");break;
-	case PRETURN:  return pos+nsp_ast_pprint_keyword(indent,"return"); break;
-	case QUIT :   return pos+nsp_ast_pprint_keyword(indent,"quit");   break;
-	case NSP_EXIT :  return pos+nsp_ast_pprint_keyword(indent,"exit");  break;
-	case ABORT :  return pos+nsp_ast_pprint_keyword(indent,"abort");  break;
-	case CONTINUE : return pos+nsp_ast_pprint_keyword(indent,"continue");  break;
-	case WHAT :  return pos+nsp_ast_pprint_keyword(indent,"what");  break;
-	  
-	default:
-	  Sciprintf("Warning in PlistPrettyPrint :");
-	  s=nsp_astcode_to_name(ast->op);
-	  if ( s != (char *) 0) Sciprintf(" %s ",s);
-	}
-    }
-  return newpos;
-}
-
-static int _nsp_ast_pprint_args(NspAst *ast, int start, int last, int indent, int pos, 
-				int posret, char *sep, int breakable, const char *breakstr)
-{
-  int j, len, newpos=pos;
-  for ( j = start ; j <= last ; j++)
-    {
-      len =  _nsp_ast_printlength_arg(ast,j,indent,newpos,posret);
-      if (breakable==TRUE && ( posret < newpos ) && ( newpos > CMAX || len > CMAX))
-	{
-	  Sciprintf(breakstr);newpos= Sciprintf2(posret, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
-	}
-      newpos = _nsp_ast_pprint_arg(ast,j,indent,newpos,posret);
-      if ( j != last ) newpos += Sciprintf(sep);
-    }
-  return newpos;
-}
-
-static int _nsp_ast_pprint_arg(NspAst *ast,int elt, int indent, int pos, int posret)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return 0; /* BUG */
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return 0; /* BUG */
-  return _nsp_ast_pprint(ast1,indent,pos,posret);
-}
-
-static int _nsp_ast_pprint_arg_comment_ended(NspAst *ast,int elt)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return FALSE;
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return FALSE;
-  return (ast1->op == COMMENT);
-}
-
-static int _nsp_ast_pprint_op_comment_ended(NspAst *ast, int elt)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return FALSE;
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return FALSE;
-  if ( ast1->op == COLCONCAT ||  ast1->op ==CELLCOLCONCAT)
-    {
-      return _nsp_ast_pprint_arg_comment_ended(ast1,nsp_list_length(ast1->args));
-    }
-  return FALSE;
-}
-
-/*
- * returns the length of a mlhs  in an equal_op 
- */
-
-static int _nsp_ast_equalop_mlhs_length(NspAst *ast)
-{
-  NspAst *mlhs = (NspAst *) nsp_list_get_element(ast->args,1);
-  if (mlhs == NULL) return -1;
-  if ( mlhs->op != MLHS ) return -1;
-  return nsp_list_length(mlhs->args);
-}
-
-static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
-{
-  if ( ast1->op != ast2->op ) return FALSE;
-  switch ( ast1->op ) 
-    {
-    case NUMBER :
-    case INUMBER32 :
-    case INUMBER64 :
-    case UNUMBER32 :
-    case UNUMBER64 :
-    case STRING:
-    case COMMENT:
-    case NAME :
-    case OPNAME :
-      return strcmp((char *) ast1->str,(char *) ast2->str)==0;
-      break;
-    default: 
-      return TRUE;
-    }
-  return TRUE;
-}
-
-/*
- * checks that all elements are of type NspAst 
- */ 
-
-int nsp_ast_check_args(NspList *L)
-{
-  int n = nsp_list_length(L);
-  int i;
-  for ( i = 1; i <= n ; i++)
-    {
-      NspObject *Obj = nsp_list_get_element(L,i);
-      if ( IsAst(Obj) == FALSE ) return FAIL;
-    }
-  return OK;
-}
-
 
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level)
 {
@@ -2050,8 +1195,6 @@ static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_l
     }
 } 
 
-
-
 int nsp_ast_set_str(NspAst *ast,const char *str)
 {
   char *str1,*ast_str =((NspAst *) ast)->str ;
@@ -2082,565 +1225,42 @@ int nsp_ast_set_str(NspAst *ast,const char *str)
   return OK;
 }
 
-/* check statements to detect if they contain newlines 
- */
-
-static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt)
+static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
 {
-  NspAst *astel=  (NspAst*) nsp_list_get_element(ast->args,elt);
-  int l, j;
-  if ( astel->op != STATEMENTS )
+  if ( ast1->op != ast2->op ) return FALSE;
+  switch ( ast1->op ) 
     {
-      Sciprintf("Should be statements\n");
-      return FALSE;
+    case NUMBER :
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+    case STRING:
+    case COMMENT:
+    case NAME :
+    case OPNAME :
+      return strcmp((char *) ast1->str,(char *) ast2->str)==0;
+      break;
+    default: 
+      return TRUE;
     }
-  l = nsp_list_length(astel->args);
-  for ( j = 1 ; j <= l ; j++)
+  return TRUE;
+}
+/*
+ * checks that all elements are of type NspAst 
+ */ 
+
+int nsp_ast_check_args(NspList *L)
+{
+  int n = nsp_list_length(L);
+  int i;
+  for ( i = 1; i <= n ; i++)
     {
-      NspAst *ast1 = (NspAst*) nsp_list_get_element(astel->args,j);
-      if ( ast1 == NULL) continue;
-      switch (ast1->op)
-	{
-	case RETURN_OP : 
-	case  COMMA_RET_OP : 
-	case  SEMICOLON_RET_OP  :
-	  return TRUE;
-	}
+      NspObject *Obj = nsp_list_get_element(L,i);
+      if ( IsAst(Obj) == FALSE ) return FAIL;
     }
-  return FALSE;
+  return OK;
 }
 
 
-static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos)
-{
-  int newpos;
-  if ( _nsp_ast_pprint_statements_with_ret(ast,elt) == TRUE) 
-    {
-      Sciprintf("\n"); newpos=0;
-    }
-  else
-    {
-      newpos = pos+ Sciprintf(" ");
-    }
-  return newpos;
-}
-
-/**
- * nsp_ast_printlength:
- * @L: 
- * @indent: the curent indentation to use.
- * 
- * pretty printing of a #PList. 
- * 
- **/
-
-
-static int _nsp_ast_printlength(NspAst *ast, int indent, int pos, int posret);
-static int _nsp_ast_printlength_args(NspAst *ast, int start, int last, int indent, int pos, 
-				     int posret, char *sep, int breakable, const char *breakstr);
-static int _nsp_ast_printlength_arg(NspAst *ast,int elt, int indent, int pos, int posret);
-static int _nsp_ast_printlength_arg_comment_ended(NspAst *ast,int elt);
-static int _nsp_ast_printlength_op_comment_ended(NspAst *ast, int elt);
-
-static int nsp_ast_printlength(NspAst * L, int indent)
-{
-  return _nsp_ast_printlength(L,indent,0,indent);
-}
-
-static int nsp_ast_printlength_comment(int indent,const char *str)
-{
-  return indent + 2 + strlen(str); // 
-}
-
-static int nsp_ast_printlength_string(int indent,const char *str)
-{
-  return indent +  2 + strlen(str);
-}
-
-static int nsp_ast_printlength_number(int indent,const char *str)
-{
-  return indent + strlen(str);
-}
-
-static int nsp_ast_printlength_keyword(int indent,const char *str)
-{
-  return indent + strlen(str);
-}
-
-/* print operator name after @indent blank characters 
- * and return the new position.
- * pos is giving the current position.
- */
-
-static int nsp_ast_printlength_opname(int type, int indent, int pos)
-{
-  const char *s = nsp_astcode_to_name(type);
-  return pos + indent + strlen(s);
-}
-
-/* posret: indentation to use if line-break. 
- *
- */
-
-static int _nsp_ast_printlength(NspAst *ast, int indent, int pos, int posret)
-{
-  int j,newpos=0;
-  
-  /* be sure that we are starting to print at least at column postret */
-  if ( pos < posret ) 
-    {
-      if ( ast->op != OBJECT ) pos= posret-pos +1;
-    }
-  /* select print operation */
-  if ( ast->op > 0 ) 
-    {
-      /* operators **/
-      switch ( ast->arity ) 
-	{
-	case 0: /* 0-ary operators */
-	  return nsp_ast_printlength_opname(ast->op,indent,pos);
-	  break;
-	case 1:
-	  switch ( ast->op ) 
-	    {
-	    case  COMMA_OP : 
-	    case  SEMICOLON_OP  :
-	      newpos =_nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_printlength_opname(ast->op,0,newpos);
-	      return newpos;
-	      break;
-	    case  COMMA_RET_OP : 
-	    case  SEMICOLON_RET_OP  :
-	      newpos =_nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_printlength_opname(ast->op,0,newpos);
-	      return newpos;
-	      break;
-	    case QUOTE_OP : 
-	    case DOTPRIM:
-	      newpos =_nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	      newpos = nsp_ast_printlength_opname(ast->op,0,newpos);
-	      return  newpos;
-	      break;
-	    case RETURN_OP : 
-	      return _nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	      break;
-	    case TILDE_OP : 
-	    default:
-	      newpos =nsp_ast_printlength_opname(ast->op,indent,pos);
-	      newpos =_nsp_ast_printlength_arg(ast,1,0,newpos,posret);
-	      return newpos;
-	    }
-	  break;
-	case 2:
-	  newpos =_nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	  newpos =nsp_ast_printlength_opname(ast->op,1,newpos);
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,posret);
-	  return newpos;
-	  break;
-	default :
-	  newpos = pos;
-	  for ( j = 0 ; j <  ast->arity ; j++ )
-	    {
-	      newpos =_nsp_ast_printlength_arg(ast,j+1,(j == 0) ? indent : 1,
-					   newpos,posret);
-	      if ( j != ast->arity -1 ) 
-		{
-		  newpos =nsp_ast_printlength_opname(ast->op,1,newpos);
-		  newpos += 1;
-		}
-	    }
-	  return newpos;
-	  break;
-	}
-    }
-  else 
-    {
-      switch ( ast->op ) 
-	{
-	case OPT:
-	  /* val = value in a calling list */
-	  newpos = _nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	  newpos += 3; /* Sciprintf(" = "); */
-	  newpos = _nsp_ast_printlength_arg(ast,2,0,newpos,posret);
-	  return newpos;
-	  break;
-	case EQUAL_OP:
-	  /* affectations */
-	  newpos = _nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	  if (  _nsp_ast_equalop_mlhs_length(ast) > 0 ) 
-	    newpos += 1; /*  Sciprintf("="); */
-	  /* fix new return position after = */
-	  newpos = _nsp_ast_printlength_arg(ast,2,0,newpos, newpos);
-	  return newpos;
-	  break;
-	case MLHS  :
-	  /* left hand side of an equality 
-	   * we do not display the left and right bracket 
-	   *  if arity is one 
-	   */
-	  newpos = pos +  indent + (( ast->arity > 1) ? 1 : 0);
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  if ( ast->arity > 1) newpos += 1;
-	  return newpos;
-	  break;
-	case ARGS :
-	  /* a sequence of expressions inside () for x()*/
-	  newpos = pos +  1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case CELLARGS :
-	  /* a sequence of expressions inside {} for x{} */
-	  newpos = pos + 1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case METARGS :
-	  /* a sequence of expressions inside [] for x[] */
-	  newpos = pos + 1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case DOTARGS :
-	  {
-	    NspAst *ast1;
-	    if ((ast1 =(NspAst*) nsp_list_get_element(ast->args,1)) == NULL) return newpos;
-	    if (ast1->op != STRING ) return newpos;
-	    newpos = pos + 1+ strlen((char *) ast1->str);
-	    return newpos;
-	  }
-	case CALLEVAL:
-	case LISTEVAL :
-	  newpos = pos +  1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,"",FALSE,"");
-	  return newpos;
-	  break;
-	case FEVAL :
-	  newpos =_nsp_ast_printlength_arg(ast,1,indent,pos,posret);
-	  newpos += 1;
-	  newpos = _nsp_ast_printlength_args(ast,2,ast->arity,0,newpos,newpos,",",TRUE,"\n");
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case PLIST :
-	  /* such node should not appear here */
-	  return newpos;
-	  break;
-	case COMMENT:
-	  return pos+ nsp_ast_printlength_comment(indent,(const char *) ast->str); break;
-	case NAME :
-	  return pos+ indent + strlen((char *) ast->str); break;
-	case OPNAME :
-	  return pos+ indent + strlen((char *) ast->str); break;
-	case NUMBER:
-	  return pos + nsp_ast_printlength_number(indent,(const char *) ast->str);break;
-	case STRING:
-	  return pos + nsp_ast_printlength_string(indent,(const char *) ast->str);break;
-	case INUMBER32 :
-	case INUMBER64 :
-	case UNUMBER32 :
-	case UNUMBER64 :
-	  return pos+  nsp_ast_printlength_number(indent,(const char *) ast->str);
-	  break;
-	case OBJECT: 
-	  return pos; break;
-	case EMPTYMAT:  return pos+ 2;break;
-	case EMPTYCELL: return pos+ 2;break;
-	case P_MATRIX :
-	  newpos = pos + 1;
-	  newpos =_nsp_ast_printlength_arg(ast,1,0,newpos,posret+1);
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case P_CELL :
-	  newpos = pos + 1;
-	  newpos =_nsp_ast_printlength_arg(ast,1,0,newpos,posret+1);
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case ROWCONCAT:
-	case COLCONCAT:
-	case DIAGCONCAT:
-	case CELLROWCONCAT:
-	case CELLCOLCONCAT:
-	case CELLDIAGCONCAT:
-	  newpos = pos;
-	  for ( j = 0 ; j < ast->arity ; j++)
-	    {
-	      int is_comment;
-	      newpos =_nsp_ast_printlength_arg(ast,j+1,0,newpos,posret);
-	      is_comment =_nsp_ast_printlength_op_comment_ended(ast,j+1);
-	      if ( j < ast->arity-1)
-		{
-		  if ( is_comment ) 
-		    {
-		      newpos = posret;
-		    }
-		  else
-		    {
-		      newpos =nsp_ast_printlength_opname(ast->op,0,newpos);
-		    }
-		}
-	    }
-	  return newpos;
-	  break;
-	case WHILE:
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"while");
-	  newpos =_nsp_ast_printlength_arg(ast,1,1,newpos,posret);
-	  newpos += nsp_ast_printlength_keyword(1,"do");
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,posret+2);
-	  newpos = nsp_ast_printlength_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case FUNCTION:
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"function");
-	  newpos = _nsp_ast_printlength_arg(ast,1,1,newpos,newpos);
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,posret+2);
-	  if ( ast->arity == 3 ) 
-	    {
-	      newpos =_nsp_ast_printlength_arg(ast,3,0,newpos,posret+2);
-	    }
-	  newpos= nsp_ast_printlength_keyword(Max(posret-newpos,0),"endfunction");
-	  return newpos;
-	  break;
-	case FOR:
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"for");
-	  newpos =_nsp_ast_printlength_arg(ast,1,1,newpos,posret);
-	  newpos += 1; /* = */
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,newpos);
-	  newpos += nsp_ast_printlength_keyword(1,"do");
-	  newpos += 1; /* checknewline */
-	  newpos =_nsp_ast_printlength_arg(ast,3,0,newpos,posret+2);
-	  newpos += nsp_ast_printlength_keyword(0,"end");
-	  return newpos;
-	  break;
-	case IF:
-	  /* a sequence of if elseif etc.... */
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"if");
-	  for ( j = 0 ; j < ast->arity  ; j += 2 )
-	    {
-	      if ( j == ast->arity-1 ) 
-		{
-		  /* we have reached the last else **/
-		  newpos +=  nsp_ast_printlength_keyword(Max(posret-newpos,0),"else");
-		  newpos += 1;
-		  newpos =_nsp_ast_printlength_arg(ast,j+1,0,newpos,posret+2);
-		}
-	      else 
-		{ 
-		  if ( j != 0) 
-		    {
-		      newpos +=nsp_ast_printlength_keyword(Max(posret-newpos,0),"elseif");
-		    }
-		  newpos =_nsp_ast_printlength_arg(ast,j+1,1,newpos,posret+2);
-		  newpos += nsp_ast_printlength_keyword(1,"then");
-		  newpos += 1;
-		  newpos =_nsp_ast_printlength_arg(ast,j+2,0,newpos,posret+2);
-		}
-	    }
-	  newpos +=  nsp_ast_printlength_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case TRYCATCH :
-	  /* try catch sequence */
-	  newpos = pos+ nsp_ast_printlength_keyword(Max(posret-pos,0),"try");
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,1,0,newpos,posret+2);
-	  newpos += nsp_ast_printlength_keyword(Max(posret-newpos,0),"catch");
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,posret+2);
-	  if ( ast->arity == 3 ) 
-	    {
-	      newpos += nsp_ast_printlength_keyword(Max(posret-newpos,0),"finally");
-	      newpos += 1;
-	      newpos =_nsp_ast_printlength_arg(ast,3,0,newpos,posret+2);
-	    }
-	  newpos = nsp_ast_printlength_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case SELECT :
-	  /* first argument is the test.
-	   * next ones are cases 
-	   */
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"select");
-	  for ( j = 0 ; j < ast->arity ; j++)
-	    {
-	      if ( j==0) 
-		{
-		  _nsp_ast_printlength_arg(ast,j+1,1,newpos,posret);
-		  newpos= 0;
-		}
-	      else
-		{
-		  newpos=_nsp_ast_printlength_arg(ast,j+1,0,newpos,posret+2);
-		}
-	    }
-	  newpos = nsp_ast_printlength_keyword(Max(posret-newpos,0),"end");
-	  return newpos;
-	  break;
-	case STATEMENTS :
-	  newpos=pos;
-	  newpos= _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
-	  return newpos;
-	  break;
-	case STATEMENTS1 :
-	  newpos=pos;
-	  newpos= _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
-	  return newpos;
-	  break;
-	case PARENTH :
-	  newpos = pos + 1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += 1;
-	  return newpos;
-	  break;
-	case CASE : 
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"case");
-	  newpos =_nsp_ast_printlength_arg(ast,1,1,newpos,posret+2);
-	  nsp_ast_printlength_keyword(1,"then");
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,2,0,newpos,posret+2);
-	  return newpos;
-	  break;
-	case LASTCASE :
-	  newpos = pos + nsp_ast_printlength_keyword(Max(posret-pos,0),"else");
-	  newpos += 1;
-	  newpos =_nsp_ast_printlength_arg(ast,1,0,newpos,posret+2);
-	  return newpos;
-	  break;
-	case GLOBAL:
-	  /* n-ary global */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"global")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CLEAR:
-	  /* n-ary clear */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"clear")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CLEARGLOBAL:
-	  /* n-ary global */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"clearglobal")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case PAUSE:
-	  /* can be 0 or 1-ary pause */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"pause")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case HELP:
-	  /* 0 or  1-ary help */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"help")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case WHO:
-	  /* 0 or 1-ary who */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"who")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case EXEC:
-	  /* 1-ary exec */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"exec")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case APROPOS:
-	  /* 1-ary apropos */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"apropos")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case CD_COMMAND:
-	  /* 1-ary cd */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"cd")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case LS_COMMAND:
-	  /* 1-ary ls */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"ls")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-	case PWD_COMMAND:
-	  /* 1-ary pwd */
-	  newpos = nsp_ast_printlength_keyword(Max(posret-pos,0),"pwd")+1;
-	  newpos = _nsp_ast_printlength_args(ast,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
-	  return newpos;
-	  break;
-
-	case BREAK: return pos+nsp_ast_printlength_keyword(indent,"break");break;
-	case PRETURN:  return pos+nsp_ast_printlength_keyword(indent,"return"); break;
-	case QUIT :   return pos+nsp_ast_printlength_keyword(indent,"quit");   break;
-	case NSP_EXIT :  return pos+nsp_ast_printlength_keyword(indent,"exit");  break;
-	case ABORT :  return pos+nsp_ast_printlength_keyword(indent,"abort");  break;
-	case CONTINUE : return pos+nsp_ast_printlength_keyword(indent,"continue");  break;
-	case WHAT :  return pos+nsp_ast_printlength_keyword(indent,"what");  break;
-	  
-	default: break;
-	}
-    }
-  return newpos;
-}
-
-/* a set of Args separated by sep */
-
-static int _nsp_ast_printlength_args(NspAst *ast, int start, int last, int indent, int pos, 
-				int posret, char *sep, int breakable, const char *breakstr)
-{
-  NspList *L= ast->args;
-  int j,  newpos=pos;
-  for ( j = start ; j <= last ; j++)
-    {
-      NspAst *ast1;
-      if ((ast1 =(NspAst*) nsp_list_get_element(L,j )) == NULL) return 0;
-      newpos =_nsp_ast_printlength(ast1,indent,newpos,posret);
-      if ( j != last ) newpos += strlen(sep);
-    }
-  return newpos;
-}
-
-static int _nsp_ast_printlength_arg(NspAst *ast,int elt, int indent, int pos, int posret)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return 0; /* BUG */
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return 0; /* BUG */
-  return _nsp_ast_printlength(ast1,indent,pos,posret);
-}
-
-static int _nsp_ast_printlength_arg_comment_ended(NspAst *ast,int elt)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return FALSE;
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return FALSE;
-  return (ast1->op == COMMENT);
-}
-
-static int _nsp_ast_printlength_op_comment_ended(NspAst *ast, int elt)
-{
-  NspList *L = ast->args;
-  NspAst *ast1;
-  if ( nsp_list_length(L) < elt) return FALSE;
-  if ((ast1 = (NspAst*)nsp_list_get_element(L,elt)) == NULL) return FALSE;
-  if ( ast1->op == COLCONCAT ||  ast1->op ==CELLCOLCONCAT)
-    {
-      return _nsp_ast_printlength_arg_comment_ended(ast1,nsp_list_length(ast1->args));
-    }
-  return FALSE;
-}
-
-#line 2647 "ast.c"
+#line 1267 "ast.c"

@@ -52,6 +52,7 @@ struct _NspAst {
   NspObject* xobj;
   NspList* args;
   NspObject* user_data;
+  int line;
 };
 
 extern int nsp_type_ast_id;
@@ -72,7 +73,7 @@ NspAst *new_ast();
 
 #define NULLAST (NspAst*) 0
 
-extern NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,NspTypeBase *type);
+extern NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,int line,NspTypeBase *type);
 extern NspAst *nsp_ast_create_default(const char *name);
 
 /* from NspAstObj.c */
@@ -105,8 +106,10 @@ extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 extern int nsp_ast_set_str(NspAst *ast,const char *str);
 extern int nsp_ast_check_args(NspList *L);
+extern void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int html,int gtk, int space);
+extern int nsp_ast_printlength(NspAst *ast, int indent);
 
-#line 110 "./ast.h"
+#line 113 "./ast.h"
 #endif /* NSP_INC_NspAst */ 
 
 #ifdef NspAst_Private 
@@ -121,29 +124,19 @@ static AttrTab ast_attrs[];
 static NspMethods *ast_get_methods(void);
 /* static int int_ast_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAst *nsp_ast_create_void(const char *name,NspTypeBase *type);
-#line 17 "codegen/ast.override"
+#line 19 "codegen/ast.override"
 
 /* inserted in the private part of include file
  * of classa.h
  */
-static void nsp_ast_pprint(NspAst * L, int indent);
+static void nsp_ast_pprint(NspAst * L, int indent, int color,int html,int gtk, int space);
 static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
-static void set_use_html_color_class(int flag);
-static void set_use_gtk_color_class(int flag);
-static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt);
-static void nsp_print_string_as_read_for_html(const char *str);
-static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos);
-static void nsp_print_comment_for_html(const char *str);
-static int _nsp_ast_pprint_arg_comment_ended(NspAst *ast,int elt);
-static int _nsp_ast_pprint_op_comment_ended(NspAst *ast, int elt);
-static int nsp_ast_printlength(NspAst * L, int indent);
-static int _nsp_ast_printlength_arg(NspAst *ast,int elt, int indent, int pos, int posret);
 
-#line 148 "./ast.h"
+#line 141 "./ast.h"
 #endif /* NspAst_Private */
 

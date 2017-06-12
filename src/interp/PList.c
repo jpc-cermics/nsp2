@@ -42,6 +42,8 @@
 #include <nsp/frame.h>
 #include <nsp/parse.h>
 
+extern int nsp_parser_get_line(PList L);
+
 /**
  * nsp_parse_add:
  * @plist: 
@@ -230,13 +232,13 @@ int nsp_parse_add_object(PList *plist, NspObject *obj )
  * 
  * Return value: %OK or %FAIL
  **/
-int nsp_parse_add_string(PList *plist, char *str)
+int nsp_parse_add_string(PList *plist, char *str, int tag )
 {
   PList loc = *plist,loc1;
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O =new_nsp_string(str)) == NULLSTRING) return(FAIL);
   loc1->type = STRING;
-  loc1->arity = 0; /* for names arity can be used as a work integer */
+  loc1->arity = tag; /* used to transmit the string delimiter */
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -589,7 +591,7 @@ static PList _nsp_plist_copy(PList L,int tag)
 	  if (nsp_parse_add_object(&Res_last,obj)==FAIL) return(NULLPLIST);
 	  break;
 	case STRING :
-	  if (nsp_parse_add_string(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
+	  if (nsp_parse_add_string(&Res_last,(char*) L->O, L->arity)==FAIL) return(NULLPLIST);
 	  break;
 	case COMMENT :
 	  if (nsp_parse_add_comment(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
@@ -834,16 +836,17 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
 {
   char *str;
   NspObject *obj;
+  int line_number = nsp_parser_get_line(L);
   switch ( L->type) 
     {
     case OBJECT :
       if ((obj=nsp_object_copy_and_name("table",L->O)) == NULLOBJ) return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,NULL,obj,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,NULL,obj,NULL,NULL,line_number,NULL);
       break;
     case NUMBER :
       if ((str = nsp_string_copy(((parse_double *) L->O)->str)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,line_number,NULL);
       break;
     case INUMBER32 :
     case INUMBER64 :
@@ -851,9 +854,13 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
     case UNUMBER64 :
       if ((str = nsp_string_copy(((parse_int *) L->O)->str)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,line_number,NULL);
       break;
     case STRING:
+      /* arity of NAME can be different to zero we put 0 here */
+      if ((str = nsp_string_copy((char *) L->O)) ==NULL)
+	return NULLAST;
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,line_number,NULL);
     case COMMENT:
     case NAME : /* Note that the arity field is an integer which stands for 
 		 * the position of name in the table of a function */
@@ -861,18 +868,18 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
       /* arity of NAME can be different to zero we put 0 here */
       if ((str = nsp_string_copy((char *) L->O)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,0,str,NULL,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,0,str,NULL,NULL,NULL,line_number,NULL);
       break;
     case PLIST: 
       return nsp_plist_to_ast(name,(PList) L->O);
       break;
     case FUNCTION:
-      return nsp_ast_create(name,L->type,L->arity,NULL,NULL,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,NULL,NULL,NULL,NULL,line_number,NULL);
     default: 
       /* we do not transmit L->O to nsp_ast_name since it only code 
        * a line number here
        */
-      return nsp_ast_create(name,L->type,L->arity,NULL,NULL,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,NULL,NULL,NULL,NULL,line_number,NULL);
     }
   return NULL;
 } 
@@ -992,7 +999,11 @@ static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, 
 
 void nsp_plist_pretty_print(PList L, int indent)
 {
-  _nsp_plist_pretty_print(L,indent,0,indent);
+  int color=TRUE, html=FALSE, gtk=FALSE, space=TRUE;
+  /* just in case L is not the first */
+  while ( L->prev != NULL) L= L->prev;
+  nsp_plist_generic_pretty_printer(L, indent, color, html, gtk, space);
+  // _nsp_plist_pretty_print(L,indent,0,indent);
 }
 
 typedef enum { p_black =30, 
@@ -1584,7 +1595,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       /* return pos+Sciprintf1(i,"\"%s\"",(char *) L->O);*/
       n= pos + Sciprintf1(i,"");
       n+= strlen(((char *) L->O));
-      nsp_print_string_as_read((char *) L->O);
+      nsp_print_string_as_read((char *) L->O, L->arity);
       return n;
       break;
     case COMMENT:

@@ -2710,9 +2710,9 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A,int tab)
  * string can be re-parsed by nsp.
  **/
 
-void nsp_print_string_as_read(const char *str)
+void nsp_print_string_as_read(const char *str, char string_delim)
 {
-  Sciprintf("\"");
+  Sciprintf("%c",string_delim);
   while ( *str != '\0') 
     {
       switch (*str) 
@@ -2759,14 +2759,14 @@ void nsp_print_string_as_read(const char *str)
 	}
       str++;
     }
-  Sciprintf("\"");
+  Sciprintf("%c",string_delim);
 }
 
 
 static void SMij_string_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
 {
   const NspSMatrix *M=m;
-  nsp_print_string_as_read(M->S[i+(M->m)*j]);
+  nsp_print_string_as_read(M->S[i+(M->m)*j],'\"');
 }
 
 static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)

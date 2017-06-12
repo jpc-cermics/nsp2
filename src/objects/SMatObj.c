@@ -2535,7 +2535,7 @@ static int int_print_string_as_read (Stack stack, int rhs, int opt, int lhs)
   CheckRhs (1, 1);
   if ((str = GetString(stack,1)) == ((char *) 0) )
     return RET_BUG;
-  nsp_print_string_as_read(str);
+  nsp_print_string_as_read(str,'\"');
   return 0;
 }
 

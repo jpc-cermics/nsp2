@@ -159,7 +159,7 @@ extern NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k);
 extern int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k);
 extern NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k);
 extern NspSMatrix *nsp_latex_utf8_symbols(void);
-extern void nsp_print_string_as_read(const char *str);
+extern void nsp_print_string_as_read(const char *str,char string_delim);
 
 #endif 
 
