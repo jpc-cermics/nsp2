@@ -4,7 +4,7 @@
 // NSP  graphic demo 
 //--------------------------------------------------- 
 
-exec('NSP/demos/graphics/main_graphic.sci');
+exec('NSP/demos3/graphics/main_graphic.sci');
 
 // A set of demos 
 // add libdemo in the function search list 

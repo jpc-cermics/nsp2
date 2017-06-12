@@ -77,23 +77,10 @@
 ==>    y="redefined"
 ==>  endfunction
 ==>  y=g(x);
-==>endfunction
-f	=		pl (file='function.tst')
-
-  [34mfunction[0m y=f(x)
-    [34mfunction[0m y=perms(x)
-      y="redefined"
-    [34mendfunction[0m
-    y=g(x);
-  [34mendfunction[0m
+==>endfunction;
 -nsp->function y=g(x)
 ==>  y=perms(x)
-==>endfunction
-g	=		pl (file='function.tst')
-
-  [34mfunction[0m y=g(x)
-    y=perms(x)
-  [34mendfunction[0m
+==>endfunction;
 -nsp->// g used the perms defines in lib 
 -nsp->y=g(1:2);
 -nsp->if ~y.equal[[1,2;2,1]] then pause;end 

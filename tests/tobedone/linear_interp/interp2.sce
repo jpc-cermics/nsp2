@@ -21,25 +21,25 @@ zp5 = linear_interpn(XP, YP, x, y, z, "by_nan");
 
 xbasc()
 subplot(2,3,1,a3d=%t)
-plot3d(x, y, z, leg="", flag = [2 4 0])
+plot3d1(x, y, z, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("Fonction to interpolate")
 
 subplot(2,3,2,a3d=%t)
-plot3d(xp, yp, zp1, leg="", flag = [2 4 0])
+plot3d1(xp, yp, zp1, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("Natural")
 
 subplot(2,3,3,a3d=%t)
-plot3d(xp, yp, zp2, leg="", flag = [2 4 0])
+plot3d1(xp, yp, zp2, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("Periodic")
 
 subplot(2,3,4,a3d=%t)
-plot3d(xp, yp, zp3, leg="", flag = [2 4 0])
+plot3d1(xp, yp, zp3, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("C0")
 
 subplot(2,3,5,a3d=%t)
-plot3d(xp, yp, zp4, leg="", flag = [2 4 0])
+plot3d1(xp, yp, zp4, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("by_zero")
 
 subplot(2,3,6,a3d=%t)
-plot3d(xp, yp, zp5, leg="", flag = [2 4 0])
+plot3d1(xp, yp, zp5, iso=%t, colormap=jetcolormap(32),mesh=%f,shade=%f);
 xtitle("by_nan")

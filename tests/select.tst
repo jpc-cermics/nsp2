@@ -12,7 +12,7 @@ function y=f(x)
   else
     y=6;
   end	
-endfunction
+endfunction;
 
 x=34;
 if f(x)<> 1.2 then pause;end 

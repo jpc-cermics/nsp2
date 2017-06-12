@@ -90,11 +90,11 @@ function y=f(x)
     y="redefined"
   endfunction
   y=g(x);
-endfunction
+endfunction;
 
 function y=g(x)
   y=perms(x)
-endfunction
+endfunction;
 
 // g used the perms defines in lib 
 y=g(1:2);
