@@ -793,7 +793,12 @@ static int int_file_putfile(Stack stack, int rhs, int opt, int lhs)
   nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
   if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   rep= nsp_fprintf_smatrix(F,S); 
-  if (nsp_file_close(F) == FAIL || rep == FAIL ) return RET_BUG;
+  if (nsp_file_close(F) == FAIL || rep == FAIL )
+    {
+      nsp_file_destroy(F);
+      return RET_BUG;
+    }
+  nsp_file_destroy(F);
   return 0;
 }
 
@@ -815,10 +820,16 @@ static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_fscanf_smatrix(F,&S) == FAIL) 
     {
       nsp_file_close(F);
-      return RET_BUG; 
+      nsp_file_destroy(F);
+      return RET_BUG;
     }
-  if (nsp_file_close(F) == FAIL  ) return RET_BUG;
+  if (nsp_file_close(F) == FAIL  )
+    {
+      nsp_file_destroy(F);
+      return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject *) S);
+  nsp_file_destroy(F);
   return 1;
 }
 

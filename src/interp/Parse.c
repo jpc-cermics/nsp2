@@ -899,6 +899,7 @@ static NspAst *nsp_parse_full(Tokenizer *T)
       /* then create an ast with tolevel object */
       if ((ast= nsp_ast_create(NVOID,STATEMENTS,nsp_list_length(args),NULL,NULL,NULL,NULL,-1,NULL))== NULL)
 	goto err;
+      nsp_list_destroy(ast->args);
       ast->args = args;
       return ast;
     }
