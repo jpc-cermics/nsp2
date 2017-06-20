@@ -62,8 +62,8 @@ function [m,sd] = dist_stat(dist, varargin)
 	end
 	nu = varargin(1);
 	lambda = varargin(2);
-	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 ... 
-	      && is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0 ) then
+	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ... 
+	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0 ) then
 	      error("Error: for dist_stat(""nch"",nu,lambda), nu should be a positive real and lambda a non negative real")
 	end
 	m = nu + lambda; sd = sqrt(2*(nu+2*lambda));
@@ -309,8 +309,8 @@ function [m,sd] = dist_stat(dist, varargin)
            sigma=par(1); a = par(2); m = par(3)
 	   y = (x-m).^2 .* pdf("tray",x,sigma,a)
         endfunction
-	sd = sqrt( intg(a,m,vartray,args=[sigma,a,m],vecteval=%t) ...
-		  +intg(m,%inf,vartray,args=[sigma,a,m],vecteval=%t))
+	sd = sqrt( intg(a,m,vartray,args=[sigma,a,m],vecteval=%t) + ...
+		   intg(m,%inf,vartray,args=[sigma,a,m],vecteval=%t))
 	   
      case "uin" then
 	if numel(varargin) ~= 2 then

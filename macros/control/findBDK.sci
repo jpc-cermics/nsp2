@@ -85,7 +85,7 @@ function [B,D,K,Q,Ry,S,rcnd]=findBDK(s,n,l,R,A,C,meth,job,nsmpl,tol,printw)
   if nin<8 then job = 2;end
   if isempty(job) then job = 2;end
   if nin<7 then meth = 2;end
-  if meth == [] then meth = 2;end
+  if isempty(meth) then meth = 2;end
   if nin<6 then
     error('Error: Wrong number of input arguments');
   end

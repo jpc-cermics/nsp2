@@ -67,15 +67,19 @@ function main_demo_gtk3()
     resource_filename = sprintf("%s/demos3/gtk3/libbase/%s",getenv("NSP"), filename);
     if ~file('exists',resource_filename) then 
       printf("Warning: Cannot open source for %s\n", resource_filename);
+      source_buffer.set_text [ ' '];
+      source_view.set_buffer[source_buffer];
+      info_buffer.set_text[ 'Demo for ' + demoname + ' not found!'];
+      info_view.set_buffer[info_buffer];
       return;
     end
     // The -gtk-icon-shadow should be un commented depending on gtk version
     
-    if %t then 
+    if %f then 
       S=getfile(resource_filename);
       source_buffer.set_text [ catenate(S,sep='\n')];
     else
-      S=pretty_printer[resource_filename,target="gtk"];
+      S=pretty_printer(resource_filename,target="gtk");
       iter = source_buffer.get_start_iter[];
       source_buffer.insert_markup[iter, catenate(S,sep='\n'),-1];
     end

@@ -125,12 +125,10 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
 	if type(val,'string') == 'Mat' && size(val,'*')==1 then
 	  model.set[iter,col,val];
 	else
-	  x_message("Given expression does not evaluate to a scalar d"+...
-		    "ouble !");
+	  x_message("Given expression does not evaluate to a scalar double !");
 	end
       else
-	x_message("Given expression does not evaluate to a scalar d"+...
-		  "ouble !");
+	x_message("Given expression does not evaluate to a scalar double !");
 	// x_message(lasterror());
       end
     end

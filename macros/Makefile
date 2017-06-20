@@ -13,7 +13,7 @@ SUBDIRS = \
 
 DIR=
 
-all clean distclean ::
+all clean distclean pp ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \

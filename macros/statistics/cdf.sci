@@ -71,8 +71,8 @@ function [P,Q] = cdf(dist, x, varargin)
 	end
 	nu = varargin(1);
 	lambda = varargin(2);
-	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 ... 
-	      && is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0 ) then
+	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ... 
+	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0 ) then
 	      error("Error: for cdf(""nch"",x,nu,lambda), nu should be a positive real and lambda a non negative real")
 	end
 	size_to_x = ones(size(x));

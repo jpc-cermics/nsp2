@@ -30,8 +30,8 @@ function [c,lagindex]=xcorr(x,varargin,maxlags=[],mode="none")
   autocorr=%t
   if length(varargin)==0 then
     autocorr=%t
-    if type(maxlags,'short')<>'m' || size(maxlags,"*") > 1 || ~isreal(maxlags) ...
-	  || maxlags<>int(maxlags) || maxlags < 1 then
+    if type(maxlags,'short')<>'m' || size(maxlags,"*") > 1 || ~isreal(maxlags) || ...
+	  maxlags<>int(maxlags) || maxlags < 1 then
       error(sprintf("Error: maxlags should be a positive integer\n"));
       return;
     end

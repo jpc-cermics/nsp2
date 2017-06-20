@@ -68,9 +68,9 @@ function [varargout] = cov(X, varargin, varargopt)
       if varargopt.iskey["weights"] then
 	 weights = varargopt.weights
 	 narg_opt = narg_opt+1;
-	 if ~ (is(weights,%types.Mat) && isreal(weights) && isvector(weights) ...
-	       && and(size(x,1)==numel(weights)) ) then
-	    error("Error: weights should be a real vector with size(x,1) elements")
+	 if ~ (is(weights,%types.Mat) && isreal(weights) && isvector(weights) && ...
+	       and(size(x,1)==numel(weights)) ) then
+	   error("Error: weights should be a real vector with size(x,1) elements")
 	 end
 	 if min(weights) < 0 then
 	    error("Error: weights should be non negative")

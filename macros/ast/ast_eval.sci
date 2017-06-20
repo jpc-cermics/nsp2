@@ -173,11 +173,10 @@ function [rep,H,ast]=ast_eval(ast,H)
 	rep=astv_create([],value=value); // XXX 
       end
     elseif length(varargin)== 3 then 
-      value = (varargin(1).have_value[])&(varargin(2).have_value[]) ...
-	      &(varargin(3).have_value[]);
+      value = (varargin(1).have_value[])&(varargin(2).have_value[]) & ...
+	      (varargin(3).have_value[]);
       if value then 
-	rep=astv_create((varargin(1).get_value[]):(varargin(2).get_value[]):...
-			(varargin(3).get_value[]),value=value);
+	rep=astv_create((varargin(1).get_value[]):(varargin(2).get_value[]):(varargin(3).get_value[]),value=value);
       else
 	rep=astv_create(val(varargin(1).get_value[]),value=%f);
       end
