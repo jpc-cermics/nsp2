@@ -124,8 +124,8 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
     {
       plist1 = NULLPLIST ;
       if (parse_stmt(T,symb_table,&plist1) == FAIL ) return(FAIL);
-      /* a Scilab comment will lead to an empty plist1 so 
-	 we check that case */
+      /* a comment will lead to an empty plist1 so we check that case 
+       */
       if ( plist1 != NULLPLIST ) 
 	{
 	  count++;
@@ -622,6 +622,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   NspBHash *symbols = NULLBHASH;
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
+  int func_line = T->tokenv.Line;
   if (debug) scidebug(debugI++,"[function>");
   /* 
    * create a table for local symbols 
@@ -709,7 +710,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       
       if ((cell= (NspObject *)nsp_cells_create("symbols",3,1)) == NULLOBJ) goto fail;
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
-      if (nsp_parse_add(&plist1,FUNCTION,3,T->tokenv.Line) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,FUNCTION,3,func_line) == FAIL) goto fail;
       
       /* add persistent variables declared by persistent(...) to the symbols table  */
       nsp_plist_name_detect_persistent(plist1,symbols,0, TRUE);
@@ -749,7 +750,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
 #endif
 #else 
-      if (nsp_parse_add(&plist1,FUNCTION,2,T->tokenv.Line) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,FUNCTION,2,func_line) == FAIL) goto fail;
 #endif 
       if (nsp_parse_add_list(plist,&plist1) == FAIL) goto fail;
       if (debug) scidebug(--debugI,"<endfunc]"); 
@@ -939,7 +940,7 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
-
+  int while_line = T->tokenv.Line;
   if (debug) scidebug(debugI++,"[while>");
 
   /* Parsing the while condition */
@@ -970,7 +971,7 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if ( T->tokenv.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist1,WHILE,2,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,WHILE,2,while_line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<while-do]"); 
       if (debug) scidebug(--debugI,"<while]"); 
@@ -1067,9 +1068,13 @@ static int parse_nblines(Tokenizer *T)
       else 
 	{
 	  if ( T->tokenv.id == RETURN_OP ) 
-	    { if ( T->NextToken(T) == FAIL) return(FAIL);}
+	    {
+	      if ( T->NextToken(T) == FAIL) return(FAIL);
+	    }
 	  else 
-	    break;
+	    {
+	      break;
+	    }
 	}
     }
   return OK;
@@ -1135,7 +1140,7 @@ static int parse_stopif (Tokenizer *T,int token)
 
 static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
-  int count = 0,flag=1;
+  int count = 0,flag=1, if_line = T->tokenv.Line;
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
 
@@ -1199,7 +1204,7 @@ static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	  return(FAIL);
 	}
     }
-  if (nsp_parse_add(&plist1,IF,count,T->tokenv.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add(&plist1,IF,count, if_line ) == FAIL) return(FAIL);
   if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<endif]");
   return (OK) ;
@@ -1234,17 +1239,20 @@ static int parse_stopselect (Tokenizer *T,int token)
 
 static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
+  int case_line = -1, select_line = -1, else_line = -1;
   int kount = 1 ; /* counts the number of cases */
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
   PList plist3 = NULLPLIST ;
-  if (debug) scidebug(debugI++,"[select>"); 
+  if (debug) scidebug(debugI++,"[select>");
+  select_line = T->tokenv.Line;
   /* select <expr> */
   if ( T->NextToken(T) == FAIL) return(FAIL);
   if (parse_expr(T,symb_table,&plist1,'f') == FAIL ) return(FAIL);
   if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
  CaseLoop:
   plist1 = NULLPLIST ;
+  case_line = T->tokenv.Line;
   if (parse_bkey(T,CASE,CASE,"select",&plist1) == FAIL) return(FAIL);
   /* case <expr> */
   if (debug) scidebug(debugI++,"[case_exp >"); 
@@ -1268,7 +1276,7 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
       plist1=NULLPLIST;
       if (parse_exprs(T,symb_table,&plist1,0,parse_stopselect ) == FAIL) return(FAIL);
       if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist3,CASE,2,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist3,CASE,2,case_line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
       kount++;
     }
@@ -1276,7 +1284,7 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
     {
     case END : 
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist2,SELECT,kount,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,SELECT,kount,select_line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<endselect]"); 
       return (OK) ;
@@ -1284,6 +1292,7 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
       plist3=NULLPLIST;
       goto CaseLoop;
     case  ELSE :
+      else_line = T->tokenv.Line;
       if ( T->NextToken(T) == FAIL) return(FAIL);
       plist1=NULLPLIST;
       if (parse_exprs(T,symb_table,&plist1,0,parse_endstop ) == FAIL) return(FAIL);
@@ -1291,11 +1300,11 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	{
 	  plist3=NULLPLIST;
 	  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
-	  if (nsp_parse_add(&plist3,LASTCASE,1,T->tokenv.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist3,LASTCASE,1,else_line ) == FAIL) return(FAIL);
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
 	  kount++;
-	  if (nsp_parse_add(&plist2,SELECT,kount,T->tokenv.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist2,SELECT,kount,select_line) == FAIL) return(FAIL);
 	  if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
 	  if (debug) scidebug(--debugI,"<endselect]"); 
 	  return (OK) ;
