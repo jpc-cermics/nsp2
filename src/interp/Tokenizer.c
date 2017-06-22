@@ -1269,8 +1269,8 @@ static void SciFileReadLine(Tokenizer *T, char *prompt, char *buffer, int *buf_s
 
 static void SciSMatReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
-  
-  if ( T->strings.S == NULL || *(T->strings.S) == 0) 
+  int count=0;
+  if ( T->strings.S == NULL ||  *(T->strings.S) == 0)
     {
       *eof = 1 ; 
       *len_line = 0;
@@ -1288,9 +1288,13 @@ static void SciSMatReadLine(Tokenizer *T,char *prompt, char *buffer, int *buf_si
 	{
 	  T->strings.ind++;
 	  T->strings.line = T->strings.S[T->strings.ind];
+	  count++;
 	}
       else 
-	return;
+	{
+	  T->tokenv.Line += (count >0) ? count-1:0;
+	  return;
+	}
     }
 }
 
