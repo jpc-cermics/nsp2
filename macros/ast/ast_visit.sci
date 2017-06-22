@@ -1,6 +1,12 @@
 function ast=ast_visit(ast,visitor,H)
 // generic function which can be used to walk on an ast
 //   
+  function ast=default_visitor(ast,H)
+    for i=1:H, printf(" ");end
+    printf("[%s,%d]\n",ast.get_opname[],ast.get_line[]);
+    rep= ast_visit_args(ast,visitor,H+1);
+  endfunction
+    
   function rep= ast_visit_args(ast,visitor,H)
   //printf("-->arg_visit_args\n");
     L= ast.get_args[];
@@ -26,7 +32,8 @@ function ast=ast_visit(ast,visitor,H)
     //printf("<--arg_visit_internal\n");
   endfunction
     
-  if nargin <= 2 then H=hash(0);end
+  if nargin <= 2 then H=0;end
+  if nargin <= 3 then visitor=default_visitor;end 
   ast= ast_visit_internal(ast,visitor,H)
 endfunction
 
