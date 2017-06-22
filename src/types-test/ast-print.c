@@ -909,10 +909,11 @@ static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt)
 {
   ast_wrap astel;
   int l, j;
+  // int current_line = ast->get_line(ast);
   if ( ast->get_arg(ast,elt,&astel) == FAIL) return FALSE;
   if ( astel.get_op(&astel) != STATEMENTS )
     {
-      Sciprintf("Should be statements\n");
+      // Sciprintf("Should be statements\n");
       return FALSE;
     }
   l = astel.get_length_args(&astel);
@@ -920,16 +921,26 @@ static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt)
     {
       ast_wrap ast1;
       if ( astel.get_arg(&astel,j,&ast1)  == FAIL) return FALSE;
-      switch (ast1.get_op(&ast1))
+      // if ( ast1.get_line(&ast1) >  current_line)
 	{
-	case RETURN_OP : 
-	case COMMA_RET_OP : 
-	case SEMICOLON_RET_OP  :
-	  return TRUE;
+	  switch (ast1.get_op(&ast1))
+	    {
+	    case RETURN_OP : 
+	    case COMMA_RET_OP : 
+	    case SEMICOLON_RET_OP  :
+	      return TRUE;
+	    }
 	}
     }
   return FALSE;
 }
+
+/* this routine explores the given ast to decide if the 
+ * pretty printing of the ast should start with a white space or 
+ * a newline. This is usefull for example to decice if the do of 
+ * a for statement should be followed by a newline or if the do can be 
+ * displayed on a single line 
+ */
 
 static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos)
 {

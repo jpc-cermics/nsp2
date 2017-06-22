@@ -90,6 +90,12 @@
   (return-type "int")
 )
 
+(define-method get_line
+  (of-object "Ast")
+  (c-name "ast_get_line")
+  (return-type "int")
+)
+
 (define-method sprint
   (of-object "Ast")
   (c-name "ast_sprint")

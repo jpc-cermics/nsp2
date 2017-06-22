@@ -211,6 +211,21 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
 }
 
 %%
+override Ast.ast_get_line kwargs
+/* override a method */
+static int _wrap_ast_get_line(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  int ret ;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  ret = ((int) self->line);
+  if ((Ret=nsp_new_double_obj((double) ret))== NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+%%
 override Ast.ast_is kwargs
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
