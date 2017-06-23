@@ -652,6 +652,11 @@ static int parse_symb(Tokenizer *T,char *str, int *l)
     {
       str[(*l)++] = c;
       c=T->GetChar(T);
+      if ( c == '\0') 
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c=T->GetChar(T);
+	}
     }
   if ( (*l) == NAME_MAXL ) 
     {
@@ -1105,7 +1110,15 @@ static int token_read_line(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
   int len_line;
   T->token_readline(T,prompt,buffer, buf_size, &len_line, eof);
   /* we add  \n ( which was swallowed by T->tokenv_readline*/
-  buffer[len_line] ='\n';
+  if ( *buf_size == len_line + 1 )
+    {
+      /* we haven't read a complete line because of buffer limitation */
+      buffer[len_line] ='\0';
+    }
+  else
+    {
+      buffer[len_line] ='\n';
+    }
   buffer[len_line+1] = '\0';
   buffer[len_line+2] = '\0'; /* ??? xxxx*/
   
