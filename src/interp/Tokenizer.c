@@ -144,15 +144,15 @@ void nsp_tokenizer_strings(Tokenizer *T,char **S)
 static int next_token(Tokenizer *T)
 {
   static int chcnt;
- loop:
-  T->IgnoreWSpaces(T);
+ 
+  if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
   T->curline.lpt1 = T->curline.lpt2;
   T->curline.lpt2 = T->curline.lpt3;
   if ( isdigit(T->tokenv.NextC))
     {
       /*    --------------parsing a number  */
       if ( T->ParseNumber(T) == FAIL) return FAIL;
-      T->IgnoreWSpaces(T);
+      if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
       return(OK);
     }
   if (isalnum(T->tokenv.NextC) || PERCENT_CHECK(T->tokenv.NextC)
@@ -162,7 +162,7 @@ static int next_token(Tokenizer *T)
       /*     -------------name or Scilab keyword */
       T->tokenv.id = NAME;
       if ( T->ParseSymb(T,T->tokenv.syn,&chcnt) == FAIL) return(FAIL);
-      T->IgnoreWSpaces(T);
+      if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
       key =nsp_is_nsp_keyword(T->tokenv.syn);
       if ( key != LASTCODE_NEG_OP ) 
 	T->tokenv.id = key;
@@ -175,14 +175,13 @@ static int next_token(Tokenizer *T)
       T->tokenv.id= RETURN_OP;
       return(OK);
     }
-  if (0 && T->tokenv.id == '\r' ) 
-    {
-      /* trying to ignore '\r' */
-      T->GetChar(T);
-      goto loop;
-    }
-
+  
   T->GetChar(T);
+  if (T->tokenv.NextC == '\0') 
+    {
+      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+    }
+  
   if ( T->tokenv.id == '.' ) 
     {
       if ( isdigit(T->tokenv.NextC )) 
@@ -190,7 +189,7 @@ static int next_token(Tokenizer *T)
 	  /*     ------------number with leading dot */
 	  T->backch(T);T->backch(T);T->GetChar(T);
 	  if ( T->ParseNumber(T) == FAIL) return FAIL;
-	  T->IgnoreWSpaces(T);
+	  if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
 	  return(OK) ;
 	}
       else if ( T->IsDotDotDot(T) == OK ) 
@@ -216,28 +215,14 @@ static int next_token(Tokenizer *T)
     }
   else if ( (T->mtlb == TRUE)  && ( T->tokenv.id == '%' ))
     {
-      /*  ----------- comments : ignore up to end of line
-	  char c;
-	  c=T->GetChar(T);
-	  while (c != '\n') c=T->GetChar(T);
-	  T->tokenv.id = '\n';
-	  return(OK);
-      */
       return T->ParseComment(T);
     }
   else if ( T->mtlb == FALSE && ( T->tokenv.id == '/' && T->tokenv.NextC == '/' ))
     {
-      /*  ----------- comments : ignore up to end of line
-	  char c;
-	  c=T->GetChar(T);
-	  while (c != '\n') c=T->GetChar(T);
-	  T->tokenv.id = '\n';
-	  return(OK);
-      */
       return T->ParseComment(T);
     }
   T->ParseOperators(T);
-  T->IgnoreWSpaces(T);
+  if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
   /* XXXXXX : changing EOL to 0 XXX */
   if ( T->tokenv.id == 0)  T->tokenv.id= '\0';
   return(OK);
@@ -247,9 +232,14 @@ static int next_token(Tokenizer *T)
  * Parses nsp operators 
  */
 
-static void  parse_operators(Tokenizer *T)
+static int parse_operators(Tokenizer *T)
 {
   /* Comparaisons */
+  if ( T->tokenv.NextC == '\0')
+    {
+      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+    }
+  
   switch ( T->tokenv.id ) 
     {
     case '>' :
@@ -469,6 +459,7 @@ static void  parse_operators(Tokenizer *T)
     case '=':  T->tokenv.id =  EQUAL_OP ;break;
     default: break;
     }
+  return OK;
 }
 
 /*
@@ -487,6 +478,11 @@ static int parse_number(Tokenizer *T)
       T->tokenv.buf[count++]=c;
       /* T->tokenv.syv = 10.00*(  T->tokenv.syv) + cdigit2num(c) ; */
       c=T->GetChar(T);
+      if ( c == '\0') 
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c=T->tokenv.NextC;
+	}
     }
   if ( c == 'x' ) 
     {
@@ -495,6 +491,11 @@ static int parse_number(Tokenizer *T)
 	{
 	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
+	  if ( c == '\0') 
+	    {
+	      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	      c=T->tokenv.NextC;
+	    }
 	  while (1) 
 	    {
 	      if ( isdigit(c) ) 
@@ -502,12 +503,22 @@ static int parse_number(Tokenizer *T)
 		  T->tokenv.buf[count++]=c;
 		  /* T->tokenv.syv = 16.00*(  T->tokenv.syv) + cdigit2num(c) ; */
 		  c=T->GetChar(T);
+		  if ( c == '\0') 
+		    {
+		      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		      c=T->tokenv.NextC;
+		    }
 		}
 	      else  if ( (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
 		{
 		  T->tokenv.buf[count++]=c;
 		  /* T->tokenv.syv = 16.00*(  T->tokenv.syv) + c - 'a' + 10 ; */
 		  c=T->GetChar(T);
+		  if ( c == '\0') 
+		    {
+		      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		      c=T->tokenv.NextC;
+		    }
 		}
 	      else break;
 	    }
@@ -529,9 +540,19 @@ static int parse_number(Tokenizer *T)
       T->tokenv.buf[count]='\0';
       T->tokenv.id = (c == 'i') ? INUMBER32 : UNUMBER32;
       c1 = T->GetChar(T);
+      if ( c1 == '\0') 
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c1=T->tokenv.NextC;
+	}
       if ( c1 == '3' || c1 == '6') 
 	{
 	  c2 = T->GetChar(T);
+	  if ( c1 == '\0') 
+	    {
+	      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	      c1=T->tokenv.NextC;
+	    }
 	  if ( ( (c1 == '3' && c2 != '2') || (c1 == '6' && c2 != '4')))
 	    {
 	      T->ParseError(T,"Error while parsing a number %s is ended by '%c%c' \n",T->tokenv.buf,c1,c2);
@@ -562,6 +583,11 @@ static int parse_number(Tokenizer *T)
 	{
 	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
+	  if ( c == '\0') 
+	    {
+	      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	      c=T->tokenv.NextC;
+	    }
 	  deno=0.00;
 	  count1=0;
 	  if ( isdigit(c) ) 
@@ -571,6 +597,11 @@ static int parse_number(Tokenizer *T)
 		  T->tokenv.buf[count++]=c;
 		  deno = 10.00*deno + cdigit2num(c) ;
 		  c=T->GetChar(T);
+		  if ( c == '\0') 
+		    {
+		      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		      c=T->tokenv.NextC;
+		    }
 		  count1++;
 		}
 	      /* T->tokenv.syv += (deno/pow(10.00,(double)count1)); */
@@ -583,6 +614,11 @@ static int parse_number(Tokenizer *T)
       T->tokenv.buf[count++]='E';
       /* parsing e+xxx or e-xxx or exxx*/
       c=T->GetChar(T);
+      if ( c == '\0') 
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c=T->tokenv.NextC;
+	}
       if ( c == '+' || c == '-' ) 
 	{
 	  /* sign = c; */
@@ -597,12 +633,25 @@ static int parse_number(Tokenizer *T)
 	      T->tokenv.buf[count++]=c;
 	      /* ipow = 10*ipow + cdigit2num(c) ; */
 	      c=T->GetChar(T);
+	      if ( c == '\0') 
+		{
+		  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		  c=T->tokenv.NextC;
+		}
 	    }
 	  /* T->tokenv.syv  *= pow(10.00,(double)((sign == '+') ? ipow : -ipow)); */
 	}
       else if ( c == '\t' || c == ' ' ) 
 	{
-          while(c == '\t' || c == ' ') c=T->GetChar(T);
+          while(c == '\t' || c == ' ')
+	    {
+	      c=T->GetChar(T);
+	      if ( c == '\0') 
+		{
+		  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		  c=T->tokenv.NextC;
+		}
+	    }
         }
       else if ( c != '\n' && c != ';' && c != ',') 
 	{
@@ -614,7 +663,15 @@ static int parse_number(Tokenizer *T)
       /* xxx : ! is scilab Rc up to now*/
       if ( c == '\t' || c == ' ' ) 
 	{
-          while(c == '\t' || c == ' ') c=T->GetChar(T);
+          while(c == '\t' || c == ' ')
+	    {
+	      c=T->GetChar(T);
+	      if ( c == '\0') 
+		{
+		  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		  c=T->tokenv.NextC;
+		}
+	    }
         }
       else if ( c != '\n' && c != ';' && c != ',') 
 	{
@@ -655,7 +712,7 @@ static int parse_symb(Tokenizer *T,char *str, int *l)
       if ( c == '\0') 
 	{
 	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
-	  c=T->GetChar(T);
+	  c=T->tokenv.NextC;
 	}
     }
   if ( (*l) == NAME_MAXL ) 
@@ -680,6 +737,11 @@ static int parse_comment(Tokenizer *T)
   int count =0; 
   while ( (c=T->GetChar(T)) != '\n') 
     {
+      if ( c == '\0') 
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c=T->tokenv.NextC;
+	}
       if ( count < TOK_BUF-1 ) 
 	{
 	  T->tokenv.buf[count++]= c;
@@ -717,11 +779,11 @@ static int parse_command_arg(Tokenizer *T)
     {
       if ( c == '\0' ) 
 	{
-	  break;
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	  c=T->tokenv.NextC;
 	}
       if ( c == '\n' )
 	{ 
-	  /* c= T->GetChar(T); */
 	  break;
 	}
       else if ( c == ';' || c == ',' ) 
@@ -733,15 +795,30 @@ static int parse_command_arg(Tokenizer *T)
 	  char c1;
 	  int d;
 	  c1= T->GetChar(T);
+	  if ( c1 == '\0' ) 
+	    {
+	      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	      c1 =T->tokenv.NextC;
+	    }
 	  /* octal coded number \ddd d in [0-7] */
 	  if ( isdigit(c1) ) 
 	    { 
 	      d = c1 - '0' ; 
 	      c1= T->GetChar(T);
+	      if ( c1 == '\0' ) 
+		{
+		  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		  c1 =T->tokenv.NextC;
+		}
 	      if ( isdigit(c1)) 
 		{
 		  d = (d << 3)+ (c1 -'0') ; 
 		  c1= T->GetChar(T);
+		  if ( c1 == '\0' ) 
+		    {
+		      if ( T->ForceNextChar(T) == FAIL) return FAIL;
+		      c1 =T->tokenv.NextC;
+		    }
 		  if ( isdigit(c1)) 
 		    {
 		      d = (d << 3)+ (c1 -'0') ;
@@ -963,6 +1040,10 @@ static int ignore_white_spaces(Tokenizer *T)
 {
   while ( 1)
     {
+      if ( T->tokenv.NextC == '\0' )
+	{
+	  if ( T->ForceNextChar(T) == FAIL) return FAIL;
+	}
       if ( T->tokenv.NextC == ' ' || T->tokenv.NextC == '\t' ) 
 	{
 	  T->GetChar(T);
@@ -980,15 +1061,15 @@ static int ignore_white_spaces(Tokenizer *T)
 	  else
 	    {
 	      T->backch(T);
-	      return 0;
+	      return OK;
 	    }
 	}
       else 
 	{
-	  return 0;
+	  return OK;
 	}
     }
-  return 0;
+  return OK;
 }
 
 /*  view next character */

@@ -455,9 +455,13 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       /* xxx : a comment will result in an empty plist */
       if ( T->tokenv.NextC == '/' ) 
 	{
+#if 1
+	  if ( T->ParseComment(T) == FAIL ) return(FAIL);
+#else
 	  char c;
 	  c=T->GetChar(T);
 	  while (c != '\n') c=T->GetChar(T);
+#endif
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  return(OK);
 	}
@@ -552,7 +556,7 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
 	case COMMA_RET_OP :
 	  ++excnt;       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  parse_nblines(T);
+	  if ( parse_nblines(T) == FAIL ) return FAIL;
 	  break;
 	case NAME: 
 	  ++excnt;
@@ -690,14 +694,14 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (nsp_parse_add_list1(&plist1,&plist1) == FAIL) goto fail;
   if (debug) scidebug(debugI++,"[func>"); 
 
-  parse_nblines(T);
+  if ( parse_nblines(T) == FAIL ) return FAIL;
   plist2=NULLPLIST;
   if ( parse_exprs(T,symbols,&plist2,1,parse_funcstop) == FAIL) goto fail;
   if (nsp_parse_add_list(&plist1,&plist2) == FAIL) goto fail;
   /* For backward compatibility : we accepts that a function 
    * ends with end of file 
    */
-  if ( T->tokenv.id != 0 ) parse_nblines(T);
+  if ( T->tokenv.id != 0 ) if ( parse_nblines(T) == FAIL ) return FAIL;
   if ( T->tokenv.id == 0 || T->tokenv.id == ENDFUNCTION )
     {
 #ifdef  WITH_SYMB_TABLE 
@@ -898,7 +902,7 @@ static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	case COMMA_RET_OP :
 	  ++excnt;       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  parse_nblines(T);
+	  if ( parse_nblines(T) == FAIL ) return FAIL;
 	  break;
 	case ']' : ++excnt;       
 	  break;
@@ -967,7 +971,7 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (parse_exprs(T,symb_table,&plist2,0,parse_endstop ) == FAIL) return(FAIL);
   if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
   /* xxx : a revoir */
-  parse_nblines(T);
+  if ( parse_nblines(T) == FAIL ) return FAIL;
   if ( T->tokenv.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -1019,28 +1023,11 @@ static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist)
       return(FAIL);
     }
   if ( T->NextToken(T) == FAIL) return(FAIL);
-  /* 
-     if ( T->tokenv.id == '/' )
-     {
-     char c;
-     if ( k != '/') 
-     {
-     T->ParseError(T,"Parse Error: Unexpected Token %s found in a %s \n",T->code2name(T,T->tokenv.id),str);
-     if ( key1 == key2 ) 
-     Scierror("Expecting : %s or , or ; or '\\n'\n",T->code2name(T,key1));
-     else 	
-     Scierror("Expecting : %s or %d or , or ; or '\\n'\n",T->code2name(T,key1),T->code2name(T,key2));
-     }
-     c=T->GetChar(T);
-     while (c != '\n') c=T->GetChar(T);
-     if ( T->NextToken(T) == FAIL) return(FAIL);
-     }
-  */
-  parse_nblines(T);
+  if ( parse_nblines(T) == FAIL ) return FAIL;
   if ( T->tokenv.id == key1 || T->tokenv.id == key2  ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      parse_nblines(T);
+      if ( parse_nblines(T) == FAIL ) return FAIL;
     }
   return(OK);
 }
@@ -1148,7 +1135,7 @@ static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
     {
       plist2= NULLPLIST;
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      parse_nblines(T);
+      if ( parse_nblines(T) == FAIL ) return FAIL;
       /* do not accept expr = expr1 */
       T->tokenv.FlagEqu = 0;
       /* Parse if condition */
@@ -1168,7 +1155,7 @@ static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (parse_exprs(T,symb_table,&plist2,0,parse_stopif ) == FAIL) return(FAIL);
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       count++;
-      parse_nblines(T);
+      if ( parse_nblines(T) == FAIL ) return FAIL;
       switch ( T->tokenv.id )
 	{
 	case END :
@@ -1181,12 +1168,12 @@ static int parse_if(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	case ELSE :
 	  if (debug) scidebug(debugI++,"[else>");
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  parse_nblines(T);
+	  if ( parse_nblines(T) == FAIL ) return FAIL;
 	  plist2= NULLPLIST;
 	  if (parse_exprs(T,symb_table,&plist2,0,parse_endstop ) == FAIL) return(FAIL);
 	  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
 	  count++;
-	  parse_nblines(T);
+	  if ( parse_nblines(T) == FAIL ) return FAIL;
 	  if ( T->tokenv.id == END ) 
 	    {
 	      if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -1489,7 +1476,7 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (parse_exprs(T,symb_table,&plist1,0,parse_endstop ) == FAIL) return(FAIL);
   if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   /* XXX : a revoir */
-  parse_nblines(T);
+  if ( parse_nblines(T) == FAIL ) return FAIL;
   if ( T->tokenv.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -1545,7 +1532,7 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
 	 have been parsed in <expr> */
       if ( T->NextToken(T) == FAIL) return(FAIL);
     }
-  parse_nblines(T);
+  if ( parse_nblines(T) == FAIL ) return FAIL;
   if (parse_expr(T,symb_table,&plist2,'f') == FAIL ) return(FAIL);
   if ( flag == 1) 
     {
@@ -2094,10 +2081,14 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
     }
   if (  T->tokenv.id == '/' && T->tokenv.NextC == '/' ) 
     {
+#if 1
+      if ( T->ParseComment(T) == FAIL ) return(FAIL);
+#else
       char c;
       c=T->GetChar(T);
       while (c != '\n') c=T->GetChar(T);
       if ( T->ForceNextChar(T) == FAIL) return(FAIL);
+#endif
       if ( T->NextToken(T) == FAIL) return(FAIL);
     }
   switch ( T->tokenv.id ) 
@@ -2141,7 +2132,7 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case QUOTE_OP:  /* case '\'' : */
     case '"'  :
       /*  *************     get a string */
-      T->ParseString(T);
+      if ( T->ParseString(T) == FAIL ) return FAIL;
       if (nsp_parse_add_string(plist,T->tokenv.buf,
 			       (T->tokenv.id== QUOTE_OP) ? 0 : 1 ) == FAIL)
 	return(FAIL);
@@ -2373,7 +2364,7 @@ static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist,int *cou
       PList plist2=NULLPLIST;
       (*count)++;
       if (debug) Sciprintf("-arg-");
-      parse_nblines_and_comments(T);
+      if ( parse_nblines_and_comments(T)==FAIL) return FAIL;
       plist2=NULLPLIST;
       if (parse_expr(T,symb_table,&plist2,'f') == FAIL ) return(FAIL);
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
@@ -2873,7 +2864,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
   if ( T->NextToken(T) == FAIL) return(FAIL);
   if ( fblank == 1)
     {
-      ( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T);
+      if ((( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T)) == FAIL) return FAIL;
     }
   while ( T->tokenv.id != end_char ) 
     {
@@ -2882,7 +2873,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( fblank == 1)
 	{
-	  ( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T);
+	  if ((( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T)) == FAIL) return FAIL;
 	}
       switch ( T->tokenv.id ) 
 	{
@@ -2890,7 +2881,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
 	case COMMA_RET_OP :
 	  ++(*excnt);       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  ( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T);
+	  if ((( t_id == '(' ) ? parse_nblines_and_comments(T) : parse_nblines(T)) == FAIL) return FAIL;
 	  if ( T->tokenv.id == end_char ) 
 	    {
 	      T->ParseError(T,"Parse Error: extra , or missing expression before %c\n",end_char);
@@ -3184,7 +3175,7 @@ static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist,
       PList plist2=NULLPLIST;
       if (debug) scidebug(debugI,"{%s}",nsp_astcode_to_name(op));
       /* forget the comments in a parse_nary  */
-      parse_nblines_and_comments(T);
+      if ( parse_nblines_and_comments(T)==FAIL) return FAIL;
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2) == FAIL ) return(FAIL);
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
@@ -3222,7 +3213,7 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
     {
       PList plist2=NULLPLIST;
       if (debug) scidebug(debugI,"{%s}",nsp_astcode_to_name(op));
-      parse_nblines_and_comments(T);
+      if ( parse_nblines_and_comments(T)==FAIL) return FAIL;
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2,opt) == FAIL ) return(FAIL);
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
@@ -3267,7 +3258,7 @@ static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
     {
       PList plist2=NULLPLIST;
       if (debug) Sciprintf("-arg-");
-      parse_nblines(T);
+      if ( parse_nblines(T) == FAIL ) return FAIL;
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2,opt) == FAIL ) return(FAIL);
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);

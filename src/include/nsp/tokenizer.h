@@ -3,7 +3,7 @@
 
 #include <nsp/plisttoken.h>
 
-#define LINEMAXSIZE 4096 
+#define LINEMAXSIZE 65536
 
 typedef struct _curline Curline; 
 
@@ -11,7 +11,7 @@ struct _curline {
     int lpt1; /* position of the begining of the before last recognised token */
     int lpt2; /* position of the begining of the last recognised token */
     int lpt3; /* current char position in buf */
-    char buf[LINEMAXSIZE];
+    char buf[LINEMAXSIZE+3];
 } ;
 
 
@@ -59,7 +59,7 @@ typedef int token_IsTranspose(Tokenizer *T);
 typedef int token_ParseShowLine(Tokenizer *T);
 typedef int token_Getlin(Tokenizer *T,char *prompt);
 typedef int token_TokenLineSet(Tokenizer *T,int l);
-typedef void token_ParseOperators(Tokenizer *T);
+typedef int token_ParseOperators(Tokenizer *T);
 typedef int token_ParseNumber(Tokenizer *T);
 typedef int token_ParseSymb(Tokenizer *T,char *str, int *l);
 typedef int token_ParseComment(Tokenizer *T);
