@@ -857,12 +857,12 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
       return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,line_number,NULL);
       break;
     case STRING:
-      /* arity of NAME can be different to zero we put 0 here */
+      /* L->arity for string is 0 or 1 to code for ' or " */
       if ((str = nsp_string_copy((char *) L->O)) ==NULL)
 	return NULLAST;
       return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL,line_number,NULL);
     case COMMENT:
-    case NAME : /* Note that the arity field is an integer which stands for 
+    case NAME : /* Note that the L->arity field is an integer which stands for 
 		 * the position of name in the table of a function */
     case OPNAME :
       /* arity of NAME can be different to zero we put 0 here */

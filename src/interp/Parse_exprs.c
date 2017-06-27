@@ -412,7 +412,8 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->tokenv.buf[0] != '\0') 
 	{
-	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,1) == FAIL) return(FAIL);
+	  /* with special arity 2 to keep track of strings with quotes */
+	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,2) == FAIL) return(FAIL);
 	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
@@ -441,7 +442,8 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->tokenv.buf[0] != '\0') 
 	{
-	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,1) == FAIL) return(FAIL);
+	  /* added with 2 which is used to keep track of string type (see ast-print.c) */
+	  if (nsp_parse_add_string(&plist1,T->tokenv.buf,2) == FAIL) return(FAIL);
 	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
