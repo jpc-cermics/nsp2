@@ -7,7 +7,7 @@ function contourf(x,y,z,varargopt)
     print(s_mat);
     execstr(s_mat);
     return;
-  end;
+  end
   if nargin <= 1 then y=1:10;end
   if nargin <= 2 then z=rand(size(x,'*'),size(y,'*'));end
 
@@ -23,7 +23,7 @@ function contourf(x,y,z,varargopt)
   if isempty(x) then x=1:size(z,'r');end
   if isempty(y) then y=1:size(z,'c');end
   nvs=size(nv,'*') ;
-  if nvs==1 then nvs=nv;nv = zmin + (1:nvs)*(zmax-zmin)./(nvs+1);end;
+  if nvs==1 then nvs=nv;nv = zmin + (1:nvs)*(zmax-zmin)./(nvs+1);end
 
   [mz,nz] = size(z);
 

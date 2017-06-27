@@ -49,7 +49,7 @@ function [y] = mean(x, varargin, varargopt)
    
    if numel(varargopt) >= 1 then
 
-      if  varargopt.iskey["dim"] then, dim = varargopt.dim; narg_opt.add[1]; end
+      if  varargopt.iskey["dim"] then dim = varargopt.dim; narg_opt.add[1]; end
    
       if varargopt.iskey["skip_nan"] then
 	 skip_nan = varargopt.skip_nan
@@ -94,7 +94,7 @@ function [y] = mean(x, varargin, varargopt)
       elseif dim == -1 then
 	 error("Error: dim should not be equal to -1")
       elseif dim == -2 then // matlab compat
-	 if isvector(x) then, dim = 0, else, dim = 1, end
+	 if isvector(x) then dim = 0, else, dim = 1, end
       end     
    end
    
@@ -119,14 +119,14 @@ function [y] = mean(x, varargin, varargopt)
    
    else                       // trimmed mean
 
-      if isempty(x), then, y = mean(x,dim), return, end
+      if isempty(x), then y = mean(x,dim), return, end
       
       if dim == 0 then
 	 x = sort(x, type="g", dir = "i")
 	 n = numel(x);
 	 if skip_nan then  // nan are put at the end with sort
 	    while n >= 1 && isnan(x(n)), n.add[-1], end
-	    if n == 0, then, y = %nan, return, end
+	    if n == 0, then y = %nan, return, end
 	 end
 	 ndiscard = floor(min(n*trim,(n-1)/2))
 	 k1 = 1 + ndiscard
@@ -135,7 +135,7 @@ function [y] = mean(x, varargin, varargopt)
 	 
       elseif dim == 1 then
 	 [m,n] = size(x);
-	 if m == 0, then, y = mean(x,dim); return; end
+	 if m == 0, then y = mean(x,dim); return; end
 	 x = sort(x, type="r", dir = "i")
 	 if ~skip_nan then
 	    mdiscard = floor(min(m*trim,(m-1)/2));

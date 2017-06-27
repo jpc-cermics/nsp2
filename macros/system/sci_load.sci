@@ -290,7 +290,7 @@ function sci_save(fname,varargopt)
   // Copyright (C) 2006-2015 Jean-Philippe Chancelier
     F1.put[1,type='il'];
     nn=size(val);
-    if and(imag(val)==0) then m_type=0;else m_type=1;end;
+    if and(imag(val)==0) then m_type=0;else m_type=1;end
     F1.put[[nn,m_type],type='il'];
     F1.put[real(val),type='dl'];
     if m_type==1 then 
@@ -323,7 +323,7 @@ function sci_save(fname,varargopt)
     nn=size(val);
     // get the triplet of the transpose
     [Jc,Ir,Pr]=spget_mtlb(val');
-    if nnz(imag(val))==0 then m_type=0;else m_type=1;end;
+    if nnz(imag(val))==0 then m_type=0;else m_type=1;end
     // [m,n,type_rc,nnz]
     F1.put[[nn,m_type,length(Ir)],type='il']
     // number of non-null elements for each row 
@@ -458,7 +458,7 @@ function sci_save(fname,varargopt)
   // utility for sci_save
   // Copyright (C) 2006-2015 Jean-Philippe Chancelier
     nn=size(val,'*');
-    if and(imag(val)==0) then m_type=0;else m_type=1;end;
+    if and(imag(val)==0) then m_type=0;else m_type=1;end
     y= 2 + nn*(1+m_type);
   endfunction
 
@@ -487,7 +487,7 @@ function sci_save(fname,varargopt)
   // utility for sci_save
   // Copyright (C) 2007-2015 Jean-Philippe Chancelier
     nn=size(val,'*');
-    if nnz(imag(val))==0 then m_type=0;else m_type=1;end;
+    if nnz(imag(val))==0 then m_type=0;else m_type=1;end
     y = 2 + nn(1) + nnz(val)*(2+m_type);
   endfunction
 

@@ -51,7 +51,7 @@ function chart(varargin,varargopt)
 	w=linspace(100*%eps,%pi,N);
       else 
 	w=linspace(-%pi,- 100*%eps,N);
-      end;
+      end
       n=prod(size(w))
       rf=centre(i)*ones(size(w))+rayon(i)*exp(%i*w);
       phi=atan(imag(rf),real(rf))/ratio; //phi is in [-180 0]
@@ -76,7 +76,7 @@ function chart(varargin,varargopt)
 	  end
 	end
       end
-    end;
+    end
     for pi=1:size(p,'*'); xpoly(p{pi},m{pi},color=xget('lastpattern')+3);end
   end
   //isophase curves
@@ -88,7 +88,7 @@ function chart(varargin,varargopt)
 	last=teta-eps;
       else
 	last=teta+eps;
-      end;
+      end
       w=[-(175*ratio):0.03:last,last]
       n=prod(size(w));
       module=real(20*log((sin(w)*cos(teta)/sin(teta)-cos(w)))/l10)
@@ -102,7 +102,7 @@ function chart(varargin,varargopt)
 	  m{$+1}=[module];
 	end
       end
-    end;
+    end
     for pi=1:size(p,'*');
       I=isinf(m{i});p{i}(I)=[];m{i}(I)=[];
       if size(p{i},'*')> 1 then  xpoly(p{pi},m{pi},color=xget('lastpattern')+3);end

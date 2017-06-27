@@ -44,7 +44,7 @@ function [n,d]=coff(m,var)
       m(l,k)=m(l,k)+mlk;
       n(k,l)=-(poly(m,var)-d)/mlk;
       m(l,k)=m(l,k)-mlk
-    end;
+    end
   end
   if norm(imag(m),1)==0 then n=real(n);d=real(d);end
   n=clean(n);

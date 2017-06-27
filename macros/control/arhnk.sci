@@ -3,12 +3,12 @@ function [slm]=arhnk(sl,ordre,tol)
   
   if type(sl,'short')<>'linearsys' then 
     error("Error: expecting a linear system"),
-  end;
-  if sl(7)<>'c' then error("Error: system should be continuous"),end;
+  end
+  if sl(7)<>'c' then error("Error: system should be continuous"),end
   select nargin
    case 2 then istol=0;
    case 3 then istol=1;
-  end;
+  end
   [a,b,c,d]=abcd(sl); 
   x0=sl.X0;
   dom = sl.dom;
@@ -20,7 +20,7 @@ function [slm]=arhnk(sl,ordre,tol)
   wo=lyap(a,-c'*c,domaine)
   if istol==0 then [t,nn]=equil1(wc,wo);
   else [t,nn]=equil1(wc,wo,tol);
-  end;
+  end
   n1=nn(1);
   ti=inv(t);a=t*a*ti;b=t*b;c=c*ti
   wc=t*wc*t';wo=ti'*wo*ti;
@@ -29,7 +29,7 @@ function [slm]=arhnk(sl,ordre,tol)
     a=a(1:n1,1:n1);b=b(1:n1,:);c=c(:,1:n1);
     if nargout==1 then slm=syslin('c',a,b,c,d,0*ones(n1,1)),end
     return,
-  end;
+  end
   sigma=wc(ordre+1,ordre+1)
     
   r=max(n1-ordre-1,1)
@@ -56,6 +56,6 @@ function [slm]=arhnk(sl,ordre,tol)
     a=a(1:m,1:m)
     b=b(1:m,:)-t*b(m+1:n,:)
     c=c(:,1:m)
-  end;
+  end
   slm=syslin('c',a,b,c,d,0*ones(m,1));
 endfunction

@@ -55,6 +55,6 @@ function [n]=linf(g,eps,tol)
 	x*c'/s*c,   -a'+c'*d/r*b'],
     mp=abs(real(spec(mx))),mp=min(mp),
     if mp>tol then gu=x, else gl=x, end,
-  end;
+  end
   n=(gu+gl)/2
 endfunction

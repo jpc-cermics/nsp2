@@ -7,7 +7,7 @@ function plzr(a,b,c,d)
   elseif type(a,'short')== 'linearsys' then 
     sl=a;
     a=sl.A,b=sl.B,c=sl.C,d=sl(5);//
-  end;
+  end
   dr=spec(a)
   [al,be]=tr_zer(a,b,c,d)
   nr=al./be
@@ -37,7 +37,7 @@ function plzr(a,b,c,d)
   else
     strf='100'
     pos=3
-  end;
+  end
   plot2d(dr,di,style=-2,mark_size=8,leg='Poles');
   plot2d([mnx;mxx],[0;0],style=4);
   plot2d([0;0],[-my;my],style=4);

@@ -139,8 +139,8 @@ function [m,sd] = dist_stat(dist, varargin)
 	      is(b,%types.Mat) && isreal(b) && isscalar(b) && b > 0 ) then
 	      error("Error: for dist_stat(""par"",a,b), a and b should be positive real")
 	end
-	if a > 1 then, m = a*b/(a-1), else, m = %inf, end
-	if a > 2 then, sd = sqrt(a/(a-2))*b/(a-1), else, sd = %inf, end
+	if a > 1 then m = a*b/(a-1), else, m = %inf, end
+	if a > 2 then sd = sqrt(a/(a-2))*b/(a-1), else, sd = %inf, end
 	
      case "poi" then
 	if numel(varargin) ~= 1 then
@@ -162,7 +162,7 @@ function [m,sd] = dist_stat(dist, varargin)
 	      is(nu2,%types.Mat) && isreal(nu2) && isscalar(nu2) && nu2 > 0 ) then
 	      error("Error: for dist_stat(""f"",nu1,nu2), nu1 and nu2 should be positive real")
 	end
-	if nu2 > 2 then, m = nu2/(nu2-2), else, m = %inf, end
+	if nu2 > 2 then m = nu2/(nu2-2), else, m = %inf, end
 	if nu2 > 4 then
 	   sd = nu2*sqrt(2*(nu1+nu2-2)/(nu1*(nu2-4)))/(nu2-2)
 	elseif nu2 > 2 then
@@ -181,7 +181,7 @@ function [m,sd] = dist_stat(dist, varargin)
 	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0  ) then
 	      error("Error: for dist_stat(""nf"",P,nu1,nu2,lambda), nu1 and nu2 should be positive and lambda non negative")
 	end
-	if nu2 > 2 then, m = nu2*(nu1+lambda)/(nu1*(nu2-2)), else, m = %inf, end
+	if nu2 > 2 then m = nu2*(nu1+lambda)/(nu1*(nu2-2)), else, m = %inf, end
 	if nu2 > 4 then
 	   sd = sqrt( 2*((nu1+lambda)^2+(nu1+2*lambda)*(nu2-2))/(nu2-4) ) * nu2/(nu1*(nu2-2))
 	elseif nu2 > 2 then
@@ -198,7 +198,7 @@ function [m,sd] = dist_stat(dist, varargin)
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0) then
 	   error("Error: for dist_stat(""t"",nu), nu should be positive real")
 	end
-	if nu > 1 then, m = 0, else, m = %nan, end; 
+	if nu > 1 then m = 0, else, m = %nan, end 
 	if nu > 2 then
 	   sd = sqrt(nu/(nu-2))
 	elseif nu > 1 then

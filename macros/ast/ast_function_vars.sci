@@ -18,13 +18,13 @@ function [ok,H]=ast_function_vars(ast)
   sig= args(1);
   lhs = sig.get_args[](1).get_args[];
   out = m2s([]);
-  for i=1:length(lhs) 
+  for i=1:length(lhs) do
     out(i,1)=lhs(i).get_str[];
   end
   call= sig.get_args[](2).get_args[];
   fname= call(1).get_str[];
   in = m2s([]);
-  for i=2:length(call) 
+  for i=2:length(call) do
     in(i-1,1)=call(i).get_str[];
   end
   body = args(2);
@@ -51,7 +51,7 @@ function [ok,H]=ast_function_vars(ast)
   // We keep in H.funs all the callable functions.
   vals=H.called.__keys;
   H.funs = hash(10);
-  for v=vals';
+  for v=vals' do
     if or(exists(v+['','_m','_s','_i'],'callable')) then 
       H.called.delete[v];
       H.funs(v)=%t;

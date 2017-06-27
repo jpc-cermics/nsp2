@@ -32,7 +32,7 @@ function black(varargin,varargopt)
     error("dom should be ''c'' or ''d'' or ''u''");
     return
   end
-  if dom.equal['u'] then dom = 'c';end;
+  if dom.equal['u'] then dom = 'c';end
   if dom.equal['s'] && ~varargopt.iskey['dt'] then 
     error("Error: when dom is equal to ''s'' dt must be given");
     return;
@@ -81,7 +81,7 @@ function black(varargin,varargopt)
       ilf=1;
     else
       ilf=0;
-    end;
+    end
   end
   
   if type(varargin(1),'short')== 'p' then 
@@ -89,7 +89,7 @@ function black(varargin,varargopt)
     if length(varargin) <> 2 then 
       error("Error: expecting two non optional arguments for polynomial case");
       return;
-    end;
+    end
     if type(varargin(2),'short')<> 'p' then 
       error("Error: second argument should be polynomial");
       return
@@ -121,7 +121,7 @@ function black(varargin,varargopt)
   end
 
   // Graphics 
-  if ~new_graphics() then switch_graphics();end;
+  if ~new_graphics() then switch_graphics();end
   [mn,n]=size(phi);
   //
   xmn=floor(min(phi)/90)*90
@@ -161,7 +161,7 @@ function black(varargin,varargopt)
     xnumb(phi(k,ks),d(k,ks),frq(kf,ks));
     xpoly(phi(k,ks),d(k,ks),mark=1,mark_size=8,color=-2);
     kf=kf+ilf
-  end;
+  end
   //xclip();
   xtitle('h(2i.pi.f) ','phase','magnitude');
   //     contour 2.3 db

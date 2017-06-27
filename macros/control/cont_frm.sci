@@ -41,7 +41,7 @@ function sl=cont_frm(num,den)
     b=[0*ones((nd-1)*ne,ne);eye(ne,ne)]
   else
     a=[];b=[];c=[]
-  end;
+  end
   [n,vn]=size(a);
   sl=syslin([],a,b,c,d,0*ones(n,1))
 endfunction

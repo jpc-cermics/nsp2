@@ -13,7 +13,7 @@ function [x,but]=locate(n,flag=0)
   
   but=[]
   xselect();
-  if nargin==0 then n=-1;end;
+  if nargin==0 then n=-1;end
   
   function []=clearmode(flag,x,xxx)
     modek=xget('alufunction');

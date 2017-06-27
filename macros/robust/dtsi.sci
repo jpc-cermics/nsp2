@@ -90,7 +90,7 @@ function [ga,gs,gi]=dtsi(g,tol)
     cc=c*tr,c1=cc(:,1:n),c2=cc(:,n+1:t),
     ga=syslin('c',a4,b2,c2),
     gs=syslin('c',a1,b1,c1);
-  end;
+  end
 endfunction
 
 function D=ginfini(g)

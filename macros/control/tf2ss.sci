@@ -23,7 +23,7 @@ function [sl]=tf2ss(h,tol)
       [nk,pp]=cmndred(num(:,k),den(:,k));
     else
       pp=den(k);nk=num(k);
-    end;
+    end
 
     slk=cont_frm(nk,pp);
     // [ak,bk,ck,dk1]=slk(2:5);
@@ -36,9 +36,9 @@ function [sl]=tf2ss(h,tol)
       n1=n1+n2;
     else
       if n1<>0 then b(n1,k)=0;end
-    end;
+    end
     d=[d dk];
-  end;
+  end
 
   // if d.degree[]==0 then d=coeff(d),end
 

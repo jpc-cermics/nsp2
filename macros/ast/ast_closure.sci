@@ -5,7 +5,7 @@ function g=ast_closure(f,H)
     function rep= ast_model_args(ast,start,last,H)
       L= ast.get_args[];
       rep=list();
-      for j = start:last
+      for j = start:last do
 	rep($+1) =ast_model_internal(L(j),H);
       end
     endfunction 
@@ -30,7 +30,7 @@ function g=ast_closure(f,H)
 	arg2 = L(2);
 	L1 = arg2.get_args[];
 	names = H.__keys;
-	for i=1:size(names,'*')
+	for i=1:size(names,'*') do
 	  val = sprint(H(names(i)),as_read=%t,name="")
 	  str = [sprintf('persistent(%s = ... ',names(i));
 		 val;

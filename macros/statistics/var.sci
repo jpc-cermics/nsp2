@@ -53,7 +53,7 @@ function [V,mean] = var(x, varargin, varargopt)
    
    if numel(varargopt) >= 1 then
       
-      if  varargopt.iskey["dim"] then, dim = varargopt.dim; narg_opt = narg_opt+1; end
+      if  varargopt.iskey["dim"] then dim = varargopt.dim; narg_opt = narg_opt+1; end
    
       if varargopt.iskey["skip_nan"] then
 	 skip_nan = varargopt.skip_nan
@@ -96,7 +96,7 @@ function [V,mean] = var(x, varargin, varargopt)
       elseif dim == -1 then
 	 error("Error: dim should not be equal to -1")
       elseif dim == -2 then // matlab compat
-	 if isvector(x) then, dim = 0, else, dim = 1, end
+	 if isvector(x) then dim = 0, else, dim = 1, end
       end     
    end
 
@@ -105,21 +105,21 @@ function [V,mean] = var(x, varargin, varargopt)
       if ~skip_nan then
 	 if dim == 0 then
 	    mn = numel(x)
-	    if mn == 0 then, V = %nan, return, end
+	    if mn == 0 then V = %nan, return, end
 	    mean = sum(x)/mn
-	    if unbiased then, denom = mn-1, else, denom = mn, end
+	    if unbiased then denom = mn-1, else, denom = mn, end
 	    x = x - mean
 	    V = dot(x,x)/denom
 	 elseif dim == 1 then
 	    [m,n] = size(x)
 	    mean = sum(x,1)/m
-	    if unbiased then, denom = max(m-1,0), else, denom = m, end
+	    if unbiased then denom = max(m-1,0), else, denom = m, end
 	    x.blas_ger[-1, ones(m,1),mean]
 	    V = dot(x,x,dim=1)/denom
 	 else // dim == 2
 	    [m,n] = size(x)
 	    mean = sum(x,2)/n
-	    if unbiased then, denom = max(n-1,0), else, denom = n, end
+	    if unbiased then denom = max(n-1,0), else, denom = n, end
 	    x.blas_ger[-1,mean,ones(n,1)]
 	    V = dot(x,x,dim=2)/denom
 	 end
@@ -129,7 +129,7 @@ function [V,mean] = var(x, varargin, varargopt)
 	 x(imask) = 0
 	 len = sum(~mask,dim)
 	 mean = sum(x, dim)./len
-	 if unbiased then, denom = len-1, else, denom = len, end
+	 if unbiased then denom = len-1, else, denom = len, end
 	 denom = max(denom,0)
 	 [m,n] = size(x)
 	 if dim == 0 then
@@ -172,6 +172,6 @@ function [V,mean] = var(x, varargin, varargopt)
       end
    end
 
-   if ~isreal(x) then, V = real(V), end
+   if ~isreal(x) then V = real(V), end
    
 endfunction

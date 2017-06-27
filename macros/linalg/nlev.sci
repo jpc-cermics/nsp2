@@ -28,7 +28,7 @@ function[m,den]=nlev(a,z,rmax)
     [a,x,bs]=bdiag(a,rmax),
   else 
     [a,x,bs]=bdiag(a),
-  end;
+  end
   [m1, n1]=size(a)
   if m1<>n1 then error("Error: argument must be a squared matrix");end
   k=1;m=[];v=0*z+ ones(1,n1);den=1;
@@ -42,7 +42,7 @@ function[m,den]=nlev(a,z,rmax)
       b=h*f,
       d=-sum(diag(b))/kl,
       f=b+eye(size(b))*d,
-    end;
+    end
     d=sum(diag(h*f))/n
     //
     den=den*d;
@@ -50,7 +50,7 @@ function[m,den]=nlev(a,z,rmax)
     if ~isempty(l) then v(l)=v(l)*d;end
     m=[m,x(:,k1)*f];
     k=k+n;
-  end;
+  end
   m=m*diag(v)*inv(x);
 endfunction
 

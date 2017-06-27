@@ -36,7 +36,7 @@ function elts=pfss(S,rmax,cord)
     hl=h(:,ind);
     elts(ll+1)=syslin('c',f1l,gl,hl)
     ll=ll+1;k=k+l;
-  end;
+  end
   if nargin==2  then
     select cord
      case 'c'
@@ -48,7 +48,7 @@ function elts=pfss(S,rmax,cord)
 	  class=[class,real(spec(A))];end
 	  if oneortwo>1 then 
 	    class=[class,min(real(spec(A)))];end
-      end;
+      end
       [cl,indi]=sort(-class);
       elts1=elts;
       for k=1:size(elts);
@@ -62,7 +62,7 @@ function elts=pfss(S,rmax,cord)
 	  class=[class,abs(spec(A))];end
 	  if oneortwo>1 then 
 	    class=[class,maxi(abs(spec(A)))];end
-      end;
+      end
       [cl,indi]=sort(-class);
       elts1=elts;
       for k=1:size(elts);

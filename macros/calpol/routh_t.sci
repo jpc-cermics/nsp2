@@ -39,7 +39,7 @@ function r=routh_t(h,k)
     if type(h,'short')<>'p' then error('argument must be polynomial'),end
     nd=h.degree[]+1;
     cobf=coeff(h,0:nd-1)
-  end;
+  end
   
   //
   r1=cobf(nd:-2:1);
@@ -48,11 +48,11 @@ function r=routh_t(h,k)
   if length(r2)<>ncol then r2=[r2,0],end
   r=[r1;r2]
 
-  if ncol<2 then r=[],return,end;
+  if ncol<2 then r=[],return,end
   if nargin==2 then
     for i=3:nd do
       r(i,1:ncol-1)=[r(i-1,1),-r(i-2,1)]*[r(i-2,2:ncol);r(i-1,2:ncol)]
-    end;
+    end
   else
     for i=3:nd do
       if r(i-1,1)==0 then 
@@ -60,6 +60,6 @@ function r=routh_t(h,k)
       else
 	r(i,1:ncol-1)=[1.,-r(i-2,1)/r(i-1,1)]*[r(i-2,2:ncol);r(i-1,2:ncol)]
       end
-    end;
-  end;
+    end
+  end
 endfunction

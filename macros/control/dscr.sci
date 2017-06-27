@@ -15,7 +15,7 @@ function [f,r]=dscr(a,dt,m)
     //[a,b,c,d,x0,dom]=a(2:7)
   else 
     error("Error: fisrt argument cannot be used as linear system");
-  end;
+  end
   if a.dom <>'c' then 
     printf('dscr: time domain assumed to be continuous\n'),
   end
@@ -25,6 +25,6 @@ function [f,r]=dscr(a,dt,m)
   if nargin==3 then
     s=expm([- a.A,m;0*a.A,a.A']*dt),
     r=f*s(1:n1,n1+1:n1+n1),
-  end;
+  end
   f=linear_system(f,g,a.C,a.D,a.X0,dom='s',sample=dt);
 endfunction

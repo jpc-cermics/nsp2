@@ -5,7 +5,7 @@ function kp=krac2(sl)
    case 'linearsys' then sl=ss2tf(sl); n=sl.num, d = sl.den; dom = sl.dom;
   else 
     error("Error: first argument must be a linear system or transfer matrix");,
-  end;
+  end
   
   if ~or(dom==['c','u']) then error('Error: System must be continuous'),end
   if size(n,'*')<>1 then error("Error: argument should be a siso system");end

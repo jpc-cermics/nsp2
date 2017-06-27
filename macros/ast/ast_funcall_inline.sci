@@ -13,7 +13,7 @@ function [ast,H]=ast_funcall_inline(ast,f)
     args = ast.get_args[](2);
     if ~args.is['ARGS'] then ok = %f;return;end
     args= args.get_args[];
-    for i=1:length(args)
+    for i=1:length(args) do
       ast1=ast_create(%ast.MLHS);
       ast1.set_args[list(ast_create(%ast.NAME,str=L(i)))];
       ast2=ast_create(%ast.EQUAL_OP);
@@ -59,9 +59,14 @@ function ast_funcall_inline_test2()
     [p,q]=size(y);
     if n == p then 
       z=zeros(m,q);
-      for i=1:m ;for j=1:q; for k=1:n; z(i,j)= z(i,j)+x(i,k)*y(k,j);
-	  end;end;end;
-    end;
+      for i=1:m do 
+	for j=1:q do 
+	  for k=1:n do
+	    z(i,j)= z(i,j)+x(i,k)*y(k,j);
+	  end
+	end
+      end
+    end
   endfunction
   ast1=ast_funcall_inline(ast,f);
   ast1.print[];

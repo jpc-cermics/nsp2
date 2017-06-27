@@ -7,7 +7,7 @@ function [gm,fr]=g_margin(h)
     h=ss2tf(h)
   else 
     error("Error: first argument must be a linear system or transfer matrix");,
-  end;
+  end
   //
   //if h(4)<>'c' then error(93,1),end
   // [n,d]=h(['num','den']);
@@ -23,7 +23,7 @@ function [gm,fr]=g_margin(h)
     if abs(imag(i))<eps then
       if real(i)<0 then  ws=[ws;real(i)],end
     end,
-  end;
+  end
   
   if isempty(ws) then gm=%inf,fr=[],return,end
 

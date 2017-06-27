@@ -74,7 +74,7 @@ function [f,d]=inv_p(h,flag)
       f=f*d;f=f.num;
     end
     return;
-  end;
+  end
   //     GENERAL POLYNOMIAL MATRIX 
   select flag
    case 'L' then
@@ -83,7 +83,7 @@ function [f,d]=inv_p(h,flag)
       b=h*f,
       d=-sum(diag(b))/k
       f=b+eye(n,n)*d,
-    end;
+    end
     d=sum(diag(h*f))/n,
     if d.degree[]==0 then d=coeff(d),end,
     if nargout <=1 then f=f ./ d;end
@@ -96,7 +96,7 @@ function [f,d]=inv_p(h,flag)
   else
     error("Error: when given, flag should be ""C"" or ""L""");
     return;
-  end;
+  end
 endfunction 
 
 function [f,d]=inv_r(h,flag)
@@ -128,7 +128,7 @@ function [f,d]=inv_r(h,flag)
       b=h*f,
       d=0;for l=1:n do d=d+b(l,l),end,d=-d ./ k;
       f=b+eye(n,n)*d,
-    end;
+    end
     b=h*f;d=0;for l=1:n do d=d+b(l,l),end;d=d ./ n,
     if nargout <=1 then f=f ./ d;end
     return;
@@ -152,5 +152,5 @@ function [f,d]=inv_r(h,flag)
     [f,d]=coffg(h);
     if nargout <=1 then f= f ./ d;end
     return;
-  end;
+  end
 endfunction

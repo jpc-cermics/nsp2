@@ -48,7 +48,7 @@ function [x,U]=gcd_p(p)
       U=[U(:,1:l-2), U(:,l-1)*u(1,[2,1])];U(l,l-1:l)=u(2,[2,1]);
     end
   end,
-  if nargout ==1 then return,end;
+  if nargout ==1 then return,end
   for l=mn:-1:2 do
     pivot=U(l,l-1);
     for k=l:mn do

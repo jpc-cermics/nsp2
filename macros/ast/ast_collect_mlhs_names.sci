@@ -8,7 +8,7 @@ function rep=ast_collect_mlhs_names(ast)
      case %ast.MLHS then
       // Optional values specified by name = val ; we do not rename name
       args = ast.get_args[];
-      for i=1:length(args) 
+      for i=1:length(args)  do
 	if args(i).is['NAME'] then 
 	  H(args(i).get_str[])=%t;
 	else 
@@ -21,7 +21,7 @@ function rep=ast_collect_mlhs_names(ast)
       return;
     else
       rep =  ast_visit_args(ast,ast_mlhs_names_visit,H);
-      for i=1:length(rep) ;H.merge[rep(i)];  end
+      for i=1:length(rep) do H.merge[rep(i)];  end
     end
   endfunction
   rep=ast_visit(ast,ast_mlhs_names_visit,hash(0));

@@ -4,7 +4,7 @@ function [phm,fr]=p_margin(h)
    case 'linearsys' then h=ss2tf(h)
   else 
     error("Error: first argument must be a linear system or transfer matrix");,
-  end;
+  end
   //
   //[n,d]=h(['num','den']);
   n=h.num; d=h.den;

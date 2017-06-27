@@ -34,15 +34,15 @@ function [nt,dt,rk]=trzeros(Sl)
     return;
   end
   if size(A,'*')==0 then 
-    if type(D,'short')=='m' then nt=[];dt=[];return;end;
+    if type(D,'short')=='m' then nt=[];dt=[];return;end
     if type(D,'short')=='p' then 
       [m,n]=size(D);
       if m<>n then error('Error: D(s) must be square');return;end
       chis=det(D);nt=roots(chis);dt=ones(nt);
       if nargout==1 then nt=nt./dt;dt=[];rk=[];end
       return;
-    end;
-  end;
+    end
+  end
   [ld,kd]=size(D);
   if norm(D,1)<sqrt(%eps)|ld==kd then
     [nt,dt,rk]=tr_zer(A,B,C,D);
@@ -56,7 +56,7 @@ function [nt,dt,rk]=trzeros(Sl)
     //nt=spec(A-B*pinv(D)*C);dt=ones(nt);
     [nt,dt]=tr_zer(A,B,C,D);
     rk=ld;
-    if nargout==1 then nt=nt./dt;end;
+    if nargout==1 then nt=nt./dt;end
     return;
   end
   DP=pinv(D)*D;
@@ -78,5 +78,5 @@ function [nt,dt,rk]=trzeros(Sl)
   finitepencil=Q(ix,:)*syst_matrix*Z(:,iy);
   [E,A]=pen2ea(finitepencil);
   [nt,dt]=gspec(A,E);rk=[];
-  if nargout==1 then nt=nt./dt;dt=[];rk=[];end;
+  if nargout==1 then nt=nt./dt;dt=[];rk=[];end
 endfunction

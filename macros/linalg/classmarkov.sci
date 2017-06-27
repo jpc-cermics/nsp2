@@ -32,9 +32,9 @@ function [perm,L]=classmarkov(M)
 // Q is sub-Markov matrix of dimension tr = size(L{$},'*'); 
 // perm is obtained by the concatenantion of 
 // the elements of L 
-// perm=[];for i=1:size(L,'*'), perm = [perm;L{i}];end;
+// perm=[];for i=1:size(L,'*'), perm = [perm;L{i}];end
   
   L= tarjan(M);
-  perm=[];for i=1:size(L,"*") do perm = [perm,L{i}];end;
+  perm=[];for i=1:size(L,"*") do perm = [perm,L{i}];end
 endfunction
 

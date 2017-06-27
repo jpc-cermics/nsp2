@@ -26,14 +26,14 @@ function ast=ast_expand(ast,reset=%t)
     
     function [rep,newargs]=ast_expand_args(ast,rep,newargs)
       L= ast.get_args[];
-      for j = 1:ast.get_arity[]
+      for j = 1:ast.get_arity[] do
 	[rep,newargs]=ast_expand_arg(L(j),rep,newargs)
       end
     endfunction 
     
     function [rep,newargs]=ast_expand_arg(ast,rep,newargs) 
       [loc,flag] = ast_expand_internal(ast)
-      for j=1:length(loc)-1; rep($+1)=loc(j);  end
+      for j=1:length(loc)-1 do rep($+1)=loc(j);  end
       // Set of ast for which introducing extra variable is useless
       vals =['INUMBER32','INUMBER64','UNUMBER32','UNUMBER64','NAME','NUMBER','PARENTH'];
       if or(loc($).get_codename[]== vals) then 
@@ -105,7 +105,7 @@ function ast=ast_expand(ast,reset=%t)
 	args = ast.get_args[](2); // arguments (ARGS ....)
 	elts = args.get_args[];
 	newargs=list();
-	for i=1:length(elts)
+	for i=1:length(elts) do
 	  [rep,newargs]=ast_expand_arg(elts(i),rep,newargs);
 	end
 	args.set_args[newargs];
@@ -163,7 +163,7 @@ function ast=ast_expand(ast,reset=%t)
        case %ast.IF then
 	// do not expand conditions for a start 
 	L=ast.get_args[]; Ln= length(L); R=L;
-	for j=1:Ln
+	for j=1:Ln do
 	  if modulo(j,2)==0 || (modulo(j,2)==1 && j ==Ln) then 
 	    [rep]=ast_expand_internal(L(j));
 	    R(j)=rep(1); // 
@@ -173,7 +173,7 @@ function ast=ast_expand(ast,reset=%t)
 	return;
        case %ast.TRYCATCH  then
 	L=ast.get_args[]
-	for j =1:length(L)
+	for j =1:length(L) do
 	  [rep,newargs]=ast_expand_default(L(j));
 	  L(j)=rep; // argument are cases which return an ast;
 	end
@@ -185,7 +185,7 @@ function ast=ast_expand(ast,reset=%t)
 	// arity N. ast argument is the test other arguments are 
 	// the cases 
 	L=ast.get_args[]
-	for j =2:length(L)
+	for j =2:length(L) do
 	  [rep]=ast_expand_internal(L(j));
 	  L(j)=rep(1); // argument are cases which return an ast;
 	end
@@ -197,7 +197,7 @@ function ast=ast_expand(ast,reset=%t)
 	newargs=list();
 	L=ast.get_args[];
 	R=list();
-	for j =1:length(L)
+	for j =1:length(L) do
 	  [rep]=ast_expand_internal(L(j))
 	  R.concat[rep]; // argument are cases which return an ast;
 	end
@@ -249,7 +249,7 @@ function ast=ast_expand(ast,reset=%t)
   endfunction
   if reset then ast_reset_var();end
   rep = ast_expand_internal(ast)
-  for i=1:length(rep)
+  for i=1:length(rep) do
     printf("arg %d\n",i);
     rep(i).print[];printf("\n");
   end
@@ -267,7 +267,7 @@ function ast_expand_test()
     while %t then 
       x=x+8/(x+6);
     end,
-    for i=1:6; 
+    for i=1:6 do
       x=x+8/(x+6);
       return;
       break;

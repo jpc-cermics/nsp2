@@ -28,15 +28,15 @@ function [S]=tf2des(G,flag)
       [r,q]=pdiv(Num(l,k)+0*%s,denlk+0*%s);
       pol(l,k)=q;
       pro(l,k)=r/denlk;
-    end;
-  end;
+    end
+  end
   
   sp=tf2ss(pro);
   D=zeros(size(Num));
   
   if flag.equal["withD"] then
     D=coeff(pol,0);pol=pol-D;
-  end;
+  end
   spol=tf2ss(horner(pol,1/%s,ttmode=%t)/%s);
 
   [n1,vn1]=size(sp(2));

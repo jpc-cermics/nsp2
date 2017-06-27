@@ -33,7 +33,7 @@ function [frq,rep,splitf]=repfreq_new(h,varargopt)
   if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;end;
+  if fmin.equal['sym'] then fmin = -fmax;end
   // frq 
   frq=  varargopt.find['frq',def=[]];
 
@@ -77,7 +77,7 @@ function [frq,rep,splitf]=repfreq_new(h,varargopt)
       rep=freq(h.num,h.den,2*%pi*%i*frq);
     else
       rep=freq(h.num,h.den,exp(2*%pi*%i*dt*frq));
-    end;
+    end
   else 
     // linear system 
     [a,b,c,d]=abcd(h);
@@ -87,7 +87,7 @@ function [frq,rep,splitf]=repfreq_new(h,varargopt)
       rep=freq(a,b,c,d,2*%pi*%i*frq)
     else 
       rep=freq(a,b,c,d,exp(2*%pi*%i*dt*frq))
-    end;
+    end
   end
   // returned values 
   if nargout==1 then frq=rep,end

@@ -3,8 +3,8 @@ function [gc]=ctr_gram(a,b,domaine)
 // Copyright INRIA
   select type(a,'short')
    case 'm'  then
-    if nargin < 2 then error("Error: expecting at least two arguments");return; end;
-    if nargin == 2 then domaine='c'; end;
+    if nargin < 2 then error("Error: expecting at least two arguments");return; end
+    if nargin == 2 then domaine='c'; end
     if domaine<>'c' then domaine='d',end
     [m,n]=size(a);
     if m<>n then error("Error: first argument should be square");end

@@ -46,7 +46,7 @@ function [resn,g]=pfactors(pol,flag)
 	if kk>n then return;end
       end
     end
-  end; //nargin=1
+  end //nargin=1
   if nargin==2 then
     kk=1;k=1;
     if flag=='c' then
@@ -89,6 +89,6 @@ function [resn,g]=pfactors(pol,flag)
 	  if kk>n then return;end
 	end
       end
-    end;   //'d'
-  end;   //nargin=2
+    end   //'d'
+  end   //nargin=2
 endfunction

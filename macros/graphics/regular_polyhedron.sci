@@ -30,7 +30,7 @@ function [V,F] = regular_polyhedron(polyhedron_name)
       error("Error: argument should be a (scalar) string")
    end
    
-   if polyhedron_name == "hexahedron" then, polyhedron_name = "cube", end
+   if polyhedron_name == "hexahedron" then polyhedron_name = "cube", end
 
    select polyhedron_name
       case "tetrahedron"

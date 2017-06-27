@@ -20,10 +20,10 @@ function [n,nc,u,sl,v]=st_ility(sl,tol)
     [n,u,ind,V,a,b]=contr(a,b);
   else 
     [n,u,ind,V,a,b]=contr(a,b,tol);
-  end;
+  end
   if nb==0 then
     b=[];
-  end;
+  end
   n=sum(n);nc=n;
   if nargout==4 then c=c*u;x0=u'*x0;end
   if n<>na then
@@ -44,9 +44,9 @@ function [n,nc,u,sl,v]=st_ility(sl,tol)
 	  c(:,nn)=cc
 	end
 	x0(nn)=v'*x0(nn)
-      end;
-    end;
-  end;
+      end
+    end
+  end
   //
   if nargout==4 then sl=syslin(dom,a,b,c,d,x0),end
   if nargout==5 then v=sl.B;sl=sl.A;end 

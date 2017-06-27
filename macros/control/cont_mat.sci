@@ -18,6 +18,6 @@ function c=cont_mat(a,b)
     [n,vn]=size(a)  
   else 
     error('Error: expecting a,b pair or linear system')
-  end;
+  end
   c=b;for k=1:n-1, c=[b,a*c],end
 endfunction

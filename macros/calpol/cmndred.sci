@@ -30,6 +30,6 @@ function [n,d]=cmndred(num,den)
   for l=1:m1 do
     for k=1:n1 do 
       n(l,k)=num(l,k)*pdiv(d,den(l,k));
-    end;
-  end;
+    end
+  end
 endfunction

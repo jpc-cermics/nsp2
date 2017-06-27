@@ -13,7 +13,7 @@ function []=zgrid()
   [mr,nr]=size(raci);
   for l=1:nr,
     xstring(real(raci(mr-10,l)),-imag(raci(mr-10,l)),' '+string(xsi(l)),0,0);
-  end;
+  end
   plot2d(real(raci),imag(raci),style=1*ones_new(1,nr));
   plot2d(real(raci),-imag(raci),style=1*ones_new(1,nr));
   //
@@ -22,7 +22,7 @@ function []=zgrid()
   zw=exp(e_itheta*w0);[mz,nz]=size(zw)
   for l=1:nz,
     xstring(real(zw(1,l)),imag(zw(1,l)),' '+string(w0(l)/(2*%pi)),0,0);
-  end;
+  end
   //-- the curves
   plot2d(real(zw),imag(zw),style=1*ones_new(1,nr));
   plot2d(real(zw),-imag(zw),style=1*ones_new(1,nr));

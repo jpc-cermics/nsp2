@@ -59,13 +59,13 @@ function [Sk,rk,mu]=h_inf(P,r,mumin,mumax,nmax)
     if norm(coeff(D22),1) <> 0 then Sk=Sk/.D22;end
     if type(P,'short')=='r' then 
       Sk=ss2tf(Sk);
-    end;
+    end
     return;
   end
   if nargout==3 then rk=r;
     if type(P,'short')=='r' then 
       Sk=ss2tf(Sk);
-    end;
+    end
   end
 endfunction
 
@@ -390,8 +390,8 @@ function [P6,Kinf,tv,Uc#i,Yc#i]=h_test(P2,r,mu)
 	end
       else 
 	printf([1/sqrt(mu),answer],'('' gama = '',f18.10,''              OK              test = '',e15.5)');
-      end;
-    end;
+      end
+    end
     P6=syslin('c',A,[B1,B2],[C1;C2],[D11,D12;D21,D22])
 
 

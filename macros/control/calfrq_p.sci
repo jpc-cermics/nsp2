@@ -8,23 +8,23 @@ function [frq,bnds,splitf]=calfrq_p(hnum,hden,fmin,fmax,dom='c',dt=1)
 
   function f=cont_sel(r,fmin,fmax,tol)
     f=[];
-    if size(r,'*') ==0 then return,end;
+    if size(r,'*') ==0 then return,end
     f=imag(r(find((abs(real(r))<=tol*abs(r))&(imag(r)>=0))));
     if ~isempty(f) then
       f=f(find((f>fmin-tol)&(f<fmax+tol)));
-    end;
+    end
   endfunction
 
   function f=disc_sel(r,fmin,fmax,dom,tol)
     f=[];
-    if size(r,'*')==0 then return,end;
+    if size(r,'*')==0 then return,end
     f=r(find( ((abs(abs(r)-ones(size(r))))<=tol)&(imag(r)>=0)));
     if ~isempty(f) then ;
       f=atan(imag(f),real(f));nf=prod(size(f));
       for k=1:nf
 	kk=int((fmax-f(k))/(2*%pi))+1;;
 	f=[f;f(1:nf)+2*%pi*kk*ones(nf,1)];;
-      end;
+      end
       f=f(find((f>fmin-tol)&(f<fmax+tol)));
     end
   endfunction

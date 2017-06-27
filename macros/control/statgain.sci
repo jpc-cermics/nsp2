@@ -13,14 +13,14 @@ function st=statgain(sl)
 	error('Error: singular eye-a matrix');
       end
       st=sl(5)+sl(4)*inv(eye(m,m)-sl(2))*sl(3);
-    end;
+    end
    case 'r' then
     dom=sl.dt;
     if dom=='c' then
       st=freq(sl.num,sl.den,0)
     else
       st=freq(sl.num,sl.den,1)
-    end;
+    end
   else  
     error("Error: first argument must be a linear system or transfer matrix");
   end

@@ -571,7 +571,7 @@ function loadmatfile(varargin)
 	if ~ok then 
 	  fd.close[],print(lasterror()),
 	  return,
-	end;
+	end
 	if fd.eof[] then  
 	  break,
 	end 

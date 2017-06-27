@@ -41,7 +41,7 @@ function q = quantile(x, p, dim=0, skip_nan=%f, meth=5, test_arg=%t)
 	 elseif dim == -1 then
 	    error("Error: dim should not be equal to -1")
 	 elseif dim == -2 then // matlab compat
-	    if isvector(x) then, dim = 0, else, dim = 1, end
+	    if isvector(x) then dim = 0, else, dim = 1, end
 	 end
       end
       

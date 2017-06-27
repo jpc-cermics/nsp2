@@ -24,5 +24,5 @@ function [U,dim]=range(A,k)
   if k==0 then dim=m;U=eye(m,m);return; end
   [U,dim]=rowcomp(A);
   if k==1 then return; end
-  for l=2:k do B=A*U'; [U,dim]=rowcomp(B(:,1:dim)); end;
+  for l=2:k do B=A*U'; [U,dim]=rowcomp(B(:,1:dim)); end
 endfunction

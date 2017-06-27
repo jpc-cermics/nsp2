@@ -3,12 +3,12 @@ function [Slmin]=minss(Sl,tol)
   if type(Sl,'short')<>'linearsys' then 
     error("Error: expecting a linear system");
     return;
-  end;
+  end
   select nargin
    case 1 then tol=[]
    case 2 then tol=tol
   else error('1 or 2 inputs: sl [,tol]')
-  end;
+  end
   [a,b,c,d]=abcd(Sl);
   //
   if  ~isempty(tol) then

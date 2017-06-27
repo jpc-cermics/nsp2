@@ -14,7 +14,7 @@ function [nk,W]=hankelsv(sl,tol)
   if min(abs(lf))<=tol then
     error('Error: Imaginary-axis poles!')
   end
-  if max(real(lf)) > tol then printf('Warning:  unstable system\n'),end;
+  if max(real(lf)) > tol then printf('Warning:  unstable system\n'),end
   [sla,sls,d]=dtsi(sl);
   lc=ctr_gram(sls);
   lo=obs_gram(sls),W=lc*lo;

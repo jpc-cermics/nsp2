@@ -9,9 +9,9 @@ function [a,b,c]=obsvss(a,b,c,tol)
      case 1 then tol=100*%eps
      case 2 then tol=b
     else error('Error: when first argument is a linear system arguments are sl [,tol]')
-    end;
+    end
     [a,b,c,d]=abcd(sl);
-  end;
+  end
   [no,u]=contr(a',c',tol)
   u=u(:,1:no)
   a=u'*a*u;b=u'*b;c=c*u

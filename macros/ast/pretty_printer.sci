@@ -49,7 +49,7 @@ function txt=pretty_printer(fname,target="nsp")
     
   S=getfile(fname);
   S=stripblanks(S);
-  // S1=m2s([]);for i =1:size(S,'*'), S1($+1)=S(i);S1($+1)="";end; S=S1(:);
+  // S1=m2s([]);for i =1:size(S,'*'), S1($+1)=S(i);S1($+1)="";end S=S1(:);
   I=find( S == "");
   S(I)= "//#@#@#";
   // F=fopen("pipo.sci",mode="w");F.put_smatrix[S]; F.close[]

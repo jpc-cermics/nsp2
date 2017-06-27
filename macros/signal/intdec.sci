@@ -30,8 +30,8 @@ function [y]=intdec(x,lom)
  
    xsize=size(x);
    xmin=min(x);xmax=max(x);
-   if xsize(1)==1 then, lom=[1 lom]; end
-   if xsize(2)==1 then, lom=[lom 1]; end
+   if xsize(1)==1 then lom=[1 lom]; end
+   if xsize(2)==1 then lom=[lom 1]; end
  
 //compute sampling rate change as ratio of two integers
  
@@ -67,7 +67,7 @@ function [y]=intdec(x,lom)
  
 //If the input is a constant then don't do the work
  
-   if xmax==xmin then,
+   if xmax==xmin then
       y=xmax*ones_deprecated(xmsize(1),xmsize(2));
    else
  
@@ -89,10 +89,10 @@ function [y]=intdec(x,lom)
  
 //Re-assemble the correct portions of the frequency domain signal
  
-      if fm(1)<fp(1) then,//reduce row length (decimation)
+      if fm(1)<fp(1) then//reduce row length (decimation)
          xlf=[xf(1:fm(1),:);xf(xsize(1)-fmc(1)+1:xsize(1),:)];
       else
-         if xmsize(1)==xsize(1) then,//no changes in row length
+         if xmsize(1)==xsize(1) then//no changes in row length
             xlf=xf;
          else//increase row length (interpolation)
             xlf=[xf(1:fp(1),:);...
@@ -100,10 +100,10 @@ function [y]=intdec(x,lom)
                  xf(xsize(1)-fpc(1)+1:xsize(1),:)];
          end
       end
-      if fm(2)<fp(2) then,//decrease column length (decimation)
+      if fm(2)<fp(2) then//decrease column length (decimation)
          xlf=[xlf(:,1:fm(2)),xlf(:,xsize(2)-fmc(2)+1:xsize(2))];
       else
-         if xmsize(2)==xsize(2) then,//no changes in column length
+         if xmsize(2)==xsize(2) then//no changes in column length
             xlf=xlf;
          else //increase column length (interpolation)
             xlf=[xlf(:,1:fp(2)),...

@@ -2,8 +2,8 @@ function [go]=obs_gram(a,c,domaine)
 // Copyright INRIA
   select type(a,'short')
    case 'm'  then
-    if nargin < 2 then error("Expecting at least two arguments");return; end;
-    if nargin==2 then domaine='c'; end;
+    if nargin < 2 then error("Expecting at least two arguments");return; end
+    if nargin==2 then domaine='c'; end
     if domaine<>'c' then domaine='d',end
     [m,n]=size(a)
     if m<>n then error("Error: first argument should be square");end
@@ -26,7 +26,7 @@ function [go]=obs_gram(a,c,domaine)
   else 
     error('Error: expecting (A,C) pair or syslin list')
     return;
-  end;
+  end
   s=spec(a)
   if part(domaine,1)=='c' then
     if max(real(s))>=0 then error('Unstable system'),end

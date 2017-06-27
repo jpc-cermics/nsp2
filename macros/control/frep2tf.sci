@@ -27,7 +27,7 @@ function [best_h,best_w]=frep2tf(frq,repf,dg,dom,tols,weight)
       weight=(1)./horner(h.den,exp(dom*%i*frq*2*%pi),ttmode=%t);
     end
     [h,err1]=frep2tf_b(frq,repf,dg,dom,weight);
-    if ( (abs(err-err1) < rtol *err & err > err1 )| err1 < atol) then break;end;
+    if ( (abs(err-err1) < rtol *err & err > err1 )| err1 < atol) then break;end
     if err1 < err then best_err = err1 ; best_h = h; end 
     err=err1;
     printf('iteration '+string(k+1)+', error='+string(err1)+'\n');

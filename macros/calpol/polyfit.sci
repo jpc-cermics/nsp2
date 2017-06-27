@@ -91,7 +91,7 @@ function [p,s,mu]=polyfit(x,y,n)
   
   function M=vander(x,p)
     M=ones(size(x,1),p);M(:,2)=x;
-    for i=3:p do M(:,i)=M(:,i-1).*x;end;
+    for i=3:p do M(:,i)=M(:,i-1).*x;end
   endfunction
   
   // Construct the Vandermonde matrix.

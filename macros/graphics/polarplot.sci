@@ -7,7 +7,7 @@ function polarplot(theta,rho,color=1,grid_color=3,rect=[])
     rm=max(rho)
     x=rho.*cos(theta)
     y=rho.*sin(theta);
-    if isempty(rect) then rect=[-rm,-rm,rm,rm];end;
+    if isempty(rect) then rect=[-rm,-rm,rm,rm];end
     plot2d(x,y,rect=rect,strf='030');
     step=rm/5
     r=step;dr=0.02*r;
@@ -39,7 +39,7 @@ function polarplot(theta,rho,color=1,grid_color=3,rect=[])
     rm=max(rho)
     x=rho.*cos(theta)
     y=rho.*sin(theta)
-    if isempty(rect) then rect=[-rm,-rm,rm,rm];end;
+    if isempty(rect) then rect=[-rm,-rm,rm,rm];end
     xsetech(frect=[-rm,-rm,rm,rm],clip=%f,iso=%t,axesflag=0);
     //plot2d(x,y,rect=rect,strf='030');
     step=rm/5

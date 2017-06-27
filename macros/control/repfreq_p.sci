@@ -19,7 +19,7 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
     error("dom should be ''c'' or ''d'' or ''u''");
     return
   end
-  if dom.equal['u'] then dom = 'c';end;
+  if dom.equal['u'] then dom = 'c';end
   if dom.equal['s'] && ~varargopt.iskey['dt'] then 
     error("Error: when dom is equal to ''s'' dt must be given");
     return;
@@ -32,7 +32,7 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
   // frequancies 
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;end;
+  if fmin.equal['sym'] then fmin = -fmax;end
   // frq 
   frq=  varargopt.find['frq',def=[]];
   
@@ -72,7 +72,7 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
     rep=freq(hnum,hden,2*%pi*%i*frq);
   else
     rep=freq(hnum,hden,exp(2*%pi*%i*dt*frq));
-  end;
+  end
   // returned values 
   if nargout==1 then frq=rep,end
 endfunction

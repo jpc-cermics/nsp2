@@ -62,7 +62,7 @@ function [varargout] = ndgrid(varargin)
        dim(k) = length(varargin(k))
        varargin(k).redim[1,-1] // force row form
      end
-     if ( inc == 0 ) then, dim(2:$) = dim(1), end
+     if ( inc == 0 ) then dim(2:$) = dim(1), end
 
      // try to simulate n-dimensional matrix in nsp: the following 3
      // lines should be removed and fdim replaced by dim in the last redim

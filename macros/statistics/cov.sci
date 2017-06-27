@@ -83,7 +83,7 @@ function [varargout] = cov(X, varargin, varargopt)
       end
    end
 
-   if xy then, X = [X(:), Y(:)], end
+   if xy then X = [X(:), Y(:)], end
    
    if skip_nan then 
       // remove all observations for which at least one variable is %nan
@@ -98,7 +98,7 @@ function [varargout] = cov(X, varargin, varargopt)
       [m,n] = size(X)
       mean = sum(X,1)/m
       X.blas_ger[-1,ones(m,1),mean]
-      if unbiased then, denom = m-1, else, denom = m, end
+      if unbiased then denom = m-1, else, denom = m, end
       cv = pmult(X,X) / denom
    else
       weights = weigths/sum(weights) // normalize weights

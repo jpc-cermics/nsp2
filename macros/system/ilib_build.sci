@@ -609,7 +609,7 @@ function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
     [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str, w32mode=%f);
     xpause(0,%t);
     return;
-  end;
+  end
   // a modified version of spawn_sync 
   // for win32 version i.e with msvc 
   // because stdout and stderr are 

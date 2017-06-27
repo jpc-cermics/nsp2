@@ -13,6 +13,6 @@ function o=obsv_mat(a,c)
     sl=tf2ss(a); a = sl.A; c = sl.C; [n,vn]=size(a);
   else 
     error('Error: (a,c) pair or syslin list')
-  end;
+  end
   o=c;for k=1:n-1, o=[c;o*a],end
 endfunction

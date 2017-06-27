@@ -7,7 +7,7 @@ function ast=ast_model(ast,H)
     function rep= ast_model_args(ast,start,last,H)
       L= ast.get_args[];
       rep=list();
-      for j = start:last
+      for j = start:last do
 	rep($+1) =ast_model_internal(L(j),H);
       end
     endfunction 
@@ -142,7 +142,7 @@ function ast=ast_model(ast,H)
        case %ast.STATEMENTS  then
 	L= ast.get_args[];
 	rep=list();
-	for j = 1:length(L)
+	for j = 1:length(L) do
 	  rep($+1) =ast_model_internal(L(j),H);
 	end
 	ast.set_args[rep];
@@ -150,7 +150,7 @@ function ast=ast_model(ast,H)
        case %ast.STATEMENTS1  then
 	L= ast.get_args[];
 	rep=list();
-	for j = 1:length(L)
+	for j = 1:length(L) do
 	  rep($+1) =ast_model_internal(L(j),H);
 	end
 	ast.set_args[rep];

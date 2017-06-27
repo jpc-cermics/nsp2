@@ -7,7 +7,7 @@ function [t,siz]=equil1(p,q,tol)
     [u,p,v,np]=svd(p);
   else 
     [u,p,v,np]=svd(p,tol);
-  end;
+  end
   p= sqrt(p);
   p=[p(1:np);ones(n-np,1)];
   t1=diag(ones(n,1)./p)*u';
@@ -18,7 +18,7 @@ function [t,siz]=equil1(p,q,tol)
     [u,sigma1,v,nq]=svd(q(1:np,1:np))
   else 
     [u,sigma1,v,nq]=svd(q(1:np,1:np),tol)
-  end;
+  end
   sigma1=sqrt(sigma1(1:nq));
   t2=[u',0*ones(np,n-np);0*ones(n-np,np) eye(n-np,n-np)];
   //
@@ -29,14 +29,14 @@ function [t,siz]=equil1(p,q,tol)
     t3(1:nq,np+1:n)=-x;
     q=t3'*q*t3;// ici t3 vaut en fait t3**-1
     t3(1:nq,np+1:n)=x;
-  end;
+  end
   //
   // t4
   if nargin==2 then 
     [u,q,v,n3]=svd(q(np+1:n,np+1:n));
   else 
     [u,q,v,n3]=svd(q(np+1:n,np+1:n),tol);
-  end;
+  end
   t4=[diag(sqrt(sigma1))  0*ones(nq,n-nq);
       0*ones(np-nq,nq)   eye(np-nq,np-nq)       0*ones(np-nq,n-np);
       0*ones(n-np,np)               u']

@@ -257,7 +257,7 @@ function [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A, b, lambda
    // Items for use in stopping rules.
    normb  = beta;
    istop  = 0;
-   ctol   = 0;         if conlim > 0 then ctol = 1/conlim; end;
+   ctol   = 0;         if conlim > 0 then ctol = 1/conlim; end
    normr  = beta;
 
    // Exit if b=0 or A'b = 0.
@@ -439,7 +439,7 @@ function [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A, b, lambda
 	 end
       end
       if istop > 0 then break, end
-   end; // iteration loop
+   end // iteration loop
    
    // Print the stopping condition.
    

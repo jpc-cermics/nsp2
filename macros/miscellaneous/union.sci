@@ -72,10 +72,10 @@ function [c,ka,kb] = union(a,b,ind_type="double",which="elements")
 	col_flag = size(a,2)==1 & size(b,2)==1
 	a.redim[1,-1]; b.redim[1,-1]
 	n = size(a,"*")
-	if ind_type.equal["int"] then, n = m2i(n); end
+	if ind_type.equal["int"] then n = m2i(n); end
 	if nargout == 1 then
 	   c = unique([a,b]);
-	   if col_flag then, c.redim[-1,1]; end
+	   if col_flag then c.redim[-1,1]; end
 	else
 	   [c,ka] = unique([a,b],ind_type=ind_type)	 
 	   ind = find(ka > n, ind_type="int")
@@ -99,7 +99,7 @@ function [c,ka,kb] = union(a,b,ind_type="double",which="elements")
 	      c = unique([a;b],which="rows",ind_type=ind_type)
 	   else
 	      m = size(a,1)
-	      if ind_type.equal["int"] then, m = m2i(m); end
+	      if ind_type.equal["int"] then m = m2i(m); end
 	      [c,ka] = unique([a;b],which="rows",ind_type=ind_type)
 	      ind = find(ka > m, ind_type="int")
 	      kb = ka(ind) - m
@@ -114,7 +114,7 @@ function [c,ka,kb] = union(a,b,ind_type="double",which="elements")
 	      c = unique([a,b],which="columns",ind_type=ind_type)
 	   else
 	      n = size(a,2)
-	      if ind_type.equal["int"] then, n = m2i(n); end
+	      if ind_type.equal["int"] then n = m2i(n); end
 	      [c,ka] = unique([a,b],which="columns",ind_type=ind_type)
 	      ind = find(ka > n, ind_type="int")
 	      kb = ka(ind) - n
@@ -132,7 +132,7 @@ function [c,ka,kb] = union_l_l(a,b,ind_type="double")
      error(" optional ind_type argument should be ""double"" or ""int""")
   end
   n = length(a)
-  if ind_type.equal["int"] then, n = m2i(n); end
+  if ind_type.equal["int"] then n = m2i(n); end
   [c,ka] = unique(list_concat(a,b),ind_type=ind_type)
   ind = find(ka > n,ind_type="int")
   kb = ka(ind) - n

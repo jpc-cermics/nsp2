@@ -11,7 +11,7 @@ select nargin
  case 2 then orig=[0;0];
  case 3 then orig=matrix(orig,2,1);
  else error("Error: incorrect number of input arguments")
-end;
+end
 //
 [m,n]=size(xy)
 if m<>2 then  error('xy doit etre un vecteur a 2 lignes [x;y]'),end

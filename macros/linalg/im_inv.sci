@@ -28,13 +28,13 @@ function [X,dim,Y]=im_inv(A,B,tol)
 //dim = # columns of A11.
 //
   [nA,mA]=size(A);[nB,mB]=size(B);
-  if nargin==2 then tol=100*%eps*mA*nA*nB*mB,end;
+  if nargin==2 then tol=100*%eps*mA*nA*nB*mB,end
   if nA<>nB then error ("im_inv: uncompatible dimensions!"),return,end
   // basis for im(B)
   [Y,rB]=rowcomp(B);//u=Y'
   
   //Trivial cases
-  if rB >= nA then X=eye(mA,mA);dim=mA,return;end;
+  if rB >= nA then X=eye(mA,mA);dim=mA,return;end
   if rB ==0 then [X,k1]=colcomp(A);dim=mA-k1,return,end
   //
   up=1:rB;low=rB+1:nA;

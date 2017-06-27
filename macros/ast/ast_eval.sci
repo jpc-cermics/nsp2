@@ -75,7 +75,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     if ~args(1).is['NAME'] then
       error("expecting a name\n");
       return;
-    end;
+    end
     name=args(1).get_str[];
     if H.iskey[name] then 
       str=ast_str_extract(ast,name)
@@ -96,7 +96,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     [rep,H,ast1]=ast_eval_args(ast,1,1,H);
     obj=rep(1); // the base object 
     L=ast.get_args[];
-    for i=2:length(L) 
+    for i=2:length(L) do
       select L(i).get_op[] 
        case %ast.ARGS  then
 	// we need to extract the args 
@@ -223,7 +223,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     L = ast.get_args[];
     args= L(2);
     args1 = args.get_args[];
-    for i=1:length(args1);
+    for i=1:length(args1) do
       if args1(i).is['OPT'] then 
 	L1=args1(i).get_args[];
 	args1(i).set_args[list(L1(1),ast_expr(sprintf('rep(%d)',i)))];
@@ -242,7 +242,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     L = ast.get_args[];
     args= L(2);
     args1 = args.get_args[];
-    for i=1:length(args1);
+    for i=1:length(args1) do
       if args1(i).is['OPT'] then 
 	L1=args1(i).get_args[];
 	args1(i).set_args[list(L1(1),ast_expr(sprintf('rep(%d)',i)))];
@@ -263,10 +263,10 @@ function [rep,H,ast]=ast_eval(ast,H)
     args= ast.get_args[];
     mlhs=args(1);
     ast1=args(2);
-    if ~mlhs.is['MLHS'] then y=%f;return;end;
+    if ~mlhs.is['MLHS'] then y=%f;return;end
     args= mlhs.get_args[];
-    if length(args) <> 1 then y=%f;return;end;
-    if ~args(1).is['NAME'] then y=%f;return;end;
+    if length(args) <> 1 then y=%f;return;end
+    if ~args(1).is['NAME'] then y=%f;return;end
     name=args(1).get_str[];
     y=%t;
   endfunction  
@@ -320,7 +320,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     S=varargopt.__keys;
     V=hash(size(S,'*'));
     ok=%t;
-    for i=1:size(S,'*') 
+    for i=1:size(S,'*') do
       if ~varargopt(S(i)).have_value[] then 
 	ok=%f;break;
       else
@@ -345,7 +345,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     function [rep,H,ast]= ast_eval_args(ast,start,last,H)
       L= ast.get_args[];
       rep=list();
-      for j=start:last
+      for j=start:last do
 	[repj,H,ast1] =ast_eval_internal(L(j),H);
 	if type(repj,'short')== 'l' then 
 	  rep.concat[repj];
@@ -360,7 +360,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     function [rep,H,ast]= ast_eval_args_plus(ast,start,last,H)
       L= ast.get_args[];
       rep=list();
-      for j=start:last
+      for j=start:last do
 	[repj,H,ast1] =ast_eval_internal(L(j),H);
 	if type(repj,'short')== 'l' then 
 	  rep.concat[repj];
@@ -390,9 +390,9 @@ function [rep,H,ast]=ast_eval(ast,H)
     function rep=ast_equalop_mlhs_length(ast)
     // returns the length of a mlhs  in an equal_op 
       L= ast.get_args[];
-      if length(L) < 1 then rep=-1;return; end;
+      if length(L) < 1 then rep=-1;return; end
       mlhs=L(1);
-      if mlhs.get_op[] <> %ast.MLHS then rep=-1;return; end;
+      if mlhs.get_op[] <> %ast.MLHS then rep=-1;return; end
       rep=length(mlhs.get_args[]);
     endfunction 
     
@@ -439,7 +439,7 @@ function [rep,H,ast]=ast_eval(ast,H)
       else
 	// n-ary 
 	args=list();
-	for j = 1:ast.get_arity[]
+	for j = 1:ast.get_arity[] do
 	  [args(j),H] =ast_eval_arg(ast,j,H);
 	end
 	execstr("rep="+ast.get_codename[]+"(args);");
@@ -551,7 +551,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	execstr("rep="+op+"(arg1,arg2);");
 	return;
        case { %ast.CELLROWCONCAT, %ast.CELLCOLCONCAT, %ast.CELLDIAGCONCAT }  then 
-	for j=0:( ast.get_arity[]-1)
+	for j=0:( ast.get_arity[]-1) do
 	  rep =ast_eval_arg(ast,j+1,H);
 	  if ( j < ast.get_arity[]-1) then 
 	    newpos =ast_eval_opname(ast.get_opname[],0,newpos,H);
@@ -579,7 +579,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	ok=-1;
 	if modulo(Ln,2)==0 then Last=Ln;else Last=Ln-1;end
 	reps=(1:2:Last) == 0;
-	for i=1:2:Last
+	for i=1:2:Last do
 	  rep = ast_eval_internal(L(i),H);
 	  reps(i)=  rep.have_value[];
 	  if rep.have_value[] && and(rep.get_value[]) then 
@@ -588,7 +588,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	end
 	// detect if we can select one branch only 
 	reps=reps(1:2:Last); if ok == -1 && and(reps) then ok =length(L) ;end
-	for j=1:Ln
+	for j=1:Ln do
 	  if modulo(j,2)==0 || (modulo(j,2)==1 && j ==Ln) then 
 	    [repj,Hj,astj]= ast_eval_internal(L(j),H)
 	    L(j)=astj;
@@ -618,7 +618,7 @@ function [rep,H,ast]=ast_eval(ast,H)
        case %ast.SELECT  then
 	// arity N. ast argument is the test other arguments are 
 	// the cases 
-	for j=0:(ast.get_arity[]-1)
+	for j=0:(ast.get_arity[]-1) do
 	  if ( j==0) then
 	    ast_eval_arg(ast,j+1,H);
 	    Sciprintf("\n");newpos= Sciprintf1(posret+2,"");

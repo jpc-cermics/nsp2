@@ -3,7 +3,7 @@ function it=invsyslin(t)
     error("Error: argument has wrong type, linear system expected");
   end
   [p,m]=size(t(5));
-  if p <> m then  printf('Warning: non square D matrix\n'),end;
+  if p <> m then  printf('Warning: non square D matrix\n'),end
   if type(t(5),'short')== 'm' then 
     d=pinv(t(5));
   else

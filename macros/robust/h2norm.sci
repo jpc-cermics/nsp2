@@ -8,10 +8,10 @@ function [nh]=h2norm(g,tol)
 // Copyright INRIA
   if type(g,'short')=='m',if norm(g)==0,nh=0,return,end,end,
 
-  if nargin==1 then tol=1000*%eps,end;
+  if nargin==1 then tol=1000*%eps,end
   g1=g(1);
   if g1(1)=='linearsys' then
-    if norm(g(5))>0 then error('Error: non zero D'),end;
+    if norm(g(5))>0 then error('Error: non zero D'),end
     sp=spec(g(2)),
     if maxi(real(sp))>=-tol then
       error('Error: unstable system!'),

@@ -144,13 +144,13 @@ function []=evans(n,d,kmax)
       if coeff(d,md)<0 then
 	x1=0*ones(1,1),y1=0*ones(1,1)
       end,
-    end;
+    end
     if max(k)>0 then
       if new_graphics() then
 	// drawing the asymptotic directions should not change the
         // rectangle
 	plot2d([i1*ones(1,q);x1+i1],[i2*ones(1,q);y1+i2],style=ones(1,q),rect=rect,leg= 'asymptotic directions');
-	// for i=1:q,xsegs([i1,x1(i)+i1],[i2,y1(i)+i2]),end;
+	// for i=1:q,xsegs([i1,x1(i)+i1],[i2,y1(i)+i2]),end
       else
 	plot2d(i1,i2,style=1,frameflag=0,axesflag=0);
 	legs=[legs,'asymptotic directions'],lstyle=[lstyle, [1;1]];
@@ -159,7 +159,7 @@ function []=evans(n,d,kmax)
 	xclip();
       end
     end
-  end;
+  end
   // evals locus
   [n1,n2]=size(racines);
   if  new_graphics() then

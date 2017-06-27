@@ -32,12 +32,12 @@ function []=m_circle(gain)
       xx=centre(i)-sin(%pi/3)*rayon(i)-hx*ng
       xy=sgn*cos(-%pi/3)*rayon(i)
       w=-%pi:0.03:0;
-    end;
+    end
     n=prod(size(w))
     rf=centre(i)*ones_new(size(w))+rayon(i)*exp(%i*w);
     rf=rf';
     plot2d(real(rf),imag(rf),style=[3]);
     plot2d(real(rf),-imag(rf),style=[3]);
     //  xstring(xx,xy,g)
-  end;
+  end
 endfunction

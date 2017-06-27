@@ -53,14 +53,14 @@ function F=randpencil(eps,infi,fin,eta)
     // turn Lk to polynom 
     // [me,ne]=size(Lk);Lk = ce2p(m2ce(Lk,1:me,1:ne));
     Lk = Lk + %zero;
-    if k==0 then return;end;
-    for j=1:k do Lk(j,j)=%s;Lk(j+1,j)=-1+ %zero;end;
+    if k==0 then return;end
+    for j=1:k do Lk(j,j)=%s;Lk(j+1,j)=-1+ %zero;end
   endfunction;
   
   function Lk=%epsilon(k) 
     Lk=zeros(k,k+1) + %zero ;
-    if k==0 then return;end;
-    for j=1:k do Lk(j,j)=%s;Lk(j,j+1)=-1 + %zero;end;
+    if k==0 then return;end
+    for j=1:k do Lk(j,j)=%s;Lk(j,j+1)=-1 + %zero;end
   endfunction;
 
   J=[];

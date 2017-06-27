@@ -25,9 +25,9 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
   if maxi(real(eiga)) >= -1e-12 then
     printf('Warning : system is not stable ! ');
   end
-  if nargin==1 then rerr=1e-8; end;
+  if nargin==1 then rerr=1e-8; end
   [no,ns] = size(c); [ns,ni] = size(b);
-  if min(ni,no) == 1 then isiso = 2; else isiso = 1; end;
+  if min(ni,no) == 1 then isiso = 2; else isiso = 1; end
   [p,a] = hess(a); [u,d,v] = svd(d); b = p' * b * v; c = u' * c * p;
   dtd = diag(d'*d); ddt = diag(d*d'); dtc = d' * c;
   aj = sqrt(-1)*eye(ns); R1 = ones(ni,1); S1 = ones(no,1);
@@ -42,7 +42,7 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
   w = [1.d30 0 w ]; M = w(i);
   // to avoid numerical problems with Rinv and Sinv if lb == norm(d), lb must be
   // enlarged to at least (1+1e-3)*lb;
-  if lb == svdd then lb=1.001*lb+eps;end;
+  if lb == svdd then lb=1.001*lb+eps;end
   for it = 1:15,
     gam = (1 + 2 * rerr) * lb; gam2 = gam * gam;
     Rinv = diag(R1./(dtd - gam2 * R1));
@@ -64,16 +64,16 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
       sv=[];
       for j = 1:maxi(size(M)),
 	sv = [sv maxi(svd(d + c*((M(j)*aj*eye(size(a)) - a)\b)))];
-      end;
+      end
       lb = maxi(sv);l=[l;lb];
-    end;
-  end;
+    end
+  end
   if M == 1.d30 then
     lb=svdd;
     printf("Warning: norm cannot be computed rel. accuracy smaller than 1e-3\n")
     printf('Hinfnorm is probably exactly max sv(D)\n')
     printf('The system might be all-pass\n')
-  end;
+  end
   if exists('ub')==0 then ub=lb;end
   hinfnorm = 0.5 * (ub+lb); frequency = M;
 

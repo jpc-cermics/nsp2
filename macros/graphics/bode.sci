@@ -17,7 +17,7 @@ function bode(varargin,varargopt)
     error("dom should be ''c'' or ''d'' or ''u''");
     return
   end
-  if dom.equal['u'] then dom = 'c';end;
+  if dom.equal['u'] then dom = 'c';end
   if dom.equal['s'] && ~varargopt.iskey['dt'] then 
     error("Error: when dom is equal to ''s'' dt must be given");
     return;
@@ -71,7 +71,7 @@ function bode(varargin,varargopt)
     if length(varargin) <> 2 then 
       error("Error: expecting two non optional arguments for polynomial case");
       return;
-    end;
+    end
     if type(varargin(2),'short')<> 'p' then 
       error("Error: second argument should be polynomial");
       return

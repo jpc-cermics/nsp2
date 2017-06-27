@@ -37,8 +37,8 @@ function [Q,Z,Ec,Ac,Qd,Zd,numbeps]=quaskro(E,A,tol)
     [E,A]=pen2ea(E);tol=1.E-10;
   end
   if nargin==2 then
-    if type(E,"short")=="p" then [E,A]=pen2ea(E);end;  //quaskro(pencil,tol)
-    if type(E,"short")=="m" then tol=1.E-10;end;  //quaskro(E,A);
+    if type(E,"short")=="p" then [E,A]=pen2ea(E);end  //quaskro(pencil,tol)
+    if type(E,"short")=="m" then tol=1.E-10;end  //quaskro(E,A);
   end
   [na,ma]=size(A);
   Q=eye(na,na);Z=eye(ma,ma);

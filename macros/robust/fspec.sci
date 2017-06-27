@@ -20,5 +20,5 @@ function [gm]=fspec(g)
   id=sqrtm(d),
   gm=syslin('c',a,b,inv(id)*(c+b'*x),id),
   gm=minss(gm)
-  if flag=='tf' then gm=ss2tf(gm);end;
+  if flag=='tf' then gm=ss2tf(gm);end
 endfunction

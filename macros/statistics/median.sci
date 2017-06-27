@@ -43,7 +43,7 @@ function [md] = median(x, varargin, varargopt)
    end
    
    if numel(varargopt) >= 1 then
-      if  varargopt.iskey["dim"] then, dim = varargopt.dim; narg_opt = narg_opt+1; end
+      if  varargopt.iskey["dim"] then dim = varargopt.dim; narg_opt = narg_opt+1; end
    
       if varargopt.iskey["skip_nan"] then
 	 skip_nan = varargopt.skip_nan
@@ -65,7 +65,7 @@ function [md] = median(x, varargin, varargopt)
       elseif dim == -1 then
 	 error("Error: dim should not be equal to -1")
       elseif dim == -2 then // matlab compat
-	 if isvector(x) then, dim = 0, else, dim = 1, end
+	 if isvector(x) then dim = 0, else, dim = 1, end
       end     
    end
 
@@ -90,7 +90,7 @@ function [md] = median(x, varargin, varargopt)
    elseif dim == 1 then
       [m,n] = size(x)
       // this shortcut avoid some tests after:
-      if m == 0 then, md = %nan*ones(1,n); return; end
+      if m == 0 then md = %nan*ones(1,n); return; end
 
       x = sort(x, type="r", dir="i")
       
@@ -116,7 +116,7 @@ function [md] = median(x, varargin, varargopt)
    else // dim == 2
       [m,n] = size(x)
       // this shortcut avoid some tests after:
-      if n == 0 then, md = %nan*ones(m,1); return; end
+      if n == 0 then md = %nan*ones(m,1); return; end
 
       x = sort(x, type="c", dir="i")
       

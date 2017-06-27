@@ -18,7 +18,7 @@ function [Sl]=markp2ss(markpar,n,nout,nin)
     k1=k1+nin;
     p=markpar(:,k1:nmax);p(nout,nmax)=0;
     H(l1,:)=p;
-  end;
+  end
   [u,s,v,deg]=svd(H);
   s=diag(s);
   obs=u(:,1:deg);con=s*v(1:deg,:)';

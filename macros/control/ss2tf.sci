@@ -61,7 +61,7 @@ function [h,num,den]=ss2tf(sl,rmax)
 	b=h*f,
 	d=-sum(diag(b))/kl,
 	f=b+eye()*d,
-      end;
+      end
       d=sum(diag(h*f))/n
       //
       den=den*d;
@@ -69,7 +69,7 @@ function [h,num,den]=ss2tf(sl,rmax)
       if  ~isempty(l) then v(l)=v(l)*d,end
       m=[m,x(:,k1)*f];
       k=k+n;
-    end;
+    end
     if nargout==3 then h=sl(5),num=sl(4)*m*diag(v)*(x\sl(3));return;end
     m=sl(4)*m*diag(v)*(x \ sl(3))+sl(5)*den;
     [m1,n1]=size(m);[m,den]=simp(m,den*ones(m1,n1))

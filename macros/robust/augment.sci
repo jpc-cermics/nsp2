@@ -98,7 +98,7 @@ function [P,r]=augment(G,SRT,flag)
 	      Ouy,Iu;
 	      Iy,Oyu];
 	  P=W1*W2;
-	end;
+	end
 	if ssSRT ==1 then
 	  P=[Ouy,Iu;
 	     Oyy,G;
@@ -116,7 +116,7 @@ function [P,r]=augment(G,SRT,flag)
 	      Ouy,Iu;
 	      Iy,Oyu];
 	  P=W1*W2;
-	end;
+	end
 	if ssSRT ==1 then
 	  P=[Iy,-G;
 	     Iy,-G];
@@ -168,7 +168,7 @@ function [P,r]=augment(G,SRT,flag)
       // 'SRT'
       if SRT<>"SRT" then error("option ''"+string(SRT)+"'' not allowed, use ''SRT'' ",9999);
 	return;
-      end;
+      end
       if ssSRT==0 then
 	W1=[Iu,-Iu;
 	    Oyu,Oyu;
@@ -226,7 +226,7 @@ function [P,r]=augment(G,SRT,flag)
 	  W2=[Iy;Ouy;Iy];
 	  W3=[Iu,-Iu];
 	  P=W1+W2*G*W3;
-	end;
+	end
 	if ssSRT ==1 then
 	  P=[G,-G;
 	     Ouu,Iu;
@@ -244,7 +244,7 @@ function [P,r]=augment(G,SRT,flag)
 	  W3=[Iu,-Iu];
 	  P=W1+W2*G*W3;
 
-	end;
+	end
 	if ssSRT ==1 then
 	  P=[Iu,-Iu;
 	     -G,G] 

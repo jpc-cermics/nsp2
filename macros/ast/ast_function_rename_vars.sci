@@ -10,13 +10,13 @@ function [ast]=ast_function_rename_vars(ast)
   [ok,H]= ast_function_vars(ast);
   if ~ok then error('failed\n');return;end 
   H1=hash(20);
-  for name = H.lhs.__keys' 
+  for name = H.lhs.__keys' do
     H1(name)= ast_new_var('t');
   end
-  for name = H.in' 
+  for name = H.in' do
     H1(name)= ast_new_var('t');
   end
-  for name = H.out' 
+  for name = H.out' do
     H1(name)= ast_new_var('t');
   end
   ast=ast_rename_vars(ast,H1);

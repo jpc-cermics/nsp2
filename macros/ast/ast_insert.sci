@@ -10,7 +10,7 @@ function rep=ast_insert(ast,f)
     ast1 = ast_create(%ast.RETURN_OP);
     ast1.set_args[list(ast)];
     rep($+1) = ast1;
-    for i=1:length(L)
+    for i=1:length(L) do
       ast= ast_create(%ast.SEMICOLON_OP);
       ast.set_args[list(L(i))];
       rep($+1)=ast;
@@ -30,7 +30,7 @@ function rep=ast_insert(ast,f)
     if astif.is['IF'] then 
       args = astif.get_args[];
       // do not touch the conditions; XXXXX 
-      for i=2:2:length(args)
+      for i=2:2:length(args) do
 	args(i) = ast_inserter(args(i),H);
       end
       astif.set_args[args];
@@ -48,7 +48,7 @@ function rep=ast_insert(ast,f)
      case {%ast.STATEMENTS, %ast.STATEMENTS1}  then
       L= ast.get_args[];
       rep=list();
-      for j = 1:length(L)
+      for j = 1:length(L) do
 	Lj = L(j);
 	[ok1,rep1]= ast_special_funcall(Lj,H);
 	//pause yyy;
@@ -60,14 +60,14 @@ function rep=ast_insert(ast,f)
 	  if length(fc)<>0 then 
 	    // inline the calls 
 	    out=m2s([]);
-	    for i=1:length(fc);
+	    for i=1:length(fc) do
 	      [astn,Ho]=ast_funcall_inline(fc(i),H.code);
 	      out(i)=Ho.out;
 	      rep($+1)= astn;
 	    end
 	    //newast= ast_insert_build_exprs(fc);
 	    //rep($+1) = newast;
-	    for i=1:length(fc);
+	    for i=1:length(fc) do
 	      Lj = ast_replace_funcall(Lj,fc(i),ast_expr(out(i)));
 	    end
 	    rep($+1) = ast_visit_internal(Lj,ast_inserter,H);

@@ -57,8 +57,8 @@ function [Q,Z,Qd,Zd,numbeps,numbeta]=kroneck(E,A)
     Zd(4)=Zd(3);Qd(4)=Qd(3);Qd(3)=0;
     numbeta=Qd(4)-Zd(4);
     return;
-  end;
-  if isempty(rows) then Qd(4)=0;Zd(4)=0;numbeta=0;return;end;
+  end
+  if isempty(rows) then Qd(4)=0;Zd(4)=0;numbeta=0;return;end
   Er=Ec(rows,cols);
   Ar=Ac(rows,cols);
   E1=pertrans(Er);

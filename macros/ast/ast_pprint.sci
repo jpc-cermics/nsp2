@@ -29,7 +29,7 @@ function ast_pprint(ast,indent)
     function rep= ast_pprint_args(ast,start,last,indent,pos,posret,sep,breakable, breakstr)
       L= ast.get_args[];
       newpos=pos;
-      for j = start:last
+      for j = start:last do
 	ast1=L(j);
 	newpos =ast_pprint_internal(ast1,indent,newpos,posret);
 	if ( j <> last ) then newpos = newpos + Sciprintf(sep); end
@@ -81,9 +81,9 @@ function ast_pprint(ast,indent)
 
     function rep = ast_equalop_mlhs_length(ast)
       L= ast.get_args[];
-      if length(L) < 1 then rep = -1;return; end;
+      if length(L) < 1 then rep = -1;return; end
       mlhs = L(1);
-      if mlhs.get_op[] <> %ast.MLHS then rep = -1;return; end;
+      if mlhs.get_op[] <> %ast.MLHS then rep = -1;return; end
       rep = length(mlhs.get_args[]);
     endfunction 
     
@@ -133,7 +133,7 @@ function ast_pprint(ast,indent)
 	rep = newpos;
       else
 	newpos = pos;
-	for j = 0:(ast.get_arity[]-1)
+	for j = 0:(ast.get_arity[]-1) do
 	  ii = (j==0)*indent + (j<>0);
 	  newpos =ast_pprint_arg(ast,j+1,ii,  newpos,posret);
 	  if ( j <> ast.get_arity[] -1 ) then 
@@ -247,13 +247,13 @@ function ast_pprint(ast,indent)
 	  newpos =ast_pprint_opname(ast.get_opname[],0,newpos);
 	end
 	if ( newpos > CMAX ) then 
-	  if ( ast.get_op[] == %ast.COLCONCAT ) then Sciprintf("...");end;
+	  if ( ast.get_op[] == %ast.COLCONCAT ) then Sciprintf("...");end
 	  Sciprintf("\n");newpos= Sciprintf1(posret,"");
 	end
 	[newpos,ret] =ast_pprint_arg_ret(ast.get_args[],2,0,newpos,posret);
 	rep=newpos;return;
        case { %ast.CELLROWCONCAT, %ast.CELLCOLCONCAT, %ast.CELLDIAGCONCAT }  then 
-	for j = 0:( ast.get_arity[]-1)
+	for j = 0:( ast.get_arity[]-1) do
 	  if ( j > 0 && newpos > CMAX  ) then 
 	    Sciprintf("\n");newpos= Sciprintf1(posret,"");
 	  end
@@ -297,7 +297,7 @@ function ast_pprint(ast,indent)
        case %ast.IF then
 	// a sequence of if elseif etc.... */
 	newpos=ast_print_tag("if");//printf("pos=%d,posret=%d",pos,posret);
-	for  j = 0:2:(ast.get_arity[]-1)
+	for  j = 0:2:(ast.get_arity[]-1) do
 	  if  j == ast.get_arity[]-1  then
 	    // we have reached the last else **/
 	    newpos= ast_pprint_key("else",newpos,posret);
@@ -334,7 +334,7 @@ function ast_pprint(ast,indent)
 	// arity N. ast argument is the test other arguments are 
 	// the cases 
 	newpos=ast_print_tag("select");
-	for j = 0:(ast.get_arity[]-1)
+	for j = 0:(ast.get_arity[]-1) do
 	  if ( j==0) then
 	    ast_pprint_arg(ast,j+1,1,newpos,posret);
 	    Sciprintf("\n");newpos= Sciprintf1(posret+2,"");

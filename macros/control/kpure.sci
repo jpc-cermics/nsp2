@@ -39,8 +39,8 @@ function [y,R]=kpure(tf)
 	  end
 	end
       end,
-    end;
-  end;
+    end
+  end
   [y,k]=sort(y)
   R=R(k)
 endfunction

@@ -18,7 +18,7 @@ function [y]=lgfft(x)
 //
   
 // 
-  if type(x,'short') <> "m" then error("Error: expecting a matrix");end;
+  if type(x,'short') <> "m" then error("Error: expecting a matrix");end
   nz=max(size(x));
   pnz=int(log(nz)/log(2));
   rz=nz-2**pnz;

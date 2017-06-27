@@ -14,7 +14,7 @@ function rep=ast_check_callfun(ast,str)
     else
       args = ast_visit_args(ast,ast_checker,str);
       rep = %f 
-      for i=1:length(args)
+      for i=1:length(args) do
 	if type(args(i),'short')== 'b' && args(i) == %t then 
 	  rep = %t;
 	  return 

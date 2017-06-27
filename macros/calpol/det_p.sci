@@ -30,7 +30,7 @@ function res=det_p(P,k=[])
   if isempty(P) then
     res=P;  // empty polynomial
     return;
-  end;
+  end
   if size(P,1)<>size(P,2) then 
     error('Error: argument must be a square matrix');
     return;

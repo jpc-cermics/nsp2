@@ -7,7 +7,7 @@ function [den,num,err]=arl2(y,den0,n,imp=%f,all=%f)
     [den,num,err]=arl2_ius(y,den0,n,imp,'all');
   else
     [den,num,err]=arl2_ius(y,den0,n,imp);
-  end;
+  end
   if nargout<=1 then
     den= num ./ den ;
   end

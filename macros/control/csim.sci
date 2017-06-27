@@ -30,7 +30,7 @@ function [y,x]=csim(u,dt,sl,x0,tol)
 // dsimul flts ltitr rtitr ode impl
 //!
   //
-  if nargin<3 then error("Error: expecting at least three arguments");return;end;
+  if nargin<3 then error("Error: expecting at least three arguments");return;end
   if and(type(sl,'short')<>['linearsys','r']) then 
     error("csim: Invalid third parameter (should be rational or linear system)")
   end
@@ -52,23 +52,23 @@ function [y,x]=csim(u,dt,sl,x0,tol)
   select type(u,'short')
    case 's' then 
     // u is a string 
-    if mb<>1 then error("Error: d has incompatible size");return;end;
+    if mb<>1 then error("Error: d has incompatible size");return;end
     if part(u,1)=='i' then
       //impuse response
       imp=1;
       if norm(d,1)<>0 then
 	printf("Warning: Direct feedthrough set to zero.\n");
 	d=0*d;
-      end;
+      end
     elseif part(u,1)=='s' then
       step=1
       //      if norm(d,1)<>0 then
       //	printf("Warning: msprintf(("%s: Direct feedthrough set to zero.\n"),"csim"));
       //	d=0*d;
-      //      end;
+      //      end
     else
       error("Error: first argument when string must be ""step"" or ""impuls""");
-    end;
+    end
     function [y]=u(t); if t==0 then y=0, else y=1,end;endfunction;
    case 'pl' then 
     %t
@@ -86,7 +86,7 @@ function [y,x]=csim(u,dt,sl,x0,tol)
     %t
   else 
     error("Error: first argument has wrong type");return;
-  end;
+  end
   //
   if nargin==3 then x0=sl(6),end
   if imp==1|step==1 then x0=0*x0,end
@@ -117,7 +117,7 @@ function [y,x]=csim(u,dt,sl,x0,tol)
 	y=ut(:,nn)
       else 
 	y=ut(:,nn)+(t-dt(nn))/(dt(nn+1)-dt(nn))*(ut(:,nn+1)-ut(:,nn))
-      end;
+      end
     endfunction
     function [ydot]=%sim2(%tt,%y); ydot=ak*%y+bk*u(%tt);endfunction
     
@@ -126,7 +126,7 @@ function [y,x]=csim(u,dt,sl,x0,tol)
     ut=ones(mb,nt);for k=1:nt, ut(:,k)=u(dt(k)),end
   else
     %sim2=u;
-    tx=' ';for l=2:size(u), tx=tx+',%'+string(l-1);end;
+    tx=' ';for l=2:size(u), tx=tx+',%'+string(l-1);end
     text='function [ydot]=sk(%tt,%y,u'+tx+');ydot=ak*%y+bk*u(%tt'+tx+');endfunction';
     execstr(text);
     %sim2(0)=sk;u=u(1)
@@ -136,7 +136,7 @@ function [y,x]=csim(u,dt,sl,x0,tol)
 	    "endfunction"];
     execstr(text);
     ut=uu(dt);
-  end;
+  end
   
   //simulation
   k=1;
@@ -153,9 +153,9 @@ function [y,x]=csim(u,dt,sl,x0,tol)
       end
       x(kk,:)=ode(x0(kk),dt(1),dt,%sim2,rtol=rtol,atol=atol,type="adams")
       if imp==1 then x(kk,:)=ak*x(kk,:)+bk*ut,end
-    end;
+    end
     k=k+n
-  end;
+  end
   if imp==0 then y=c*x+d*ut,else y=c*x,end
   if nargout==2 then x=v1*v2*x,end
 endfunction

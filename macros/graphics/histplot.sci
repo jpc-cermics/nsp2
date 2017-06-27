@@ -23,8 +23,8 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
     end
     execstr(s_mat);
     return;
-  end;
-  if nargin < 2 then printf('histplot : Wrong number of arguments\n'); return; end;
+  end
+  if nargin < 2 then printf('histplot : Wrong number of arguments\n'); return; end
   p=numel(data)
   data=data(:)
 

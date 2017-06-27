@@ -53,7 +53,7 @@ function x = bdiv_sp_m(A,b)
       [C,p] = cholmod_create(A'*A)
       // we could use also [C,p] = cholmod_create(A,type="col")
       // but this seems slower on different examples tested
-      if ( p ~= 0 ) then, error("matrix is not full rank"), end 
+      if ( p ~= 0 ) then error("matrix is not full rank"), end 
       rc1 = C.get_rcond[];
       if ( rc1 < n*%eps )
 	printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)
@@ -64,7 +64,7 @@ function x = bdiv_sp_m(A,b)
       [C,p] = cholmod_create(A*A')
       // we could use also [C,p] = cholmod_create(A,type="row")
       // but this seems slower on different examples tested
-      if ( p ~= 0 ) then, error("matrix is not full rank"), end 
+      if ( p ~= 0 ) then error("matrix is not full rank"), end 
       rc1 = C.get_rcond[];
       if ( rc1 < m*%eps )
 	printf(" Warning: matrix is badly conditionned, solution is dubtious (rcond = %e)\n", rc1)

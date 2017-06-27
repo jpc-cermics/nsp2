@@ -27,7 +27,7 @@ function [Bfs,Bis,chis]=glever(E,A,s)
 // See also shuffle, determ, invr, coffg
 //
   if nargin==1 then s=poly(0,E.get_var[]);[E,A]=pen2ea(E);end 
-  if nargin==2 then s=poly(0,"s"),end;
+  if nargin==2 then s=poly(0,"s"),end
   if nargin==3 then s=poly(0,s);end
   [Si,Pi,Di,index]=penlaur(E,A);
   k=round(sum(diag(Si*E)));

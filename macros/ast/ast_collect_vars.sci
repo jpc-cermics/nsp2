@@ -14,7 +14,7 @@ function rep=ast_collect_vars(ast)
       end
     else
       rep =  ast_visit_args(ast,ast_vars_visit,H);
-      for i=1:length(rep) ;H.merge[rep(i)];  end
+      for i=1:length(rep) do H.merge[rep(i)];  end
     end
   endfunction
     

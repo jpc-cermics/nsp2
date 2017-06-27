@@ -135,7 +135,7 @@ function [c,ka,kb] = intersect(a,b,ind_type="double",which="elements")
      end
      if row_flag then
 	c.redim[1,-1]; 
-	if nargout > 1 then, ka.redim[1,-1]; kb.redim[1,-1], end
+	if nargout > 1 then ka.redim[1,-1]; kb.redim[1,-1], end
      end
      
   else

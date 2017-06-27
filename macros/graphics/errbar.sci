@@ -19,7 +19,7 @@ function []=errbar(x,y,em,ep)
     print(demo_errbar);
     execstr(demo_errbar);
     return;
-  end;
+  end
   xselect();
   [n1,n2]=size(x);
   y1=matrix(y-em,1,n1*n2);

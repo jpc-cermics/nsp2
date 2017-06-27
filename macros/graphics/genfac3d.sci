@@ -22,7 +22,7 @@ function [xx,yy,zz]=genfac3d(x,y,zmat,mask)
 	   'plot3d(xx,yy,zz)'];
     write(%io(2),s_mat);execstr(s_mat);
     return;
-  end;
+  end
   [nr,nc]=size(zmat)
   indy=(ones_new(1,nc-1).*.[0;1;1;0]+(1:nc-1).*.[1;1;1;1]).*.ones_new(1,nr-1);
   indx=ones_new(1,nc-1).*.(ones_new(1,nr-1).*.[0;0;1;1]+(1:nr-1).*.[1;1;1;1]);

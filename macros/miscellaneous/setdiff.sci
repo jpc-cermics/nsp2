@@ -100,7 +100,7 @@ function [c,ka] = setdiff(a,b,ind_type="double",which="elements")
 	else
 	   [c,ka] = unique(a,ind_type=ind_type)
 	   [kb,occ,missed] = bsearch(b,c,match="v",ind_type="int") 
-	   if missed > 0 then, kb = kb(find(kb)), end
+	   if missed > 0 then kb = kb(find(kb)), end
 	   c(kb) = []; ka(kb) = [];
 	end
      else
@@ -160,7 +160,7 @@ function [c,ka] = setdiff_l_l(a,b,ind_type="double")
   [c,ka] = unique(a,ind_type="double")
   for i = 1:length(b)
     [found,k] = c.has[b.item[i]];
-    if found then, c.remove[k], ka(k) = [], end
+    if found then c.remove[k], ka(k) = [], end
   end
 endfunction
 
@@ -171,7 +171,7 @@ function [c,ka] = setdiff_ce_ce(a,b,ind_type="double")
   [c,ka] = unique(a,ind_type="double")
   for i = 1:length(b)
     [found,k] = c.has[b{i}];
-    if found then, c(k) = [], ka(k) = [], end
+    if found then c(k) = [], ka(k) = [], end
   end
 endfunction
 

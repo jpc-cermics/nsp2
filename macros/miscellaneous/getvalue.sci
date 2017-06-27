@@ -138,7 +138,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
   %12=[];%13=[];%14=[];%15=[];%16=[];%17=[];%18=[];%19=[];%20=[];
 
   // %ini 
-  if nargin < 4  then %ini=smat_create(%nn,1);end;
+  if nargin < 4  then %ini=smat_create(%nn,1);end
   
   if type(%ini,'short')== 'l' then 
     ini1=m2s([]);
@@ -165,7 +165,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     for %kk=1:%nn
       // expected size.
       %sz=%typ(2*%kk); 
-      if type(%sz,'string')=="SMat" then %sz=evstr(%sz,exec_context),end;
+      if type(%sz,'string')=="SMat" then %sz=evstr(%sz,exec_context),end
       ok = %t;
       // switch according to types 
       select part(%typ(2*%kk-1),1:3)
@@ -188,7 +188,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	else
 	  ok = check_dims(%vv,[%nv,1]);
 	end
-	if ~ok then  error_size(%labels(%kk),string_dims([%nv,1]));break;end;
+	if ~ok then  error_size(%labels(%kk),string_dims([%nv,1]));break;end
        case 'col'
 	//---- column vector 
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
@@ -224,13 +224,13 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	exec_context.z=poly(0,'z');
 	exec_context.s=poly(0,'s');
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['PMat','Mat']); 
-	if ~ok then break;end;
+	if ~ok then break;end
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
        case 'gen'
 	// 
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),m2s([])); 
-	if ~ok then break;end;
+	if ~ok then break;end
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
        case 'str'
@@ -242,7 +242,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
        case 'lis'
 	//---- a list 
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'List'); 
-	if ~ok then break;end;
+	if ~ok then break;end
 	%nsz= prod(%sz);
 	ok = %nsz < 0 || length(%vv)== abs(%nsz);
 	if ~ok then 

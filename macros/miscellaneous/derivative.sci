@@ -80,14 +80,14 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
   endfunction
   
   
-  if nargin<2 | nargin>6 then, error("Wrong number of input arguments"), end
+  if nargin<2 | nargin>6 then error("Wrong number of input arguments"), end
 
   if ~((is(F,%types.PList) | is(F,%types.Func)) & (is(x,%types.Mat) && isreal(x))) then
     error("bad type for the first and/or the second argument")
   end
   
   [n,p] = size(x)
-  if p ~= 1 then, error("x must be a column vector"), end
+  if p ~= 1 then error("x must be a column vector"), end
   
   if (order ~= 1 & order ~= 2 & order ~= 4) then
     error("order must be 1, 2 or 4")
@@ -113,7 +113,7 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
   J = %deriv1_(F, x, h, order, Q, args)
   m = size(J,1);
   
-  if nargout == 1 then, return, end
+  if nargout == 1 then return, end
 
   if h_not_given then
     select order  // stepsizes for approximation of second derivatives

@@ -8,7 +8,7 @@ function val=interpolate(x,xref,yref)
     error('interpolate: xref and yref must be of same size and must have at least 2 components');
     return;
   end
-  if isempty(x) then, val = [], return, end
+  if isempty(x) then val = [], return, end
 
   I=bsearch(x,xref);
   if ~isempty(find(I==0)) then 

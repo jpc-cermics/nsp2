@@ -29,5 +29,5 @@ function [Bk,Ck]=fullrfk(A,k)
   for l=2:k do
     [B,C,dim]=fullrf(C*B);
     Bk=Bk*B;Ck=C*Ck;     // Bk*Ck = A^k  (Full rank factorization)
-  end;
+  end
 endfunction

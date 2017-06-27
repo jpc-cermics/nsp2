@@ -25,7 +25,7 @@ function [S,P,D,index]=projspec(A,tol)
 //
   [m,n]=size(A);
   if m<>n then error("Error: matrix should be square");end
-  if nargin <= 1 then tol=1.E-6;end;
+  if nargin <= 1 then tol=1.E-6;end
   // A=0 ?
   if norm(A,1) < %eps*n*n then
     P=eye(size(A)),D=A,S=0*P;index=1;
@@ -33,14 +33,14 @@ function [S,P,D,index]=projspec(A,tol)
   //     nonsingular A:  index 0
   if rcond(A) > tol then
     S=inv(A),P=0*eye(size(A));D=P;index=0;return;
-  end;
+  end
   //write(%io(2),'    rank A^k    rcond')
   //                    index 1
   index=1;
   [B,C,dim]=fullrf(A);
   if dim==0 then
     P=eye(n,n);S=0*P;D=A;return
-  end;
+  end
   Ck=C;Bk=B;//write(%io(2),[dim,rcond(C*B)],'(7x,f3.0,6x,e9.3)');
   tst=rcond(Ck*Bk);
   if size(Ck,1)==1 then tst=norm(Ck*Bk,1);end
@@ -52,7 +52,7 @@ function [S,P,D,index]=projspec(A,tol)
     [B,C,dim]=fullrf(C*B);
     if dim==0 then
       P=eye(n,n);S=0*P;D=A;index=k;return;
-    end;
+    end
     Bk=Bk*B;Ck=C*Ck;      // Bk*Ck = A^k  (Full rank factorization)
     index=k;
     //write(%io(2),[dim,rcond(C*B)],'(7x,f3.0,6x,e9.3)');
@@ -62,7 +62,7 @@ function [S,P,D,index]=projspec(A,tol)
       S=Bk*M*inv(C*B)*Ck;   // S=inv(A-P-D)+P   
       D=0.5*(A*P+P*A);return;
     end
-  end;
+  end
   P=eye(n,n);S=0*P;D=A;index=k;return;
 endfunction
 

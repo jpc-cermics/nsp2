@@ -19,17 +19,17 @@ function rep=ast_expand_expr(ast)
     if ~ast.is["EQUAL_OP"] then ok=%f;return;end
     args= ast.get_args[];
     mlhs=args(1);
-    if ~mlhs.is['MLHS'] then ok=%f;return;end;
+    if ~mlhs.is['MLHS'] then ok=%f;return;end
     args= mlhs.get_args[];
-    if length(args) <> 1 then ok=%f;return;end;
-    if ~args(1).is['NAME'] then ok=%f;return;end;
+    if length(args) <> 1 then ok=%f;return;end
+    if ~args(1).is['NAME'] then ok=%f;return;end
     name=args(1).get_str[];
     ok=%t;
   endfunction  
   
   function [rep,newargs]=ast_expand_expr_arg(ast,rep,newargs)
     loc = ast_expand_expr(ast);
-    for j=1:length(loc)-1; rep($+1)=loc(j);  end
+    for j=1:length(loc)-1 do rep($+1)=loc(j);  end
     if loc($).is['NAME'] || loc($).is['NUMBER'] then 
       // printf('already a name');
       newargs($+1) = loc($);
@@ -47,7 +47,7 @@ function rep=ast_expand_expr(ast)
     args = ast.get_args[](2); // arguments (ARGS ....)
     elts = args.get_args[];
     newargs=list();
-    for i=1:length(elts)
+    for i=1:length(elts) do
       [rep,newargs]=ast_expand_expr_arg(elts(i),rep,newargs);
     end
     args.set_args[newargs];
@@ -59,7 +59,7 @@ function rep=ast_expand_expr(ast)
     // just expand operators
     // get args 
     args = ast.get_args[];
-    for i=1:length(args)
+    for i=1:length(args) do
       [rep,newargs]=ast_expand_expr_arg(args(i),rep,newargs);
     end
     ast.set_args[newargs];
@@ -83,6 +83,6 @@ function ast_expand_expr_test1(str)
   ast_reset_var();
   ast=ast_expr(str);
   rep=ast_expand_expr(ast);
-  for i=1:length(rep); rep(i).print[];printf('\n');end
+  for i=1:length(rep) do rep(i).print[];printf('\n');end
 endfunction
 

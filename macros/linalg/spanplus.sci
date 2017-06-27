@@ -31,7 +31,7 @@ function [x,dim,dima]=spanplus(a,b,tol)
   if na<>nb then error("uncompatible dimensions!"),end
   [x,dima]=rowcomp(a);
   b=x*b;x=x'; //update b,x
-  if dima == na then dim=dima,return,end;
+  if dima == na then dim=dima,return,end
   low=(dima+1):na;
   blow=b(low,:);
   if norm(blow,1) <= tol*norm(b,1) then dim=dima,return,end

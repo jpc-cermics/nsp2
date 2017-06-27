@@ -16,10 +16,10 @@ function [y,xf]=flts(u,sl,x0)
     [nb,mb]=size(sl(3))
     if mb<>nu then
       erro("Error: arguments have incompatible dimensions");,
-    end;
+    end
     select sl(7)
      case 'c' then error(94,2),
-    end;
+    end
     np=max(sl.D.degree[]);
     [xf,x]=ltitr(sl(2),sl(3),u(:,1:(mu-np)),x0)
     if type(sl(5),'short')== 'm' then
@@ -35,8 +35,8 @@ function [y,xf]=flts(u,sl,x0)
     dom = sl.dom;
     select dom
      case 'c' then error("Error: expecting a discrete system");return;
-    end;
-    if ne<>nu then erro("Error: arguments have incompatible dimensions");end;
+    end
+    if ne<>nu then erro("Error: arguments have incompatible dimensions");end
     nden = m2p([],var=den.get_var[]);
     nnum = m2p([],var=den.get_var[]);
     for l=1:1:ns,
@@ -44,7 +44,7 @@ function [y,xf]=flts(u,sl,x0)
       for k=2:ne,[pg,uu]=bezout(pp,den(l,k)),pp=pp*uu(1,2),end
       nden(l)=pp
       for k=1:ne,nnum(l,k)=num(l,k)*pdiv(pp,den(l,k)),end,
-    end;
+    end
     for l=1:ns, nm(l)=(nden(l).degree[])-max(nnum(l,:).degree[]),end
     ly=mu+min(nm)
     if nargin==3 then
@@ -52,10 +52,10 @@ function [y,xf]=flts(u,sl,x0)
       if nx<maxdgd then
 	error('Error: need at least '+string(maxdgd)+' past values');
 	return;
-      end;
+      end
       if mx<>ns+ne then 
 	error("Error: arguments have incompatible dimensions");,end
-    end;
+    end
     y=0*ones(ns,ly);
     for l=1:ns
       ddl=nden(l).degree[]
@@ -70,12 +70,12 @@ function [y,xf]=flts(u,sl,x0)
 	up=x0(1:ne,maxdgd-ddl+1:maxdgd);
 	yp=x0(ne+l,maxdgd-ddl+1:maxdgd);
 	y(l,:)=rtitr(nnum(l,:),nden(l),u(:,1:lent),up,yp);
-      end;
+      end
     end,
     l=size(y,2);
     y=y(:,1:min(mu,l));
   else 
     error("Error: expecting a linear system");
     return;
-  end;
+  end
 endfunction

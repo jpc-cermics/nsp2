@@ -25,10 +25,10 @@ function [sl]=syslin(domain,a,b,c,d,x0)
       z='z'
     else 
       error(domain+': unknown time domain')
-    end;
+    end
   else 
     error('1rst argument of syslin should be a string, a scalar or a [] matrix')
-  end;
+  end
   //============================================================================
   if nargin==2 then //syslin(domaine,sys)
     if type(a,'short') == 'r' then 

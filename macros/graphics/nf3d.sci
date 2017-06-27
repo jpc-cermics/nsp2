@@ -13,8 +13,8 @@ function [xf,yf,zf,qf] = nf3d(x,y,z,q,orient)
    //       i   i+1    orient=2 corresponds to :
    //                    (i,j) -> (i+1,j) -> (i+1,j+1) -> (i,j+1)
    //
-   if nargin < 5 then, orient=2, end  // orientation of the old version
-   if nargin < 3 then, error("nf3d needs at least 3 arguments"), end
+   if nargin < 5 then orient=2, end  // orientation of the old version
+   if nargin < 3 then error("nf3d needs at least 3 arguments"), end
    [n1,n2]=size(x)
    nx = (n1-1)*(n2-1);
    v = 1:(n1*n2-n1-1); v(n1*(1:(n2-2)))=[];

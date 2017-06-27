@@ -65,7 +65,7 @@ endfunction
   if norm(A,1)==0 then
     if verbose then
       printf("         %i  block of size %i\n",size(A,1),1);
-    end;
+    end
     [n,na]=size(A);Y=eye(n,n);Dg=ones(n,1);struc=n;blks=ones(1,n);
     return;
   end
@@ -74,9 +74,9 @@ endfunction
   if isempty(struc) then 
     if verbose then
       printf("         %i  block \n",0);
-    end;
+    end
     Y=X;Dg=ones(size(A,1),1);
-    return;end;
+    return;end
     Index=length(struc);
     slice=[0,struc];
     Y=[];old=[];Dg=[];
@@ -91,7 +91,7 @@ endfunction
       [w,d1,d2]=spanplus([kermoins,old],kerplus);
       d=d1-d2;
       //  if d<>Nb_blks then d1=d2;warning("warning");end   //Warning ... 
-      if d<>Nb_blks then d2=d1-Nb_blks;end; //Warning ... 
+      if d<>Nb_blks then d2=d1-Nb_blks;end //Warning ... 
       W=w(:,d2+1:d1);
       // old=A*Slice;   //= X*An*X'*Slice = X*An(:,p)
       old=X*An(:,p); 
@@ -107,13 +107,13 @@ endfunction
 	  if norm(nxt)==0 then pause;end
 	  Y=[Y,nxt];
 	end
-      end;
+      end
       if size(W,2) <>0 then 
 	if verbose then
 	  printf("        %i  block(s) of size %i\n",size(W,2),blk_size);
-	end;
+	end
         blks=[blks,blk_size*ones(1,size(W,2))];
-      end;
+      end
     end
     p=size(Y,2);n=size(X,2);sz=n-p;
     if p<n then
