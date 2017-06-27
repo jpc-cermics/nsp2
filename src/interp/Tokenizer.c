@@ -583,7 +583,7 @@ static int parse_number(Tokenizer *T)
       if ( c1 == '*' || c1 == '/' || c1 == '\\' || c1 == '^' 
 	   || c1 == '=' || c1 == '<' || c1 == '>' ||  c1 == '\''  )
 	{
-	  T->tokenv.buf[count++]='E';
+	  // T->tokenv.buf[count++]='E';
 	}
       else
 	{
