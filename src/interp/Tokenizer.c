@@ -617,7 +617,7 @@ static int parse_number(Tokenizer *T)
   if ( c == 'e' || c == 'E' || c == 'd' || c == 'D') 
     {
       /* char sign = '+'; */
-      T->tokenv.buf[count++]='d';
+      T->tokenv.buf[count++]='E';
       /* parsing e+xxx or e-xxx or exxx*/
       c=T->GetChar(T);
       if ( c == '\0') 
