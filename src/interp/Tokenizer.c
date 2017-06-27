@@ -449,8 +449,14 @@ static int parse_operators(Tokenizer *T)
     case '&':  T->tokenv.id =  AND_OP ;break;
     case '~':  T->tokenv.id =  TILDE_OP ;break;
     case '\n': T->tokenv.id =  RETURN_OP ;break;
-    case ',':  T->tokenv.id =  ( T->tokenv.NextC == '\n' ) ? COMMA_RET_OP: COMMA_OP;break;
-    case ';':  T->tokenv.id =  ( T->tokenv.NextC == '\n' ) ? SEMICOLON_RET_OP: SEMICOLON_OP;break;
+    case ',':
+      if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
+      T->tokenv.id =
+	( T->tokenv.NextC == '\n' ) ? COMMA_RET_OP: COMMA_OP;break;
+    case ';':
+      if ( T->IgnoreWSpaces(T) == FAIL ) return FAIL;
+      T->tokenv.id =
+	( T->tokenv.NextC == '\n' ) ? SEMICOLON_RET_OP: SEMICOLON_OP;break;
     case '-':  T->tokenv.id =  MINUS_OP ;break;
     case '/':  T->tokenv.id =  SLASH_OP ;break;
     case '\\': T->tokenv.id =  BACKSLASH_OP ;break;

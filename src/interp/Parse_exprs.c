@@ -1239,8 +1239,8 @@ static int parse_select(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
  CaseLoop:
   plist1 = NULLPLIST ;
-  case_line = T->tokenv.Line;
   if (parse_bkey(T,CASE,CASE,"select",&plist1) == FAIL) return(FAIL);
+  case_line = T->tokenv.Line;
   /* case <expr> */
   if (debug) scidebug(debugI++,"[case_exp >"); 
   plist1=NULLPLIST;

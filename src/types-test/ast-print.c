@@ -419,7 +419,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret)
 	    case  SEMICOLON_RET_OP  :
 	      newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
 	      newpos = nsp_ast_pprint_opname(ast,0,newpos,0,0);
-	      Sciprintf("ZZ%s","\n");newpos=0;
+	      Sciprintf("%s","\n");newpos=0;
 	      return newpos;
 	      break;
 	    case QUOTE_OP : 
