@@ -467,8 +467,8 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  newpos = pos;
 	  for ( j = 0 ; j <  ast->get_arity(ast) ; j++ )
 	    {
-	      newpos =_nsp_ast_pprint_arg(ast,j+1,(j == 0) ? indent : 1,
-					   newpos,posret,0);
+	      newpos =_nsp_ast_pprint_arg(ast,j+1,(j == 0) ? indent : 0,
+					  newpos,posret,0);
 	      if ( j != ast->get_arity(ast) -1 ) 
 		{
 		  newpos =nsp_ast_pprint_opname(ast,0,newpos,1,1);
@@ -1075,7 +1075,7 @@ static int _nsp_ast_printlength(ast_wrap *ast, int indent, int pos, int posret)
 	  newpos = pos;
 	  for ( j = 0 ; j <  ast->get_arity(ast) ; j++ )
 	    {
-	      newpos =_nsp_ast_printlength_arg(ast,j+1,(j == 0) ? indent : 1,
+	      newpos =_nsp_ast_printlength_arg(ast,j+1,(j == 0) ? indent : 0,
 					   newpos,posret);
 	      if ( j != ast->get_arity(ast) -1 ) 
 		{
