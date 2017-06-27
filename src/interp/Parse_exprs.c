@@ -1424,13 +1424,11 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
+  int for_line = T->tokenv.Line;
 
   /* Name of the loop var : for x=... */
- 
   if (debug) scidebug(debugI++,"[for>");
-  
   if ( T->NextToken(T) == FAIL) return(FAIL);
-
   if (T->tokenv.id != NAME)
     {
       T->ParseError(T,"Parse Error: Unexpected token after do : %s\n",T->code2name(T,T->tokenv.id));
@@ -1449,7 +1447,7 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
       return(FAIL);
     }
   
-  /*  * Parsing val in x=val */
+  /* Parsing val in x=val */
 
   if ( T->NextToken(T) == FAIL) return(FAIL);
   plist1=NULLPLIST;
@@ -1480,7 +1478,7 @@ static int parse_for(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if ( T->tokenv.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist2,FOR,3,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,FOR,3,for_line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<enddo]"); 
       return (OK) ;
