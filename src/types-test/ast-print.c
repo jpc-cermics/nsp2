@@ -65,6 +65,7 @@ static int _nsp_ast_pprint_arg(ast_wrap *ast,int elt, int i, int pos, int posret
 static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int post);
 static int _nsp_ast_pprint_args(ast_wrap *ast, int start, int last, int indent, int pos,
 				int posret, char *sep, int breakable,const char *breakstr);
+static int _nsp_latin1_character_to_html(char c, char *str);
 static int _nsp_ast_equalop_mlhs_length(ast_wrap *ast);
 static void nsp_ast_to_ast_wrap(NspAst *ast, ast_wrap *astwrap);
 static void nsp_plist_to_ast_wrap(PList ast, ast_wrap *astwrap);
@@ -211,12 +212,20 @@ static void nsp_print_comment_for_html(const char *str)
   Sciprintf("//");
   while ( *str != '\0') 
     {
-      switch (*str) 
+      char buf[64];
+      if ( _nsp_latin1_character_to_html(*str,buf))
 	{
-	case '<' : Sciprintf("%s","&lt;");break;
-	case '>' : Sciprintf("%s","&gt;");break;
-	case '&' : Sciprintf("%s","&amp;");break;
-	default :  Sciprintf("%c",*str);
+	  Sciprintf("%s",buf);
+	}
+      else
+	{
+	  switch (*str) 
+	    {
+	    case '<' : Sciprintf("%s","&lt;");break;
+	    case '>' : Sciprintf("%s","&gt;");break;
+	    case '&' : Sciprintf("%s","&amp;");break;
+	    default :  Sciprintf("%c",*str);
+	    }
 	}
       str++;
     }
@@ -264,51 +273,59 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim)
   Sciprintf("%c",string_delim);
   while ( *str != '\0') 
     {
-      switch (*str) 
+      char buf[64];
+      if ( _nsp_latin1_character_to_html(*str,buf))
 	{
-	case '\'' :  Sciprintf("%s","''");break;
-	case '\"' :  Sciprintf("%s","\"\"");break;
-	case '\\' :  
-	  switch (*(str+1)) 
+	  Sciprintf("%s",buf);
+	}
+      else
+	{
+	  switch (*str) 
 	    {
-	    case 'a':
-	    case 'b' : 
-	    case 'f' :  
-	    case 'n' :  
-	    case 'r' :  
-	    case 't' :  
-	    case 'v' :  
-	    case '\a' :  
-	    case '\b' :  
-	    case '\f' :  
-	    case '\n' :  
-	    case '\r' :  
-	    case '\t' :  
-	    case '\v' : Sciprintf("%s","\\\\");break;
-	    default: Sciprintf("%s","\\");break;
-	    }
-	  break;
-	case '\a' :  Sciprintf("%s","\\a"); break;
-	case '\b' :  Sciprintf("%s","\\b"); break;
-	case '\f' :  Sciprintf("%s","\\f"); break;
-	case '\n' :  Sciprintf("%s","\\n");break;
-	case '\r' :  Sciprintf("%s","\\r"); break;
-	case '\t' :  Sciprintf("%s","\\t"); break;
-	case '\v' :  Sciprintf("%s","\\v"); break;
-	default: 
-	  if (isprint(*str)) 
-	    {
-	      switch (*str ) {
-	      case '<' : Sciprintf("%s","&lt;");break;
-	      case '>' : Sciprintf("%s","&gt;");break;
-	      default:
-		Sciprintf("%c",*str);
-	      }
-	    }
-	  else 
-	    {
-	      unsigned char c = *str;
-	      Sciprintf("\\%0.3o",c);
+	    case '\'' :  Sciprintf("%s","''");break;
+	    case '\"' :  Sciprintf("%s","\"\"");break;
+	    case '\\' :  
+	      switch (*(str+1)) 
+		{
+		case 'a':
+		case 'b' : 
+		case 'f' :  
+		case 'n' :  
+		case 'r' :  
+		case 't' :  
+		case 'v' :  
+		case '\a' :  
+		case '\b' :  
+		case '\f' :  
+		case '\n' :  
+		case '\r' :  
+		case '\t' :  
+		case '\v' : Sciprintf("%s","\\\\");break;
+		default: Sciprintf("%s","\\");break;
+		}
+	      break;
+	    case '\a' :  Sciprintf("%s","\\a"); break;
+	    case '\b' :  Sciprintf("%s","\\b"); break;
+	    case '\f' :  Sciprintf("%s","\\f"); break;
+	    case '\n' :  Sciprintf("%s","\\n");break;
+	    case '\r' :  Sciprintf("%s","\\r"); break;
+	    case '\t' :  Sciprintf("%s","\\t"); break;
+	    case '\v' :  Sciprintf("%s","\\v"); break;
+	    default: 
+	      if (isprint(*str)) 
+		{
+		  switch (*str ) {
+		  case '<' : Sciprintf("%s","&lt;");break;
+		  case '>' : Sciprintf("%s","&gt;");break;
+		  default:
+		    Sciprintf("%c",*str);
+		  }
+		}
+	      else 
+		{
+		  unsigned char c = *str;
+		  Sciprintf("\\%0.3o",c);
+		}
 	    }
 	}
       str++;
@@ -970,6 +987,61 @@ static char *_nsp_ast_get_space(ast_wrap *ast)
 {
   return ((ast->use_html_color_class == TRUE) ? "&nbsp;": " ");
 }
+
+static int _nsp_latin1_character_to_html(char c, char *str)
+{
+  switch (c)
+    {
+    case '\300' : strcpy(str,"&Agrave;");break;
+    case '\310' : strcpy(str,"&Egrave;");break;
+    case '\314' : strcpy(str,"&Igrave;");break;
+    case '\322' : strcpy(str,"&Ograve;");break;
+    case '\331' : strcpy(str,"&Ugrave;");break;
+    case '\340' : strcpy(str,"&agrave;");break;
+    case '\350' : strcpy(str,"&egrave;");break;
+    case '\354' : strcpy(str,"&igrave;");break;
+    case '\362' : strcpy(str,"&ograve;");break;
+    case '\371' : strcpy(str,"&ugrave;");break;
+    case '\301' : strcpy(str,"&Aacute;");break;
+    case '\311' : strcpy(str,"&Eacute;");break;
+    case '\315' : strcpy(str,"&Iacute;");break;
+    case '\323' : strcpy(str,"&Oacute;");break;
+    case '\332' : strcpy(str,"&Uacute;");break;
+    case '\335' : strcpy(str,"&Yacute;");break;
+    case '\341' : strcpy(str,"&aacute;");break;
+    case '\351' : strcpy(str,"&eacute;");break;
+    case '\355' : strcpy(str,"&iacute;");break;
+    case '\363' : strcpy(str,"&oacute;");break;
+    case '\372' : strcpy(str,"&uacute;");break;
+    case '\375' : strcpy(str,"&yacute;");break;
+    case '\302' : strcpy(str,"&Acirc;");break;
+    case '\312' : strcpy(str,"&Ecirc;");break;
+    case '\316' : strcpy(str,"&Icirc;");break;
+    case '\324' : strcpy(str,"&Ocirc;");break;
+    case '\333' : strcpy(str,"&Ucirc;");break;
+    case '\342' : strcpy(str,"&acirc;");break;
+    case '\352' : strcpy(str,"&ecirc;");break;
+    case '\356' : strcpy(str,"&icirc;");break;
+    case '\364' : strcpy(str,"&ocirc;");break;
+    case '\373' : strcpy(str,"&ucirc;");break;
+    case '\303' : strcpy(str,"&Atilde;");break;
+    case '\321' : strcpy(str,"&Ntilde;");break;
+    case '\325' : strcpy(str,"&Otilde;");break;
+    case '\343' : strcpy(str,"&atilde;");break;
+    case '\361' : strcpy(str,"&ntilde;");break;
+    case '\365' : strcpy(str,"&otilde;");break;
+    case '\304' : strcpy(str,"&Auml;");break;
+    case '\313' : strcpy(str,"&Euml;");break;
+    case '\317' : strcpy(str,"&Iuml;");break;
+    case '\326' : strcpy(str,"&Ouml;");break;
+    case '\334' : strcpy(str,"&Uuml;");break;
+    default: return FALSE;
+    }
+  return TRUE;
+}
+
+/* compute the lenght used to pprint given ast 
+ */
 
 static int _nsp_ast_printlength_args(ast_wrap *ast, int start, int last, int indent, int pos, 
 				     int posret, char *sep, int breakable, const char *breakstr);
