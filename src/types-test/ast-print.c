@@ -53,7 +53,11 @@ struct _ast_wrap {
   int use_color;
 };
 
-static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt, int offset);
+static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset);
+static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset);
+#if 0
+static int _nsp_ast_pprint_statements_newline_ended(ast_wrap *ast,int elt, int offset);
+#endif
 static void nsp_print_string_as_read_for_html(const char *str, char string_delim);
 static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offset);
 static void nsp_print_comment_for_html(const char *str);
@@ -385,6 +389,9 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
 	s1 = "&gt;=";
       else if ( strcmp(s,"<>") == 0)
 	s1 = "&lt;&gt";
+      /* else if ( strcmp(s,"~") == 0 )
+	 s1 = "&#126;";
+      */
       else s1 = s;
     }
   if (  ast->use_gtk_color_class == TRUE )
@@ -686,8 +693,14 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  newpos += Sciprintf("=") ;
 	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos,newpos, 0);
 	  newpos += nsp_ast_pprint_keyword(1,ast,"do");
+	  /* check if we insert a newline after do or try to generate 
+	   * a one line for 
+	   */
 	  newpos = _nsp_ast_pprint_check_newline(ast,3,newpos, 0);
 	  newpos = _nsp_ast_pprint_arg(ast,3,0,newpos,posret+2, 0);
+	  /* WIP: here: we should insert a newline before end if the one line for 
+	   * option was rejected 
+	   */
 	  newpos += nsp_ast_pprint_keyword(Max(posret-newpos,0),ast,"end");
 	  return newpos;
 	  break;
@@ -929,7 +942,7 @@ static int _nsp_ast_equalop_mlhs_length(ast_wrap *ast)
 /* This routine returns true is the statements are on a single line
  */
 
-static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt, int offset)
+static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset)
 {
   ast_wrap astel;
   // int l, j;
@@ -947,20 +960,49 @@ static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt, int offset
     {
       ast_wrap ast1;
       if ( astel.get_arg(&astel,j,&ast1)  == FAIL) return FALSE;
-      // if ( ast1.get_line(&ast1) >  current_line)
+      switch (ast1.get_op(&ast1))
 	{
-	  switch (ast1.get_op(&ast1))
-	    {
-	    case RETURN_OP : 
-	    case COMMA_RET_OP : 
-	    case SEMICOLON_RET_OP  :
-	      return TRUE;
-	    }
+	case RETURN_OP : 
+	case COMMA_RET_OP : 
+	case SEMICOLON_RET_OP  :
+	  return TRUE;
 	}
     }
   return FALSE;
 #endif
 }
+
+/* This routine returns true is the statements are ended by an operator with return 
+ * i.e  RETURN_OP, COMMA_RET_OP, SEMICOLON_RET_OP
+ */
+#if 0
+static int _nsp_ast_pprint_statements_newline_ended(ast_wrap *ast,int elt, int offset)
+{
+  ast_wrap astel;
+  int l, j;
+  // int current_line = ast->get_line(ast);
+  if ( ast->get_arg(ast,elt,&astel) == FAIL) return FALSE;
+  if ( astel.get_op(&astel) != STATEMENTS )
+    {
+      // Sciprintf("Should be statements\n");
+      return FALSE;
+    }
+  l = astel.get_length_args(&astel);
+  for ( j = 1 ; j <= l ; j++)
+    {
+      ast_wrap ast1;
+      if ( astel.get_arg(&astel,j,&ast1)  == FAIL) return FALSE;
+      switch (ast1.get_op(&ast1))
+	{
+	case RETURN_OP : 
+	case COMMA_RET_OP : 
+	case SEMICOLON_RET_OP  :
+	  return TRUE;
+	}
+    }
+  return FALSE;
+}
+#endif
 
 /* this routine explores the given ast to decide if the 
  * pretty printing of the ast should start with a white space or 
@@ -972,7 +1014,7 @@ static int _nsp_ast_pprint_statements_with_ret(ast_wrap *ast,int elt, int offset
 static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offset)
 {
   int newpos;
-  if ( _nsp_ast_pprint_statements_with_ret(ast,elt, offset) == TRUE) 
+  if ( _nsp_ast_pprint_one_line_statements(ast,elt, offset) == TRUE) 
     {
       Sciprintf("\n"); newpos=0;
     }
@@ -983,7 +1025,7 @@ static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offs
   return newpos;
 }
 
-static char *_nsp_ast_get_space(ast_wrap *ast)
+static char* _nsp_ast_get_space(ast_wrap *ast)
 {
   return ((ast->use_html_color_class == TRUE) ? "&nbsp;": " ");
 }

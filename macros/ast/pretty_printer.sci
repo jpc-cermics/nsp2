@@ -76,8 +76,9 @@ function txt=pretty_printer(fname,target="nsp")
     // to be protected for tex4ht
     S=strsubst(S,"\","&#92;");
     S=strsubst(S,"%","&#37;");	
-    S=strsubst(S,"#","\#");	
-    S=latin1_letters_to_html(S);
+    S=strsubst(S,"#","\#");
+    S=strsubst(S,"~","&#126;");
+    // S=latin1_letters_to_html(S);
     S=['\HCode{';
        S+ "\Hnewline";
        '}'];
