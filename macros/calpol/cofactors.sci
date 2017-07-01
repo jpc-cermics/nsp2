@@ -1,5 +1,5 @@
 function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
-  // Copyright  2010-2015 Jean-Philippe Chancelier
+  // Copyright  2010-2017 Jean-Philippe Chancelier
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@ function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
   // this function can be used after cofactors to
   // improve a solution by fsolve iterations
   //
-  
+
   function [g,p,q]=cofactors_iter(u,v,p,q,ftol = 1.d-14)
     // find a solution of
     //  p*g -u = 0
     //  q*g -v = 0
     // this function can be used after cofactors to
     // improve a solution by fsolve iterations
-    
+
     function y=f(x)
       //  p*g -u = 0
       //  q*g -v = 0
@@ -44,7 +44,7 @@ function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
       Cq=toeplitz([qc;zeros(r,1)],[qc(1),zeros(1,r)]);
       y=[Cp*gc;Cq*gc]-[uc;vc];
     endfunction
-    
+
     function J=jac(x)
       // jacobian of function f
       gc=x(1:r+1);
@@ -60,7 +60,7 @@ function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
       Cg2=toeplitz([gc;zeros(m,1)],[gc(1),zeros(1,m)]);
       J=[Cp,Cg1,zeros(r+n+1,m+1);Cq,zeros(r+m+1,n+1),Cg2];
     endfunction
-    
+
     n=p.degree[];
     m=q.degree[];
     pc=p.coeffs{1}.';
@@ -72,28 +72,28 @@ function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
     uc=u.coeffs{1}.';
     vc=v.coeffs{1}.';
     mm=size(uc,'*')+size(vc,'*');
-    
+
     x0=[gc;pc;qc];
     [xf,ff]=fsolve_lsq(x0,f,mm,jac = jac,ftol = ftol,warn = %f);
-    
+
     g=m2p(xf(1:r+1));
     p=m2p(xf(r+2:r+2+n));
     q=m2p(xf(r+2+n+1:r+2+n+1+m));
   endfunction
-  
-  
+
+
   n=u.degree[];
   m=v.degree[];
   uc=u.coeffs{1};
   vc=v.coeffs{1};
-  
+
   if td==0 then
     g=m2p(1);
     p=u;
     q=v;
     return;
   end
-  
+
   Ms=[toeplitz([uc,zeros(1,m-td)],[uc(1),zeros(1,m-td)]), ...
       toeplitz([vc,zeros(1,n-td)],[vc(1),zeros(1,n-td)])];
   xx=[Ms;ones(1,n+m-2*(td-1))]\[zeros(m+n-(td-1),1);1];

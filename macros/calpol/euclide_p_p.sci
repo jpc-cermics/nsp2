@@ -1,5 +1,5 @@
 function [r,q]=monodiv_p(a,alpha)
-  // Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc
+  // Copyright  2010-2017 Jean-Philippe Chancelier Cermics/Enpc
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ function [r,q]=monodiv_p(a,alpha)
 endfunction
 
 function [r,q]=pdiv_soft_p_p(a,b)
-  // Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc
+  // Copyright  2010-2017 Jean-Philippe Chancelier Cermics/Enpc
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ function [r,q]=pdiv_soft_p_p(a,b)
   // polynomial division a=q*b + r
   // a and b are two polynoms
   // should be extended to term to term
-  
+
   q=[];
   cb=b.coeffs{1};
   nb=size(cb,'*');
@@ -151,7 +151,7 @@ if %f then
   x=m2p([0,1]);
   pqlcm.normalize[];
   if norm(pqlcm-(1+x)^4*x^2)>100*%eps then pause ;end
-  
+
   // test
   x=poly(0);
   pp1=[x*(1+x)^4;x^3*(1+x)^3;x^3*(1+x)^2;x^3*(1+x)^2;x^4*(1+x)^2;x^4*(1+x);x^3*(1+x)];
@@ -159,7 +159,7 @@ if %f then
   for i=1:size(pp1,'*') do g=euclide(g,pp1(i),monic = %t);end
   g.normalize[];
   if norm(g-x*(1+x))>100*%eps then pause ;end
-  
+
   // test
   x=poly(0);
   qq=[3*(x^2-4);3*x*(x^2-4)];
@@ -190,7 +190,7 @@ if %f then
       g.normalize[];
       N(i)=norm(g-gcpq1);
       if N(i)>1.d-5 then
-        T(i)=%f;
+	T(i)=%f;
       end
     end
     I=find(N==0);N(I)=1.d-16;
@@ -199,7 +199,7 @@ if %f then
     plot2d(1:n,log(N)/log(10))
     xtitle(sprintf('Number of correct tests %d/%d',Nok,n));
   endfunction
-  
+
   function gcd_euclide2_test()
     x=poly(0);
     r=-5:4;
@@ -208,17 +208,17 @@ if %f then
     for k=1:size(veps,'*') do
       T=ones(1,n);
       for i=1:n do
-        cp=grand(1,10,'uin',0,1);
-        p=m2p(1);for j=1:10 do p=p*(r(j)+x)^cp(j);end
-        cq=grand(1,10,'uin',0,1);
-        q=m2p(1);for j=1:10 do q=q*(r(j)+x)^cq(j);end
-        eps=veps(k);
-        [gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps = eps);
-        cpq=min(cq,cp);
-        pq=m2p(1);for j=1:10 do pq=pq*(r(j)+x)^cpq(j);end
-        gcpq1=pq;
-        gcpq.normalize[];
-        T(i)=norm(gcpq1-gcpq,1);
+	cp=grand(1,10,'uin',0,1);
+	p=m2p(1);for j=1:10 do p=p*(r(j)+x)^cp(j);end
+	cq=grand(1,10,'uin',0,1);
+	q=m2p(1);for j=1:10 do q=q*(r(j)+x)^cq(j);end
+	eps=veps(k);
+	[gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps = eps);
+	cpq=min(cq,cp);
+	pq=m2p(1);for j=1:10 do pq=pq*(r(j)+x)^cpq(j);end
+	gcpq1=pq;
+	gcpq.normalize[];
+	T(i)=norm(gcpq1-gcpq,1);
       end
       Ts=sort(T,'g','i');
       res(k)=Ts(8000);

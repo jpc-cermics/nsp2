@@ -1,6 +1,6 @@
 
 function u=epdiv_fft(p,q)
-  // Copyright  2010-2015 Paola Boito
+  // Copyright  2010-2017 Paola Boito
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ function u=epdiv_fft(p,q)
   //
   // In the original code in case 3 a GKO algorithm was used
   // here we just use standard linear algebra.
-  
+
   tol=1d-8;
   f=p.coeffs{1};
   g=q.coeffs{1};
@@ -52,7 +52,7 @@ function u=epdiv_fft(p,q)
     u=m2p(u);
     return;
   end
-  
+
   // the evaluation of g on fft points
   // gives two small values.
   // move the evaluation points.
@@ -75,7 +75,7 @@ function u=epdiv_fft(p,q)
 endfunction
 
 function u=epdiv_lsq(p,q)
-  // Copyright  2010-2015 Jean-Philippe Chancelier
+  // Copyright  2010-2017 Jean-Philippe Chancelier
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ function u=epdiv_lsq(p,q)
   // You should have received a copy of the GNU General Public License
   // along with this program; if not, write to the Free Software
   // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+
   // Computes polynomial division by solving a
   // linear least squares system by standard algebra.
   // The function computes u= p/q assuming that
@@ -113,7 +113,7 @@ function u=epdiv_lsq(p,q)
 endfunction
 
 function u=epdiv_gko(p,q)
-  // Copyright  2010-2015 Paola Boito
+  // Copyright  2010-2017 Paola Boito
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -140,22 +140,22 @@ function u=epdiv_gko(p,q)
   m=q.degree[];
   f=p.coeffs{1}.';
   g=q.coeffs{1}.';
-  
+
   k=n-m;
   threshold=1d-13;
-  
+
   N=n+1;
   M=k+1;// size of convolution matrix
   MN=lcm(N,M);
   theta=exp(M*%pi*%i/MN);
-  
+
   // choose Toeplitz-like generators
   G1=zeros(n+1,1);
   G1(1)=g(m+1);
   G1(k+2:n+1)=g(1:m);
   G1(1:m+1)=G1(1:m+1)-theta*g;
   G2=[zeros(1,k),1];
-  
+
   // compute the auxiliary matrix D0
   D0=diag(exp(%pi*%i*(0:M-1)/MN))
   // compute D1 (which is NxN)
@@ -171,27 +171,27 @@ function u=epdiv_gko(p,q)
   FD0=sN*ifft(D0,'m');
   G1_c=sN*ifft(G1,'m');
   G2_c=G2*FD0';
-  
+
   // perform fast LU
   L=zeros(N);
   U=zeros(N,M);
   P=eye(N);
   P2=eye(M);
-  
+
   for k=1:M do
     // the first generator is made orthogonal
     [Q,R]=qr(G1_c,mode = "e");
     G1_c=Q;
     G2_c=R*G2_c;
-    
+
     // look for column of max magnitude in G2_c
     c=zeros(1,M-k+1);
     c(k:M)=conj(G2_c(k:M)) .*G2_c(k:M);
-    
+
     //max for complex [val,col]=max(c);
     [val,col]=max(abs(c));
     val=c(col);
-    
+
     U(k,k:M)=(G1_c(k)*G2_c(k:M)) ./((D1(k)*ones(1,M-k+1)-D2(k:M)));
     // swap s_k and s_col
     D2.perm_elem[k,col];
@@ -202,7 +202,7 @@ function u=epdiv_gko(p,q)
     // swap columns in P2
     P2.perm_elem[k,col,'c']
     L(k:N,k)=(G1_c(k:N)*G2_c(k)) ./((D1(k:N)-D2(k)*ones(1,N-k+1)).');
-    
+
     [u,s]=max(abs(L(k:N,k)));
     s=s+k-1;
     U(k,k)=L(s,k);
@@ -226,14 +226,14 @@ function u=epdiv_gko(p,q)
   end
   L(M+1:N,M+1:N)=eye(N-M);
   y=L\(P*sN*ifft(f));
-  
+
   // detect nullity
   nullity=0;
   while abs(U(M-nullity,M-nullity))<threshold do
     nullity=nullity+1;
   end
   //  nullity = M- (max(find([threshold;abs(diag(U))] >= threshold ))-1);
-  
+
   y=y(1:M-nullity);
   U=U(1:M-nullity,1:M-nullity);
   y=U\y;
@@ -283,16 +283,16 @@ if %f then
   if norm(p-q*u)>1.d-10 then pause ;end
   u=epdiv_gko(p,q);
   if norm(p-q*u)>1.d-10 then pause ;end
-  
+
   [ok1,T1,no1]=epdiv_test(1000,epdiv_fft);
   if ~ok1 then pause ;end
-  
+
   [ok2,T2,no2]=epdiv_test(1000,epdiv_lsq);
   if ~ok2 then pause ;end
-  
+
   [ok3,T3,no3]=epdiv_test(1000,epdiv_gko);
   if ~ok3 then pause ;end
-  
+
 end
 
 

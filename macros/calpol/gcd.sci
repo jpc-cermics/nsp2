@@ -1,5 +1,5 @@
 function [q,fact]=gcd(p)
-  // Copyright  2013-2015 Jean-Philippe Chancelier Cermics/Enpc
+  // Copyright  2013-2017 Jean-Philippe Chancelier Cermics/Enpc
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@ function [q,fact]=gcd(p)
   // You should have received a copy of the GNU General Public License
   // along with this program; if not, write to the Free Software
   // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+
   error("Error: gcd not implemented for "+type(p,'string'));
   return;
 endfunction
@@ -35,7 +35,7 @@ function [g,uu]=gcd_i(p)
     for l=2:mn do g=euclide(g,p(l));end
     return;
   end
-  
+
   uu=m2i(1,it);
   for l=2:mn do
     [g,U]=euclide(g,p(l));u=U{1,1};

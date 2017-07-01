@@ -1,6 +1,6 @@
 function [phi,db]=phasemag(z,mod)
-// phase and magnitude computation
-// Copyright CECILL INRIA (from scilab).
+  // phase and magnitude computation
+  // Copyright CECILL INRIA (from scilab).
 
   if nargin <= 1 then mod='c';end
   if nargout ==2 then 

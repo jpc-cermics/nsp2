@@ -1,9 +1,9 @@
 function f=div_p_p(p1,p2)
-// p1/p2 <=> f= p1*(p2^(-1)) 
-// p1 polynomial matrix
-// p2 polynomial matrix
-//!
-// Copyright INRIA
+  // p1/p2 <=> f= p1*(p2^(-1)) 
+  // p1 polynomial matrix
+  // p2 polynomial matrix
+  //!
+  // Copyright INRIA
   if size(p2,'*') <>1 then 
     f=p1*inv(p2)
   else

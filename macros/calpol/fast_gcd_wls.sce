@@ -47,26 +47,26 @@ function [z,res] = fast_gcd_wls(pf,pg,delta)
   // normalize f and g
   f=pf/norm(pf);
   g=pg/norm(pg);
-  
+
   // introduce a heuristic correction on delta
   delta_c = max(delta,1.e-9);
-  
+
   // factorize the Sylvester matrix S
   // and find a tentative degree tdeg
   [Pr,P2r,L,U]=lu_sylvester(f,g);
   dU=abs(diag(U));
-    
+
   eta=delta_c*sqrt(N);
   k = max(find([eta;dU] >= eta))-1;
   tdeg=N-k;
-    
+
   clear dU;
   // handle special or forbidden values for tdeg
   tdeg = min(max(tdeg,1),m);
-  
+
   printf("test a gcd degree of %d\n",tdeg);
   pause 
-  
+
   if tdeg==m
     z=g;
     dfg=epdiv_fft(f,g);
@@ -79,7 +79,7 @@ function [z,res] = fast_gcd_wls(pf,pg,delta)
 
     // if 0<tdeg<m+1 start the standard procedure
   else
-    
+
     // compute cofactors
     [f1,f2]=c_cofactors(f,g,tdeg);
     // compute a tentative gcd
@@ -189,7 +189,7 @@ endfunction
 
 function [z]=c_j_lu(p,q,g,x,K)
 
-// make sure that p,q,g are column vectors
+  // make sure that p,q,g are column vectors
   [s1,s2]=size(p);
   if s2>s1
     p=p.';
@@ -211,7 +211,7 @@ function [z]=c_j_lu(p,q,g,x,K)
   // the nullity of the Jacobian is too large
 
   threshold=1e-9;
-  
+
   // compute degrees and other useful parameters
   k=length(g)-1;
   n=length(p)-1;
@@ -357,7 +357,7 @@ function [z]=c_j_lu(p,q,g,x,K)
   while abs(U(M-nullity,M-nullity))<threshold
     nullity=nullity+1;
   end
-  
+
   y=y(1:M-nullity);
   U=U(1:M-nullity,1:M-nullity);
   y=U\y;
@@ -384,15 +384,15 @@ endfunction
 function [f1,f2]=c_cofactors(f,g,tdeg)
 
   threshold=1e-9;  // tolerance for rank determination
-    
+
   // make sure that f and g are column vectors
   f = f.coeffs{1}.';
   g = g.coeffs{1}.';
-  
+
   // reverse polynomial for agreement with other programs
   f=flipud(f);
   g=flipud(g);
-  
+
   // compute degrees and other useful parameters
   n=length(f)-1;
   m=length(g)-1;
@@ -400,7 +400,7 @@ function [f1,f2]=c_cofactors(f,g,tdeg)
   M=n+m-2*tdeg+2;
   MN=lcm(N,M);
   theta=exp(M*%pi*%i/MN);
-  
+
   // compute displacement generators for the cofactor matrix
   G1=zeros(N,2);
   G1(:,1)=[f(n+1); zeros(m-tdeg,1); f(1:n)]-[g; zeros(n-tdeg,1)];
@@ -586,7 +586,7 @@ endfunction
 
 
 function y=lcm_m_m(a,b)
-// XXXXX 
+  // XXXXX 
   g = euclide(a,b);
   y = (a/g)*b;
 endfunction

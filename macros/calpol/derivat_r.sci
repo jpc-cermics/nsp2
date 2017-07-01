@@ -1,5 +1,5 @@
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
-// Copyright (C) 2016-2016 - Jean-Philippe Chancelier (Enpc)
+// Copyright (C) 2016-2017 - Jean-Philippe Chancelier (Enpc)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

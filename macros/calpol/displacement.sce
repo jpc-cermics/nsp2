@@ -1,16 +1,16 @@
 
 function t=test1()
-// Displacement Structure for the p/q division. 
-// The idea is to minimize || p - qh ||_2 
-// The equivalent linear algebra problem 
-// is to minimize || p -A h ||_2 where 
-// A is the convolution matrix associated to q.
-// The matrix T = A'*A is Toeplitz and thus 
-// we check here the displacement associated to T
+  // Displacement Structure for the p/q division. 
+  // The idea is to minimize || p - qh ||_2 
+  // The equivalent linear algebra problem 
+  // is to minimize || p -A h ||_2 where 
+  // A is the convolution matrix associated to q.
+  // The matrix T = A'*A is Toeplitz and thus 
+  // we check here the displacement associated to T
 
   p = m2p(1:6);
   q = m2p(7:9);
-  
+
   n=p.degree[];
   m=q.degree[];
   pc= p.coeffs{1};
@@ -27,7 +27,7 @@ function t=test1()
   G=[G,G]; G(1,2)=0;
   T = A'*A;
   t=norm( T - Z*T*Z' - G *[1,0;0,-1]* G')
-  
+
   // we also have a displacement with Zu and Zmu 
   // Zu*T - T*Zmu =  G1*G2'
 
@@ -46,11 +46,11 @@ function t=test1()
   Zmu.set_diag[-1,nt-1];
   t2 = norm( Zu*T - T*Zmu - G1*G2')
   t = max(t2,t);
-  
+
 endfunction
 
 function t=test2()
-// displacement structure for Sylvester Matrix 
+  // displacement structure for Sylvester Matrix 
   p = m2p(1:6);
   q = m2p(7:9);
   S=sylvester(p,q);
@@ -73,7 +73,7 @@ function t=test2()
 endfunction
 
 function t=test3()
-// displacement structure for toeplitz Matrix 
+  // displacement structure for toeplitz Matrix 
   c = [1,2:5];
   r =[1,6:9];
   n = size(c,'*');

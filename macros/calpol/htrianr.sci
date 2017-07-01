@@ -1,6 +1,6 @@
 function [A,U,rk]=htrianr(A)
   // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
-  // Copyright (C) 1987-2016 - F. Delebecque et all (INRIA)
+  // Copyright (C) 1987-2017 - F. Delebecque et all (INRIA)
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ function [A,U,rk]=htrianr(A)
   // along with this program; if not, write to the Free Software
   // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   //
-  
+
   //[A,U,rk]=htrianr(a)
   //triangularization of polynomial matrix A.  A is [m,n], m<=n.
   //U=right unimodular basis
@@ -34,15 +34,15 @@ function [A,U,rk]=htrianr(A)
     if l1<>0 then
       Al=A(l,1:l1);
       if norm(coeff(Al),1)>1.d-10 then
-        [pg,Ul]=hrmt(Al);
-        Ul=clean(Ul,1.d-10);
-        A(l,1:l1)=[0*ones(1,l1-1),pg];
-        U(:,1:l1)=U(:,1:l1)*Ul;
-        if l>1 then
-          A(1:l-1,1:l1)=A(1:l-1,1:l1)*Ul;
-        end
+	[pg,Ul]=hrmt(Al);
+	Ul=clean(Ul,1.d-10);
+	A(l,1:l1)=[0*ones(1,l1-1),pg];
+	U(:,1:l1)=U(:,1:l1)*Ul;
+	if l>1 then
+	  A(1:l-1,1:l1)=A(1:l-1,1:l1)*Ul;
+	end
       else
-        l1=l1+1
+	l1=l1+1
       end
     end
   end

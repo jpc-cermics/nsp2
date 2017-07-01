@@ -1,39 +1,39 @@
 function [Pr,P2r,L,U]=lu_sylvester(pf,pg) 
-// Copyright  2010-2015 Paola Boito 
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Adapted and revisited for Nsp (Jean-Philippe Chancelier 2010)
-// 
-// Fast LU factorization of the sylvester matrix associated to (p,q) 
-// we follow here the description of 
-// Paola Boito thesis chap 2.
-// Let Ms be the sylvester matrix 
-//
-// C = Fm'*Ms*inv(D0)*Fm ;
-// D0= diag(exp(%pi*%i*(0:N-1)/N))
-// Fm is the fourrier matrix 
-// 
-// a fast LU of C is performed.
-// C(Pr,P2r) = L*U
-// 
-// Fm*A = fft(A,'m')/sqrt(n) 
-// Fm'*A =  ifft(A,'m')*sqrt(n)
-// Fm*Fm' = Id
-//
-// compute degrees of input polynomials
+  // Copyright  2010-2017 Paola Boito 
+  //
+  // This program is free software; you can redistribute it and/or modify
+  // it under the terms of the GNU General Public License as published by
+  // the Free Software Foundation; either version 2 of the License, or
+  // (at your option) any later version.
+  //
+  // This program is distributed in the hope that it will be useful,
+  // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  // GNU General Public License for more details.
+  //
+  // You should have received a copy of the GNU General Public License
+  // along with this program; if not, write to the Free Software
+  // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  //
+  // Adapted and revisited for Nsp (Jean-Philippe Chancelier 2010)
+  // 
+  // Fast LU factorization of the sylvester matrix associated to (p,q) 
+  // we follow here the description of 
+  // Paola Boito thesis chap 2.
+  // Let Ms be the sylvester matrix 
+  //
+  // C = Fm'*Ms*inv(D0)*Fm ;
+  // D0= diag(exp(%pi*%i*(0:N-1)/N))
+  // Fm is the fourrier matrix 
+  // 
+  // a fast LU of C is performed.
+  // C(Pr,P2r) = L*U
+  // 
+  // Fm*A = fft(A,'m')/sqrt(n) 
+  // Fm'*A =  ifft(A,'m')*sqrt(n)
+  // Fm*Fm' = Id
+  //
+  // compute degrees of input polynomials
   n=pf.degree[];//length(f)-1;
   m=pg.degree[];// length(g)-1;
   N=m+n;
@@ -41,7 +41,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
   g = pg.coeffs{1};
   f = fliplr(f);
   g = fliplr(g);
-  
+
   // compute displacement generators for the Sylvester matrix
   G2=zeros(2,N);
   G2(1,N-m:N)=g;
@@ -52,7 +52,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
   G2(2,N)=G2(2,N)+g(1);
   G1=zeros(N,2);
   G1([1;m+1],:)=eye(2);
-  
+
   if %t then 
     // test displacement equation 
     Ms = sylvester(pf,pg);
@@ -64,7 +64,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
     // 
     if  norm( Zu*Ms - Ms*Zmu - G1*G2) > 1000*%eps then pause;end 
   end
-  
+
   // compute the auxiliary matrix D0
   D0= diag(exp(%pi*%i*(0:N-1)/N))
   // compute D1
@@ -75,13 +75,13 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
   // matrices that define a displacement operator for
   // the Cauchy-like matrix C associated with
   // the Sylvester matrix
-  
+
   // compute generators G1_c and G2_c  for C
   sN=sqrt(N);
   FD0=sN*ifft(D0,'m'); // Fm'*D0
   G1_c=sN*ifft(G1,'m');// Fm'*G1 
   G2_c=G2*FD0';       // G2*D0'*Fm
-  
+
   if %t then 
     // test the new displacement function 
     // Fm=Fmat(N);
@@ -91,9 +91,9 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
     C = Fm'*Ms*inv(D0)*Fm ;
     if norm(diag(D1)*C -C*diag(D2) - G1_c*G2_c) > 10000*%eps then pause;end 
   end 
-  
+
   // perform fast LU of Matrix C 
-  
+
   L=zeros(N); U=zeros(N);
   //P=eye(N);
   Pr=1:N;
@@ -149,35 +149,35 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
 endfunction
 
 function x=lu_sylvester_solve(Pr,P2r,L,U,b)
-// Copyright  2010-2015 Paola Boito 
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Adapted and revisited for Nsp (Jean-Philippe Chancelier 2010)
-// 
-// [Pr,P2r,L,U]=lu_sylvester(pf,pg)
-// C = Fm'*Ms*inv(D0)*Fm ;
-// D0= diag(exp(%pi*%i*(0:N-1)/N))
-// C(Pr,P2r) = L*U
-// Fm*A = fft(A,'m')/sqrt(n) 
-// Fm'*A =  ifft(A,'m')*sqrt(n)
-// 
-// solve Ms x= b 
-// Ms = Fm*C*Fm'*inv(D0)
-// Ms x = b 
-// C*Fm'*inv(D0)*x = Fm'*b  
+  // Copyright  2010-2017 Paola Boito 
+  //
+  // This program is free software; you can redistribute it and/or modify
+  // it under the terms of the GNU General Public License as published by
+  // the Free Software Foundation; either version 2 of the License, or
+  // (at your option) any later version.
+  //
+  // This program is distributed in the hope that it will be useful,
+  // but WITHOUT ANY WARRANTY; without even the implied warranty of
+  // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  // GNU General Public License for more details.
+  //
+  // You should have received a copy of the GNU General Public License
+  // along with this program; if not, write to the Free Software
+  // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  //
+  // Adapted and revisited for Nsp (Jean-Philippe Chancelier 2010)
+  // 
+  // [Pr,P2r,L,U]=lu_sylvester(pf,pg)
+  // C = Fm'*Ms*inv(D0)*Fm ;
+  // D0= diag(exp(%pi*%i*(0:N-1)/N))
+  // C(Pr,P2r) = L*U
+  // Fm*A = fft(A,'m')/sqrt(n) 
+  // Fm'*A =  ifft(A,'m')*sqrt(n)
+  // 
+  // solve Ms x= b 
+  // Ms = Fm*C*Fm'*inv(D0)
+  // Ms x = b 
+  // C*Fm'*inv(D0)*x = Fm'*b  
   n = size(Pr,'*');
   b1=ifft(b,'m')*sqrt(n);
   // C* y = b1 
@@ -198,7 +198,7 @@ endfunction
 
 if %f then 
   function M=Fmat(n)
-  // Fourier matrix 
+    // Fourier matrix 
     M=ones(n,n);
     for i=1:n do
       M(i,1:n)=exp(2*%pi*%i*(i-1)*((1:n)-1)/n)/sqrt(n);
