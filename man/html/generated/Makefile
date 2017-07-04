@@ -6,23 +6,17 @@ SHELL=/bin/bash
 # with a few changes at the end to allow copy/paste to nsp 
 # 
 
+manual:
+	./htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' ' -cunihtf' ''
+	@cp ../manual.css manual.css
+
 all:: manual-silent index-silent manual2-silent  manualindex 
 
-# tlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
-# htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8"
-
-manual2-silent manual-silent:
+manual-silent manual2-silent:
 	@echo -n "running htlatex..."
-	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'manual,xhtml,uni-html4,3,section+,next,notoc*'  >& /dev/null
+	@./htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' ' -cunihtf' '' >& /dev/null
 	@cp ../manual.css manual.css
 	@echo "done"
-
-manual:
-	@echo "running htlatex"
-	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'manual,xhtml,uni-html4,3,section+,next,notoc*' 
-	@cp ../manual.css manual.css
 
 index-silent: 
 	@echo -n "make index..."
