@@ -1,36 +1,28 @@
 \documentclass[11pt]{book}
 
-\input ../../html/common.tex 
+\input{../../html/common.tex}
 
-\usepackage{xcolor}
-\colorlet{kw}{blue}
-\definecolor{com}{rgb}{0,0.6,0.3}
-
-\usepackage{algorithmicx}
-\usepackage{algpseudocode}
-
-% redefine keywords
-\algrenewcommand\algorithmicfunction{\textcolor{kw}{function}}
-\algrenewcommand\algorithmicwhile{\textcolor{kw}{while}}
-\algrenewcommand\algorithmicfor{\textcolor{kw}{for}}
-\algrenewcommand\algorithmicif{\textcolor{kw}{if}}
-\algrenewcommand\algorithmicelse{\textcolor{kw}{else}}
-\algrenewcommand\algorithmicend{\textcolor{kw}{end}}
-
-% new keywords
-\algnewcommand\Break{\textcolor{kw}{break}}%
-\algnewcommand\Continue{\textcolor{kw}{continue}}%
-
-% redefine loops
-\algdef{SE}[WHILE]{While}{EndWhile}[1]{\algorithmicwhile\ #1}{\algorithmicend}%
-\algdef{SE}[FOR]{For}{EndFor}[1]{\algorithmicfor\ #1}{\algorithmicend}%
-\algdef{C}[IF]{IF}{ElsIf}[1]{\algorithmicelse\algorithmicif\ #1}%
-
-% redefine comments
-\algrenewcommand{\algorithmiccomment}[1]{{\color{com}\%#1}}
-
-%\usepackage{fancyvrb}
-%\usepackage{lgrind}
+%\usepackage{xcolor}
+%\colorlet{kw}{blue}
+%\definecolor{com}{rgb}{0,0.6,0.3}
+% \usepackage{algorithmicx}
+% \usepackage{algpseudocode}
+% % redefine keywords
+% \algrenewcommand\algorithmicfunction{\textcolor{kw}{function}}
+% \algrenewcommand\algorithmicwhile{\textcolor{kw}{while}}
+% \algrenewcommand\algorithmicfor{\textcolor{kw}{for}}
+% \algrenewcommand\algorithmicif{\textcolor{kw}{if}}
+% \algrenewcommand\algorithmicelse{\textcolor{kw}{else}}
+% \algrenewcommand\algorithmicend{\textcolor{kw}{end}}
+% % new keywords
+% \algnewcommand\Break{\textcolor{kw}{break}}%
+% \algnewcommand\Continue{\textcolor{kw}{continue}}%
+% % redefine loops
+% \algdef{SE}[WHILE]{While}{EndWhile}[1]{\algorithmicwhile\ #1}{\algorithmicend}%
+% \algdef{SE}[FOR]{For}{EndFor}[1]{\algorithmicfor\ #1}{\algorithmicend}%
+% \algdef{C}[IF]{IF}{ElsIf}[1]{\algorithmicelse\algorithmicif\ #1}%
+% % redefine comments
+% \algrenewcommand{\algorithmiccomment}[1]{{\color{com}\%#1}}
 
 \title{Nsp: man test } %\manname}
 
@@ -42,6 +34,6 @@
 
 \chapter{Test}
 
-\input \manname
+\input{\mansrc\manname}
 
 \end{document}

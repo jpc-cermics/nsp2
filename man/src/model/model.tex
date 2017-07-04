@@ -21,7 +21,7 @@ S=g(action [,q1,....,ql])
     \vname{m, n}: integers, size of the wanted matrix \verb!Y!
     \vname{X}: a matrix whom only the dimensions (say \verb!m x n!) are used
     \vname{dist\_type}: a string given the distribution which (independants) variates are to be 
-    generated ('bin', 'nor', 'poi', etc ...)
+    generated (\verb+'bin'+, \verb+'nor'+, \verb+'poi'+, etc ...)
     \vname{p1, ..., pk}: the parameters (reals or integers) required to define completly the distribution 
     \verb!dist_type!
     \vname{Y}: the resulting \verb!m x n! random matrix
@@ -88,10 +88,9 @@ a first example with $\int_0^\infty f(u)du$.
   \verb+// backslash in program \\+
   \HCode{\Hnewline
     u=prbs_a(50,10);\Hnewline
-    plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
+    plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);\Hnewline
     \%z ;// a percent un verbatim 
   }
-  
 \end{program}
 
 \noindent a second example 
@@ -130,13 +129,14 @@ a first example with $\int_0^\infty f(u)du$.
   \paragraph{clcg2} 
   The method is from P. L'Ecuyer but the C code is provided at the Luc  Devroye home page 
   (http://cgm.cs.mcgill.ca/~luc/rng.html).
+  l'école est été à où
 \end{authors}
 
 
 \paragraph{Using VerbatimInput}
 
 %\begin{program}
-\VerbatimInput{model/model-verb.txt}
+\VerbatimInput{\mansrc model/model-verb.txt}
 %\end{program}
 
 \paragraph{Using Verbatim}
@@ -199,8 +199,35 @@ endfunction
 %   \end{algorithmic}
 % }
 
-\end{document}
+\paragraph{Minted }
 
+\begin{minted}{octave}
+  function [a,u]=hermit(a)
+  //[A,U]=hermit(A)
+  //Hermite form: U is an unimodular matrix such that A*U is
+  //triangular. The output value of A is A*U.
+  [m,n]=size(a);if m<>n then error('square matrix only!'),end
+  [a,u]=htrianr(a)
+  for l=n-1: -1: 1 do
+    dl(l:n)=a(l,l:n).degree[];
+    for k=l+1:n do
+      if dl(k)>=dl(l) then
+        all=a(l,l);
+        if norm(coeff(all),1)>1.d-10 then
+          [r,q]=pdiv(a(l,k),a(l,l))
+          if l>1 then a(1:l-1,k)=a(1:l-1,k)-a(1:l-1,l)*q;end
+          a(l,k)=r
+          u(:,k)=u(:,k)-u(:,l)*q
+        end
+      end
+    end
+  end
+endfunction
+\end{minted}
+
+
+
+\end{document}
 
 
 %\input{model/intepsilon_c.tex}

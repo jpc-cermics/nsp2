@@ -111,6 +111,7 @@ table.boxedverbatim {text-align:center;}
   background: #eeeeff;
   border: solid 1px #aaaaff;
   padding: 0.5em;
+  white-space: nowrap;
 }
 .fancyvrb
 {
@@ -118,6 +119,7 @@ table.boxedverbatim {text-align:center;}
   background: #eeeeff;
   border: solid 1px #aaaaff;
   padding: 0.5em;
+  white-space: nowrap;
 }
 .manref
 {
@@ -144,5 +146,62 @@ h4,h3,h2, .likesubsectionHead {
 /* colored itemize without bullets */
 .bitem { color: #000066 ;}
 ul.nbitemize {list-style-type: none;}
+
+/* colors for minted */
+
+span#textcolor1{color:rgb(0,127,0)}
+span#textcolor2{color:rgb(186,186,186)}
+span#textcolor3{color:rgb(0,0,255)}
+span#textcolor4{color:rgb(186,186,186)}
+span#textcolor5{color:rgb(101,101,101)}
+span#textcolor6{color:rgb(101,101,101)}
+span#textcolor7{color:rgb(101,101,101)}
+span#textcolor8{color:rgb(101,101,101)}
+span#textcolor9{color:rgb(101,101,101)}
+span#textcolor10{color:rgb(0,127,0)}
+span#textcolor11{color:rgb(0,127,0)}
+span#textcolor12{color:rgb(101,101,101)}
+span#textcolor13{color:rgb(186,33,33)}
+span#textcolor14{color:rgb(0,127,0)}
+span#textcolor15{color:rgb(0,127,0)}
+span#textcolor16{color:rgb(101,101,101)}
+span#textcolor17{color:rgb(101,101,101)}
+span#textcolor18{color:rgb(101,101,101)}
+span#textcolor19{color:rgb(101,101,101)}
+span#textcolor20{color:rgb(101,101,101)}
+span#textcolor21{color:rgb(0,127,0)}
+span#textcolor22{color:rgb(101,101,101)}
+span#textcolor23{color:rgb(101,101,101)}
+span#textcolor24{color:rgb(0,127,0)}
+span#textcolor25{color:rgb(101,101,101)}
+span#textcolor26{color:rgb(0,127,0)}
+span#textcolor27{color:rgb(101,101,101)}
+span#textcolor28{color:rgb(101,101,101)}
+span#textcolor29{color:rgb(101,101,101)}
+span#textcolor30{color:rgb(101,101,101)}
+span#textcolor31{color:rgb(101,101,101)}
+span#textcolor32{color:rgb(0,127,0)}
+span#textcolor33{color:rgb(101,101,101)}
+span#textcolor34{color:rgb(101,101,101)}
+span#textcolor35{color:rgb(101,101,101)}
+span#textcolor36{color:rgb(101,101,101)}
+span#textcolor37{color:rgb(101,101,101)}
+span#textcolor38{color:rgb(101,101,101)}
+span#textcolor39{color:rgb(101,101,101)}
+span#textcolor40{color:rgb(101,101,101)}
+span#textcolor41{color:rgb(101,101,101)}
+span#textcolor42{color:rgb(101,101,101)}
+span#textcolor43{color:rgb(101,101,101)}
+span#textcolor44{color:rgb(101,101,101)}
+span#textcolor45{color:rgb(101,101,101)}
+span#textcolor46{color:rgb(0,127,0)}
+span#textcolor47{color:rgb(101,101,101)}
+span#textcolor48{color:rgb(101,101,101)}
+span#textcolor49{color:rgb(0,127,0)}
+span#textcolor50{color:rgb(0,127,0)}
+span#textcolor51{color:rgb(0,127,0)}
+span#textcolor52{color:rgb(0,127,0)}
+
+
 
 /* end css.sty */
