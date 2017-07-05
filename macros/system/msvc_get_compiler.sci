@@ -72,7 +72,7 @@ function [name,path,is64] = msvc_get_compiler()
 
     vals=1:size(table,1);
     if nargin >=1 then vals=find(query_name == table(:,1));end 
-    for i=vals
+    for i=vals do
       key=table(i,2);
       ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'',key,''ProductDir'')",errcatch=%t);
       if ~ok then 

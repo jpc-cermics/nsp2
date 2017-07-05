@@ -7,7 +7,7 @@ function str1=ilib_importlib(str, testw32=%f)
   if testw32 then msvc="forced";end 
   libs = split(str,sep=' ',msep=%t);
   str1=m2s([]);
-  for s=libs 
+  for s=libs do
     if part(s,1:2)== "-l" then 
       if msvc == "unknown" then 
 	str1.concatr[s];

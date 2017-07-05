@@ -19,7 +19,7 @@ function [msvc_compiler,name,configured]=msvc_configure(verbose=%f)
   end
   
   // stop at first configured compiler 
-  for i=1:size(table,1)
+  for i=1:size(table,1) do
     name = table(i,1); // returned value
     //    printf("Search %s\n",name);
     if %win64 then 
@@ -60,11 +60,11 @@ function [msvc_compiler,name,configured]=msvc_configure(verbose=%f)
 
   if msvc_compiler == 'msvc80express' then
     // Microsoft Visual C++ Express 8.0: search SDK
-    name1 = 'Software\Microsoft\MicrosoftSDK\InstalledSDKs\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1';
+    name1 = 'Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1';
     ok1=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''Install Dir'');",errcatch=%t);
-    name1 = 'Software\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3';
+    name1 = 'Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3';
     ok2=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''Install Dir'');",errcatch=%t);
-    name1 = 'Software\Microsoft\Microsoft SDKs\Windows';
+    name1 = 'Software\\Microsoft\\Microsoft SDKs\\Windows';
     ok3=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''CurrentInstallFolder'');",errcatch=%t);
     if or([ok1,ok2,ok3]) then
       return;
@@ -100,7 +100,7 @@ function mc=msvc_select(verbose=%f)
   table= msvc_table();
   table_ok=[];
   
-  for i=1:size(table,1)
+  for i=1:size(table,1) do
     name = table(i,1); // returned value
     // if nsp is 64 we must produce 64 executables 
     if %win64 then 
@@ -207,10 +207,10 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name,target,verbose)
 	 'VSINSTALLDIR';
 	 'WindowsSdkDir'];
   
-  for i=1:size(vars,'*')
+  for i=1:size(vars,'*') do
     tag = vars(i)+'=';
     ntag= length(tag);
-    for j=1:size(S,1)
+    for j=1:size(S,1) do
       if toupper(part(S(j,:),1:ntag)) == toupper(tag) then
 	val = part(S(j,:),(ntag+1):length(S(j,:)));
 	setenv(vars(i),val);

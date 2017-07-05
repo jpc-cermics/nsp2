@@ -24,10 +24,10 @@ function H=sci_load(fname,varargin)
     id1=F1.get[n=6,type='il'];
     if isempty(id1) then str=[];return;end
     id = ones_new(4,6);
-    for j=1:6 
+    for j=1:6 do
       idl=id1(j);
       ch=ones_new(4,1);
-      for  i=1:4 
+      for i=1:4 do
 	k=idiv(idl+128,256)
 	if k < 0 then  k=k-1;end
 	ch(i)=idl-256*k
@@ -67,7 +67,8 @@ function H=sci_load(fname,varargin)
     if s(3)==1 then val = val(1:nel)+%i*val(nel+1:$);end 
     IJ=[] 
     Im=find(rows <> 0);
-    for i=Im, nbi=rows(i),
+    for i=Im do
+      nbi=rows(i) 
       IJi=zeros_new(nbi,2);
       indi=ind(1:nbi);ind(1:nbi)=[];
       IJi(:,1)=i,IJi(:,2)=indi';
@@ -140,7 +141,7 @@ function H=sci_load(fname,varargin)
       x=F1.get[n=mn+1,type='il']; // start and end of each string
       sz= x(2:$)-x(1:$-1); // size of each string 
       Str="";
-      for i=1:mn 
+      for i=1:mn do
 	xv=F1.get[n=sz(i),type='il']; // characters in scilab code of str(i)
 	Str(i)=scilab_code2str(xv);
       end
@@ -172,7 +173,7 @@ function H=sci_load(fname,varargin)
     x=F1.get[n=s+1,type='il'];// elts positions 
     L=list();
     //printf('reloading a list\n');
-    for i=1:s 
+    for i=1:s do
       //element is undefined if x(i+1)-x(i)==0
       if x(i+1)<>x(i) then 
 	//printf('reloading element %d\n',i);
@@ -213,7 +214,7 @@ function H=sci_load(fname,varargin)
     str='';
     alpha="0123456789abcdefghijklmnopqrstuvwxyz_#!$ ();:+-*/\=.,''[]%|&<>~^"; 
     alphb="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ00?0\t00000000$000""{}000`0@0";
-    for l=1:size(id,'*');
+    for l=1:size(id,'*') do
       ch=id(l)
       if abs(ch) >= csiz then 
 	str = str + '*';
@@ -362,7 +363,7 @@ function sci_save(fname,varargopt)
 	sz=sz(:)';
 	x=cumsum([1,sz]);
 	F1.put[x,type='il']; // start and end of each string
-	for j=1:size(val,'*');
+	for j=1:size(val,'*') do
 	  xv=sci_str2code(val(j));
 	  F1.put[xv,type='il']; // start and end of each string
 	end
@@ -380,7 +381,7 @@ function sci_save(fname,varargopt)
     nn=size(val);
     F1.put[nn,type='il'];
     x=ones_new(1,nn+1);
-    for i=1:nn
+    for i=1:nn do
       ok=execstr('elt=val(i)',errcatch=%t);
       if ok then 
 	select type(elt,'short')
@@ -400,7 +401,7 @@ function sci_save(fname,varargopt)
     end
     x=cumsum(x);
     F1.put[x,type='il'];
-    for i=1:nn
+    for i=1:nn do
       ok=execstr('elt=val(i)',errcatch=%t);
       if ok then 
 	select type(elt,'short')
@@ -442,13 +443,13 @@ function sci_save(fname,varargopt)
       if sci_type== 'cpr' then tmlist=16;end
       nn=[sci_type,strs];
       L=list(nn);
-      for s=2:size(nn,'*'); L(s)= val(nn(s));end 
+      for s=2:size(nn,'*') do L(s)= val(nn(s));end 
       sci_save_list(F1,L,tmlist);
     else
       // save a hash table as a scilab struct
       nn=['st';'dims';val.__keys]';
       L=list(nn,[1,1]);
-      for s=3:size(nn,'*'); L(s)= val(nn(s));end 
+      for s=3:size(nn,'*') do L(s)= val(nn(s));end 
       sci_save_list(F1,L,17);
     end
   endfunction
@@ -498,7 +499,7 @@ function sci_save(fname,varargopt)
   // Copyright (C) 2006-2015 Jean-Philippe Chancelier
     nn=size(val);
     y = ceil((2 + nn+1)/2);
-    for i=1:nn
+    for i=1:nn do
       elt=val(i);
       select type(elt,'short')
        case 'm' then y = y + sci_save_count_mat(elt);
@@ -536,12 +537,12 @@ function sci_save(fname,varargopt)
       if sci_type== 'cpr' then tmlist=16;end
       nn=[sci_type,strs];
       L=list(nn);
-      for s=2:size(nn,'*'); L(s)= val(nn(s));end 
+      for s=2:size(nn,'*') do L(s)= val(nn(s));end 
     else
       // save a hash table as a scilab struct
       nn=['st';'dims';val.__keys]';
       L=list(nn,[1,1]);
-      for s=3:size(nn,'*'); L(s)= val(nn(s));end 
+      for s=3:size(nn,'*') do L(s)= val(nn(s));end 
     end
     y=sci_save_count_list(L);
   endfunction
@@ -553,7 +554,7 @@ function sci_save(fname,varargopt)
     return;
   end
   F1=fopen(fname,mode='wb');
-  for i=1:size(S,'*');
+  for i=1:size(S,'*') do
     vname=S(i);
     id=sci_str2code(vname);
     id = id(1:min(24,length(id)));
