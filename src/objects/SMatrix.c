@@ -2719,24 +2719,33 @@ void nsp_print_string_as_read(const char *str, char string_delim)
 	{
 	case '\'' :  Sciprintf("%s","''");break;
 	case '\"' :  Sciprintf("%s","\"\"");break;
-	case '\\' :  
-	  switch (*(str+1)) 
+	case '\\' :
+	  /* maybe it would be easier to alway emit "\\\\" */
+	  if ( isdigit(*(str+1)) )
 	    {
-	    case 'a':
-	    case 'b' : 
-	    case 'f' :  
-	    case 'n' :  
-	    case 'r' :  
-	    case 't' :  
-	    case 'v' :  
-	    case '\a' :  
-	    case '\b' :  
-	    case '\f' :  
-	    case '\n' :  
-	    case '\r' :  
-	    case '\t' :  
-	    case '\v' : Sciprintf("%s","\\\\");break;
-	    default: Sciprintf("%s","\\");break;
+	      Sciprintf("%s","\\\\");
+	    }
+	  else
+	    {
+	      switch (*(str+1)) 
+		{
+		case 'a' :
+		case 'b' : 
+		case 'f' :  
+		case 'n' :  
+		case 'r' :  
+		case 't' :  
+		case 'v' : 
+		case '\a' :  
+		case '\b' : 
+		case '\f' : 
+		case '\n' : 
+		case '\r' : 
+		case '\t' : 
+		case '\v' : Sciprintf("%s","\\\\");break;
+		default:
+		  Sciprintf("%s","\\");break;
+		}
 	    }
 	  break;
 	case '\a' :  Sciprintf("%s","\\a"); break;
