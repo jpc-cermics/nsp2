@@ -1358,6 +1358,7 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
+  int try_line = T->tokenv.Line;
   if (debug) scidebug(debugI++,"[try>"); 
   /* try <expr> */
   if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -1375,7 +1376,7 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
     {
     case END : 
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if (nsp_parse_add(&plist2,TRYCATCH,2,T->tokenv.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,TRYCATCH,2,try_line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<endselect]"); 
       return (OK) ;
@@ -1387,7 +1388,7 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	{
 	  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  if (nsp_parse_add(&plist2,TRYCATCH,3,T->tokenv.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist2,TRYCATCH,3,try_line) == FAIL) return(FAIL);
 	  if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
 	  if (debug) scidebug(--debugI,"<endselect]"); 
 	  return (OK) ;
@@ -1402,8 +1403,6 @@ static int parse_try_catch(Tokenizer *T,NspBHash *symb_table,PList *plist)
       return(FAIL);
     }
 }
-
-  
 
 /**
  * parse_for:
