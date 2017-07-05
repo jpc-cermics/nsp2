@@ -1097,7 +1097,7 @@ if test xx"$with_gtk" = xx; then
     GTK_PKGS_CFLAGS='gtk+-2.0'
     GTK_PKGS_LIBS='gtk+-2.0'
     
-    PKG_CHECK_MODULES(GTK,[$GTK_PKGS_CFLAGS >= $GTK_REQUIRED_VERSION])
+    PKG_CHECK_MODULES(GTK2,[$GTK_PKGS_CFLAGS >= $GTK_REQUIRED_VERSION])
     
     AC_MSG_CHECKING([gtk version ])
     GTK_VER=`$PKG_CONFIG --modversion $GTK_PKGS_CFLAGS`
@@ -1145,7 +1145,7 @@ if test xx"$with_gtk" = xx; then
     GTK_PKGS_CFLAGS='gtk+-3.0'
     GTK_PKGS_LIBS='gtk+-3.0'
     
-    PKG_CHECK_MODULES(GTK,[$GTK_PKGS_CFLAGS >= $GTK_REQUIRED_VERSION])
+    PKG_CHECK_MODULES(GTK3,[$GTK_PKGS_CFLAGS >= $GTK_REQUIRED_VERSION])
     
     AC_MSG_CHECKING([gtk version ])
     GTK_VER=`$PKG_CONFIG --modversion $GTK_PKGS_CFLAGS`
@@ -1171,7 +1171,7 @@ if test xx"$with_gtk" = xx; then
       GZVT=
     fi
     # we need epoxy library for opengl and gtk3
-    PKG_CHECK_MODULES(GTK,[$GTK_PKGS_CFLAGS >= 3.16.0], HAVE_GTK3GL=yes, HAVE_GTK3GL=no)
+    PKG_CHECK_MODULES(GTK3GL,[$GTK_PKGS_CFLAGS >= 3.16.0], HAVE_GTK3GL=yes, HAVE_GTK3GL=no)
     PKG_CHECK_MODULES(epoxy, epoxy, HAVE_EPOXY=yes, HAVE_EPOXY=no)
     if test "$HAVE_GTK3GL" = "yes"; then 
        if test "$HAVE_EPOXY" = "yes"; then
