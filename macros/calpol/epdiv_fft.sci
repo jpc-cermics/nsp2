@@ -1,4 +1,3 @@
-
 function u=epdiv_fft(p,q)
   // Copyright  2010-2017 Paola Boito
   //
@@ -33,7 +32,7 @@ function u=epdiv_fft(p,q)
   // In the original code in case 3 a GKO algorithm was used
   // here we just use standard linear algebra.
 
-  tol=1d-8;
+  tol=1E-8;
   f=p.coeffs{1};
   g=q.coeffs{1};
   n=length(f);
@@ -142,7 +141,7 @@ function u=epdiv_gko(p,q)
   g=q.coeffs{1}.';
 
   k=n-m;
-  threshold=1d-13;
+  threshold=1E-13;
 
   N=n+1;
   M=k+1;// size of convolution matrix
@@ -263,7 +262,7 @@ function [ok,T,no]=epdiv_test(n,fn)
     u=fn(p,q);
     cr=cp-cq;
     uref=p1^cr(1)*p2^cr(2)*p3^cr(3)*p4^cr(4)
-    if norm(u-uref)>1.d-2 then
+    if norm(u-uref)>1.E-2 then
       ok=%f;
     end
     no=max(no,norm(u-uref));
@@ -278,11 +277,11 @@ if %f then
   p=(1+x)*(1+2*x)*(1+5*x);
   q=(1+2*x);
   u=epdiv_fft(p,q);
-  if norm(p-q*u)>1.d-10 then pause ;end
+  if norm(p-q*u)>1.E-10 then pause ;end
   u=epdiv_lsq(p,q);
-  if norm(p-q*u)>1.d-10 then pause ;end
+  if norm(p-q*u)>1.E-10 then pause ;end
   u=epdiv_gko(p,q);
-  if norm(p-q*u)>1.d-10 then pause ;end
+  if norm(p-q*u)>1.E-10 then pause ;end
 
   [ok1,T1,no1]=epdiv_test(1000,epdiv_fft);
   if ~ok1 then pause ;end
@@ -292,9 +291,4 @@ if %f then
 
   [ok3,T3,no3]=epdiv_test(1000,epdiv_gko);
   if ~ok3 then pause ;end
-
 end
-
-
-
-

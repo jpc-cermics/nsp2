@@ -37,4 +37,3 @@ function y=poly(x,varargin,varargopt)
     y = m2p(x,var=opts.var);
   end
 endfunction
-

@@ -39,4 +39,3 @@ function Sm=systmat(Sl)
     return
   end
 endfunction
-

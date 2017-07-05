@@ -30,7 +30,7 @@ function [a,u]=hermit(a)
     for k=l+1:n do
       if dl(k)>=dl(l) then
 	all=a(l,l);
-	if norm(coeff(all),1)>1.d-10 then
+	if norm(coeff(all),1)>1.E-10 then
 	  [r,q]=pdiv(a(l,k),a(l,l))
 	  if l>1 then a(1:l-1,k)=a(1:l-1,k)-a(1:l-1,l)*q;end
 	  a(l,k)=r

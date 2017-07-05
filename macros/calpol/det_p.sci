@@ -53,7 +53,7 @@ function res=det_p(P,k = [])
   e=zeros(k,1);
   e(2)=1;
   // parameters for clean.
-  epsa=1.d-10;
+  epsa=1.E-10;
   epsr=0;//no relative rounding
   if k==1 then
     ksi=1;
@@ -96,8 +96,3 @@ if %f then
   d=[];for k=1:size(H2,'*') do d(k)=det(H2{k});end
   if norm(d-H{1})>100*%eps then pause ;end
 end
-
-
-
-
-

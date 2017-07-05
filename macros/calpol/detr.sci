@@ -36,7 +36,3 @@ function d=detr(h)
     error("Error: expecting numerical, polynomial or rational matrix\n");
   end
 endfunction
-
-
-
-

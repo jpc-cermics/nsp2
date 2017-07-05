@@ -61,7 +61,7 @@
 // Adapted-By: jwe
 
 function [p,s,mu]=polyfit(x,y,n)
-
+  //
   if (nargin<3||nargin>4) then
     error("polyfit requires three input arguments\n");
     return;
@@ -181,5 +181,3 @@ if exists('test_lib') then
   if norm(mu-[mean(xv),std(xv)])>%eps then pause ;end
   if (s.normr/s2.normr>sqrt(%eps)) then pause ;end
 end
-
-

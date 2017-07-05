@@ -31,5 +31,3 @@ function M=sylvester_p_p(p,q)
   M = toeplitz([cp(1),q0], [cp,q0]);
   M = [M; toeplitz([cq(1),p0], [cq,p0])];
 endfunction
-
-

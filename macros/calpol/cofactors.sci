@@ -1,4 +1,4 @@
-function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
+function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.E-14)
   // Copyright  2010-2017 Jean-Philippe Chancelier
   //
   // This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ function [g,p,q]=cofactors(u,v,td,iter = %t,ftol = 1.d-14)
   // improve a solution by fsolve iterations
   //
 
-  function [g,p,q]=cofactors_iter(u,v,p,q,ftol = 1.d-14)
+  function [g,p,q]=cofactors_iter(u,v,p,q,ftol = 1.E-14)
     // find a solution of
     //  p*g -u = 0
     //  q*g -v = 0
@@ -115,5 +115,3 @@ if %f then
   [g,p,q]=cofactors(u,v,k);
   [norm(g*p-u),norm(g*q-v)]
 end
-
-

@@ -37,5 +37,3 @@ function y=coeff(p,num)
     end
   end
 endfunction
-
-

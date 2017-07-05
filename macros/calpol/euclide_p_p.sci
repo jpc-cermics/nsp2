@@ -74,7 +74,7 @@ function [r,q]=pdiv_soft_p_p(a,b)
   q=m2p(q,var = a.get_var[]);
 endfunction
 
-function [g,Rp,sgn]=euclide_p_p(a,b,eps = 1.d-6,monic = %f)
+function [g,Rp,sgn]=euclide_p_p(a,b,eps = 1.E-6,monic = %f)
   // epsilon euclid method
   // See Paola Boito Thesis Chap 3 or
   // original paper of Hribernig and Stetter.
@@ -189,11 +189,11 @@ if %f then
       [g,b1]=euclide(p/norm(p,2),q/norm(q,2));
       g.normalize[];
       N(i)=norm(g-gcpq1);
-      if N(i)>1.d-5 then
+      if N(i)>1.E-5 then
 	T(i)=%f;
       end
     end
-    I=find(N==0);N(I)=1.d-16;
+    I=find(N==0);N(I)=1.E-16;
     xclear();
     Nok=size(find(T),'*');
     plot2d(1:n,log(N)/log(10))
@@ -225,5 +225,3 @@ if %f then
     end
   endfunction
 end
-
-

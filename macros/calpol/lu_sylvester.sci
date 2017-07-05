@@ -221,13 +221,4 @@ if %f then
   x=lu_sylvester_solve(Pr,P2r,L,U,b);
   Ms=sylvester(pf,pg);
   norm(Ms*x-b);
-
 end
-
-
-
-
-
-
-
-

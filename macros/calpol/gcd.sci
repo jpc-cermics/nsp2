@@ -77,4 +77,3 @@ function [g,uu]=bezout_m_m(i1,i2)
   [g,uu]=gcd_m([i1,i2])
   uu=uu(:,$: -1: 1);
 endfunction
-

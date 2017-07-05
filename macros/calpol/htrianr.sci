@@ -33,9 +33,9 @@ function [A,U,rk]=htrianr(A)
     l1=l1-1;
     if l1<>0 then
       Al=A(l,1:l1);
-      if norm(coeff(Al),1)>1.d-10 then
+      if norm(coeff(Al),1)>1.E-10 then
 	[pg,Ul]=hrmt(Al);
-	Ul=clean(Ul,1.d-10);
+	Ul=clean(Ul,1.E-10);
 	A(l,1:l1)=[0*ones(1,l1-1),pg];
 	U(:,1:l1)=U(:,1:l1)*Ul;
 	if l>1 then
@@ -46,7 +46,7 @@ function [A,U,rk]=htrianr(A)
       end
     end
   end
-  U=clean(U,1.d-10);
+  U=clean(U,1.E-10);
   k0=0;k1=0;tol=norm(coeff(A),1);
   v=[];w=[];
   for k=1:n do

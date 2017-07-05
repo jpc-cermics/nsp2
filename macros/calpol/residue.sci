@@ -181,8 +181,3 @@ if %f then
   q=((x-1)^4)*(x^9-5*x+2);
   res=residue(p,q,1); //  (res=-559.5)
 end
-
-
-
-
-

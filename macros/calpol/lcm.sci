@@ -89,4 +89,3 @@ function [q,fact]=lcm_m(p)
     fact=[fact * f(2), f(1)];
   end
 endfunction
-

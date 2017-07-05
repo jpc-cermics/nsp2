@@ -1,4 +1,4 @@
-function [z,f1,f2,res]=gcd_p_p(u,v,delta = 1.d-9)
+function [z,f1,f2,res]=gcd_p_p(u,v,delta = 1.E-9)
   // Copyright  2010-2017 Paola Boito
   //
   // This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,9 @@ function [z,f1,f2,res]=gcd_p_p(u,v,delta = 1.d-9)
   //   last residual found is smaller or greater than delta.
   //
   debug=%f
-  if nargin<=2 then delta=1.d-9;end
+  if nargin<=2 then delta=1.E-9;end
   // tolerance for iterative refinement
-  ftol=1.d-14;
+  ftol=1.E-14;
   // compute degrees of input polynomials
   n=u.degree[];//length(f)-1;
   m=v.degree[];// length(g)-1;
@@ -51,7 +51,7 @@ function [z,f1,f2,res]=gcd_p_p(u,v,delta = 1.d-9)
   end
 
   // introduce a heuristic correction on delta
-  delta_c=max(delta,1.d-9);
+  delta_c=max(delta,1.E-9);
 
   // factorize the Sylvester matrix S
   // and find a tentative degree tdeg
@@ -106,7 +106,7 @@ function [z,f1,f2,res]=gcd_p_p(u,v,delta = 1.d-9)
   end
 endfunction
 
-function gcd_test(delta = 1.d-9)
+function gcd_test(delta = 1.E-9)
   // test gcd computations
   // more tests
   x=poly(0);
@@ -122,7 +122,7 @@ function gcd_test(delta = 1.d-9)
     [g,ppr,qqr,res]=gcd(p,q,delta = delta);
     g.normalize[];
     N(i)=norm(g-gcpq1)/(1+g.degree[]);
-    if N(i)>1.d-7 then
+    if N(i)>1.E-7 then
       T(i)=%f;
       pause ;
     end
@@ -138,7 +138,7 @@ if %f then
   x=poly(0);
   r=((-1) .^(1:10)) .*(1:10)/2;
   u=poly(r,'x',roots = %t);
-  r=r-10d .^(-(1:10));
+  r=r-10E .^(-(1:10));
   v=poly(r,'x',roots = %t);
   for i=1:12 do
     [g,p,q,res]=gcd_jpc(u,v,delta = 10^(-i));
@@ -155,10 +155,7 @@ if %f then
   q=p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
   cpq=min(cq,cp);
   gcpq1=p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
-  [g,ppr,qqr,res]=gcd(p,q,delta = 1.d-9);
+  [g,ppr,qqr,res]=gcd(p,q,delta = 1.E-9);
   g.normalize[];
   norm(g-gcpq1)/(1+g.degree[])
-
-
 end
-
