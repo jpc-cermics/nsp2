@@ -763,7 +763,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 		}
 	      else
 		{
-		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+1, arity -1 == j );
+		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2, arity -1 == j );
 		}
 	    }
 	  newpos = nsp_ast_pprint_keyword(Max(posret-newpos,0),ast,"end");
