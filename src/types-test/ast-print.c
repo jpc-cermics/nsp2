@@ -75,6 +75,8 @@ static void nsp_ast_to_ast_wrap(NspAst *ast, ast_wrap *astwrap);
 static void nsp_plist_to_ast_wrap(PList ast, ast_wrap *astwrap);
 static int _nsp_ast_printlength(ast_wrap *ast, int indent, int pos, int posret);
 static char *_nsp_ast_get_space(ast_wrap *ast);
+static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int indent, int pos, 
+				      int posret, char *sep, int breakable, const char *breakstr);
 
   
 void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int html,int gtk, int space)
@@ -771,7 +773,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  break;
 	case STATEMENTS :
 	  newpos=pos;
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->get_arity(ast),0,newpos,posret,"",TRUE,"\n");
+	  newpos= _nsp_ast_pprint_statements(ast,1,ast->get_arity(ast),0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case STATEMENTS1 :
@@ -879,6 +881,57 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  s=nsp_astcode_to_name(ast->get_op(ast));
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	}
+    }
+  return newpos;
+}
+
+/* similar to _nsp_ast_pprint_args 
+ * but keep track of multi line returns between arguments
+ */
+
+static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int indent, int pos, 
+				int posret, char *sep, int breakable, const char *breakstr)
+{
+  int j, len, newpos=pos, last_line = 0;
+  const char *space = _nsp_ast_get_space(ast);
+  for ( j = start ; j <= last ; j++)
+    {
+      ast_wrap ast1,ast2;
+      if ( ast->get_arg(ast,j,&ast1) == FAIL) return 0;
+      if ( j > start )
+	{
+	  int start_line = last_line;
+	  int count;
+	  if (ast1.get_length_args(&ast1) >= 1 && ast1.get_arg(&ast1,1,&ast2) == OK)
+	    {
+	      ast_wrap ast3;
+	      if ( ast1.get_op(&ast1) == STATEMENTS1 )
+		{
+		  /* if ast1 is a STATEMENTS1, ast2 a separator, ast3 the first instruction */
+		  if ( ast2.get_length_args(&ast2) >= 1 && ast2.get_arg(&ast2,1,&ast3) == OK)
+		    {
+		      start_line = ast3.get_line(&ast3);
+		    }
+		}
+	      else
+		{
+		  /* if ast1 is a separator, ast2 the first instruction */
+		  start_line = ast2.get_line(&ast2);
+		}
+	      for ( count = 0; count < start_line - last_line -1; count++)
+		{
+		  Sciprintf(breakstr);newpos= Sciprintf2(posret, space,"");
+		}
+	    }
+	}
+      len = _nsp_ast_printlength(&ast1,indent,newpos,posret);
+      if (breakable==TRUE && ( posret < newpos ) && ( newpos > CMAX || len > CMAX))
+	{
+	  Sciprintf(breakstr);newpos= Sciprintf2(posret, space,"");
+	}
+      newpos = _nsp_ast_pprint(&ast1,indent,newpos,posret,0);
+      if ( j != last ) newpos += Sciprintf(sep);
+      last_line = ast1.get_line(&ast1);
     }
   return newpos;
 }
