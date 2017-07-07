@@ -999,10 +999,10 @@ static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, 
 
 void nsp_plist_pretty_print(PList L, int indent)
 {
-  int color=TRUE, html=FALSE, gtk=FALSE, space=FALSE;
+  int color=TRUE, target = 4 /* terminal */, space=FALSE;
   /* just in case L is not the first */
   while ( L->prev != NULL) L= L->prev;
-  nsp_plist_generic_pretty_printer(L, indent, color, html, gtk, space);
+  nsp_plist_generic_pretty_printer(L, indent, color, target , space);
   // _nsp_plist_pretty_print(L,indent,0,indent);
 }
 

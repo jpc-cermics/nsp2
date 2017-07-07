@@ -2762,8 +2762,17 @@ void nsp_print_string_as_read(const char *str, char string_delim)
 	    }
 	  else 
 	    {
+	      /* we have the choice between \xxx 
+	       * or the character as it was inserted 
+	       * in the string 
+	       * but here we could decide to convert to utf8 or latin1
+	       */
+#if 0
 	      unsigned char c = *str;
 	      Sciprintf("\\%0.3o",c);
+#else
+	      Sciprintf("%c",*str);
+#endif
 	    }
 	}
       str++;

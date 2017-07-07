@@ -21,6 +21,7 @@
  */
 
 #include <ctype.h>
+#include <nsp/nsp.h>
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
@@ -29,13 +30,17 @@
 #include <nsp/interf.h>
 #include <nsp/seval.h>
 
-/* exported functions */
-
-void nsp_plist_generic_pretty_printer(PList ast, int indent, int color,int html,int gtk, int space);
-void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int html,int gtk, int space);
-int nsp_ast_printlength(NspAst *ast, int indent);
+/* exported functions
+ * nsp_plist_generic_pretty_printer
+ * nsp_ast_generic_pretty_printer
+ * nsp_ast_printlength
+ */
 
 /* local code */
+
+/* used to select a target when printing */
+
+typedef enum { nsp_pprint_html=1 , nsp_pprint_gtk=2, nsp_pprint_latex=3, nsp_pprint_term=4 } nsp_pprint_target;
 
 typedef struct _ast_wrap ast_wrap;
 
@@ -47,8 +52,7 @@ struct _ast_wrap {
   int (*get_line)(ast_wrap *ast);
   char * (*get_str)(ast_wrap *ast);
   void *ast;
-  int use_html_color_class;
-  int use_gtk_color_class;
+  nsp_pprint_target target;
   int use_sep_space;
   int use_color;
 };
@@ -79,12 +83,11 @@ static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int in
 				      int posret, char *sep, int breakable, const char *breakstr);
 
   
-void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int html,int gtk, int space)
+void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color, int target, int space)
 {
   ast_wrap loc;
   nsp_ast_to_ast_wrap(ast, &loc);
-  loc.use_html_color_class = html;
-  loc.use_gtk_color_class = gtk;
+  loc.target  = target;
   loc.use_sep_space = space;
   loc.use_color = color;
   _nsp_ast_pprint(&loc,indent,0,indent,0);
@@ -97,12 +100,11 @@ int nsp_ast_printlength(NspAst *ast, int indent)
   return _nsp_ast_printlength(&loc,indent,0,indent);
 }
 
-void nsp_plist_generic_pretty_printer(PList ast, int indent, int color,int html,int gtk, int space)
+void nsp_plist_generic_pretty_printer(PList ast, int indent, int color,int target, int space)
 {
   ast_wrap loc;
   nsp_plist_to_ast_wrap(ast, &loc);
-  loc.use_html_color_class = html;
-  loc.use_gtk_color_class = gtk;
+  loc.target  = target;
   loc.use_sep_space = space;
   loc.use_color = color;
   _nsp_ast_pprint(&loc,indent,0,indent,0);
@@ -170,12 +172,13 @@ static int nsp_ast_pprint_pre_tag_color(ast_wrap *ast, nsp_colorized_types key)
 {
   if ( ast->use_color == TRUE )
     {
-      if (ast->use_html_color_class == TRUE)
-	Sciprintf("<span class=\"%s\">",colortag_from_key(key));
-      else if (ast->use_gtk_color_class == TRUE)
-	Sciprintf("<span color=\"%s\">",colorname_from_key(key));
-      else
-	Sciprintf("\033[%dm",color_from_key(key));
+      switch (ast->target)
+	{
+	case nsp_pprint_html: Sciprintf("<span class=\"%s\">",colortag_from_key(key));break;
+	case nsp_pprint_gtk:  Sciprintf("<span color=\"%s\">",colorname_from_key(key));break;
+	case nsp_pprint_latex: Sciprintf("@@nsp%s{",colortag_from_key(key));break;
+	case nsp_pprint_term: Sciprintf("\033[%dm",color_from_key(key));break;
+	}
     }
   return 0;
 }
@@ -184,11 +187,13 @@ static int nsp_ast_pprint_post_tag_color(ast_wrap *ast)
 {
   if (ast->use_color == TRUE )
     {
-      if (ast->use_html_color_class == TRUE ||
-	  ast->use_gtk_color_class == TRUE)
-	Sciprintf("</span>");
-      else
-	Sciprintf("\033[0m");
+      switch (ast->target)
+	{
+	case nsp_pprint_html:Sciprintf("</span>");break;
+	case nsp_pprint_gtk:Sciprintf("</span>");break;
+	case nsp_pprint_latex:Sciprintf("}");break;
+	case nsp_pprint_term:Sciprintf("\033[0m");break;
+	}
     }
   return 0;
 }
@@ -199,15 +204,13 @@ static int nsp_ast_pprint_comment(int indent,ast_wrap *ast)
   int pos=0;
   pos += Sciprintf2(indent, _nsp_ast_get_space(ast),"");
   pos += nsp_ast_pprint_pre_tag_color(ast,type_comment);
-  if  (ast->use_html_color_class == TRUE ||
-       ast->use_gtk_color_class == TRUE )
+
+  switch (ast->target)
     {
-      nsp_print_comment_for_html(str);
-      pos += strlen(str)+2;
-    }
-  else
-    {
-      pos += Sciprintf("//%s",str);
+    case nsp_pprint_html:nsp_print_comment_for_html(str);pos += strlen(str)+2;break;
+    case nsp_pprint_gtk:nsp_print_comment_for_html(str);pos += strlen(str)+2;break;
+    case nsp_pprint_latex: pos += Sciprintf("//%s",str);break;
+    case nsp_pprint_term: pos += Sciprintf("//%s",str);break;
     }
   pos += nsp_ast_pprint_post_tag_color(ast);
   return pos;
@@ -262,13 +265,13 @@ static int nsp_ast_pprint_string(int indent, ast_wrap *ast)
   pos += Sciprintf2(indent, _nsp_ast_get_space(ast),"");
   pos += nsp_ast_pprint_pre_tag_color(ast,type_string);
   pos += 2 + strlen(str);
-  if  (ast->use_html_color_class == TRUE || ast->use_gtk_color_class == TRUE )
+
+  switch (ast->target)
     {
-      nsp_print_string_as_read_for_html(str,string_delim);
-    }
-  else
-    {
-      nsp_print_string_as_read(str,string_delim);
+    case nsp_pprint_html:nsp_print_string_as_read_for_html(str,string_delim);break;
+    case nsp_pprint_gtk:nsp_print_string_as_read_for_html(str,string_delim);break;
+    case nsp_pprint_latex:nsp_print_string_as_read(str,string_delim);break;
+    case nsp_pprint_term:nsp_print_string_as_read(str,string_delim);break;
     }
   pos += nsp_ast_pprint_post_tag_color(ast);
   return pos;
@@ -385,9 +388,11 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
   int type = ast->get_op(ast);
   const char *s = nsp_astcode_to_name(type);
   const char *s1= s;
-  if (ast->use_html_color_class == TRUE ||
-      ast->use_gtk_color_class == TRUE )
+
+  switch (ast->target)
     {
+    case nsp_pprint_html:
+    case nsp_pprint_gtk:
       if ( strcmp(s,">") == 0)
 	s1 = "&gt;";
       else if ( strcmp(s,"<") == 0)
@@ -402,11 +407,14 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
 	 s1 = "&#126;";
       */
       else s1 = s;
-    }
-  if (  ast->use_gtk_color_class == TRUE )
-    {
-      if ( strcmp(s,"&") == 0) s1 ="&amp;";
-      else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
+      if ( ast->target == nsp_pprint_gtk)
+	{
+	  if ( strcmp(s,"&") == 0) s1 ="&amp;";
+	  else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
+	}
+      break;
+    case nsp_pprint_latex: break;
+    case nsp_pprint_term: break;
     }
   if ( pre && ( ast->use_sep_space || (strlen(s1) > 0 && s1[0]== '.')) )  {Sciprintf("%s",space); seps++;}
   Sciprintf2(indent, space ,"%s",s1);
@@ -1087,7 +1095,14 @@ static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offs
 
 static char* _nsp_ast_get_space(ast_wrap *ast)
 {
-  return ((ast->use_html_color_class == TRUE) ? "&nbsp;": " ");
+  switch (ast->target)
+    {
+    case nsp_pprint_html: return "&nbsp;";break;
+    case nsp_pprint_gtk:
+    case nsp_pprint_latex:
+    case nsp_pprint_term: return " ";break;
+    }
+  return " ";
 }
 
 static int _nsp_latin1_character_to_html(char c, char *str)
@@ -1691,8 +1706,7 @@ static void nsp_ast_to_ast_wrap(NspAst *ast, ast_wrap *astwrap)
   astwrap->get_length_args = nsp_ast_get_length_args;
   astwrap->get_arg = nsp_ast_get_arg;
   astwrap->ast = ast;
-  astwrap->use_html_color_class = FALSE;
-  astwrap->use_gtk_color_class = FALSE;
+  astwrap->target = nsp_pprint_term;
   astwrap->use_sep_space = TRUE;
   astwrap->use_color = TRUE;
 }
@@ -1768,8 +1782,7 @@ static void nsp_plist_to_ast_wrap(PList ast, ast_wrap *astwrap)
   astwrap->get_length_args = nsp_plist_get_length_args;
   astwrap->get_arg = nsp_plist_get_arg;
   astwrap->ast = ast;
-  astwrap->use_html_color_class = FALSE;
-  astwrap->use_gtk_color_class = FALSE;
+  astwrap->target = nsp_pprint_term;
   astwrap->use_sep_space = TRUE;
   astwrap->use_color = TRUE;
 }

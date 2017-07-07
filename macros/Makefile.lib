@@ -32,8 +32,16 @@ pp : $(PP)
 	@$(SCIDIR)/bin/scilex -nw -ns -e "pretty_printer('$*.sci');quit"
 	@diff -riw $*.sci $*_pp.sci && ([ $$? -eq 0 ] && echo -n "") || echo -n "" 
 
+PPTEX=$(patsubst %.sci,%.tex,$(wildcard *.sci))
+
+pptex : $(PPTEX) 
+
+%.tex : %.sci
+	@echo "pretty print $*.sci to $*.tex"
+	@$(SCIDIR)/bin/scilex -nw -ns -e "pretty_printer('$*.sci',target='latex',color=%t);quit"
+
 clean	::
-	@$(RM) $(PP)
+	@$(RM) $(PP) $(PPTEX) 
 
 
 

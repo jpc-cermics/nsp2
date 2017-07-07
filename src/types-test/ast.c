@@ -1036,6 +1036,9 @@ static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs)
 
 static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs, print_mode mode)
 {
+  int target = 4;
+  char *s_target = NULL;
+  const char *targets[]={"html", "gtk", "latex", "term", NULL };
   NspFile *F=NULL;
   FILE *f=NULL;
   IOVFun def=NULL ;
@@ -1049,8 +1052,7 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
 			    { "color",s_bool,NULLOBJ,-1},
 			    { "depth", s_int,NULLOBJ,-1},
 			    { "indent",s_int,NULLOBJ,-1},
-			    { "html",s_bool,NULLOBJ,-1},
-			    { "gtk",s_bool,NULLOBJ,-1},
+			    { "target",string,NULLOBJ,-1},
 			    { NULL,t_end,NULLOBJ,-1}};
 
   if ( mode == file_out ) 
@@ -1067,8 +1069,19 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   if ( mode == string_out) color=FALSE;
   
   if ( get_optional_args(stack, rhs, opt, print_opts,
-			 &as_read,&color,&depth,&indent,&html,&gtk) == FAIL) 
+			 &as_read,&color,&depth,&indent,&s_target) == FAIL) 
     return RET_BUG;
+
+  if ( s_target != NULL ) 
+    {
+      int rep;
+      if ( (rep= is_string_in_array(s_target,targets,0)) == -1 )
+	{
+	  string_not_in_array(stack,s_target,targets , "optional argument targets");
+	  return RET_BUG;
+	}
+      target = rep+1;
+    }
   
   /* initialize according to mode */
   switch ( mode ) 
@@ -1128,14 +1141,14 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
       Sciprintf2(indent," ","-->\n");
       Sciprintf2(indent," ","%s\n","<div class=\"nsp_code\">");
       Sciprintf2(indent+2," ","%s\n","<pre class=\"code\">");
-      nsp_ast_pprint(self, indent + 2, user_pref.color,html , gtk, TRUE);
+      nsp_ast_pprint(self, indent + 2, user_pref.color, target, TRUE);
       Sciprintf2(indent+2," ","\n");
       Sciprintf2(indent+2," ","%s\n","</pre>");
       Sciprintf2(indent," ","%s\n","</div>");
     }
   else
     {
-      nsp_ast_pprint(self, indent, user_pref.color,html , gtk, FALSE);
+      nsp_ast_pprint(self, indent, user_pref.color, target, FALSE);
     }
   user_pref.color=cr;
   user_pref.pr_depth= dp;
@@ -1170,9 +1183,9 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
  * 
  **/
 
-static void nsp_ast_pprint(NspAst * L, int indent, int color,int html,int gtk, int space)
+static void nsp_ast_pprint(NspAst * L, int indent, int color,int target , int space)
 {
-  nsp_ast_generic_pretty_printer(L,indent,color, html,gtk,space);
+  nsp_ast_generic_pretty_printer(L,indent,color, target, space);
 }
 
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level)
@@ -1281,4 +1294,4 @@ int nsp_ast_check_args(NspList *L)
 }
 
 
-#line 1285 "ast.c"
+#line 1298 "ast.c"
