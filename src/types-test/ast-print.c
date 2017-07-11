@@ -62,9 +62,9 @@ static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset
 #if 0
 static int _nsp_ast_pprint_statements_newline_ended(ast_wrap *ast,int elt, int offset);
 #endif
-static void nsp_print_string_as_read_for_html(const char *str, char string_delim);
+static void nsp_print_string_as_read_for_html(const char *str, char string_delim, int target);
 static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offset);
-static void nsp_print_comment_for_html(const char *str);
+static void nsp_print_comment_for_html(const char *str,int target);
 static int _nsp_ast_pprint_arg_comment_ended(ast_wrap *ast,int elt);
 static int _nsp_ast_pprint_op_comment_ended(ast_wrap *ast, int elt);
 static int _nsp_ast_printlength_arg(ast_wrap *ast,int elt, int indent, int pos, int posret);
@@ -207,16 +207,16 @@ static int nsp_ast_pprint_comment(int indent,ast_wrap *ast)
 
   switch (ast->target)
     {
-    case nsp_pprint_html:nsp_print_comment_for_html(str);pos += strlen(str)+2;break;
-    case nsp_pprint_gtk:nsp_print_comment_for_html(str);pos += strlen(str)+2;break;
-    case nsp_pprint_latex: pos += Sciprintf("//%s",str);break;
+    case nsp_pprint_html:nsp_print_comment_for_html(str,ast->target);pos += strlen(str)+2;break;
+    case nsp_pprint_gtk:nsp_print_comment_for_html(str,ast->target);pos += strlen(str)+2;break;
+    case nsp_pprint_latex:nsp_print_comment_for_html(str,ast->target);pos += strlen(str)+2;break;
     case nsp_pprint_term: pos += Sciprintf("//%s",str);break;
     }
   pos += nsp_ast_pprint_post_tag_color(ast);
   return pos;
 }
 
-static void nsp_print_comment_for_html(const char *str)
+static void nsp_print_comment_for_html(const char *str, int target)
 {
   Sciprintf("//");
   while ( *str != '\0') 
@@ -230,6 +230,16 @@ static void nsp_print_comment_for_html(const char *str)
 	{
 	  switch (*str) 
 	    {
+	    case '{' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","@@nspob{}");
+	      else Sciprintf("%c",*str);
+	      break;
+	    case '}' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","@@nspcb{}");
+	      else Sciprintf("%c",*str);
+	      break;
 	    case '<' : Sciprintf("%s","&lt;");break;
 	    case '>' : Sciprintf("%s","&gt;");break;
 	    case '&' : Sciprintf("%s","&amp;");break;
@@ -268,16 +278,16 @@ static int nsp_ast_pprint_string(int indent, ast_wrap *ast)
 
   switch (ast->target)
     {
-    case nsp_pprint_html:nsp_print_string_as_read_for_html(str,string_delim);break;
-    case nsp_pprint_gtk:nsp_print_string_as_read_for_html(str,string_delim);break;
-    case nsp_pprint_latex:nsp_print_string_as_read(str,string_delim);break;
+    case nsp_pprint_html:nsp_print_string_as_read_for_html(str,string_delim,ast->target);break;
+    case nsp_pprint_gtk:nsp_print_string_as_read_for_html(str,string_delim,ast->target);break;
+    case nsp_pprint_latex:nsp_print_string_as_read_for_html(str,string_delim,ast->target);break;
     case nsp_pprint_term:nsp_print_string_as_read(str,string_delim);break;
     }
   pos += nsp_ast_pprint_post_tag_color(ast);
   return pos;
 }
 
-static void nsp_print_string_as_read_for_html(const char *str,char string_delim)
+static void nsp_print_string_as_read_for_html(const char *str,char string_delim, int target)
 {
   Sciprintf("%c",string_delim);
   while ( *str != '\0') 
@@ -291,6 +301,16 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim)
 	{
 	  switch (*str) 
 	    {
+	    case '{' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","@@nspob{}");
+	      else Sciprintf("%c",*str);
+	      break;
+	    case '}' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","@@nspcb{}");
+	      else Sciprintf("%c",*str);
+	      break;
 	    case '\'' :  Sciprintf("%s","''");break;
 	    case '\"' :  Sciprintf("%s","\"\"");break;
 	    case '\\' :
@@ -383,42 +403,55 @@ static int nsp_ast_pprint_keyword(int indent,ast_wrap *ast,const char *str)
 
 static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int post)
 {
-  int seps=0;
+  int seps=0, force_space = FALSE;
   const char *space = _nsp_ast_get_space(ast);
   int type = ast->get_op(ast);
   const char *s = nsp_astcode_to_name(type);
   const char *s1= s;
-
+  //Sciprintf("opname [%s] [%s] [%d] [%d]\n",s,space,pre,post);
   switch (ast->target)
     {
     case nsp_pprint_html:
     case nsp_pprint_gtk:
       if ( strcmp(s,">") == 0)
-	s1 = "&gt;";
+	{ s1 = "&gt;"; }
       else if ( strcmp(s,"<") == 0)
-	s1 = "&lt;";
+	{s1 = "&lt;"; force_space  = TRUE;}
       else if ( strcmp(s,"<=") == 0)
-	s1 = "&lt;=";
+	{s1 = "&lt;=";}
       else if ( strcmp(s,">=") == 0)
-	s1 = "&gt;=";
+	{s1 = "&gt;=";}
       else if ( strcmp(s,"<>") == 0)
-	s1 = "&lt;&gt";
-      /* else if ( strcmp(s,"~") == 0 )
-	 s1 = "&#126;";
-      */
+	{s1 = "&lt;&gt";}
+      else if ( strcmp(s,"~") == 0 )
+	{s1 = s;}
+      else if ( strcmp(s,"&") == 0)
+	{ s1 ="&amp;";}
+      else if ( strcmp(s,"&&") == 0)
+	{ s1 ="&amp;&amp;";}
       else s1 = s;
-      if ( ast->target == nsp_pprint_gtk)
-	{
-	  if ( strcmp(s,"&") == 0) s1 ="&amp;";
-	  else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
-	}
       break;
     case nsp_pprint_latex: break;
     case nsp_pprint_term: break;
     }
-  if ( pre && ( ast->use_sep_space || (strlen(s1) > 0 && s1[0]== '.')) )  {Sciprintf("%s",space); seps++;}
+  if ( strcmp(s,">") == 0 ||
+       strcmp(s,"<") == 0 ||
+       strcmp(s,"<=") == 0||
+       strcmp(s,">=") == 0||
+       strcmp(s,"<>") == 0||
+       strcmp(s,"&") == 0||
+       strcmp(s,"&&") == 0||
+       strcmp(s,"|") == 0||
+       strcmp(s,"||") == 0)
+    {
+      force_space=TRUE;
+    }
+  
+  if ( force_space || ( pre && ( ast->use_sep_space || (strlen(s1) > 0 && s1[0]== '.'))))
+    {Sciprintf("%s",space); seps++;}
   Sciprintf2(indent, space ,"%s",s1);
-  if ( post && ast->use_sep_space ) {Sciprintf("%s",space);seps++;}
+  if ( force_space || ( post && ast->use_sep_space ))
+    {Sciprintf("%s",space);seps++;}
   return pos + indent + seps + strlen(s);
 }
 
@@ -558,11 +591,17 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  return newpos;
 	  break;
 	case CELLARGS :
-	  /* a sequence of expressions inside {} for x{} */
-	  newpos = pos +  Sciprintf2(indent, _nsp_ast_get_space(ast),"{");
-	  newpos = _nsp_ast_pprint_args(ast,1,ast->get_arity(ast),0,newpos,newpos,",",TRUE," ...\n");
-	  newpos += Sciprintf("}");
-	  return newpos;
+	  {
+	    const char *ob = (ast->target == nsp_pprint_latex) ? "@@nspob{}": "{";
+	    const char *cb = (ast->target == nsp_pprint_latex) ? "@@nspcb{}": "}";
+	    /* a sequence of expressions inside {} for x{} */
+	    newpos = pos +  indent+1;
+	    Sciprintf2(indent, _nsp_ast_get_space(ast), ob);
+	    newpos = _nsp_ast_pprint_args(ast,1,ast->get_arity(ast),0,newpos,newpos,",",TRUE," ...\n");
+	    newpos += 1;
+	    Sciprintf(cb);
+	    return newpos;
+	  }
 	  break;
 	case METARGS :
 	  /* a sequence of expressions inside [] for x[] */
@@ -630,7 +669,13 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 #endif
 	  break;
 	case EMPTYMAT:  return pos+Sciprintf2(indent, _nsp_ast_get_space(ast),"[]");break;
-	case EMPTYCELL: return pos+Sciprintf2(indent, _nsp_ast_get_space(ast),"{}");break;
+	case EMPTYCELL:
+	  {
+	    const char *obcb = (ast->target == nsp_pprint_latex) ? "@@nspob{}@@nspcb{}": "{}";
+	    Sciprintf2(indent, _nsp_ast_get_space(ast), obcb);
+	    return pos+indent+2;
+	  }
+	  break;
 	case P_MATRIX :
 	  newpos = pos + Sciprintf2(indent, _nsp_ast_get_space(ast),"[");
 	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1, 0 );
@@ -638,10 +683,16 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  return newpos;
 	  break;
 	case P_CELL :
-	  newpos = pos + Sciprintf2(indent, _nsp_ast_get_space(ast),"{");
-	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1, 0);
-	  newpos += Sciprintf("}");
-	  return newpos;
+	  {
+	    const char *ob = (ast->target == nsp_pprint_latex) ? "@@nspob{}": "{";
+	    const char *cb = (ast->target == nsp_pprint_latex) ? "@@nspcb{}": "}";
+	    newpos = pos + indent+1;
+	    Sciprintf2(indent, _nsp_ast_get_space(ast), ob);
+	    newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1, 0);
+	    newpos += 1;
+	    Sciprintf(cb);
+	    return newpos;
+	  }
 	  break;
 	case ROWCONCAT:
 	case COLCONCAT:

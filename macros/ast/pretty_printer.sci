@@ -36,12 +36,12 @@ function txt=pretty_printer(fname,target="nsp",color=%f)
    case "latex" then 
     target_name = target_name + ".tex";
     S=ast.sprint[target="latex",color=color];
-    S=strsubst(S,"\\","\\nspb{}");
+    S=strsubst(S,"\\","\\nspbs{}");
+    S=strsubst(S,"%","\\nsppc{}");	
+    S=strsubst(S,"#","\\nspsh{}");
+    S=strsubst(S,"~","\\nspti{}");
     S=strsubst(S,"@@","\\");
-    S=strsubst(S,"%","\\nspp{}");	
-    S=strsubst(S,"#","\\nspd{}");
-    S=strsubst(S,"~","\\nspt{}");
-    S=['\\begin{Verbatim}';S;'\\end{Verbatim}'];
+    S=['\\begin{Verbatim}[commandchars=\\\\\\{\\}]';S;'\\end{Verbatim}'];
     
   else
     printf("Warning: unknown target ""%s""\n",target);
