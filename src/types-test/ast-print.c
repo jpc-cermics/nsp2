@@ -461,7 +461,7 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
  *
  */
 
-static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int tag)
+static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int tag1)
 {
   const char *s;
   int j,newpos=0, arity=0;
@@ -569,7 +569,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  if (  _nsp_ast_equalop_mlhs_length(ast) > 0 ) 
 	    newpos += Sciprintf("=");
 	  /* fix new return position after = */
-	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos, newpos, 0);
+	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos, newpos, tag1);
 	  return newpos;
 	  break;
 	case MLHS  :
@@ -626,7 +626,9 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  return newpos;
 	  break;
 	case FEVAL :
+	  if ( tag1 == 1) nsp_ast_pprint_pre_tag_color(ast, type_fname);
 	  newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret,0);
+	  if ( tag1 == 1) nsp_ast_pprint_post_tag_color(ast);
 	  newpos += Sciprintf("(");
 	  newpos = _nsp_ast_pprint_args(ast,2,ast->get_arity(ast),0,newpos,newpos,",",TRUE," ...\n");
 	  newpos += Sciprintf(")");
@@ -745,7 +747,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  break;
 	case FUNCTION:
 	  newpos = pos + nsp_ast_pprint_keyword(Max(posret-pos,0),ast,"function");
-	  newpos = _nsp_ast_pprint_arg(ast,1,1,newpos,newpos, 0);
+	  newpos = _nsp_ast_pprint_arg(ast,1,1,newpos,newpos, 1);
 	  newpos = _nsp_ast_pprint_check_newline(ast,2,newpos,0);
 	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos,posret+2, 0);
 	  if ( ast->get_arity(ast) == 3 ) 
@@ -831,7 +833,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 		}
 	      else
 		{
-		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2, arity -1 == j );
+		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2, 0 );
 		}
 	    }
 	  newpos = nsp_ast_pprint_keyword(Max(posret-newpos,0),ast,"end");
