@@ -134,10 +134,10 @@ static int color_from_key( nsp_colorized_types key)
 {
   switch (key)
     {
-    case type_comment: return p_red;break;
-    case type_string:  return p_cyan;break;
-    case type_keyword: return p_purple;break;
-    case type_number:  return p_green;break;
+    case type_comment: return p_cyan;break;
+    case type_string:  return p_red;break;
+    case type_keyword: return p_green;break;
+    case type_number:  return p_purple;break;
     case type_fname:   return p_blue;break;
     case type_operator:return p_black;break;
     }
@@ -148,10 +148,10 @@ static char* colorname_from_key( nsp_colorized_types key)
 {
   switch (key)
     {
-    case type_comment: return "red";break;
-    case type_string:  return "cyan";break;
-    case type_keyword: return "purple";break;
-    case type_number:  return "green";break;
+    case type_comment: return "cyan";break;
+    case type_string:  return "red";break;
+    case type_keyword: return "green";break;
+    case type_number:  return "purple";break;
     case type_fname:   return "blue";break;
     case type_operator:return "black";break;
     }
