@@ -40,35 +40,35 @@ function [A,C,rcnd]=findAC(s,n,l,R,meth,tol,printw)
   // 
   //        See also FINDABCD, FINDBD, FINDBDK, FINDR, ORDER, SIDENT
   // 
-  
+
   //        V. Sima 18-01-2000.
   // 
   //        Revisions:
   //   
-  
-  nin = nargin;
-  nout = nargout;
+
+  nin=nargin;
+  nout=nargout;
   // 
-  if nin<7 then
-    printw = 0;
+  if nin < 7 then
+    printw=0;
   end
-  if nin<6 then tol = 0;end
-  if isempty(tol) then tol = 0;end
-  if nin<5 then meth = 1;end
-  if isempty(meth) then meth = 1;end
-  if nin<4 then
+  if nin < 6 then tol=0;end
+  if isempty(tol) then tol=0;end
+  if nin < 5 then meth=1;end
+  if isempty(meth) then meth=1;end
+  if nin < 4 then
     error('Error: Wrong number of input arguments');
   end
   // 
   // Compute system matrices A and C.
-  job = 2;
-  nsmpl = 0;
+  job=2;
+  nsmpl=0;
   if nout==1 then
-    A = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+    A=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
   elseif nout==2 then
-    [A,C] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+    [A,C]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
   elseif nout==3 then
-    [A,C,rcnd] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+    [A,C,rcnd]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
   else
     error('Error: Wrong number of output arguments');
   end

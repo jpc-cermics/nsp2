@@ -72,41 +72,41 @@ function [R,n,sval,rcnd]=findR(s,y,u,meth,alg,jobd,tol,printw)
   // 
   //See also FINDABCD, FINDAC, FINDBD, FINDBDK, ORDER, SIDENT
   // 
-  
+
   //        V. Sima 18-01-2000.
   // 
   //        Revisions:
   //        V. Sima, July 2000.
   //   
-  
-  nin = nargin;
+
+  nin=nargin;
   // 
   // Assumes one batch only.
-  batch = 4;
-  conct = 2;
+  batch=4;
+  conct=2;
   // 
-  if nin<8 then
-    printw = 0;
+  if nin < 8 then
+    printw=0;
   end
-  if nin<7 then
-    tol(1:2) = [0,-1] 
+  if nin < 7 then
+    tol(1:2)=[0,-1]
   end
-  if nin<6 then jobd = 2; end
-  if isempty(jobd) then jobd = 2,end
+  if nin < 6 then jobd=2;end
+  if isempty(jobd) then jobd=2,end
 
-  if nin<5 then alg = 1;end
-  if isempty(alg) then alg = 1;end
+  if nin < 5 then alg=1;end
+  if isempty(alg) then alg=1;end
 
-  if nin<4 then meth = 1;end
-  if isempty(meth) then meth = 1;end
-  if nin<3 then
-    u = [];
+  if nin < 4 then meth=1;end
+  if isempty(meth) then meth=1;end
+  if nin < 3 then
+    u=[];
   end
   // 
   if meth==1 then
-    [R,n,sval] = sorder(meth,alg,jobd,batch,conct,s,y,u,tol,printw);
+    [R,n,sval]=sorder(meth,alg,jobd,batch,conct,s,y,u,tol,printw);
   else
-    [R,n,sval,rcnd] = sorder(meth,alg,jobd,batch,conct,s,y,u,tol,printw);
+    [R,n,sval,rcnd]=sorder(meth,alg,jobd,batch,conct,s,y,u,tol,printw);
   end
   // 
   // end findR

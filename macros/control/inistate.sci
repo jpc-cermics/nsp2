@@ -35,7 +35,7 @@ function [x0,V,rcnd]=inistate(A,B,C,D,y,u,tol,printw)
   // 
   //        See also FINDBD, FINDX0BD
   // 
-  
+
   //        V. Sima 13-05-2000.
   // 
   //        For efficiency, most errors are checked in the mexfile findBD. Also,
@@ -45,56 +45,56 @@ function [x0,V,rcnd]=inistate(A,B,C,D,y,u,tol,printw)
   //        V. Sima, July 2000.
   // 
 
-  if type(A,'short')== 'linearsys' then
+  if type(A,'short')=='linearsys' then
     // Get the system matrices of the ss object, and the remaining parameters.
     // General call     x0 = inistate(A,B,C,D,y,u,tol,printw);
     // Special call     x0 = inistate(sys,y,u,tol,printw); 
     // 
-    if A.dom == 'c' then
+    if A.dom=='c' then
       error('The system SYS must be a discrete-time system');
     end
     if nargin < 2 then
       error('Error: inistate needs at least 2 input parameters');
     end
-    [As,Bs,Cs,Ds] = abcd(A)
-    [ny,nu] = size(A);
-    [ty,p] = size(B);
-    if nargin >2 then
-      [tu,m] = size(C);
-      if ~(((tu==ty|tu==0)&(m==nu))&(ty>1)) then
-	tol = C;
-	// Special call     x0 = inistate(sys,y,tol,printw); 
-	if nargin >3 then
-	  printw = D;
-	else
-	  printw = 0;
-	end
-	// Below, B means y !
-	[x0,Vl,rcndl] = findBD(1,3,As,Cs,B,tol,printw);
+    [As,Bs,Cs,Ds]=abcd(A)
+    [ny,nu]=size(A);
+    [ty,p]=size(B);
+    if nargin > 2 then
+      [tu,m]=size(C);
+      if ~(((tu==ty | tu==0) & (m==nu)) & (ty > 1)) then
+        tol=C;
+        // Special call     x0 = inistate(sys,y,tol,printw); 
+        if nargin > 3 then
+          printw=D;
+        else
+          printw=0;
+        end
+        // Below, B means y !
+        [x0,Vl,rcndl]=findBD(1,3,As,Cs,B,tol,printw);
       else
-	if nargin >3 then
-	  // Special call     x0 = inistate(sys,y,u,tol,printw); 
-	  tol = D;
-	  if nargin >4 then
-	    printw = y;
-	  else
-	    printw = 0;
-	  end
-	else
-	  tol = 0;
-	  printw = 0;
-	end
-	// Below, B means y, and C means u !
-	if norm(Ds,1)==0 then
-	  [x0,Vl,rcndl] = findBD(1,2,1,As,Bs,Cs,B,C,tol,printw);
-	else
-	  [x0,Vl,rcndl] = findBD(1,2,2,As,Bs,Cs,Ds,B,C,tol,printw);
-	end
+        if nargin > 3 then
+          // Special call     x0 = inistate(sys,y,u,tol,printw); 
+          tol=D;
+          if nargin > 4 then
+            printw=y;
+          else
+            printw=0;
+          end
+        else
+          tol=0;
+          printw=0;
+        end
+        // Below, B means y, and C means u !
+        if norm(Ds,1)==0 then
+          [x0,Vl,rcndl]=findBD(1,2,1,As,Bs,Cs,B,C,tol,printw);
+        else
+          [x0,Vl,rcndl]=findBD(1,2,2,As,Bs,Cs,Ds,B,C,tol,printw);
+        end
       end
     else
       // Special call     x0 = inistate(sys,y); 
       // Below, B means y !
-      [x0,Vl,rcndl] = findBD(1,3,As,Cs,B);
+      [x0,Vl,rcndl]=findBD(1,3,As,Cs,B);
     end
     // 
   else
@@ -103,68 +103,68 @@ function [x0,V,rcnd]=inistate(A,B,C,D,y,u,tol,printw)
     // Special calls    x0 = inistate(A,B,C,y,u,tol,printw); 
     //                  x0 = inistate(A,C,y,tol,printw); 
     // 
-    if nargin <3 then
+    if nargin < 3 then
       error('Error: INISTATE needs at least 3 input parameters');
     end
-    [m2,n2] = size(B);
-    [m3,n3] = size(C);
-    if nargin >=4 then
-      [m4,n4] = size(D);
-      if nargin >=5 then
-	[m5,n5] = size(y);
-	if nargin >=6 then
-	  [m6,n6] = size(u);
-	  if nargin >=7 then
-	    if (nargin ==7)&(m6*n6>1) then
-	      // Special call     x0 = inistate(A,B,C,D,y,u,tol); 
-	      [x0,Vl,rcndl] = findBD(1,2,1,A,B,C,D,y,u,tol);
-	    elseif nargin ==7 then
-	      // Special call     x0 = inistate(A,B,C,y,u,tol,printw);
-	      // Below, D means y and y means u !
-	      printw = tol;
-	      tol = u;
-	      [x0,Vl,rcndl] = findBD(1,2,1,A,B,C,D,y,tol,printw);
-	    else
-	      [x0,Vl,rcndl] = findBD(1,2,2,A,B,C,D,y,u,tol,printw);
-	    end
-	  else
-	    if m6*n6>1 then
-	      [x0,Vl,rcndl] = findBD(1,2,2,A,B,C,D,y,u);
-	    else
-	      // Special call     x0 = inistate(A,B,C,y,u,tol);
-	      // Below, y means U and D means y !
-	      tol = u;
-	      [x0,Vl,rcndl] = findBD(1,2,1,A,B,C,D,y,tol);
-	    end
-	  end
-	else
-	  // Special calls    x0 = inistate(A,B,C,y,u); 
-	  //                  x0 = inistate(A,C,y,tol,printw); 
-	  if m5*n5>1 then
-	    // Below, y means u and D means y !
-	    [x0,Vl,rcndl] = findBD(1,2,1,A,B,C,D,y);
-	  else
-	    // Below, C means y and B means C !
-	    tol = D;
-	    printw = y;
-	    [x0,Vl,rcndl] = findBD(1,3,A,B,C,tol,printw);
-	  end
-	end
+    [m2,n2]=size(B);
+    [m3,n3]=size(C);
+    if nargin >= 4 then
+      [m4,n4]=size(D);
+      if nargin >= 5 then
+        [m5,n5]=size(y);
+        if nargin >= 6 then
+          [m6,n6]=size(u);
+          if nargin >= 7 then
+            if (nargin==7) & (m6*n6 > 1) then
+              // Special call     x0 = inistate(A,B,C,D,y,u,tol); 
+              [x0,Vl,rcndl]=findBD(1,2,1,A,B,C,D,y,u,tol);
+            elseif nargin==7 then
+              // Special call     x0 = inistate(A,B,C,y,u,tol,printw);
+              // Below, D means y and y means u !
+              printw=tol;
+              tol=u;
+              [x0,Vl,rcndl]=findBD(1,2,1,A,B,C,D,y,tol,printw);
+            else
+              [x0,Vl,rcndl]=findBD(1,2,2,A,B,C,D,y,u,tol,printw);
+            end
+          else
+            if m6*n6 > 1 then
+              [x0,Vl,rcndl]=findBD(1,2,2,A,B,C,D,y,u);
+            else
+              // Special call     x0 = inistate(A,B,C,y,u,tol);
+              // Below, y means U and D means y !
+              tol=u;
+              [x0,Vl,rcndl]=findBD(1,2,1,A,B,C,D,y,tol);
+            end
+          end
+        else
+          // Special calls    x0 = inistate(A,B,C,y,u); 
+          //                  x0 = inistate(A,C,y,tol,printw); 
+          if m5*n5 > 1 then
+            // Below, y means u and D means y !
+            [x0,Vl,rcndl]=findBD(1,2,1,A,B,C,D,y);
+          else
+            // Below, C means y and B means C !
+            tol=D;
+            printw=y;
+            [x0,Vl,rcndl]=findBD(1,3,A,B,C,tol,printw);
+          end
+        end
       else
-	// Below, D means tol, C means y, and B means C !
-	[x0,Vl,rcndl] = findBD(1,3,A,B,C,D);
+        // Below, D means tol, C means y, and B means C !
+        [x0,Vl,rcndl]=findBD(1,3,A,B,C,D);
       end
     else
       // Below, C means y, and B means C !
-      [x0,Vl,rcndl] = findBD(1,3,A,B,C);
+      [x0,Vl,rcndl]=findBD(1,3,A,B,C);
     end
   end
   // 
-  if nargout>2 then
-    V = Vl;
-    rcnd = rcndl;
-  elseif nargout>1 then
-    V = Vl;
+  if nargout > 2 then
+    V=Vl;
+    rcnd=rcndl;
+  elseif nargout > 1 then
+    V=Vl;
   end
   // 
   // end inistate

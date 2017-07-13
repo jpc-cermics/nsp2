@@ -47,7 +47,7 @@ function [x0,B,D,V,rcnd]=findx0BD(A,C,y,u,withx0,withd,tol,printw)
   // 
   //        See also FINDBD, INISTATE
   // 
-  
+
   //        V. Sima 13-05-2000.
   // 
   //        For efficiency, most errors are checked in the mexfile findBD. 
@@ -55,63 +55,63 @@ function [x0,B,D,V,rcnd]=findx0BD(A,C,y,u,withx0,withd,tol,printw)
   //        Revisions:
   //        V. Sima, July 2000.
   // 
-  ni = nargin;
-  nout = nargout;
-  if ni<4 then
+  ni=nargin;
+  nout=nargout;
+  if ni < 4 then
     error('Error: at least 4 input parameters');
   end
-  if nout<1 then
+  if nout < 1 then
     error('Error: at least 1 output parameters');
   end
   // 
-  if ni<8 then
-    printw = 0;
+  if ni < 8 then
+    printw=0;
   end
-  if ni<7 then tol = 0;end
-  if isempty(tol) then tol = 0;end
-  if ni<6 then 
-    withd = 1;
-  elseif isempty(withd ) then
-    withd = 1;
-  elseif (withd~=0)&(withd~=1) then
+  if ni < 7 then tol=0;end
+  if isempty(tol) then tol=0;end
+  if ni < 6 then
+    withd=1;
+  elseif isempty(withd) then
+    withd=1;
+  elseif (withd <> 0) & (withd <> 1) then
     error('Error: withd could only be 0 or 1');
   end
-  if ni<5 then  withx0 = 1;end
-  if isempty(withx0 ) then  withx0 = 1;end
-  job = withd+1;
+  if ni < 5 then withx0=1;end
+  if isempty(withx0) then withx0=1;end
+  job=withd+1;
   // 
   if withx0==1 then
     if withd==1 then
-      [x0,B,D,Vl,rcndl] = findBD(withx0,1,job,A,C,y,u,tol,printw);
-      if nout>3 then
-	V = Vl;
+      [x0,B,D,Vl,rcndl]=findBD(withx0,1,job,A,C,y,u,tol,printw);
+      if nout > 3 then
+        V=Vl;
       end
-      if nout>4 then
-	rcnd = rcndl;
+      if nout > 4 then
+        rcnd=rcndl;
       end
     else
-      [x0,B,Vl,rcndl] = findBD(withx0,1,job,A,C,y,u,tol,printw);
-      if nout>2 then
-	D = Vl;
+      [x0,B,Vl,rcndl]=findBD(withx0,1,job,A,C,y,u,tol,printw);
+      if nout > 2 then
+        D=Vl;
       end
-      if nout>3 then
-	V = rcndl;
+      if nout > 3 then
+        V=rcndl;
       end
     end
   else
     // Below, x0 means B, and B means D or V !
     if withd==1 then
-      [x0,B,Vl,rcndl] = findBD(withx0,1,job,A,C,y,u,tol,printw);
-      if nout>2 then
-	D = Vl;
+      [x0,B,Vl,rcndl]=findBD(withx0,1,job,A,C,y,u,tol,printw);
+      if nout > 2 then
+        D=Vl;
       end
-      if nout>3 then
-	V = rcndl;
+      if nout > 3 then
+        V=rcndl;
       end
     else
-      [x0,B,Vl] = findBD(withx0,1,job,A,C,y,u,tol,printw);
-      if nout>2 then
-	D = Vl;
+      [x0,B,Vl]=findBD(withx0,1,job,A,C,y,u,tol,printw);
+      if nout > 2 then
+        D=Vl;
       end
     end
   end

@@ -1,16 +1,16 @@
 function [P,m]=lqg2stan(P22,Q,R)
-//P = standard plant for LQG control problem
-//described by the triple (A,B,C)
-//  . 
-//  x = Ax + w1 + Bu   (resp x[n+1]= ... if dom='d')
-//  
-//  y = Cx + w2
-//
-//  cov(w1,w2)=R;
-//
-//  mininize (x,u)'Q(x,u)
-//
-// Copyright INRIA
+  //P = standard plant for LQG control problem
+  //described by the triple (A,B,C)
+  //  . 
+  //  x = Ax + w1 + Bu   (resp x[n+1]= ... if dom='d')
+  //  
+  //  y = Cx + w2
+  //
+  //  cov(w1,w2)=R;
+  //
+  //  mininize (x,u)'Q(x,u)
+  //
+  // Copyright INRIA
   flag=0;
   if type(P22,'short')=='r' then
     P22=tf2ss(P22);flag=1;
@@ -27,7 +27,8 @@ function [P,m]=lqg2stan(P22,Q,R)
   C2=C;
   D11=0*C1*B1;
   dom=P22(7);
-  if isempty(dom) then printf("Warning: in lqg2stan, time domain assumed to be continuous\n');dom='c';end
+  if isempty(dom) then
+    printf("Warning: in lqg2stan, time domain assumed to be continuous\n");dom='c';end
   P=syslin(dom,A,real([B1,B2]),real([C1;C2]),real([D11,D12;D21,D22]));
   m=size(C2*B2);
   if flag==1 then

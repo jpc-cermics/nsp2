@@ -67,54 +67,54 @@ function [B,D,K,Q,Ry,S,rcnd]=findBDK(s,n,l,R,A,C,meth,job,nsmpl,tol,printw)
   // 
   //        See also FINDABCD, FINDAC, FINDBD, FINDR, ORDER, SIDENT
   // 
-  
+
   //        V. Sima 18-01-2000.
   // 
   //        Revisions:
   //        V. Sima, July 2000.
   //   
-  
-  nin = nargin;
-  nout = nargout;
+
+  nin=nargin;
+  nout=nargout;
   // 
-  if nin<11 then printw = 0;end
-  if nin<10 then tol = 0;end
-  if isempty(tol) then tol = 0,end
-  if nin<9 then nsmpl = 0;end
-  if isempty(nsmpl) then nsmpl = 0;end
-  if nin<8 then job = 2;end
-  if isempty(job) then job = 2;end
-  if nin<7 then meth = 2;end
-  if isempty(meth) then meth = 2;end
-  if nin<6 then
+  if nin < 11 then printw=0;end
+  if nin < 10 then tol=0;end
+  if isempty(tol) then tol=0,end
+  if nin < 9 then nsmpl=0;end
+  if isempty(nsmpl) then nsmpl=0;end
+  if nin < 8 then job=2;end
+  if isempty(job) then job=2;end
+  if nin < 7 then meth=2;end
+  if isempty(meth) then meth=2;end
+  if nin < 6 then
     error('Error: Wrong number of input arguments');
   end
   // 
-  jobl = job+2;
+  jobl=job+2;
   // 
   // Compute system matrices B and D.
   if nout==1 then
-    B = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    B=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==2 then
     // If job = 1 and nsmpl > 0, D means K.
     // If job = 1 and nsmpl = 0, D means rcnd.
-    [B,D] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==3 then
     // If below, job = 1 and nsmpl = 0, D means rcnd, K is not assigned.
     // If job = 1 and nsmpl > 0, D means K, K means Q.
-    [B,D,K] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D,K]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==4 then
     // If job = 1 and nsmpl > 0, D means K, K means Q, Q means Ry.
-    [B,D,K,Q] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D,K,Q]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==5 then
     // If job = 1 and nsmpl > 0, D means K, K means Q, Q means Ry, Ry means S.
-    [B,D,K,Q,Ry] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D,K,Q,Ry]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==6 then
     // If job = 1 and nsmpl > 0, D means K, K means Q, Q means Ry, 
     // Ry means S, S means rcnd.
-    [B,D,K,Q,Ry,S] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D,K,Q,Ry,S]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   elseif nout==7 then
-    [B,D,K,Q,Ry,S,rcnd] = sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
+    [B,D,K,Q,Ry,S,rcnd]=sident(meth,jobl,s,n,l,R,tol,nsmpl,A,C,printw);
   else
     error('Error: Wrong number of output arguments');
   end

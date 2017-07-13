@@ -1,36 +1,36 @@
 function F=stabil(A,B,alfa)
-//
-//returns F such that A+B*F is stable if (A,B) is stabilizable.
-//Assignable poles are set to alfa(1),alfa(2),...
-//If (A,B) is not stabilizable a warning is displayed
-//and assignable poles are set to alfa(1),alfa(2),...
-// Default value for alfa is -1.
-//
-//K=stabil(Sys,alfa,Beta) returns K, a compensentor for Sys
-//such that (A,B)-controllable eigenvalues are set to 
-//alfa and (C,A)-observable eigenvalues are set to Beta.
-// All assignable closed loop poles (which are given by the 
-//eigenvalues of Aclosed=h_cl(Sys,K) are set to alfa(i)'s
-//and Beta(j)'s.
-//
-//Example:
-// Sys=ssrand(2,2,5,list('st',2,3,3));
-// A=Sys(2);B=Sys(3); F=stabil(A,B);
-// spec(A)   
-//2 controllable modes 2 unstable uncontrollable modes
-//  and one stable uncontrollable mode
-//spec(A+B*F) 
-//the two controllable modes are set to -1.
-//
-// Copyright INRIA
+  //
+  //returns F such that A+B*F is stable if (A,B) is stabilizable.
+  //Assignable poles are set to alfa(1),alfa(2),...
+  //If (A,B) is not stabilizable a warning is displayed
+  //and assignable poles are set to alfa(1),alfa(2),...
+  // Default value for alfa is -1.
+  //
+  //K=stabil(Sys,alfa,Beta) returns K, a compensentor for Sys
+  //such that (A,B)-controllable eigenvalues are set to 
+  //alfa and (C,A)-observable eigenvalues are set to Beta.
+  // All assignable closed loop poles (which are given by the 
+  //eigenvalues of Aclosed=h_cl(Sys,K) are set to alfa(i)'s
+  //and Beta(j)'s.
+  //
+  //Example:
+  // Sys=ssrand(2,2,5,list('st',2,3,3));
+  // A=Sys(2);B=Sys(3); F=stabil(A,B);
+  // spec(A)   
+  //2 controllable modes 2 unstable uncontrollable modes
+  //  and one stable uncontrollable mode
+  //spec(A+B*F) 
+  //the two controllable modes are set to -1.
+  //
+  // Copyright INRIA
 
-  if type(A,'short') ~='linearsys' then
+  if type(A,'short') <> 'linearsys' then
     [ns,nc,U,sl]=st_ility(syslin('c',A,B,[]));
     [nx,vnx]=size(A);[nn,nu]=size(B);
-    if ns<nx then 
+    if ns < nx then
       printf('system not stabilizable (or detectable)=>stabilizing the stabilizable part\n');
     end
-    if nargin==2 then 
+    if nargin==2 then
       alfa=-ones(1,nx);
     end
     if prod(size(alfa))==1 then

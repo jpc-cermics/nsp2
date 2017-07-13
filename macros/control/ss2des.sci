@@ -1,16 +1,16 @@
 function S=ss2des(Sl,flag)
-// Returns S=list('des',A,B,C,D,E) for Sl a state-space
-// system with Ds polynomial.
-// if flag=="withD" a maximal rank D matrix is returned in S
-// otherwise D=0;
-// Copyright INRIA
+  // Returns S=list('des',A,B,C,D,E) for Sl a state-space
+  // system with Ds polynomial.
+  // if flag=="withD" a maximal rank D matrix is returned in S
+  // otherwise D=0;
+  // Copyright INRIA
 
   if nargin==1 then flag="void";end
-  if nargin==2 && flag<>"withD" then printf("ss2des: unknown flag!\n");end
+  if nargin==2 && flag <> "withD" then printf("ss2des: unknown flag!\n");end
   Ds=Sl(5);
   if type(Ds,'short')=='m' then
     if norm(Ds,1)==0 then S=Sl;return;end
-    if norm(Ds,1)<>0 then Ds=Ds+poly(0,'s')*0*Ds;end
+    if norm(Ds,1) <> 0 then Ds=Ds+poly(0,'s')*0*Ds;end
   end
   A2=Sl.A,B2=Sl.B;C2=Sl.C;
   if flag.equal["withD"] then D=coeff(Ds,0);Ds=Ds-D;end

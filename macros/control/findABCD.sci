@@ -59,49 +59,49 @@ function [sys,K,Q,Ry,S,rcnd]=findABCD(s,n,l,R,meth,nsmpl,tol,printw)
   // 
   //        See also FINDAC, FINDBD, FINDBDK, FINDR, ORDER, SIDENT
   // 
-  
+
   //        V. Sima 18-01-2000.
   // 
   //        Revisions:
   //   
-  
-  nin = nargin;
-  nout = nargout;
+
+  nin=nargin;
+  nout=nargout;
   // 
-  if nin<8 then
-    printw = 0;
+  if nin < 8 then
+    printw=0;
   end
-  if nin<7 then tol = 0;end
-  if isempty(tol) then tol = 0;end
+  if nin < 7 then tol=0;end
+  if isempty(tol) then tol=0;end
 
-  if nin<6 then nsmpl = 0;end
-  if isempty(nsmpl) then nsmpl = 0;end
+  if nin < 6 then nsmpl=0;end
+  if isempty(nsmpl) then nsmpl=0;end
 
-  if nin<5 then meth = 3;end
-  if isempty(meth) then meth = 3;end
+  if nin < 5 then meth=3;end
+  if isempty(meth) then meth=3;end
 
-  if nin<4 then
+  if nin < 4 then
     error('Error: wrong number of input arguments');
   end
   // 
   // Compute all system matrices.
-  job = 1;
+  job=1;
   if nout==1 then
-    [A,C,B,D] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
-  elseif nout>=2 then
+    [A,C,B,D]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+  elseif nout >= 2 then
     if nsmpl==0 then
       // Here K means rcnd.
-      [A,C,B,D,K] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     elseif nout==2 then
-      [A,C,B,D,K] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     elseif nout==3 then
-      [A,C,B,D,K,Q] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K,Q]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     elseif nout==4 then
-      [A,C,B,D,K,Q,Ry] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K,Q,Ry]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     elseif nout==5 then
-      [A,C,B,D,K,Q,Ry,S] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K,Q,Ry,S]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     elseif nout==6 then
-      [A,C,B,D,K,Q,Ry,S,rcnd] = sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
+      [A,C,B,D,K,Q,Ry,S,rcnd]=sident(meth,job,s,n,l,R,tol,nsmpl,[],[],printw);
     else
       error('Error: Wrong number of output arguments');
     end
@@ -109,7 +109,7 @@ function [sys,K,Q,Ry,S,rcnd]=findABCD(s,n,l,R,meth,nsmpl,tol,printw)
     error('Error: Wrong number of output arguments');
   end
   // 
-  sys = syslin(1,A,B,C,D);
+  sys=syslin(1,A,B,C,D);
   // 
   // end findABCD
 endfunction

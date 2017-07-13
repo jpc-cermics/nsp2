@@ -41,11 +41,11 @@ function [X,dims,F,U,k,Z]=abinv(Sl,Alfa,Beta,flag)
   if nargin <= 1 then Alfa=-1;end
   if nargin <= 2 then Beta=Alfa;end
   if nargin <= 3 then flag='ge';end
-  if nargin==4 && type(flag,'short')~= 's' then 
+  if nargin==4 && type(flag,'short') <> 's' then
     error('abinv: flag must be a string');
   end
   timedomain=Sl.dom;
-  if Sl.dom == 'c' then 
+  if Sl.dom=='c' then
     printf('abinv: time domain not given =>Sl is assumed continuous (default)\n');
     timedomain='c';
   end
@@ -55,14 +55,14 @@ function [X,dims,F,U,k,Z]=abinv(Sl,Alfa,Beta,flag)
   Vi=eye(size(A));
   [X,dimV]=im_inv([A;C],[Vi,B;zeros(size(C*Vi)),D]);
   Vi1=X(:,1:dimV);
-  while %t,
+  while %t do
     [X,n1]=im_inv([A;C],[Vi1,B;zeros(size(C*Vi1)),D]);
     if dimV==n1 then break;end
     dimV=n1;Vi1=X(:,1:n1);
   end
   //V=X(:,1:dimV);    // V subspace
   // Fast return if V=[];
-  if dimV==0 then 
+  if dimV==0 then
     dimR=0;dimVg=0;
     [U,k]=colcomp([B;D]);
     [ns,nc,X]=st_ility(Sl);
@@ -76,7 +76,7 @@ function [X,dims,F,U,k,Z]=abinv(Sl,Alfa,Beta,flag)
   Anew=X'*A*X;Bnew=X'*B;Cnew=C*X;
   //   Determining dimR and dimVg
   B1V=Bnew(1:dimV,:);B2V=Bnew(dimV+1:nx,:);
-  [U,k]=colcomp([B2V;D]);   //U is nu x nu
+  [U,k]=colcomp([B2V;D]);//U is nu x nu
   Uker=U(:,1:nu-k);Urange=U(:,nu-k+1:nu);
   slV=syslin(timedomain,Anew(1:dimV,1:dimV),B1V*Uker,[]);
   [dimVg,dimR,Ur]=st_ility(slV);
@@ -84,58 +84,58 @@ function [X,dims,F,U,k,Z]=abinv(Sl,Alfa,Beta,flag)
   Anew=X'*A*X;Bnew=X'*B;Cnew=C*X;
   //Bnew=Bnew*U;
   //   Cut appropriate subspace  
-  dim=dimVg;   //dim=dimVg   //dim=dimR
+  dim=dimVg;//dim=dimVg   //dim=dimR
   select flag
-   case 'ge'
-    dim=dimV
-   case 'st'
-    dim=dimVg
-   case 'pp'
-    dim=dimR
+    case 'ge' then
+     dim=dimV
+    case 'st' then
+     dim=dimVg
+    case 'pp' then
+     dim=dimR
   end
   A11=Anew(1:dim,1:dim);
   B1=Bnew(1:dim,:);B2=Bnew(dim+1:nx,:);
-  [U,k]=colcomp([B2;D]);   //U is nu x nu
+  [U,k]=colcomp([B2;D]);//U is nu x nu
   Uker=U(:,1:nu-k);Urange=U(:,nu-k+1:nu);
   B1t=B1*Uker;B1bar=B1*Urange;
-  sl1=syslin(timedomain,A11,B1t,[]);    //
+  sl1=syslin(timedomain,A11,B1t,[]);//
   [dimVg1,dimR1,Ur]=st_ility(sl1);
   A21=Anew(dim+1:nx,1:dim);
   A22=Anew(dim+1:$,dim+1:$);
   C1=Cnew(:,1:dim);
-  B2bar=B2*Urange;Dbar=D*Urange; 
+  B2bar=B2*Urange;Dbar=D*Urange;
   // B2bar,Dbar have k columns , B1t has nu-k columns and dim rows
-  Z=[A21,B2bar;C1,Dbar]; //Z is (nx-dim)+ny x dim+k 
-  [W,nn]=colcomp(Z);    // ? (dim+k-nn)=dim  <=> k=nn ? if not-->problem
+  Z=[A21,B2bar;C1,Dbar];//Z is (nx-dim)+ny x dim+k 
+  [W,nn]=colcomp(Z);// ? (dim+k-nn)=dim  <=> k=nn ? if not-->problem
   W1=W(:,1:dim)*inv(W(1:dim,1:dim));
-  F1bar=W1(dim+1:dim+k,:);  
+  F1bar=W1(dim+1:dim+k,:);
   //[A21,B2bar;C1,Dbar]*[eye(dim,dim);F1bar]=zeros(nx-dim+ny,dim)
   //
-  A11=A11+B1bar*F1bar;  //add B1bar*F1bar is not necessary.
+  A11=A11+B1bar*F1bar;//add B1bar*F1bar is not necessary.
   if ~isempty(B1t) then
     voidB1t=%f;
     if nargin==1 then
-      printf("Warning: abinv: needs Alfa =>use default value Alfa=-1\n')
+      printf("Warning: abinv: needs Alfa =>use default value Alfa=-1\n")
       Alfa=-1;
     end
-    F1t_tmp=0*sl1.B'; //nu-k rows, dimV columns
+    F1t_tmp=0*sl1.B';//nu-k rows, dimV columns
   else
     voidB1t=%t;F1t_tmp=[];dimR=0;
   end
-  
+
   if ~voidB1t then
-    if norm(B1t,1)<1.d-10 then
+    if norm(B1t,1) < 1.E-10 then
       F1t_tmp=zeros(nu-k,dim);dimR=0;
-    end       
-  end     
+    end
+  end
 
   sl2=syslin(timedomain,A22,B2*Urange,0*(B2*Urange)');
   [ns2,nc2,U2,sl3]=st_ility(sl2);
-  if (nc2~=0)&(nargin==1|nargin==2) then
-    printf("Warning: abinv: needs Beta => use default value Beta=-1\n');
+  if (nc2 <> 0) & (nargin==1 | nargin==2) then
+    printf("Warning: abinv: needs Beta => use default value Beta=-1\n");
   end
   F2=Urange*stabil(sl2.A,sl2.B,Beta);
-  
+
   //final patch
   Ftmp=[U*[F1t_tmp;F1bar],F2]*X';
   An=X'*(A+B*Ftmp)*X;Bn=X'*B*U;
@@ -146,12 +146,12 @@ function [X,dims,F,U,k,Z]=abinv(Sl,Alfa,Beta,flag)
   F=[U*[F1t;F1bar],F2]*X';
   X=X*sysdiag(eye(size(Ur)),U2);
   select flag
-   case 'ge'
-    dims=[dimR,dimVg,dimV,dimV+nc2,dimV+ns2];
-   case 'st'
-    dims=[dimR,dimVg,dimVg+nc2,dimVg+ns2];
-   case 'pp'
-    dims=[dimR,dimR+nc2,dimR+ns2];
+    case 'ge' then
+     dims=[dimR,dimVg,dimV,dimV+nc2,dimV+ns2];
+    case 'st' then
+     dims=[dimR,dimVg,dimVg+nc2,dimVg+ns2];
+    case 'pp' then
+     dims=[dimR,dimR+nc2,dimR+ns2];
   end
 
   Z=syslin(timedomain,A+B*F,B*U,F,U);
