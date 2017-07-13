@@ -73,7 +73,7 @@ static int _nsp_ast_pprint_arg(ast_wrap *ast,int elt, int i, int pos, int posret
 static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int post);
 static int _nsp_ast_pprint_args(ast_wrap *ast, int start, int last, int indent, int pos,
 				int posret, char *sep, int breakable,const char *breakstr);
-static int _nsp_latin1_character_to_html(char c, char *str);
+static int _nsp_latin1_character_to_html(char c, char *str, int target);
 static int _nsp_ast_equalop_mlhs_length(ast_wrap *ast);
 static void nsp_ast_to_ast_wrap(NspAst *ast, ast_wrap *astwrap);
 static void nsp_plist_to_ast_wrap(PList ast, ast_wrap *astwrap);
@@ -127,7 +127,8 @@ typedef enum { type_comment,
 	       type_string,
 	       type_keyword,
 	       type_number,
-	       type_fname} nsp_colorized_types;
+	       type_fname,
+               type_operator} nsp_colorized_types;
 
 static int color_from_key( nsp_colorized_types key)
 {
@@ -138,6 +139,7 @@ static int color_from_key( nsp_colorized_types key)
     case type_keyword: return p_purple;break;
     case type_number:  return p_green;break;
     case type_fname:   return p_blue;break;
+    case type_operator:return p_black;break;
     }
   return p_black;
 }
@@ -151,6 +153,7 @@ static char* colorname_from_key( nsp_colorized_types key)
     case type_keyword: return "purple";break;
     case type_number:  return "green";break;
     case type_fname:   return "blue";break;
+    case type_operator:return "black";break;
     }
   return "black";
 }
@@ -164,6 +167,7 @@ static char *colortag_from_key( nsp_colorized_types key)
     case type_keyword: return "keyword";break;
     case type_number:  return "number";break;
     case type_fname:   return "function";break;
+    case type_operator:   return "operator";break;
     }
   return "undefined";
 }
@@ -176,7 +180,7 @@ static int nsp_ast_pprint_pre_tag_color(ast_wrap *ast, nsp_colorized_types key)
 	{
 	case nsp_pprint_html: Sciprintf("<span class=\"%s\">",colortag_from_key(key));break;
 	case nsp_pprint_gtk:  Sciprintf("<span color=\"%s\">",colorname_from_key(key));break;
-	case nsp_pprint_latex: Sciprintf("@@nsp%s{",colortag_from_key(key));break;
+	case nsp_pprint_latex: Sciprintf("\\nsp%s{",colortag_from_key(key));break;
 	case nsp_pprint_term: Sciprintf("\033[%dm",color_from_key(key));break;
 	}
     }
@@ -222,28 +226,34 @@ static void nsp_print_comment_for_html(const char *str, int target)
   while ( *str != '\0') 
     {
       char buf[64];
-      if ( _nsp_latin1_character_to_html(*str,buf))
+      if ( _nsp_latin1_character_to_html(*str,buf,target))
 	{
 	  Sciprintf("%s",buf);
 	}
       else
 	{
-	  switch (*str) 
+	  if ( target == nsp_pprint_latex)
 	    {
-	    case '{' :
-	      if ( target ==  nsp_pprint_latex )
-		Sciprintf("%s","@@nspob{}");
-	      else Sciprintf("%c",*str);
-	      break;
-	    case '}' :
-	      if ( target ==  nsp_pprint_latex )
-		Sciprintf("%s","@@nspcb{}");
-	      else Sciprintf("%c",*str);
-	      break;
-	    case '<' : Sciprintf("%s","&lt;");break;
-	    case '>' : Sciprintf("%s","&gt;");break;
-	    case '&' : Sciprintf("%s","&amp;");break;
-	    default :  Sciprintf("%c",*str);
+	      switch (*str) 
+		{
+		case '\\': Sciprintf("%s","\\nspbs{}");
+		case '%' : Sciprintf("%s","\\nsppc{}");
+		case '#' : Sciprintf("%s","\\nspsh{}");
+		case '~' : Sciprintf("%s","\\nspti{}");
+		case '{' : Sciprintf("%s","\\nspob{}");break;
+		case '}' : Sciprintf("%s","\\nspcb{}");break;
+		default :  Sciprintf("%c",*str);
+		}
+	    }
+	  else
+	    {
+	      switch (*str) 
+		{
+		case '<' : Sciprintf("%s","&lt;");break;
+		case '>' : Sciprintf("%s","&gt;");break;
+		case '&' : Sciprintf("%s","&amp;");break;
+		default :  Sciprintf("%c",*str);
+		}
 	    }
 	}
       str++;
@@ -289,11 +299,12 @@ static int nsp_ast_pprint_string(int indent, ast_wrap *ast)
 
 static void nsp_print_string_as_read_for_html(const char *str,char string_delim, int target)
 {
+  const char *bs = ( target ==  nsp_pprint_latex ) ? "\\nspbs{}" : "\\";
   Sciprintf("%c",string_delim);
   while ( *str != '\0') 
     {
       char buf[64];
-      if ( _nsp_latin1_character_to_html(*str,buf))
+      if ( _nsp_latin1_character_to_html(*str,buf,target))
 	{
 	  Sciprintf("%s",buf);
 	}
@@ -301,14 +312,26 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 	{
 	  switch (*str) 
 	    {
+	    case '%' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","\\nsppc{}");
+	      else Sciprintf("%c",*str);
+	    case '#' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","\\nspsh{}");
+	      else Sciprintf("%c",*str);
+	    case '~' :
+	      if ( target ==  nsp_pprint_latex )
+		Sciprintf("%s","\\nspti{}");
+	      else Sciprintf("%c",*str);
 	    case '{' :
 	      if ( target ==  nsp_pprint_latex )
-		Sciprintf("%s","@@nspob{}");
+		Sciprintf("%s","\\nspob{}");
 	      else Sciprintf("%c",*str);
 	      break;
 	    case '}' :
 	      if ( target ==  nsp_pprint_latex )
-		Sciprintf("%s","@@nspcb{}");
+		Sciprintf("%s","\\nspcb{}");
 	      else Sciprintf("%c",*str);
 	      break;
 	    case '\'' :  Sciprintf("%s","''");break;
@@ -316,7 +339,7 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 	    case '\\' :
 	      if ( isdigit(*(str+1)) )
 		{
-		  Sciprintf("%s","\\\\");
+		  Sciprintf("%s%s",bs,bs);
 		}
 	      else
 		{
@@ -335,18 +358,19 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 		    case '\n' : 
 		    case '\r' : 
 		    case '\t' : 
-		    case '\v' : Sciprintf("%s","\\\\");break;
-		    default: Sciprintf("%s","\\");break;
+		    case '\v' :
+		      Sciprintf("%s%s",bs,bs);break;
+		    default: Sciprintf("%s",bs);break;
 		    }
 		}
 	      break;
-	    case '\a' :  Sciprintf("%s","\\a"); break;
-	    case '\b' :  Sciprintf("%s","\\b"); break;
-	    case '\f' :  Sciprintf("%s","\\f"); break;
-	    case '\n' :  Sciprintf("%s","\\n");break;
-	    case '\r' :  Sciprintf("%s","\\r"); break;
-	    case '\t' :  Sciprintf("%s","\\t"); break;
-	    case '\v' :  Sciprintf("%s","\\v"); break;
+	    case '\a' :  Sciprintf("%s%s",bs,"a"); break;
+	    case '\b' :  Sciprintf("%s%s",bs,"b"); break;
+	    case '\f' :  Sciprintf("%s%s",bs,"f"); break;
+	    case '\n' :  Sciprintf("%s%s",bs,"n");break;
+	    case '\r' :  Sciprintf("%s%s",bs,"r"); break;
+	    case '\t' :  Sciprintf("%s%s",bs,"t"); break;
+	    case '\v' :  Sciprintf("%s%s",bs,"v"); break;
 	    default: 
 	      if (isprint(*str)) 
 		{
@@ -360,7 +384,7 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 	      else 
 		{
 		  unsigned char c = *str;
-		  Sciprintf("\\%0.3o",c);
+		  Sciprintf("%s%0.3o",bs,c);
 		}
 	    }
 	}
@@ -429,9 +453,13 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
 	{ s1 ="&amp;";}
       else if ( strcmp(s,"&&") == 0)
 	{ s1 ="&amp;&amp;";}
-      else s1 = s;
       break;
-    case nsp_pprint_latex: break;
+    case nsp_pprint_latex:
+      if ( strcmp(s,"\\") == 0) s1 = "\\nspbs{}";
+      else if ( strcmp(s,".\\") == 0) s1 = ".\\nspbs{}";
+      else if ( strcmp(s,"\\.") == 0) s1 = "\\nspbs{}.";
+      else if ( strcmp(s,".\\.") == 0) s1 = ".\\nspbs{}.";
+      break;
     case nsp_pprint_term: break;
     }
   if ( strcmp(s,">") == 0 ||
@@ -446,12 +474,14 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
     {
       force_space=TRUE;
     }
-  
+
+  nsp_ast_pprint_pre_tag_color(ast,type_operator);
   if ( force_space || ( pre && ( ast->use_sep_space || (strlen(s1) > 0 && s1[0]== '.'))))
     {Sciprintf("%s",space); seps++;}
   Sciprintf2(indent, space ,"%s",s1);
   if ( force_space || ( post && ast->use_sep_space ))
     {Sciprintf("%s",space);seps++;}
+  nsp_ast_pprint_post_tag_color(ast);
   return pos + indent + seps + strlen(s);
 }
 
@@ -592,8 +622,8 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  break;
 	case CELLARGS :
 	  {
-	    const char *ob = (ast->target == nsp_pprint_latex) ? "@@nspob{}": "{";
-	    const char *cb = (ast->target == nsp_pprint_latex) ? "@@nspcb{}": "}";
+	    const char *ob = (ast->target == nsp_pprint_latex) ? "\\nspob{}": "{";
+	    const char *cb = (ast->target == nsp_pprint_latex) ? "\\nspcb{}": "}";
 	    /* a sequence of expressions inside {} for x{} */
 	    newpos = pos +  indent+1;
 	    Sciprintf2(indent, _nsp_ast_get_space(ast), ob);
@@ -673,7 +703,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	case EMPTYMAT:  return pos+Sciprintf2(indent, _nsp_ast_get_space(ast),"[]");break;
 	case EMPTYCELL:
 	  {
-	    const char *obcb = (ast->target == nsp_pprint_latex) ? "@@nspob{}@@nspcb{}": "{}";
+	    const char *obcb = (ast->target == nsp_pprint_latex) ? "\\nspob{}\\\\nspcb{}": "{}";
 	    Sciprintf2(indent, _nsp_ast_get_space(ast), obcb);
 	    return pos+indent+2;
 	  }
@@ -686,8 +716,8 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  break;
 	case P_CELL :
 	  {
-	    const char *ob = (ast->target == nsp_pprint_latex) ? "@@nspob{}": "{";
-	    const char *cb = (ast->target == nsp_pprint_latex) ? "@@nspcb{}": "}";
+	    const char *ob = (ast->target == nsp_pprint_latex) ? "\\nspob{}": "{";
+	    const char *cb = (ast->target == nsp_pprint_latex) ? "\\nspcb{}": "}";
 	    newpos = pos + indent+1;
 	    Sciprintf2(indent, _nsp_ast_get_space(ast), ob);
 	    newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+1, 0);
@@ -1158,7 +1188,7 @@ static char* _nsp_ast_get_space(ast_wrap *ast)
   return " ";
 }
 
-static int _nsp_latin1_character_to_html(char c, char *str)
+static int _nsp_latin1_character_to_html(char c, char *str, int target)
 {
   switch (c)
     {
@@ -1206,6 +1236,11 @@ static int _nsp_latin1_character_to_html(char c, char *str)
     case '\326' : strcpy(str,"&Ouml;");break;
     case '\334' : strcpy(str,"&Uuml;");break;
     default: return FALSE;
+    }
+
+  if (target == nsp_pprint_latex)
+    {
+      sprintf(str,"%c",c);
     }
   return TRUE;
 }
