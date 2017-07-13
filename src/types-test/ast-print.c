@@ -55,6 +55,7 @@ struct _ast_wrap {
   nsp_pprint_target target;
   int use_sep_space;
   int use_color;
+  int columns;
 };
 
 static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset);
@@ -83,13 +84,14 @@ static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int in
 				      int posret, char *sep, int breakable, const char *breakstr);
 
   
-void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color, int target, int space)
+void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color, int target, int space, int columns)
 {
   ast_wrap loc;
   nsp_ast_to_ast_wrap(ast, &loc);
   loc.target  = target;
   loc.use_sep_space = space;
   loc.use_color = color;
+  loc.columns = columns;
   _nsp_ast_pprint(&loc,indent,0,indent,0);
 }
 
@@ -100,13 +102,14 @@ int nsp_ast_printlength(NspAst *ast, int indent)
   return _nsp_ast_printlength(&loc,indent,0,indent);
 }
 
-void nsp_plist_generic_pretty_printer(PList ast, int indent, int color,int target, int space)
+void nsp_plist_generic_pretty_printer(PList ast, int indent, int color,int target, int space, int columns)
 {
   ast_wrap loc;
   nsp_plist_to_ast_wrap(ast, &loc);
   loc.target  = target;
   loc.use_sep_space = space;
   loc.use_color = color;
+  loc.columns = columns;
   _nsp_ast_pprint(&loc,indent,0,indent,0);
 }
 
@@ -485,8 +488,6 @@ static int nsp_ast_pprint_opname(ast_wrap *ast, int indent, int pos, int pre,int
   return pos + indent + seps + strlen(s);
 }
 
-#define CMAX 90
-
 /* posret: indentation to use if line-break. 
  *
  */
@@ -554,7 +555,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret,0);
 	  newpos =nsp_ast_pprint_opname(ast,0,newpos,1,1);
 	  len =  _nsp_ast_printlength_arg(ast,2,0,newpos,posret);
-	  if ( newpos > CMAX || len > CMAX)
+	  if ( newpos > ast->columns || len > ast->columns )
 	    {
 	      /* we have the right to break line here 
 	       * we indent on the next line with posret 
@@ -740,7 +741,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	       * to decide if it's better to break here
 	       */
 	      len =  _nsp_ast_printlength_arg(ast,j+1,0,newpos,posret);
-	      if ( ( j > 0) && ( newpos > CMAX || len > CMAX))
+	      if ( ( j > 0) && ( newpos > ast->columns || len > ast->columns))
 		{
 		  if ( ast->get_op(ast) == ROWCONCAT || ast->get_op(ast) == CELLROWCONCAT)
 		    Sciprintf("\n");
@@ -1023,7 +1024,7 @@ static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int in
 	    }
 	}
       len = _nsp_ast_printlength(&ast1,indent,newpos,posret);
-      if (breakable==TRUE && ( posret < newpos ) && ( newpos > CMAX || len > CMAX))
+      if (breakable==TRUE && ( posret < newpos ) && ( newpos > ast->columns || len > ast->columns))
 	{
 	  Sciprintf(breakstr);newpos= Sciprintf2(posret, space,"");
 	}
@@ -1041,7 +1042,7 @@ static int _nsp_ast_pprint_args(ast_wrap *ast, int start, int last, int indent, 
   for ( j = start ; j <= last ; j++)
     {
       len =  _nsp_ast_printlength_arg(ast,j,indent,newpos,posret);
-      if (breakable==TRUE && ( posret < newpos ) && ( newpos > CMAX || len > CMAX))
+      if (breakable==TRUE && ( posret < newpos ) && ( newpos > ast->columns || len > ast->columns))
 	{
 	  Sciprintf(breakstr);newpos= Sciprintf2(posret, _nsp_ast_get_space(ast),"");
 	}
@@ -1797,6 +1798,7 @@ static void nsp_ast_to_ast_wrap(NspAst *ast, ast_wrap *astwrap)
   astwrap->target = nsp_pprint_term;
   astwrap->use_sep_space = TRUE;
   astwrap->use_color = TRUE;
+  astwrap->columns = 90;
 }
 
 
@@ -1873,6 +1875,7 @@ static void nsp_plist_to_ast_wrap(PList ast, ast_wrap *astwrap)
   astwrap->target = nsp_pprint_term;
   astwrap->use_sep_space = TRUE;
   astwrap->use_color = TRUE;
+  astwrap->columns = 90;
 }
 
 

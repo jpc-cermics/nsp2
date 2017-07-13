@@ -179,7 +179,7 @@ extern int nsp_plist_equal(PList L1,PList L2);
 extern int nsp_plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
 extern void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec);
 extern void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec, int action);
-extern void nsp_plist_generic_pretty_printer(PList L, int indent, int color,int target, int space);
+extern void nsp_plist_generic_pretty_printer(PList L, int indent, int color,int target, int space, int columns);
 
 
 

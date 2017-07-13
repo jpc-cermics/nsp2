@@ -106,7 +106,7 @@ extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 extern int nsp_ast_set_str(NspAst *ast,const char *str);
 extern int nsp_ast_check_args(NspList *L);
-extern void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int target, int space);
+extern void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color,int target, int space, int columns);
 extern int nsp_ast_printlength(NspAst *ast, int indent);
 
 #line 113 "./ast.h"
@@ -129,7 +129,7 @@ static NspAst *nsp_ast_create_void(const char *name,NspTypeBase *type);
 /* inserted in the private part of include file
  * of classa.h
  */
-static void nsp_ast_pprint(NspAst * L, int indent, int color,int target, int space);
+static void nsp_ast_pprint(NspAst * L, int indent, int color,int target, int space, int columns);
 static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);

@@ -1,4 +1,4 @@
-function txt=pretty_printer(fname,target="nsp",color=%f)
+function txt=pretty_printer(fname,target="nsp",color=%f, columns=90)
   
   S=getfile(fname);
   ast=parse(S);
@@ -7,18 +7,18 @@ function txt=pretty_printer(fname,target="nsp",color=%f)
   select target 
     case "nsp" then 
       target_name = target_name + "_pp" + file('extension',fname);
-      S=ast.sprint[];
+      S=ast.sprint[columns=columns];
     case "html" then 
       target_name = target_name + ".html";
-      S=ast.sprint[target="html",color=color];
+      S=ast.sprint[target="html",color=color, columns=columns];
     case "gtk" then 
       target_name = target_name + ".txt";
-      S=ast.sprint[target="gtk",color=color];
+      S=ast.sprint[target="gtk",color=color, columns=columns];
     case "tex4ht" then
       // This target is no more usefull since
       // latex can do the same 
       target_name = target_name + ".tex";
-      S=ast.sprint[target="html",color=color];
+      S=ast.sprint[target="html",color=color, columns=columns];
       // to be protected for tex4ht
       S=strsubst(S,"\\","&#92;");
       S=strsubst(S,"%","&#37;");	
@@ -29,7 +29,7 @@ function txt=pretty_printer(fname,target="nsp",color=%f)
 	 '}'];
     case "latex" then 
       target_name = target_name + ".tex";
-      S=ast.sprint[target="latex",color=color];
+      S=ast.sprint[target="latex",color=color, columns=columns];
       S=['\\begin{Verbatim}[commandchars=\\\\\\{\\}]';S;'\\end{Verbatim}'];
     else
       printf("Warning: unknown target ""%s""\n",target);
