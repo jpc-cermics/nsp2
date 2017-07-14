@@ -645,7 +645,8 @@ static int int_nsp_macro_to_string(NspPList *self,Stack stack, int rhs, int opt,
   NspSMatrix *S;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  if ((S= NspPList2SMatrix(self,0))== NULL) return RET_BUG;
+  if ( self == NULL ) return RET_BUG;
+  if ((S= nsp_plist2smatrix(self->D,0))== NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
@@ -660,7 +661,172 @@ static int int_nsp_macro_get_path(NspPList *self,Stack stack, int rhs, int opt, 
   return 1;
 }
 
+/* very similar to the generic function for printing objects and 
+ * redirection of output to string, file or stdout
+ */
 
+typedef enum { string_out, stdout_out, file_out } print_mode;
+
+static int int_plist_print_gen(NspPList *self,Stack stack, int rhs, int opt, int lhs, print_mode mode);
+
+static int int_plist_print(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  return int_plist_print_gen(self,stack,rhs,opt,lhs,stdout_out);
+}
+
+static int int_plist_sprint(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  return int_plist_print_gen(self,stack,rhs,opt,lhs,string_out);
+}
+
+static int int_plist_fprint(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  return int_plist_print_gen(self,stack,rhs,opt,lhs,file_out);
+}
+
+/* This method shares code with the same generic method for ast and could be 
+ * shared 
+ */
+
+static int int_plist_print_gen(NspPList *self,Stack stack, int rhs, int opt, int lhs, print_mode mode)
+{
+  int target = 4, columns = 90;
+  char *s_target = NULL;
+  const char *targets[]={"html", "gtk", "latex", "term", NULL };
+  NspFile *F=NULL;
+  FILE *f=NULL;
+  IOVFun def=NULL ;
+  MoreFun mf=NULL; 
+  
+  NspObject *res;
+  int dp=user_pref.pr_depth;
+  int cr=user_pref.color;
+  int as_read=FALSE,depth=INT_MAX,indent=0,color=TRUE,html=FALSE,gtk=FALSE;
+  nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+			    { "color",s_bool,NULLOBJ,-1},
+			    { "depth", s_int,NULLOBJ,-1},
+			    { "indent",s_int,NULLOBJ,-1},
+			    { "target",string,NULLOBJ,-1},
+			    { "columns",s_int, NULLOBJ,-1},
+			    { NULL,t_end,NULLOBJ,-1}};
+			    
+  if ( mode == file_out ) 
+    {
+      CheckStdRhs(1,1);
+      if ((F= GetSciFile(stack,1))== NULL) return RET_BUG; 
+    }
+  else 
+    {
+      CheckStdRhs(0,0);
+    }
+  CheckLhs(0,1);
+
+  if ( mode == string_out) color=FALSE;
+  
+  if ( get_optional_args(stack, rhs, opt, print_opts,
+			    &as_read,&color,&depth,&indent,&s_target,&columns) == FAIL) 
+    return RET_BUG;
+
+  if ( s_target != NULL ) 
+    {
+      int rep;
+      if ( (rep= is_string_in_array(s_target,targets,0)) == -1 )
+	{
+	  string_not_in_array(stack,s_target,targets , "optional argument targets");
+	  return RET_BUG;
+	}
+      target = rep+1;
+    }
+  
+  /* initialize according to mode */
+  switch ( mode ) 
+    {
+    case string_out: 
+      def = SetScilabIO(Sciprint2string);
+      mf =nsp_set_nsp_more(scimore_void);
+      break;
+    case stdout_out:
+      break;
+    case file_out : 
+      /* changes io in order to write to file F */
+      if ( !IS_OPENED(F->obj->flag))
+	{
+	  Scierror("Warning:\tfile %s is already closed\n",F->obj->fname);
+	  return RET_BUG;
+	}
+      f=Sciprint_file(F->obj->file); 
+      def = SetScilabIO(Sciprint2file);
+      mf =nsp_set_nsp_more(scimore_void);
+      break;
+    }
+  /* print object */
+  user_pref.pr_depth= depth;
+  user_pref.color=color;
+  
+  if ( gtk == TRUE )
+    {
+      user_pref.color= color = TRUE;
+    }
+  
+  if ( html == TRUE )
+    {
+      /*
+	.nsp_code  { background: #EEEEEE; color: Black;}
+	.nsp_code .code { color : Black; }
+	.nsp_code .keyword { color : blue; }
+	.nsp_code .comment { color : red;}
+	.nsp_code .string { color : brown;}
+	.nsp_code .number { color : YellowGreen; }
+	.nsp_code .function { color : SkyBlue ;  font-weight: bold;}
+      */
+      
+      user_pref.color= color = TRUE;
+      Sciprintf2(indent," ","<!-- style directives ");
+      Sciprintf2(indent," ","<head>\n");
+      Sciprintf2(indent+2," ","<style>\n");
+      Sciprintf2(indent+4," ",".nsp_code  { background:  WhiteSmoke; color: Black; font-size: 120%;}\n");
+      Sciprintf2(indent+4," ",".nsp_code .code { color : Black; }\n");
+      Sciprintf2(indent+4," ",".nsp_code .keyword { color : MediumPurple; }\n");
+      Sciprintf2(indent+4," ",".nsp_code .comment { color :  OrangeRed; }\n");
+      Sciprintf2(indent+4," ",".nsp_code .string { color : LightSalmon; }\n");
+      Sciprintf2(indent+4," ",".nsp_code .number { color : YellowGreen; }\n");
+      Sciprintf2(indent+4," ",".nsp_code .function { color : SkyBlue ;  font-weight: bold;}\n");
+      Sciprintf2(indent+2," ","</style>\n");
+      Sciprintf2(indent," ","</head>\n");
+      Sciprintf2(indent," ","-->\n");
+      Sciprintf2(indent," ","%s\n","<div class=\"nsp_code\">");
+			    Sciprintf2(indent+2," ","%s\n","<pre class=\"code\">");
+			    nsp_plist_pretty_print(self->D, indent + 2, user_pref.color, target, TRUE,columns);
+      Sciprintf2(indent+2," ","\n");
+      Sciprintf2(indent+2," ","%s\n","</pre>");
+      Sciprintf2(indent," ","%s\n","</div>");
+    }
+  else
+    {
+      nsp_plist_pretty_print(self->D, indent, user_pref.color, target, FALSE,columns);
+    }
+  user_pref.color=cr;
+  user_pref.pr_depth= dp;
+  /* restore to default values */
+  switch ( mode ) 
+    {
+    case string_out: 
+      res = Sciprint2string_reset(); 
+      SetScilabIO(def);
+      nsp_set_nsp_more(mf);
+      if ( res == NULL) return RET_BUG; 
+      MoveObj(stack,1, res);
+      return 1;
+    case stdout_out: 
+      return 0;
+    case file_out:
+      SetScilabIO(def);
+      nsp_set_nsp_more(mf);
+      Sciprint_file(f); 
+      return 0;
+    }
+  return 0;
+}
 
 static NspMethods nsp_macro_methods[] = {
   {"get_fname",(nsp_method *) int_nsp_macro_get_name },
@@ -673,6 +839,9 @@ static NspMethods nsp_macro_methods[] = {
   {"clear_cache", (nsp_method *) int_nsp_macro_clear_cache},
   {"get_cpu",(nsp_method *) int_nsp_macro_get_cpu },
   {"reset_cpu",(nsp_method *) int_nsp_macro_reset_cpu },
+  {"sprint",(nsp_method *) int_plist_sprint},
+  {"fprint",(nsp_method *) int_plist_fprint},
+  {"print",(nsp_method *)  int_plist_print},
   { NULL, NULL}
 };
 
@@ -682,10 +851,6 @@ static NspMethods *nsp_macro_get_methods(void) { return nsp_macro_methods;}
  * Now the interfaced function for macros (pl)
  *--------------------------------------------------------*/
 
-/*
- * NspPList2SMatrix
- */
-
 int int_pl2s(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *S;
@@ -693,7 +858,7 @@ int int_pl2s(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
-  if ((S= NspPList2SMatrix(PL,0))== NULL) return RET_BUG;
+  if ((S= nsp_plist2smatrix(PL->D,0))== NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }

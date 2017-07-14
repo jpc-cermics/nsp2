@@ -1,4 +1,4 @@
-function txt=pretty_printer(fname,target="nsp",color=%f, columns=90)
+function txt=pretty_printer(fname,target="term",color=%t, columns=90)
   
   S=getfile(fname);
   ast=parse(S);

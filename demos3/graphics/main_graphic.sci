@@ -61,24 +61,18 @@ function selection_cb(selection,args)
   // Only execute somethink for tree leaves
   // code is a call to a funcion
   // we convert it to string
-  execstr("text=pl2s("+code+");")
-  buffer.set_text[""];
-  t_iter = buffer.get_start_iter[];
-  // remove the colored stuff since color code is
-  // not interpreted by textbuffer.
-
-  text= strsubst(text,"\033[30m","");
-  text= strsubst(text,"\033[31m","");
-  text= strsubst(text,"\033[32m","");
-  text= strsubst(text,"\033[33m","");
-  text= strsubst(text,"\033[34m","");
-  text= strsubst(text,"\033[35m","");
-  text= strsubst(text,"\033[36m","");
-  text= strsubst(text,"\033[37m","");
-  text= strsubst(text,"\033[0m","");
-
-  for i=2:(size(text,'*')-1);
-    buffer.insert[t_iter,text[i]+"\n"];
+  if %f then 
+    // black and white 
+    execstr("text=pl2s("+code+");");
+    text= text(2:$-1,:);
+    buffer.set_text [ catenate(text,sep='\n')];
+  else
+    // colors 
+    buffer.set_text[""];
+    execstr(sprintf("text=%s.sprint[target=""gtk"",color=%%t];",code));
+    text= text(2:$-1,:);
+    iter = buffer.get_start_iter[];
+    buffer.insert_markup[iter, catenate(text,sep='\n'),-1];
   end
 endfunction
 

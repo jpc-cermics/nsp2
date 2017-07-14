@@ -133,11 +133,13 @@ typedef enum { type_comment,
 	       type_fname,
                type_operator} nsp_colorized_types;
 
+/* used in a terminal */
+
 static int color_from_key( nsp_colorized_types key)
 {
   switch (key)
     {
-    case type_comment: return p_cyan;break;
+    case type_comment: return p_blue;break;
     case type_string:  return p_red;break;
     case type_keyword: return p_green;break;
     case type_number:  return p_purple;break;
@@ -147,11 +149,13 @@ static int color_from_key( nsp_colorized_types key)
   return p_black;
 }
 
+/* used in gtk (textview) */
+
 static char* colorname_from_key( nsp_colorized_types key)
 {
   switch (key)
     {
-    case type_comment: return "cyan";break;
+    case type_comment: return "blue";break;
     case type_string:  return "red";break;
     case type_keyword: return "green";break;
     case type_number:  return "purple";break;
@@ -160,6 +164,8 @@ static char* colorname_from_key( nsp_colorized_types key)
     }
   return "black";
 }
+
+/* used for latex or html, real colors are defined elsewhere */
 
 static char *colortag_from_key( nsp_colorized_types key)
 {
