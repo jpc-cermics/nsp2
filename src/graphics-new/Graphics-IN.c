@@ -80,7 +80,7 @@ extern int nsp_get_level_curves_new(double **x, double **y, int *mm, int *n);
 
 static int nsp_graphic_demo (const char *fname,const char *code,int flag) ;
 static void  nsp_gwin_clear(void);
-static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
+static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs, int std);
 static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
 static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
 static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
@@ -324,7 +324,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
        * x and y are vectors, thus z is of size  (x->mn,y->mn)
        */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
-      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+      if ( plot3d_build_z(stack,x,y,z,fobj,args,TRUE)== FAIL)
 	{
 	  nsp_matrix_destroy(z);
 	  return RET_BUG;
@@ -509,7 +509,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
        */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       z_allocated= TRUE;
-      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+      if ( plot3d_build_z(stack,x,y,z,fobj,args,TRUE)== FAIL)
 	{
 	  nsp_matrix_destroy(z);
 	  return RET_BUG;
@@ -1038,7 +1038,7 @@ typedef NspGraphic *(*f3d2)(double *,double *,double *,int izcol,int *cvect,int 
 typedef NspGraphic *(*f3d3)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *,
 			    double *,const char *,int *,double *,NspMatrix *,int shade, int back_color);
 
-static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
+static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs, int std);
 
 static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d2 func2,f3d3 func3)
 {
@@ -1087,11 +1087,11 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 
   if ( IsNspPList(fobj) )
     {
-      int std=(x->m == 1 || x->n==1) && (x->mn == y->mn);
+      int std=(x->m == 1 || x->n==1) && (y->m == 1 || y->n == 1);
       if (std)
 	{
 	  if ((z = zloc= nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
-	  if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+	  if ( plot3d_build_z(stack,x,y,z,fobj,args, std)== FAIL)
 	    {
 	      ret= RET_BUG;
 	      goto end;
@@ -1100,7 +1100,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       else
 	{
 	  if ((z = zloc= nsp_matrix_create(NVOID,'r',x->m,x->n))== NULL) return RET_BUG;
-	  if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+	  if ( plot3d_build_z(stack,x,y,z,fobj,args,std)== FAIL)
 	    {
 	      ret= RET_BUG;
 	      goto end;
@@ -1279,7 +1279,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
  * build z from f(x,y,fargs)
  */
 
-static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs)
+static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs, int std)
 {
   NspObject *targs[4];
   NspObject *nsp_ret;
@@ -1287,7 +1287,6 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   NspMatrix *xi,*yj;
   NspObject *func, *args = NULL;
   int ret = FAIL,i,j;
-  int std=(x->m == 1 || x->n==1) && (x->mn == y->mn);
   if (( func =nsp_object_copy(f)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"plot3d_build")== FAIL)) return RET_BUG;
   /** extra arguments **/
@@ -2191,7 +2190,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
     {
       /* third argument can be a macro */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
-      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) goto bug;
+      if ( plot3d_build_z(stack,x,y,z,fobj,args,TRUE)== FAIL) goto bug;
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
