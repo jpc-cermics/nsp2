@@ -5,7 +5,7 @@ function txt=pretty_printer(fname,target="term",color=%t, columns=90)
   
   target_name = file('rootname',fname);
   select target 
-    case "nsp" then 
+    case "term" then 
       target_name = target_name + "_pp" + file('extension',fname);
       S=ast.sprint[columns=columns];
     case "html" then 
