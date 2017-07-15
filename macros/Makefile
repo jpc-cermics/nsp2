@@ -9,7 +9,7 @@ SUBDIRS = \
 	graphics miscellaneous system \
 	statistics linalg calpol \
 	ast rmatrix signal \
-	linearsys control robust \
+	linearsys control robust qhull \
 
 DIR=
 

@@ -89,7 +89,8 @@ TESTS= \
 	ast.dia \
 	persistent.dia \
 	stochdec.dia \
-	linmeq.dia
+	linmeq.dia \
+	qhull.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
