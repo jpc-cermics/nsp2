@@ -231,6 +231,10 @@ extern  sci_interface   gtksourceview_Interf ; extern  interface_info  gtksource
 #endif
 #endif
 
+#ifdef WITH_QHULL
+extern  sci_interface   libqhull_Interf ; extern  interface_info  libqhull_Interf_Info;
+#endif
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -394,6 +398,9 @@ InterfTab Interfaces[]={
 #endif
 #endif
 #endif 
+#ifdef WITH_QHULL
+  {libqhull_Interf, libqhull_Interf_Info },
+#endif
   {NULL,NULL}
 };
 

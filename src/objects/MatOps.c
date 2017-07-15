@@ -6277,7 +6277,7 @@ int nsp_mat_unique_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, Boolean
 
   else
     {
-      NspObject *Ind2;
+      NspObject *Ind2=NULL;
       int  *index1,*index2;
       
       if ( (*Ind = nsp_alloc_mat_or_imat(x->m, x->n, ind_type, &index)) == NULLOBJ )
@@ -6472,7 +6472,7 @@ int nsp_mat_unique_rows_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1, ch
     }
   else
     {
-      NspObject *Ind2;
+      NspObject *Ind2=NULL;
       int  *index1,*index2;
       if ( (*Ind = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index)) == NULLOBJ )
 	return FAIL;
@@ -6644,7 +6644,7 @@ int nsp_mat_unique_columns_mtlb(NspMatrix *x, NspObject **Ind, NspObject **Ind1,
     }
   else
     {
-      NspObject *Ind2;
+      NspObject *Ind2=NULL;
       int  *index1,*index2;
       if ( (*Ind = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;

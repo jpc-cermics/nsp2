@@ -17,6 +17,7 @@ Spqr support...........:@HAVE_SPQR@
 GtkSourceView support..:@have_gtksourceview@
 gobject-introspection..:@HAVE_GI@
 epoxy support..........:@HAVE_EPOXY@
+qhull support..........:@HAVE_QHULL@
 man vizualization......:@MAN_VIZUALIZATION@
 
 Managed by pkg-config..:@GTK_PKGS_CFLAGS@

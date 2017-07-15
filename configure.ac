@@ -74,6 +74,9 @@ AC_ARG_WITH(gtk3,
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
 
+AC_ARG_WITH(opengl,
+    [  --without-opengl        do not compile with opengl support ])
+
 AC_ARG_WITH(sndfile,
     [  --without-sndfile       do not compile with sndfile support ])
 
@@ -104,6 +107,9 @@ AC_ARG_WITH(graphviz,
 AC_ARG_WITH(glpk,
     [  --without-glpk          do not compile with glpk support ])
 
+AC_ARG_WITH(suitesparse,
+    [  --without-suitesparse  do not compile with suite-sparse support ])
+
 AC_ARG_WITH(packages,
     [  --without-packages      do not compile with optional packages ])
 
@@ -132,6 +138,9 @@ if test xx"$with_packages" = xx"no"; then
     with_gmp=no
     with_graphviz=no
     with_glpk=no
+    with_opengl=no
+    with_suitesparse=no
+    with_qhull=no
 fi
 
 ###############################
@@ -1171,23 +1180,25 @@ if test xx"$with_gtk" = xx; then
       GZVT=
     fi
     # we need epoxy library for opengl and gtk3
-    PKG_CHECK_MODULES(GTK3GL,[$GTK_PKGS_CFLAGS >= 3.16.0], HAVE_GTK3GL=yes, HAVE_GTK3GL=no)
-    PKG_CHECK_MODULES(epoxy, epoxy, HAVE_EPOXY=yes, HAVE_EPOXY=no)
-    if test "$HAVE_GTK3GL" = "yes"; then 
-       if test "$HAVE_EPOXY" = "yes"; then
-         AC_DEFINE(WITH_EPOXY,[],[epoxy library for opengl in gtk3])
-         AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
-	 HAVE_OPENGL="yes"
-	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS epoxy"
-	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS epoxy"
-         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
- 	 PERIGLEXT="periGTK3GL.o graphene-matrix.o "
+    if test "$with_opengl" != no; then
+      PKG_CHECK_MODULES(GTK3GL,[$GTK_PKGS_CFLAGS >= 3.16.0], HAVE_GTK3GL=yes, HAVE_GTK3GL=no)
+      PKG_CHECK_MODULES(epoxy, epoxy, HAVE_EPOXY=yes, HAVE_EPOXY=no)
+      if test "$HAVE_GTK3GL" = "yes"; then 
+        if test "$HAVE_EPOXY" = "yes"; then
+       	  AC_DEFINE(WITH_EPOXY,[],[epoxy library for opengl in gtk3])
+          AC_DEFINE(WITH_OPENGL,[],[use opengl as possible graphic driver])
+	  HAVE_OPENGL="yes"
+	  GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS epoxy"
+	  GTK_PKGS_LIBS="$GTK_PKGS_LIBS epoxy"
+          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+          GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+ 	  PERIGLEXT="periGTK3GL.o graphene-matrix.o "
 	else
          AC_MSG_WARN([you should install epoxy library to enable opengl support with gtk3])
-       fi 
+        fi 
+      fi
     fi
-  fi
+  fi	
 fi
 
 #################
@@ -1688,100 +1699,107 @@ builtin(include,config/ac_check_umfpack.m4)
 
 AC_SUITESPARSE_PATH()
 AC_CHECK_AMD()
-if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
+
+if test "$with_suitesparse" != no; then	
+  if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
    AC_MSG_RESULT([using "$amd_libs" for amd libraries])
    AC_MSG_RESULT([using "-I${amd_includedir}" for amd includes])
-fi
-
-if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
-  AC_CHECK_UMFPACK()
-  if test "xx$umfpack_libs" != "xx" -a "x${umfpack_includedir}" != "xNO"; then
-   AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
-   AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
-   UMFPACK_LIBS=$umfpack_libs
-   UFSPARSE_LIB=libumfpack
-   if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
-    AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
-    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
-   else
-    AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
-    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
-   fi
   fi
-fi
 
-builtin(include,config/ac_check_cholmod.m4)
-AC_CHECK_COLAMD()
-if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
-   AC_MSG_RESULT([using "$colamd_libs" for colamd libraries])
-   AC_MSG_RESULT([using "-I${colamd_includedir}" for colamd includes])
-fi
-
-if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
-  AC_CHECK_CHOLMOD()
-  if test "xx$cholmod_libs" != "xx"  -a "x${cholmod_includedir}" != "xNO" ; then
-   AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
-   AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
-   CHOLMOD_LIBS=$cholmod_libs
-   if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then
-    AC_MSG_RESULT([using "-I${cholmod_includedir} -I${colamd_includedir}" for cholmod includes])
-    CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir} -I${colamd_includedir}"
-   else
-    AC_MSG_RESULT([using "-I${cholmod_includedir}" for cholmod includes])
-    CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir}"
-   fi
-  fi
-fi
-
-if test "xx$umfpack_libs" != "xx" ; then HAVE_UMFPACK="yes"; else HAVE_UMFPACK="no"; fi
-if test "xx$cholmod_libs" != "xx" ; then HAVE_CHOLMOD="yes"; else HAVE_CHOLMOD="no"; fi
-
-if test "xx$cholmod_libs" != "xx" ; then
-  AC_CHECK_SPQR()
-  if test "xx$spqr_libs" != "xx"  -a "x${spqr_includedir}" != "xNO" ; then
-   AC_DEFINE(WITH_SPQR,[],[spqr library])
-   AC_MSG_RESULT([using "$spqr_libs" for spqr libraries])
-   SPQR_LIBS=$spqr_libs
-   if test "x${spqr_includedir}" != "x${cholmod_includedir}"; then
-    AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
-    CC_OPTIONS="${CC_OPTIONS} -I${spqr_includedir} "
-   else
-    AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
-    CC_OPTIONS="${CC_OPTIONS}"
-   fi
-  fi
-fi
-
-if test "xx$spqr_libs" != "xx"    ; then HAVE_SPQR="yes"; else HAVE_SPQR="no"; fi
-
-# try a link of both libraries and suitesparseconfig
-
-builtin(include,config/ac_check_suitesparse.m4)
-
-if test "xx$umfpack_libs" == "xx" ; then
-  AC_CHECK_SUITESPARSE()
-  if test "xx$umfpack_libs" != "xx" ; then
-    HAVE_UMFPACK="yes"
-    HAVE_CHOLMOD="yes"
-    AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
-    AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
-    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
-    AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
-    UMFPACK_LIBS=$umfpack_libs
-    UFSPARSE_LIB=libumfpack
-    CHOLMOD_LIBS=$cholmod_libs
-    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
-     AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
-     CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
-    else
-     AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
-     CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+  if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
+    AC_CHECK_UMFPACK()
+    if test "xx$umfpack_libs" != "xx" -a "x${umfpack_includedir}" != "xNO"; then
+     AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
+     AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
+     UMFPACK_LIBS=$umfpack_libs
+     UFSPARSE_LIB=libumfpack
+     if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
+      AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
+      CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
+     else
+      AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+      CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+     fi
     fi
-  else
-    HAVE_UMFPACK="no";
-    HAVE_CHOLMOD="no"
   fi
+
+  builtin(include,config/ac_check_cholmod.m4)
+  AC_CHECK_COLAMD()
+  if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
+     AC_MSG_RESULT([using "$colamd_libs" for colamd libraries])
+     AC_MSG_RESULT([using "-I${colamd_includedir}" for colamd includes])
+  fi
+  
+  if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
+    AC_CHECK_CHOLMOD()
+    if test "xx$cholmod_libs" != "xx"  -a "x${cholmod_includedir}" != "xNO" ; then
+     AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
+     AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
+     CHOLMOD_LIBS=$cholmod_libs
+     if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then
+      AC_MSG_RESULT([using "-I${cholmod_includedir} -I${colamd_includedir}" for cholmod includes])
+      CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir} -I${colamd_includedir}"
+     else
+      AC_MSG_RESULT([using "-I${cholmod_includedir}" for cholmod includes])
+      CC_OPTIONS="${CC_OPTIONS} -I${cholmod_includedir}"
+     fi
+    fi
+  fi
+
+  if test "xx$umfpack_libs" != "xx" ; then HAVE_UMFPACK="yes"; else HAVE_UMFPACK="no"; fi
+  if test "xx$cholmod_libs" != "xx" ; then HAVE_CHOLMOD="yes"; else HAVE_CHOLMOD="no"; fi
+  
+  if test "xx$cholmod_libs" != "xx" ; then
+    AC_CHECK_SPQR()
+    if test "xx$spqr_libs" != "xx"  -a "x${spqr_includedir}" != "xNO" ; then
+     AC_DEFINE(WITH_SPQR,[],[spqr library])
+     AC_MSG_RESULT([using "$spqr_libs" for spqr libraries])
+     SPQR_LIBS=$spqr_libs
+     if test "x${spqr_includedir}" != "x${cholmod_includedir}"; then
+      AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+      CC_OPTIONS="${CC_OPTIONS} -I${spqr_includedir} "
+     else
+      AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+      CC_OPTIONS="${CC_OPTIONS}"
+     fi
+    fi
+  fi
+  
+  if test "xx$spqr_libs" != "xx"    ; then HAVE_SPQR="yes"; else HAVE_SPQR="no"; fi
+  
+  # try a link of both libraries and suitesparseconfig
+  
+  builtin(include,config/ac_check_suitesparse.m4)
+  
+  if test "xx$umfpack_libs" == "xx" ; then
+    AC_CHECK_SUITESPARSE()
+    if test "xx$umfpack_libs" != "xx" ; then
+      HAVE_UMFPACK="yes"
+      HAVE_CHOLMOD="yes"
+      AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
+      AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
+      AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
+      AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
+      UMFPACK_LIBS=$umfpack_libs
+      UFSPARSE_LIB=libumfpack
+      CHOLMOD_LIBS=$cholmod_libs
+      if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
+       AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
+       CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
+      else
+       AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+       CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+      fi
+    else
+      HAVE_UMFPACK="no";
+      HAVE_CHOLMOD="no"
+    fi
+  fi
+else
+  HAVE_UMFPACK="no";
+  HAVE_CHOLMOD="no"
 fi
+
 
 #################
 ## fftw
@@ -2051,6 +2069,34 @@ if test "$HAVE_GRAPHVIZ" = "yes"; then
 fi
 
 #################
+## qhull
+#################
+
+HAVE_QHULL=no
+QHULL_LIB=
+QHULL_LIBS=
+
+if test "$with_qhull" != "no"; then
+   AC_CHECK_HEADERS(
+        [qhull/libqhull.h],
+        AC_CHECK_LIB(
+           [qhull],
+           [qh_new_qhull],
+           QHULL_CFLAGS=
+           QHULL_LIBS="-qhull"
+           [HAVE_QHULL="yes"],
+           [HAVE_QHULL="no"]),
+        [HAVE_QHULL="no"])
+fi
+
+if test "$HAVE_QHULL" = "yes"; then
+  AC_DEFINE(WITH_QHULL,[],[portaudio library])
+  QHULL_LIB=libqhull
+  QHULL_LIBS=-lqhull
+  LIBS="$QHULL_LIBS $LIBS"
+fi
+
+#################
 ## mongodb C api
 #################
 
@@ -2278,6 +2324,10 @@ AC_SUBST(SNDFILE_LIB)
 AC_SUBST(PORTAUDIO_CFLAGS)
 AC_SUBST(PORTAUDIO_LIBS)
 AC_SUBST(PORTAUDIO_LIB)
+AC_SUBST(QHULL_CFLAGS)
+AC_SUBST(QHULL_LIBS)
+AC_SUBST(QHULL_LIB)
+AC_SUBST(HAVE_QHULL)
 AC_SUBST(GRAPHVIZ_CFLAGS)
 AC_SUBST(GRAPHVIZ_LIBS)
 AC_SUBST(GRAPHVIZ_LIB)
@@ -2406,6 +2456,7 @@ echo "Umfpack support........:" $HAVE_UMFPACK
 echo "GtkSourceView support..:" $have_gtksourceview
 echo "gobject-introspection..:" $HAVE_GI
 echo "epoxy support..........:" $HAVE_EPOXY
+echo "qhull support..........:" $HAVE_QHULL
 echo "man vizualization......:" $MAN_VIZUALIZATION
 echo ""
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
