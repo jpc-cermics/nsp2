@@ -34,11 +34,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <qhull/qhull.h>
-#include <qhull/qset.h>
-#include <qhull/geom.h>
-#include <qhull/poly.h>
-#include <qhull/io.h>
+#include <libqhull/libqhull.h>
+#include <libqhull/qset.h>
+#include <libqhull/geom.h>
+#include <libqhull/poly.h>
+#include <libqhull/io.h>
 
 #include <nsp/nsp.h>
 #include <nsp/objects.h> 
