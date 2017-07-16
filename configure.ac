@@ -2078,7 +2078,7 @@ QHULL_LIBS=
 
 if test "$with_qhull" != "no"; then
    AC_CHECK_HEADERS(
-        [qhull/libqhull.h],
+        [libqhull/libqhull.h],
         AC_CHECK_LIB(
            [qhull],
            [qh_new_qhull],
