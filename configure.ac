@@ -2082,8 +2082,6 @@ if test "$with_qhull" != "no"; then
         AC_CHECK_LIB(
            [qhull],
            [qh_new_qhull],
-           QHULL_CFLAGS=
-           QHULL_LIBS="-qhull"
            [HAVE_QHULL="yes"],
            [HAVE_QHULL="no"]),
         [HAVE_QHULL="no"])
@@ -2091,6 +2089,7 @@ fi
 
 if test "$HAVE_QHULL" = "yes"; then
   AC_DEFINE(WITH_QHULL,[],[portaudio library])
+  QHULL_CFLAGS=
   QHULL_LIB=libqhull
   QHULL_LIBS=-lqhull
   LIBS="$QHULL_LIBS $LIBS"
