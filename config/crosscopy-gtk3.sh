@@ -52,12 +52,16 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgmp-10.dll bin/
     cp -f /usr/$dist/bin/libgnutls-30.dll bin/
     cp -f /usr/$dist/bin/libgobject-2.0-0.dll bin/
-    cp -f /usr/$dist/bin/libgstapp-0.10-0.dll bin/
-    cp -f /usr/$dist/bin/libgstbase-0.10-0.dll bin/
-    cp -f /usr/$dist/bin/libgstinterfaces-0.10-0.dll bin/
-    cp -f /usr/$dist/bin/libgstpbutils-0.10-0.dll bin/
-    cp -f /usr/$dist/bin/libgstreamer-0.10-0.dll bin/
-    cp -f /usr/$dist/bin/libgstvideo-0.10-0.dll bin/
+    cp -f /usr/$dist/bin/libgstapp-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstbase-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstpbutils-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstreamer-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstvideo-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstaudio-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgsttag-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgstfft-1.0-0.dll bin/
+    cp -f /usr/$dist/bin/libharfbuzz-icu-0.dll bin/
+    cp -f /usr/$dist/bin/libwebp-5.dll bin/
     cp -f /usr/$dist/bin/libgtkglext-win32-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libgtksourceview-3.0-1.dll bin/
     cp -f /usr/$dist/bin/libgtk-3-0.dll bin/
@@ -131,6 +135,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgnomevfs-2-0.dll bin
     cp -f /usr/$dist/bin/libbz2-1.dll bin
     cp -f /usr/$dist/bin/libgconf-2-4.dll bin
+    cp -f /usr/$dist/bin/libqhull.dll bin
     
     subdirs="lib/gtk-3.0 lib/gnome-vfs-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
     echo populate directories: $subdirs
@@ -155,8 +160,8 @@ if [ -d "/usr/$dist" ]; then
     # clean unused icon themes
     subdirs="gnome oxygen Tango"
     for i in $subdirs ;
-    do
-	if [ -f share/icons/$1 ]; then 
+    do  
+	if [ -d share/icons/$i ]; then
 	    \rm -fr share/icons/$i
 	fi
     done
