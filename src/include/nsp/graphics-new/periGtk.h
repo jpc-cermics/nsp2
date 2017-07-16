@@ -31,7 +31,9 @@
 
 #ifdef WITH_EPOXY
 #include <epoxy/gl.h>
+#ifndef WIN32
 #include <epoxy/glx.h>
+#endif
 #else
 #ifdef __APPLE__
 #   include <OpenGL/gl.h>
