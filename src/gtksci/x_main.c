@@ -96,7 +96,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #endif
 #endif
       gtk_init(&argc,&argv);
-      // TRUE: means no log, this is for production
+      /* TRUE: means no log, this is for production */
       nsp_unset_gtk_error(TRUE);
       /*
 	g_object_set (gtk_settings_get_default (),
@@ -411,7 +411,12 @@ static void nsp_unset_gtk_error(int no_log)
   else
     /* Set default handler based on argument for appropriate log level */
     g_log_set_default_handler( g_log_default_handler, NULL);
-  if (0 )
+
+  /* test: if the following if is active 
+   * warnings will be emited if no_log is FALSE 
+   * and not if no_log is TRUE 
+   */
+  if ( 0 )
     {
       g_warning("This is warning\n");
       g_message("This is message\n");
