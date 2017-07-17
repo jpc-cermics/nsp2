@@ -10,6 +10,7 @@ SUBDIRS = \
 	statistics linalg calpol \
 	ast rmatrix signal \
 	linearsys control robust qhull \
+	plotlib egraphics
 
 DIR=
 
