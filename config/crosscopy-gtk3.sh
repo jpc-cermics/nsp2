@@ -43,6 +43,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgailutil-3-0.dll bin/
     cp -f /usr/$dist/bin/libgdk_pixbuf-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgdk-win32-2.0-0.dll bin/
+    cp -f /usr/$dist/bin/libgtk-win32-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgeoclue-0.dll bin/
     cp -f /usr/$dist/bin/libgio-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglib-2.0-0.dll bin/
