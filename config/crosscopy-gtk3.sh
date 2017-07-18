@@ -185,6 +185,16 @@ else
     echo directory /usr/lib/gcc/$dist/$version  does not exists
 fi
 
+# for "i686-w64-mingw32" we must use libgcc_s_sjlj-1.dll from opensuze
+# to avoid a message about missing symbol when starting help in nsp
+# maybe we should do the same for x86_64 version ?
+
+if [ $dist = "i686-w64-mingw32" ]; then
+    if [ -f /usr/$dist/bin/libgcc_s_sjlj-1.dll ]; then 
+      cp -f /usr/$dist/bin/libgcc_s_sjlj-1.dll bin
+    fi
+fi
+
 chmod +x bin/*.dll
 
 # change the pathes in pixbuf loaders
