@@ -1,4 +1,5 @@
-function txt=pretty_printer(fname,target="term",color=%t, columns=90)
+function txt=pretty_printer(fname,target="term",color=%t, columns=90, outfile="")
+  // pretty print the contents of a file with various possible targets
   
   S=getfile(fname);
   ast=parse(S);
@@ -34,6 +35,9 @@ function txt=pretty_printer(fname,target="term",color=%t, columns=90)
     else
       printf("Warning: unknown target ""%s""\n",target);
     return 
+  end
+  if type(outfile,'short')=='s' && length(outfile)<>0 then
+    target_name=outfile;
   end
   txt = S;
   if nargout == 1 then 
