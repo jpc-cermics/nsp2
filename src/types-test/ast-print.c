@@ -245,10 +245,10 @@ static void nsp_print_comment_for_html(const char *str, int target)
 	    {
 	      switch (*str) 
 		{
-		case '\\': Sciprintf("%s","\\nspbs{}");
-		case '%' : Sciprintf("%s","\\nsppc{}");
-		case '#' : Sciprintf("%s","\\nspsh{}");
-		case '~' : Sciprintf("%s","\\nspti{}");
+		case '\\': Sciprintf("%s","\\nspbs{}");break;
+		case '%' : Sciprintf("%s","\\nsppc{}");break;
+		case '#' : Sciprintf("%s","\\nspsh{}");break;
+		case '~' : Sciprintf("%s","\\nspti{}");break;
 		case '{' : Sciprintf("%s","\\nspob{}");break;
 		case '}' : Sciprintf("%s","\\nspcb{}");break;
 		default :  Sciprintf("%c",*str);
