@@ -214,9 +214,10 @@ static int nsp_ast_pprint_post_tag_color(ast_wrap *ast)
 static int nsp_ast_pprint_comment(int indent,ast_wrap *ast)
 {
   const char *str = (const char *) ast->get_str(ast);
+  int escape = ( strlen(str) >= 2 && *str == '@' && *(str+1) == '@' );
   int pos=0;
   pos += Sciprintf2(indent, _nsp_ast_get_space(ast),"");
-  pos += nsp_ast_pprint_pre_tag_color(ast,type_comment);
+  if (! escape) pos += nsp_ast_pprint_pre_tag_color(ast,type_comment);
 
   switch (ast->target)
     {
@@ -225,13 +226,17 @@ static int nsp_ast_pprint_comment(int indent,ast_wrap *ast)
     case nsp_pprint_latex:nsp_print_comment_for_html(str,ast->target);pos += strlen(str)+2;break;
     case nsp_pprint_term: pos += Sciprintf("//%s",str);break;
     }
-  pos += nsp_ast_pprint_post_tag_color(ast);
+  if (! escape)  pos += nsp_ast_pprint_post_tag_color(ast);
   return pos;
 }
 
 static void nsp_print_comment_for_html(const char *str, int target)
 {
-  Sciprintf("//");
+  int escape = ( strlen(str) >= 2 && *str == '@' && *(str+1) == '@' );
+  if ( ! escape )
+    Sciprintf("//");
+  else
+    str = str+2;
   while ( *str != '\0') 
     {
       char buf[64];
@@ -241,29 +246,34 @@ static void nsp_print_comment_for_html(const char *str, int target)
 	}
       else
 	{
-	  if ( target == nsp_pprint_latex)
+	  if ( escape )
 	    {
-	      switch (*str) 
-		{
-		case '\\': Sciprintf("%s","\\nspbs{}");break;
-		case '%' : Sciprintf("%s","\\nsppc{}");break;
-		case '#' : Sciprintf("%s","\\nspsh{}");break;
-		case '~' : Sciprintf("%s","\\nspti{}");break;
-		case '{' : Sciprintf("%s","\\nspob{}");break;
-		case '}' : Sciprintf("%s","\\nspcb{}");break;
-		default :  Sciprintf("%c",*str);
-		}
+	      Sciprintf("%c",*str);
 	    }
 	  else
-	    {
-	      switch (*str) 
-		{
-		case '<' : Sciprintf("%s","&lt;");break;
-		case '>' : Sciprintf("%s","&gt;");break;
-		case '&' : Sciprintf("%s","&amp;");break;
-		default :  Sciprintf("%c",*str);
-		}
-	    }
+	    if ( target == nsp_pprint_latex)
+	      {
+		switch (*str) 
+		  {
+		  case '\\': Sciprintf("%s","\\nspbs{}");break;
+		  case '%' : Sciprintf("%s","\\nsppc{}");break;
+		  case '#' : Sciprintf("%s","\\nspsh{}");break;
+		  case '~' : Sciprintf("%s","\\nspti{}");break;
+		  case '{' : Sciprintf("%s","\\nspob{}");break;
+		  case '}' : Sciprintf("%s","\\nspcb{}");break;
+		  default :  Sciprintf("%c",*str);
+		  }
+	      }
+	    else
+	      {
+		switch (*str) 
+		  {
+		  case '<' : Sciprintf("%s","&lt;");break;
+		  case '>' : Sciprintf("%s","&gt;");break;
+		  case '&' : Sciprintf("%s","&amp;");break;
+		  default :  Sciprintf("%c",*str);
+		  }
+	      }
 	}
       str++;
     }
@@ -324,20 +334,19 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 	    case '%' :
 	      if ( target ==  nsp_pprint_latex )
 		Sciprintf("%s","\\nsppc{}");
-	      else Sciprintf("%c",*str);
+	      else Sciprintf("%c",*str);break;
 	    case '#' :
 	      if ( target ==  nsp_pprint_latex )
 		Sciprintf("%s","\\nspsh{}");
-	      else Sciprintf("%c",*str);
+	      else Sciprintf("%c",*str);break;
 	    case '~' :
 	      if ( target ==  nsp_pprint_latex )
 		Sciprintf("%s","\\nspti{}");
-	      else Sciprintf("%c",*str);
+	      else Sciprintf("%c",*str);break;
 	    case '{' :
 	      if ( target ==  nsp_pprint_latex )
 		Sciprintf("%s","\\nspob{}");
-	      else Sciprintf("%c",*str);
-	      break;
+	      else Sciprintf("%c",*str);break;
 	    case '}' :
 	      if ( target ==  nsp_pprint_latex )
 		Sciprintf("%s","\\nspcb{}");
@@ -376,7 +385,7 @@ static void nsp_print_string_as_read_for_html(const char *str,char string_delim,
 	    case '\a' :  Sciprintf("%s%s",bs,"a"); break;
 	    case '\b' :  Sciprintf("%s%s",bs,"b"); break;
 	    case '\f' :  Sciprintf("%s%s",bs,"f"); break;
-	    case '\n' :  Sciprintf("%s%s",bs,"n");break;
+	    case '\n' :  Sciprintf("%s%s",bs,"n"); break;
 	    case '\r' :  Sciprintf("%s%s",bs,"r"); break;
 	    case '\t' :  Sciprintf("%s%s",bs,"t"); break;
 	    case '\v' :  Sciprintf("%s%s",bs,"v"); break;
