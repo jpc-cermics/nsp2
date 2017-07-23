@@ -1456,7 +1456,7 @@ if test "$check_vte" = "yes" ; then
        PKG_CHECK_MODULES(vte, vte-2.90 , have_vte_290_gtk3=yes, have_vte_290_gtk3=no)
        if test "$have_vte_290_gtk3" = "yes"; then
          VTE_PKG=vte-2.90
-         VTE_FILE=vteapp-gtk3-vte-2.91.c
+         VTE_FILE=vteapp-gtk3-vte-2.90.c
        else
          AC_MSG_ERROR([you should install library and devel for VTE gtk+-3.0 (Terminal emulator widget)])
        fi
@@ -2239,6 +2239,9 @@ TOOLBOX=modnum_nsp;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 # add coselica if found
 TOOLBOX=coselica-0.4.8-nsp;
+AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
+# add coselica if found
+TOOLBOX=distmesh;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 
 AC_SUBST(TOOLBOXES)

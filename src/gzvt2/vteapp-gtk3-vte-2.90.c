@@ -98,6 +98,7 @@ vte_terminal_set_geometry_hints_for_window_old(VteTerminal *terminal,
 {
   GdkGeometry geometry;
   GtkBorder *inner_border;
+  GtkWidget *widget = &terminal->widget;
   
   gtk_widget_style_get (widget, "inner-border", &inner_border, NULL);
   geometry.width_inc = width;
@@ -123,7 +124,7 @@ char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
   if (!gtk_widget_get_realized (widget))
     return;
 
-  vte_terminal_set_geometry_hints_for_window_old(terminal, window, guint width, guint height);
+  vte_terminal_set_geometry_hints_for_window_old(terminal, window, width, height);
 }
 
 static void
@@ -139,7 +140,7 @@ char_size_realized(GtkWidget *widget, gpointer data)
   width = vte_terminal_get_char_width (terminal);
   height = vte_terminal_get_char_height (terminal);
   
-  vte_terminal_set_geometry_hints_for_window_old(terminal, window, guint width, guint height);
+  vte_terminal_set_geometry_hints_for_window_old(terminal, window, width, height);
 }
 
 static void
@@ -605,7 +606,7 @@ main(int argc, char **argv)
     NULL};
   const char *background = NULL;
   gboolean transparent = FALSE, audible = TRUE,
-    debug = FALSE, dingus = FALSE, dbuffer = TRUE,
+    debug = FALSE, dbuffer = TRUE,
     console = FALSE, scroll = FALSE, keep = FALSE,
     icon_title = FALSE, shell = TRUE, highlight_set = FALSE,
     cursor_set = FALSE, reverse = FALSE, use_geometry_hints = TRUE,
