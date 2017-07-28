@@ -243,4 +243,8 @@ function [msvc_compiler,name,is64]=msvc_get_compiler()
   is64 = %win64;
 endfunction
 
+function y=have_compiler()
+  y = ~%win32 || msvc_get_compiler() <> 'unknown';
+endfunction
+
   

@@ -1,4 +1,4 @@
-function [name,path,is64] = msvc_get_compiler() 
+function [name,path,is64] = msvc_get_compiler_old() 
 
 // Copyright (C) 2006-2015 Jean-Philippe Chancelier Enpc/Cermics
 //
