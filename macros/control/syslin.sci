@@ -35,6 +35,7 @@ function sl=syslin(domain,a,b,c,d,x0)
     //syslin(domaine,sys)
     if type(a,'short')=='r' then
       sl=a;
+      sl.set_dom[domain];
     elseif type(a,'short')=='linearsys' then
       sl=a;
       sl.dom=domain;

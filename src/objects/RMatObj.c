@@ -754,6 +754,25 @@ static int int_meth_get_den(void *self, Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_meth_get_dom(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *N;
+  NspRMatrix *p=self;
+  CheckStdRhs(0,0);
+  if ((N = int_rmatrix_get_dom(p,"dom"))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(N));
+  return 1;
+}
+static int int_meth_get_dt(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *N;
+  NspRMatrix *p=self;
+  CheckStdRhs(0,0);
+  if ((N = int_rmatrix_get_dt(p,"dt"))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(N));
+  return 1;
+}
+
 static int int_meth_set_num(void *self, Stack stack, int rhs, int opt, int lhs)
 {
   int i;
@@ -798,14 +817,49 @@ static int int_meth_set_den(void *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+static int int_meth_set_dom(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int id;
+  NspRMatrix *R=self;
+  const char *dom_table[] =       {"c","d","u",NULL};
+  CheckStdRhs(1,1);
+  CheckLhs(0,0);
+  if ( IsSMatObj(stack,1))
+    {
+      if ( (id=GetStringInArray(stack,1,dom_table,1)) == -1) return RET_BUG; 
+      R->dom = dom_table[id][0];
+    }
+  else
+    {
+      Scierror("%s: first argument should be a string\n", NspFname(stack));
+      return RET_BUG;
+    }
+  return 0;
+}
+
+static int int_meth_set_dt(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  double dt;
+  NspRMatrix *R=self; 
+  CheckStdRhs(1,1);
+  CheckLhs(0,0);
+  if (GetScalarDouble (stack, 1, &dt) == FAIL) return RET_BUG;
+  R->dt = dt;
+  return 0;
+}
+
 static NspMethods rmatrix_methods[] = {
   { "normalize", int_meth_normalize},
   { "set_var", int_meth_set_varname},
   { "get_var", int_meth_get_varname},
   { "set_num", int_meth_set_num},
-  { "set_den", int_meth_set_den},
   { "get_num", int_meth_get_num},
+  { "set_den", int_meth_set_den},
   { "get_den", int_meth_get_den},
+  { "set_dom", int_meth_set_dom},
+  { "get_dom", int_meth_get_dom},
+  { "set_dt",  int_meth_set_dt},
+  { "get_dt",  int_meth_get_dt},
   { (char *) 0, NULL}
 };
 
