@@ -82,10 +82,25 @@ static NspObject *_wrap_linearsys_get_A(void *self,const char *attr)
   return (NspObject *) ret;
 }
 
+static NspObject *_wrap_linearsys_get_obj_A(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspLinearSys *) self)->A);
+  return (NspObject *) ret;
+}
+
 static int _wrap_linearsys_set_A(void *self, char *attr, NspObject *O)
 {
   NspMatrix *A = (NspMatrix *) O;
   NspMatrix *As = ((NspLinearSys *) self)->A;
+  if ( As == A)
+    {
+      /* cheking this case avoid a crash because we should not 
+       * free A matrix in this case 
+       */
+      return OK;
+    }
   if ( ! IsMat(O) ) return FAIL;
   if ( As->m != A->m || As->n != A->n)
     {
@@ -111,11 +126,27 @@ static NspObject *_wrap_linearsys_get_D(void *self,const char *attr)
   return (NspObject *) ret;
 }
 
+static NspObject *_wrap_linearsys_get_obj_D(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspLinearSys *) self)->D);
+  return (NspObject *) ret;
+}
+
 static int _wrap_linearsys_set_D(void *self, char *attr, NspObject *O)
 {
   NspLinearSys *sys = self;
   NspPMatrix *D = (NspPMatrix *) O;
   NspPMatrix *Ds = ((NspLinearSys *) self)->D;
+
+  if ( Ds ==  D)
+    {
+      /* cheking this case avoid a crash because we should not 
+       * free A matrix in this case 
+       */
+      return OK;
+    }
   if ( IsMat(O) )
     {
       NspMatrix *Dm=(NspMatrix *) D;
@@ -151,6 +182,81 @@ static int _wrap_linearsys_set_D(void *self, char *attr, NspObject *O)
     }
   if ( Ds != NULL ) nsp_pmatrix_destroy(Ds);
   ((NspLinearSys *) self)->D= D;
+  return OK;
+}
+
+%%
+override-attr LinearSys.B
+
+static NspObject *_wrap_linearsys_get_B(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspLinearSys *) self)->B;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_linearsys_get_obj_B(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspLinearSys *) self)->B);
+  return (NspObject *) ret;
+}
+
+static int _wrap_linearsys_set_B(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *B = (NspMatrix *) O;
+  NspMatrix *Bs = ((NspLinearSys *) self)->B;
+  
+  if ( Bs ==  B)
+    {
+      /* cheking this case avoid a crash because we should not 
+       * free A matrix in this case 
+       */
+      return OK;
+    }
+  if ( ! IsMat(O) ) return FAIL;
+  if ((B = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if ( Bs != NULL ) nsp_matrix_destroy(Bs);
+  ((NspLinearSys *) self)->B= B;
+  return OK;
+}
+
+%%
+override-attr LinearSys.C
+
+static NspObject *_wrap_linearsys_get_C(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspLinearSys *) self)->C;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_linearsys_get_obj_C(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspLinearSys *) self)->C);
+  return (NspObject *) ret;
+}
+
+static int _wrap_linearsys_set_C(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *C = (NspMatrix *) O;
+  NspMatrix *Cs = ((NspLinearSys *) self)->C;
+  
+  if ( Cs ==  C)
+    {
+      /* cheking this case avoid a crash because we should not 
+       * free A matrix in this case 
+       */
+      return OK;
+    }
+  
+  if ( ! IsMat(O) ) return FAIL;
+  if ((C = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if ( Cs != NULL )  nsp_matrix_destroy(Cs);
+  ((NspLinearSys *) self)->C= C;
   return OK;
 }
 
