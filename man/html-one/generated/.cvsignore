@@ -21,4 +21,5 @@ manual0x.png
 idxmake.dvi
 idxmake.log
 *.png
-_minted-manual
+_mintednsp-manual
+manual.pyg

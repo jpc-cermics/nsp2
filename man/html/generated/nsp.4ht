@@ -1,0 +1,53 @@
+% provide configure for \hello command. we can choose any name
+% but most convenient is to name hooks after redefined command
+% we declare two hooks, to be inserted before and after the command
+
+\NewConfigure{nspcomment}{2}
+% now we need to redefine \nspcomment. save it to tmp command
+\let\tmp:nspcomment\nspcomment
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspcomment[1]{\a:nspcomment\tmp:nspcomment{#1}\b:nspcomment} 
+
+\NewConfigure{nspkeyword}{2}
+% now we need to redefine \nspkeyword. save it to tmp command
+\let\tmp:nspkeyword\nspkeyword
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspkeyword[1]{\a:nspkeyword\tmp:nspkeyword{#1}\b:nspkeyword} 
+
+\NewConfigure{nspstring}{2}
+% now we need to redefine \nspstring. save it to tmp command
+\let\tmp:nspstring\nspstring
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspstring[1]{\a:nspstring\tmp:nspstring{#1}\b:nspstring} 
+
+\NewConfigure{nspnumber}{2}
+% now we need to redefine \nspnumber. save it to tmp command
+\let\tmp:nspnumber\nspnumber
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspnumber[1]{\a:nspnumber\tmp:nspnumber{#1}\b:nspnumber}
+
+\NewConfigure{nspfunction}{2}
+% now we need to redefine \nspfunction. save it to tmp command
+\let\tmp:nspfunction\nspfunction
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspfunction[1]{\a:nspfunction\tmp:nspfunction{#1}\b:nspfunction}
+
+\NewConfigure{nspoperator}{2}
+% now we need to redefine \nspoperator. save it to tmp command
+\let\tmp:nspoperator\nspoperator
+% note that `:` can be part of command name in `.4ht` files. 
+% now insert the hooks. they are named as \a:hook, \b:hook, ..., \h:hook
+% depending on how many hooks were declared
+\renewcommand\nspoperator[1]{\a:nspoperator\tmp:nspoperator{#1}\b:nspoperator}
+
+

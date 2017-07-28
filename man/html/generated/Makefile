@@ -58,5 +58,5 @@ distclean::
 	@$(RM) manual.xref
 	@$(RM) *.aux
 	@$(RM) manual*.png
-
+	@$(RM) -fr _mintednsp-manual
 clean	:: 

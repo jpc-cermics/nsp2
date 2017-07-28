@@ -1,0 +1,1513 @@
+%%
+%% This is file `mintednsp.sty',
+%% It is a hand modified version of minted.sty 
+%% where pygmentize is replaced by a direct call to 
+%% nsp to produce a listing with color annotations
+%% 
+%% The original file, minted.sty:
+%%  Copyright 2013--2015 Geoffrey M. Poore
+%%  Copyright 2010--2011 Konrad Rudolph
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%% 
+%% Additionally, the project may be distributed under the terms of the new BSD
+%% license.
+%% 
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is Geoffrey Poore.
+%% 
+%% This work consists of the files mintednsp.dtx and mintednsp.ins
+%% and the derived file mintednsp.sty.
+%% 
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mintednsp}
+    [2015/09/09 v2.1 Yet another Pygments shim for LaTeX]
+\RequirePackage{keyval}
+\RequirePackage{kvoptions}
+\RequirePackage{fancyvrb}
+\RequirePackage{float}
+\RequirePackage{ifthen}
+\RequirePackage{calc}
+\RequirePackage{ifplatform}
+\RequirePackage{pdftexcmds}
+\RequirePackage{etoolbox}
+\RequirePackage{xstring}
+\RequirePackage{lineno}
+\AtBeginDocument{%
+  \@ifpackageloaded{color}{}{%
+    \@ifpackageloaded{xcolor}{}{\RequirePackage{xcolor}}}%
+}
+\DeclareVoidOption{chapter}{\def\mintednsp@float@within{chapter}}
+\DeclareVoidOption{section}{\def\mintednsp@float@within{section}}
+\DeclareBoolOption{newfloat}
+\DeclareBoolOption[true]{cache}
+\StrSubstitute{\jobname}{ }{_}[\mintednsp@jobname]
+\StrSubstitute{\mintednsp@jobname}{*}{_}[\mintednsp@jobname]
+\StrSubstitute{\mintednsp@jobname}{"}{}[\mintednsp@jobname]
+\newcommand{\mintednsp@cachedir}{\detokenize{_}mintednsp-\mintednsp@jobname}
+\let\mintednsp@cachedir@windows\mintednsp@cachedir
+\define@key{mintednsp}{cachedir}{%
+  \@namedef{mintednsp@cachedir}{#1}%
+  \StrSubstitute{\mintednsp@cachedir}{/}{\@backslashchar}[\mintednsp@cachedir@windows]}
+\let\mintednsp@outputdir\@empty
+\let\mintednsp@outputdir@windows\@empty
+\define@key{mintednsp}{outputdir}{%
+  \@namedef{mintednsp@outputdir}{#1/}%
+  \StrSubstitute{\mintednsp@outputdir}{/}%
+    {\@backslashchar}[\mintednsp@outputdir@windows]}
+\DeclareBoolOption{kpsewhich}
+\DeclareBoolOption{langlinenos}
+\DeclareBoolOption{draft}
+\DeclareComplementaryOption{final}{draft}
+\ProcessKeyvalOptions*
+\ifthenelse{\boolean{mintednsp@newfloat}}{\RequirePackage{newfloat}}{}
+\ifcsname tikzexternalrealjob\endcsname
+  \mintednsp@drafttrue
+  \mintednsp@cachefalse
+\else
+\fi
+\ifthenelse{\boolean{mintednsp@cache}}{%
+  \AtEndOfPackage{\ProvideDirectory{\mintednsp@outputdir\mintednsp@cachedir}}}{}
+\newcommand{\mintednsp@input}[1]{%
+  \IfFileExists{#1}%
+   {\input{#1}}%
+   {\PackageError{mintednsp}{Missing Pygments output; \string\inputmintednsp\space
+     was^^Jprobably given a file that does not exist--otherwise, you may need
+     ^^Jthe outputdir package option, or may be using an incompatible build
+     tool\ifwindows,^^Jor may be using the kpsewhich option without having
+     PowerShell installed\fi}%
+    {This could be caused by using -output-directory or -aux-directory
+     ^^Jwithout setting mintednsp's outputdir, or by using a build tool that
+     ^^Jchanges paths in ways mintednsp cannot detect\ifwindows, or by using the
+     ^^Jkpsewhich option without PowerShell\fi.}}%
+}
+\newcommand{\mintednsp@infile}{\mintednsp@jobname.out.pyg}
+\newcommand{\mintednsp@cachelist}{}
+\newcommand{\mintednsp@addcachefile}[1]{%
+  \expandafter\long\expandafter\gdef\expandafter\mintednsp@cachelist\expandafter{%
+    \mintednsp@cachelist,^^J%
+    \space\space#1}%
+  \expandafter\gdef\csname mintednsp@cached@#1\endcsname{}%
+}
+\newcommand{\mintednsp@savecachelist}{%
+  \ifdefempty{\mintednsp@cachelist}{}{%
+    \immediate\write\@mainaux{%
+      \string\gdef\string\mintednsp@oldcachelist\string{%
+        \mintednsp@cachelist\string}}%
+  }%
+}
+\newcommand{\mintednsp@cleancache}{%
+  \ifcsname mintednsp@oldcachelist\endcsname
+    \def\do##1{%
+      \ifthenelse{\equal{##1}{}}{}{%
+        \ifcsname mintednsp@cached@##1\endcsname\else
+          \DeleteFile[\mintednsp@outputdir\mintednsp@cachedir]{##1}%
+        \fi
+      }%
+    }%
+    \expandafter\docsvlist\expandafter{\mintednsp@oldcachelist}%
+  \else
+  \fi
+}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\AtEndDocument{%
+      \ifcsname mintednsp@oldcachelist\endcsname
+        \let\mintednsp@cachelist\mintednsp@oldcachelist
+        \mintednsp@savecachelist
+      \fi}}%
+  {\AtEndDocument{%
+      \mintednsp@savecachelist
+      \mintednsp@cleancache}}%
+\ifwindows
+  \providecommand{\DeleteFile}[2][]{%
+    \ifthenelse{\equal{#1}{}}%
+      {\IfFileExists{#2}{\immediate\write18{del "#2"}}{}}%
+      {\IfFileExists{#1/#2}{%
+        \StrSubstitute{#1}{/}{\@backslashchar}[\mintednsp@windir]
+        \immediate\write18{del "\mintednsp@windir\@backslashchar #2"}}{}}}
+\else
+  \providecommand{\DeleteFile}[2][]{%
+    \ifthenelse{\equal{#1}{}}%
+      {\IfFileExists{#2}{\immediate\write18{rm "#2"}}{}}%
+      {\IfFileExists{#1/#2}{\immediate\write18{rm "#1/#2"}}{}}}
+\fi
+\ifwindows
+  \newcommand{\ProvideDirectory}[1]{%
+    \StrSubstitute{#1}{/}{\@backslashchar}[\mintednsp@windir]
+    \immediate\write18{if not exist "\mintednsp@windir" mkdir "\mintednsp@windir"}}
+\else
+  \newcommand{\ProvideDirectory}[1]{%
+    \immediate\write18{mkdir -p "#1"}}
+\fi
+\newboolean{AppExists}
+\newread\mintednsp@appexistsfile
+\newcommand{\TestAppExists}[1]{
+  \ifwindows
+    \DeleteFile{\mintednsp@jobname.aex}
+    \immediate\write18{for \string^\@percentchar i in (#1.exe #1.bat #1.cmd)
+      do set >"\mintednsp@jobname.aex" <nul: /p
+      x=\string^\@percentchar \string~$PATH:i>>"\mintednsp@jobname.aex"}
+    %$ <- balance syntax highlighting
+    \immediate\openin\mintednsp@appexistsfile\mintednsp@jobname.aex
+    \expandafter\def\expandafter\@tmp@cr\expandafter{\the\endlinechar}
+    \endlinechar=-1\relax
+    \readline\mintednsp@appexistsfile to \mintednsp@apppathifexists
+    \endlinechar=\@tmp@cr
+    \ifthenelse{\equal{\mintednsp@apppathifexists}{}}
+     {\AppExistsfalse}
+     {\AppExiststrue}
+    \immediate\closein\mintednsp@appexistsfile
+    \DeleteFile{\mintednsp@jobname.aex}
+  \else
+    \immediate\write18{which "#1" && touch "\mintednsp@jobname.aex"}
+    \IfFileExists{\mintednsp@jobname.aex}
+      {\AppExiststrue
+        \DeleteFile{\mintednsp@jobname.aex}}
+      {\AppExistsfalse}
+  \fi
+}
+\newcommand{\mintednsp@optlistcl@g}{}
+\newcommand{\mintednsp@optlistcl@g@i}{}
+\let\mintednsp@lang\@empty
+\newcommand{\mintednsp@optlistcl@lang}{}
+\newcommand{\mintednsp@optlistcl@lang@i}{}
+\newcommand{\mintednsp@optlistcl@cmd}{}
+\newcommand{\mintednsp@optlistfv@g}{}
+\newcommand{\mintednsp@optlistfv@g@i}{}
+\newcommand{\mintednsp@optlistfv@lang}{}
+\newcommand{\mintednsp@optlistfv@lang@i}{}
+\newcommand{\mintednsp@optlistfv@cmd}{}
+\newcommand{\mintednsp@configlang}[1]{%
+  \def\mintednsp@lang{#1}%
+  \ifcsname mintednsp@optlistcl@lang\mintednsp@lang\endcsname\else
+    \expandafter\gdef\csname mintednsp@optlistcl@lang\mintednsp@lang\endcsname{}%
+  \fi
+  \ifcsname mintednsp@optlistcl@lang\mintednsp@lang @i\endcsname\else
+    \expandafter\gdef\csname mintednsp@optlistcl@lang\mintednsp@lang @i\endcsname{}%
+  \fi
+  \ifcsname mintednsp@optlistfv@lang\mintednsp@lang\endcsname\else
+    \expandafter\gdef\csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname{}%
+  \fi
+  \ifcsname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname\else
+    \expandafter\gdef\csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname{}%
+  \fi
+}
+\newcommand{\mintednsp@addto@optlistcl}[2]{%
+  \expandafter\def\expandafter#1\expandafter{#1%
+    \detokenize{#2}\space}}
+\newcommand{\mintednsp@addto@optlistcl@lang}[2]{%
+  \expandafter\let\expandafter\mintednsp@tmp\csname #1\endcsname
+  \expandafter\def\expandafter\mintednsp@tmp\expandafter{\mintednsp@tmp%
+    \detokenize{#2}\space}%
+  \expandafter\let\csname #1\endcsname\mintednsp@tmp}
+\newcommand{\mintednsp@def@optcl}[4][]{%
+  \ifthenelse{\equal{#1}{}}%
+    {\define@key{mintednsp@opt@g}{#2}{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@g}{#3=#4}%
+        \@namedef{mintednsp@opt@g:#2}{#4}}%
+      \define@key{mintednsp@opt@g@i}{#2}{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@g@i}{#3=#4}%
+        \@namedef{mintednsp@opt@g@i:#2}{#4}}%
+      \define@key{mintednsp@opt@lang}{#2}{%
+        \mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{#4}}%
+      \define@key{mintednsp@opt@lang@i}{#2}{%
+        \mintednsp@addto@optlistcl@lang{%
+          mintednsp@optlistcl@lang\mintednsp@lang @i}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{#4}}%
+      \define@key{mintednsp@opt@cmd}{#2}{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@cmd}{#3=#4}%
+        \@namedef{mintednsp@opt@cmd:#2}{#4}}}%
+    {\define@key{mintednsp@opt@g}{#2}[#1]{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@g}{#3=#4}%
+        \@namedef{mintednsp@opt@g:#2}{#4}}%
+      \define@key{mintednsp@opt@g@i}{#2}[#1]{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@g@i}{#3=#4}%
+        \@namedef{mintednsp@opt@g@i:#2}{#4}}%
+      \define@key{mintednsp@opt@lang}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{#4}}%
+      \define@key{mintednsp@opt@lang@i}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@lang{%
+          mintednsp@optlistcl@lang\mintednsp@lang @i}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{#4}}%
+      \define@key{mintednsp@opt@cmd}{#2}[#1]{%
+        \mintednsp@addto@optlistcl{\mintednsp@optlistcl@cmd}{#3=#4}%
+        \@namedef{mintednsp@opt@cmd:#2}{#4}}}%
+}
+\edef\mintednsp@hashchar{\string#}
+\edef\mintednsp@dollarchar{\string$}
+\edef\mintednsp@ampchar{\string&}
+\edef\mintednsp@underscorechar{\string_}
+\edef\mintednsp@tildechar{\string~}
+\edef\mintednsp@leftsquarebracket{\string[}
+\edef\mintednsp@rightsquarebracket{\string]}
+\newcommand{\mintednsp@escchars}{%
+  \let\#\mintednsp@hashchar
+  \let\%\@percentchar
+  \let\{\@charlb
+  \let\}\@charrb
+  \let\$\mintednsp@dollarchar
+  \let\&\mintednsp@ampchar
+  \let\_\mintednsp@underscorechar
+  \let\\\@backslashchar
+  \let~\mintednsp@tildechar
+  \let\~\mintednsp@tildechar
+  \let\[\mintednsp@leftsquarebracket
+  \let\]\mintednsp@rightsquarebracket
+} %$ <- highlighting
+\newcommand{\mintednsp@addto@optlistcl@e}[2]{%
+  \begingroup
+  \mintednsp@escchars
+  \xdef\mintednsp@xtmp{#2}%
+  \endgroup
+  \expandafter\mintednsp@addto@optlistcl@e@i\expandafter{\mintednsp@xtmp}{#1}}
+\def\mintednsp@addto@optlistcl@e@i#1#2{%
+  \expandafter\def\expandafter#2\expandafter{#2#1\space}}
+\newcommand{\mintednsp@addto@optlistcl@lang@e}[2]{%
+  \begingroup
+  \mintednsp@escchars
+  \xdef\mintednsp@xtmp{#2}%
+  \endgroup
+  \expandafter\mintednsp@addto@optlistcl@lang@e@i\expandafter{\mintednsp@xtmp}{#1}}
+\def\mintednsp@addto@optlistcl@lang@e@i#1#2{%
+  \expandafter\let\expandafter\mintednsp@tmp\csname #2\endcsname
+  \expandafter\def\expandafter\mintednsp@tmp\expandafter{\mintednsp@tmp#1\space}%
+  \expandafter\let\csname #2\endcsname\mintednsp@tmp}
+\newcommand{\mintednsp@def@optcl@e}[4][]{%
+  \ifthenelse{\equal{#1}{}}%
+    {\define@key{mintednsp@opt@g}{#2}{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@g}{#3=#4}%
+        \@namedef{mintednsp@opt@g:#2}{#4}}%
+      \define@key{mintednsp@opt@g@i}{#2}{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@g@i}{#3=#4}%
+        \@namedef{mintednsp@opt@g@i:#2}{#4}}%
+      \define@key{mintednsp@opt@lang}{#2}{%
+        \mintednsp@addto@optlistcl@lang@e{mintednsp@optlistcl@lang\mintednsp@lang}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{#4}}%
+      \define@key{mintednsp@opt@lang@i}{#2}{%
+        \mintednsp@addto@optlistcl@lang@e{%
+          mintednsp@optlistcl@lang\mintednsp@lang @i}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{#4}}%
+      \define@key{mintednsp@opt@cmd}{#2}{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@cmd}{#3=#4}%
+        \@namedef{mintednsp@opt@cmd:#2}{#4}}}%
+    {\define@key{mintednsp@opt@g}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@g}{#3=#4}%
+        \@namedef{mintednsp@opt@g:#2}{#4}}%
+      \define@key{mintednsp@opt@g@i}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@g@i}{#3=#4}%
+        \@namedef{mintednsp@opt@g@i:#2}{#4}}%
+      \define@key{mintednsp@opt@lang}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@lang@e{mintednsp@optlistcl@lang\mintednsp@lang}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{#4}}%
+      \define@key{mintednsp@opt@lang@i}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@lang@e{%
+          mintednsp@optlistcl@lang\mintednsp@lang @i}{#3=#4}%
+        \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{#4}}%
+      \define@key{mintednsp@opt@cmd}{#2}[#1]{%
+        \mintednsp@addto@optlistcl@e{\mintednsp@optlistcl@cmd}{#3=#4}%
+        \@namedef{mintednsp@opt@cmd:#2}{#4}}}%
+}
+\newcommand{\mintednsp@def@optcl@switch}[2]{%
+  \define@booleankey{mintednsp@opt@g}{#1}%
+    {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@g}{#2=True}%
+      \@namedef{mintednsp@opt@g:#1}{true}}
+    {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@g}{#2=False}%
+      \@namedef{mintednsp@opt@g:#1}{false}}
+  \define@booleankey{mintednsp@opt@g@i}{#1}%
+    {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@g@i}{#2=True}%
+      \@namedef{mintednsp@opt@g@i:#1}{true}}
+    {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@g@i}{#2=False}%
+      \@namedef{mintednsp@opt@g@i:#1}{false}}
+  \define@booleankey{mintednsp@opt@lang}{#1}%
+    {\mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang}{#2=True}%
+      \@namedef{mintednsp@opt@lang\mintednsp@lang:#1}{true}}
+    {\mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang}{#2=False}%
+      \@namedef{mintednsp@opt@lang\mintednsp@lang:#1}{false}}
+  \define@booleankey{mintednsp@opt@lang@i}{#1}%
+    {\mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang @i}{#2=True}%
+      \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#1}{true}}
+    {\mintednsp@addto@optlistcl@lang{mintednsp@optlistcl@lang\mintednsp@lang @i}{#2=False}%
+      \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#1}{false}}
+  \define@booleankey{mintednsp@opt@cmd}{#1}%
+      {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@cmd}{#2=True}%
+        \@namedef{mintednsp@opt@cmd:#1}{true}}
+      {\mintednsp@addto@optlistcl{\mintednsp@optlistcl@cmd}{#2=False}%
+        \@namedef{mintednsp@opt@cmd:#1}{false}}
+}
+\newcommand{\mintednsp@def@optfv}[1]{%
+  \define@key{mintednsp@opt@g}{#1}{%
+    \expandafter\def\expandafter\mintednsp@optlistfv@g\expandafter{%
+      \mintednsp@optlistfv@g#1=##1,}%
+    \@namedef{mintednsp@opt@g:#1}{##1}}
+  \define@key{mintednsp@opt@g@i}{#1}{%
+    \expandafter\def\expandafter\mintednsp@optlistfv@g@i\expandafter{%
+      \mintednsp@optlistfv@g@i#1=##1,}%
+    \@namedef{mintednsp@opt@g@i:#1}{##1}}
+  \define@key{mintednsp@opt@lang}{#1}{%
+    \expandafter\let\expandafter\mintednsp@tmp%
+      \csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname
+    \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+      \mintednsp@tmp#1=##1,}%
+    \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname%
+      \mintednsp@tmp
+    \@namedef{mintednsp@opt@lang\mintednsp@lang:#1}{##1}}
+  \define@key{mintednsp@opt@lang@i}{#1}{%
+    \expandafter\let\expandafter\mintednsp@tmp%
+      \csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname
+    \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+      \mintednsp@tmp#1=##1,}%
+    \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname%
+      \mintednsp@tmp
+    \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#1}{##1}}
+  \define@key{mintednsp@opt@cmd}{#1}{%
+    \expandafter\def\expandafter\mintednsp@optlistfv@cmd\expandafter{%
+      \mintednsp@optlistfv@cmd#1=##1,}%
+    \@namedef{mintednsp@opt@cmd:#1}{##1}}
+}
+\newcommand{\mintednsp@def@optfv@switch}[1]{%
+  \define@booleankey{mintednsp@opt@g}{#1}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@g\expandafter{%
+      \mintednsp@optlistfv@g#1=true,}%
+     \@namedef{mintednsp@opt@g:#1}{true}}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@g\expandafter{%
+      \mintednsp@optlistfv@g#1=false,}%
+     \@namedef{mintednsp@opt@g:#1}{false}}%
+  \define@booleankey{mintednsp@opt@g@i}{#1}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@g@i\expandafter{%
+      \mintednsp@optlistfv@g@i#1=true,}%
+     \@namedef{mintednsp@opt@g@i:#1}{true}}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@g@i\expandafter{%
+      \mintednsp@optlistfv@g@i#1=false,}%
+     \@namedef{mintednsp@opt@g@i:#1}{false}}%
+  \define@booleankey{mintednsp@opt@lang}{#1}%
+    {\expandafter\let\expandafter\mintednsp@tmp%
+        \csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname
+      \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+        \mintednsp@tmp#1=true,}%
+      \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname%
+        \mintednsp@tmp
+     \@namedef{mintednsp@opt@lang\mintednsp@lang:#1}{true}}%
+    {\expandafter\let\expandafter\mintednsp@tmp%
+        \csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname
+      \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+        \mintednsp@tmp#1=false,}%
+      \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname%
+        \mintednsp@tmp
+     \@namedef{mintednsp@opt@lang\mintednsp@lang:#1}{false}}%
+  \define@booleankey{mintednsp@opt@lang@i}{#1}%
+    {\expandafter\let\expandafter\mintednsp@tmp%
+        \csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname
+      \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+        \mintednsp@tmp#1=true,}%
+      \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname%
+        \mintednsp@tmp
+     \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#1}{true}}%
+    {\expandafter\let\expandafter\mintednsp@tmp%
+        \csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname
+      \expandafter\def\expandafter\mintednsp@tmp\expandafter{%
+        \mintednsp@tmp#1=false,}%
+      \expandafter\let\csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname%
+        \mintednsp@tmp
+     \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#1}{false}}%
+  \define@booleankey{mintednsp@opt@cmd}{#1}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@cmd\expandafter{%
+      \mintednsp@optlistfv@cmd#1=true,}%
+     \@namedef{mintednsp@opt@cmd:#1}{true}}%
+    {\expandafter\def\expandafter\mintednsp@optlistfv@cmd\expandafter{%
+      \mintednsp@optlistfv@cmd#1=false,}%
+     \@namedef{mintednsp@opt@cmd:#1}{false}}%
+}
+\newboolean{mintednsp@isinline}
+\newcommand{\mintednsp@fvset}{%
+  \expandafter\fvset\expandafter{\mintednsp@optlistfv@g}%
+  \expandafter\let\expandafter\mintednsp@tmp%
+    \csname mintednsp@optlistfv@lang\mintednsp@lang\endcsname
+  \expandafter\fvset\expandafter{\mintednsp@tmp}%
+  \ifthenelse{\boolean{mintednsp@isinline}}%
+   {\expandafter\fvset\expandafter{\mintednsp@optlistfv@g@i}%
+    \expandafter\let\expandafter\mintednsp@tmp%
+      \csname mintednsp@optlistfv@lang\mintednsp@lang @i\endcsname
+    \expandafter\fvset\expandafter{\mintednsp@tmp}}%
+   {}%
+  \expandafter\fvset\expandafter{\mintednsp@optlistfv@cmd}%
+}
+\newcommand{\mintednsp@def@opt}[2][]{%
+  \define@key{mintednsp@opt@g}{#2}{%
+    \@namedef{mintednsp@opt@g:#2}{##1}}
+  \define@key{mintednsp@opt@g@i}{#2}{%
+    \@namedef{mintednsp@opt@g@i:#2}{##1}}
+  \define@key{mintednsp@opt@lang}{#2}{%
+    \@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{##1}}
+  \define@key{mintednsp@opt@lang@i}{#2}{%
+    \@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{##1}}
+  \define@key{mintednsp@opt@cmd}{#2}{%
+    \@namedef{mintednsp@opt@cmd:#2}{##1}}
+}
+\newcommand{\mintednsp@def@opt@style}{%
+  \define@key{mintednsp@opt@g}{style}{%
+    \mintednsp@checkstyle{##1}%
+    \@namedef{mintednsp@opt@g:style}{##1}}%
+  \define@key{mintednsp@opt@g@i}{style}{%
+    \mintednsp@checkstyle{##1}%
+    \@namedef{mintednsp@opt@g@i:style}{##1}}%
+  \define@key{mintednsp@opt@lang}{style}{%
+    \mintednsp@checkstyle{##1}%
+    \@namedef{mintednsp@opt@lang\mintednsp@lang:style}{##1}}%
+  \define@key{mintednsp@opt@lang@i}{style}{%
+    \mintednsp@checkstyle{##1}%
+    \@namedef{mintednsp@opt@lang\mintednsp@lang @i:style}{##1}}%
+  \define@key{mintednsp@opt@cmd}{style}{%
+    \mintednsp@checkstyle{##1}%
+    \@namedef{mintednsp@opt@cmd:style}{##1}}%
+}
+\newcommand{\mintednsp@checkstyle}[1]{%
+% not used for nsp 
+}
+\newcommand{\voidmintednsp@checkstyle}[1]{%
+  \ifcsname mintednsp@styleloaded@\ifstrempty{#1}{default-pyg-prefix}{#1}\endcsname\else
+    \expandafter\gdef%
+      \csname mintednsp@styleloaded@\ifstrempty{#1}{default-pyg-prefix}{#1}\endcsname{}%
+    \ifthenelse{\boolean{mintednsp@cache}}%
+      {\IfFileExists
+       {\mintednsp@outputdir\mintednsp@cachedir/\ifstrempty{#1}{default-pyg-prefix}{#1}.pygstyle}%
+       {}%
+       {%
+        \ifwindows
+          \immediate\write18{%
+            \MintedPygmentize\space -S \ifstrempty{#1}{default}{#1} -f latex
+            -P commandprefix=PYG#1
+            > "\mintednsp@outputdir@windows\mintednsp@cachedir@windows\@backslashchar%
+                 \ifstrempty{#1}{default-pyg-prefix}{#1}.pygstyle"}%
+        \else
+          \immediate\write18{%
+            \MintedPygmentize\space -S \ifstrempty{#1}{default}{#1} -f latex
+            -P commandprefix=PYG#1
+            > "\mintednsp@outputdir\mintednsp@cachedir/%
+                 \ifstrempty{#1}{default-pyg-prefix}{#1}.pygstyle"}%
+        \fi
+        }%
+        \begingroup
+        \let\def\gdef
+        \endlinechar=-1\relax
+        \mintednsp@input{%
+          \mintednsp@outputdir\mintednsp@cachedir/\ifstrempty{#1}{default-pyg-prefix}{#1}.pygstyle}%
+        \endgroup
+        \mintednsp@addcachefile{\ifstrempty{#1}{default-pyg-prefix}{#1}.pygstyle}}%
+      {\ifwindows
+          \immediate\write18{%
+            \MintedPygmentize\space -S \ifstrempty{#1}{default}{#1} -f latex
+            -P commandprefix=PYG#1 > "\mintednsp@outputdir@windows\mintednsp@jobname.out.pyg"}%
+        \else
+          \immediate\write18{%
+            \MintedPygmentize\space -S \ifstrempty{#1}{default}{#1} -f latex
+            -P commandprefix=PYG#1 > "\mintednsp@outputdir\mintednsp@jobname.out.pyg"}%
+        \fi
+        \begingroup
+        \let\def\gdef
+        \endlinechar=-1\relax
+        \mintednsp@input{\mintednsp@outputdir\mintednsp@jobname.out.pyg}%
+        \endgroup}%
+  \fi
+}
+\ifthenelse{\boolean{mintednsp@draft}}{\renewcommand{\mintednsp@checkstyle}[1]{}}{}
+\AtBeginDocument{\mintednsp@checkstyle{}}
+\newcommand{\mintednsp@patch@PYGZsq}{%
+  \ifcsname PYGZsq\endcsname
+    \ifx\upquote@cmtt\mintednsp@undefined\else
+      \ifx\encodingdefault\upquote@OTone
+        \ifx\ttdefault\upquote@cmtt
+          \expandafter\ifdefstring\expandafter{\csname PYGZsq\endcsname}{\char`\'}%
+          {\expandafter\gdef\csname PYGZsq\endcsname{\char13 }}{}%
+        \else
+          \expandafter\ifdefstring\expandafter{\csname PYGZsq\endcsname}{\char`\'}%
+          {\expandafter\gdef\csname PYGZsq\endcsname{\textquotesingle}}{}%
+        \fi
+      \else
+        \expandafter\ifdefstring\expandafter{\csname PYGZsq\endcsname}{\char`\'}%
+        {\expandafter\gdef\csname PYGZsq\endcsname{\textquotesingle}}{}%
+      \fi
+    \fi
+  \fi
+}
+\ifthenelse{\boolean{mintednsp@draft}}{}{\AtBeginDocument{\mintednsp@patch@PYGZsq}}
+\newcommand{\mintednsp@def@opt@switch}[2][false]{%
+  \define@booleankey{mintednsp@opt@g}{#2}%
+    {\@namedef{mintednsp@opt@g:#2}{true}}%
+    {\@namedef{mintednsp@opt@g:#2}{false}}
+  \define@booleankey{mintednsp@opt@g@i}{#2}%
+    {\@namedef{mintednsp@opt@g@i:#2}{true}}%
+    {\@namedef{mintednsp@opt@g@i:#2}{false}}
+  \define@booleankey{mintednsp@opt@lang}{#2}%
+    {\@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{true}}%
+    {\@namedef{mintednsp@opt@lang\mintednsp@lang:#2}{false}}
+  \define@booleankey{mintednsp@opt@lang@i}{#2}%
+    {\@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{true}}%
+    {\@namedef{mintednsp@opt@lang\mintednsp@lang @i:#2}{false}}
+  \define@booleankey{mintednsp@opt@cmd}{#2}%
+    {\@namedef{mintednsp@opt@cmd:#2}{true}}%
+    {\@namedef{mintednsp@opt@cmd:#2}{false}}%
+  \@namedef{mintednsp@opt@g:#2}{#1}%
+}
+\def\mintednsp@get@opt#1#2{%
+  \ifcsname mintednsp@opt@cmd:#1\endcsname
+    \csname mintednsp@opt@cmd:#1\endcsname
+  \else
+    \ifmintednsp@isinline
+      \ifcsname mintednsp@opt@lang\mintednsp@lang @i:#1\endcsname
+        \csname mintednsp@opt@lang\mintednsp@lang @i:#1\endcsname
+      \else
+        \ifcsname mintednsp@opt@g@i:#1\endcsname
+          \csname mintednsp@opt@g@i:#1\endcsname
+        \else
+          \ifcsname mintednsp@opt@lang\mintednsp@lang:#1\endcsname
+            \csname mintednsp@opt@lang\mintednsp@lang:#1\endcsname
+          \else
+            \ifcsname mintednsp@opt@g:#1\endcsname
+              \csname mintednsp@opt@g:#1\endcsname
+            \else
+              #2%
+            \fi
+          \fi
+        \fi
+      \fi
+    \else
+      \ifcsname mintednsp@opt@lang\mintednsp@lang:#1\endcsname
+        \csname mintednsp@opt@lang\mintednsp@lang:#1\endcsname
+      \else
+        \ifcsname mintednsp@opt@g:#1\endcsname
+          \csname mintednsp@opt@g:#1\endcsname
+        \else
+          #2%
+        \fi
+      \fi
+    \fi
+  \fi
+}%
+\mintednsp@def@optcl{encoding}{-P encoding}{#1}
+\mintednsp@def@optcl{outencoding}{-P outencoding}{#1}
+\mintednsp@def@optcl@e{escapeinside}{-P "escapeinside}{#1"}
+\mintednsp@def@optcl@switch{stripnl}{-P stripnl}
+\mintednsp@def@optcl@switch{stripall}{-P stripall}
+\mintednsp@def@optcl@switch{python3}{-P python3}
+\mintednsp@def@optcl@switch{funcnamehighlighting}{-P funcnamehighlighting}
+\mintednsp@def@optcl@switch{startinline}{-P startinline}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\mintednsp@def@optfv{gobble}}%
+  {\mintednsp@def@optcl{gobble}{-F gobble:n}{#1}}
+\mintednsp@def@optcl{codetagify}{-F codetagify:codetags}{#1}
+\mintednsp@def@optcl{keywordcase}{-F keywordcase:case}{#1}
+\mintednsp@def@optcl@switch{texcl}{-P texcomments}
+\mintednsp@def@optcl@switch{texcomments}{-P texcomments}
+\mintednsp@def@optcl@switch{mathescape}{-P mathescape}
+\mintednsp@def@optfv@switch{linenos}
+\mintednsp@def@opt@style
+\mintednsp@def@optfv{frame}
+\mintednsp@def@optfv{framesep}
+\mintednsp@def@optfv{framerule}
+\mintednsp@def@optfv{rulecolor}
+\mintednsp@def@optfv{numbersep}
+\mintednsp@def@optfv{numbers}
+\mintednsp@def@optfv{firstnumber}
+\mintednsp@def@optfv{stepnumber}
+\mintednsp@def@optfv{firstline}
+\mintednsp@def@optfv{lastline}
+\mintednsp@def@optfv{baselinestretch}
+\mintednsp@def@optfv{xleftmargin}
+\mintednsp@def@optfv{xrightmargin}
+\mintednsp@def@optfv{fillcolor}
+\mintednsp@def@optfv{tabsize}
+\mintednsp@def@optfv{fontfamily}
+\mintednsp@def@optfv{fontsize}
+\mintednsp@def@optfv{fontshape}
+\mintednsp@def@optfv{fontseries}
+\mintednsp@def@optfv{formatcom}
+\mintednsp@def@optfv{label}
+\mintednsp@def@optfv@switch{numberblanklines}
+\mintednsp@def@optfv@switch{showspaces}
+\mintednsp@def@optfv@switch{resetmargins}
+\mintednsp@def@optfv@switch{samepage}
+\mintednsp@def@optfv@switch{showtabs}
+\mintednsp@def@optfv@switch{obeytabs}
+\mintednsp@def@optfv@switch{breaklines}
+\mintednsp@def@optfv{breakindent}
+\mintednsp@def@optfv@switch{breakautoindent}
+\mintednsp@def@optfv{breaksymbol}
+\mintednsp@def@optfv{breaksymbolsep}
+\mintednsp@def@optfv{breaksymbolindent}
+\mintednsp@def@optfv{breaksymbolleft}
+\mintednsp@def@optfv{breaksymbolsepleft}
+\mintednsp@def@optfv{breaksymbolindentleft}
+\mintednsp@def@optfv{breaksymbolright}
+\mintednsp@def@optfv{breaksymbolsepright}
+\mintednsp@def@optfv{breaksymbolindentright}
+\mintednsp@def@optfv{breakafter}
+\mintednsp@def@optfv@switch{breakaftergroup}
+\mintednsp@def@optfv{breakaftersymbolpre}
+\mintednsp@def@optfv{breakaftersymbolpost}
+\mintednsp@def@optfv@switch{breakanywhere}
+\mintednsp@def@optfv{breakanywheresymbolpre}
+\mintednsp@def@optfv{breakanywheresymbolpost}
+\mintednsp@def@opt@switch{breakbytoken}
+\mintednsp@def@opt@switch{breakbytokenanywhere}
+\mintednsp@def@opt{bgcolor}
+\mintednsp@def@opt@switch{autogobble}
+\newcommand{\mintednsp@encoding}{\mintednsp@get@opt{encoding}{UTF8}}
+\ifcsname KV@FV@breaklines\endcsname\else
+\newboolean{FV@BreakLines}
+\let\FV@ListProcessLine@Orig\FV@ListProcessLine
+\define@booleankey{FV}{breaklines}%
+  {\FV@BreakLinestrue
+    \let\FV@ListProcessLine\FV@ListProcessLine@Break}%
+  {\FV@BreakLinesfalse
+    \let\FV@ListProcessLine\FV@ListProcessLine@Orig}
+\newdimen\FV@BreakIndent
+\define@key{FV}{breakindent}{\FV@BreakIndent=#1}
+\fvset{breakindent=0pt}
+\newboolean{FV@BreakAutoIndent}
+\define@booleankey{FV}{breakautoindent}%
+  {\FV@BreakAutoIndenttrue}{\FV@BreakAutoIndentfalse}
+\fvset{breakautoindent=true}
+\define@key{FV}{breaksymbolleft}{\def\FancyVerbBreakSymbolLeft{#1}}
+\define@key{FV}{breaksymbol}{\fvset{breaksymbolleft=#1}}
+\fvset{breaksymbolleft=\tiny\ensuremath{\hookrightarrow}}
+\define@key{FV}{breaksymbolright}{\def\FancyVerbBreakSymbolRight{#1}}
+\fvset{breaksymbolright={}}
+\newdimen\FV@BreakSymbolSepLeft
+\define@key{FV}{breaksymbolsepleft}{\FV@BreakSymbolSepLeft=#1}
+\define@key{FV}{breaksymbolsep}{\fvset{breaksymbolsepleft=#1}}
+\fvset{breaksymbolsepleft=1em}
+\newdimen\FV@BreakSymbolSepRight
+\define@key{FV}{breaksymbolsepright}{\FV@BreakSymbolSepRight=#1}
+\fvset{breaksymbolsepright=1em}
+\newdimen\FV@BreakSymbolIndentLeft
+\settowidth{\FV@BreakSymbolIndentLeft}{\ttfamily xxxx}
+\define@key{FV}{breaksymbolindentleft}{\FV@BreakSymbolIndentLeft=#1}
+\define@key{FV}{breaksymbolindent}{\fvset{breaksymbolindentleft=#1}}
+\newdimen\FV@BreakSymbolIndentRight
+\settowidth{\FV@BreakSymbolIndentRight}{\ttfamily xxxx}
+\define@key{FV}{breaksymbolindentright}{\FV@BreakSymbolIndentRight=#1}
+\newcommand{\FancyVerbFormatBreakSymbolLeft}[1]{%
+  \ifnum\value{linenumber}=1\relax\else{#1}\fi}
+\newcounter{FancyVerbLineBreakLast}
+\newcommand{\FV@SetLineBreakLast}{%
+  \setcounter{FancyVerbLineBreakLast}{\value{linenumber}}}
+\newcommand{\FancyVerbFormatBreakSymbolRight}[1]{%
+  \ifnum\value{linenumber}=\value{FancyVerbLineBreakLast}\relax\else{#1}\fi}
+\newboolean{FV@BreakAnywhere}
+\define@booleankey{FV}{breakanywhere}%
+  {\FV@BreakAnywheretrue
+    \let\FancyVerbBreakStart\FV@Break
+    \let\FancyVerbBreakStop\FV@EndBreak
+    \let\FV@Break@Token\FV@Break@AnyToken}%
+  {\FV@BreakAnywherefalse
+    \let\FancyVerbBreakStart\relax
+    \let\FancyVerbBreakStop\relax}
+\fvset{breakanywhere=false}
+\let\FancyVerbBreakStart\relax
+\let\FancyVerbBreakStop\relax
+\edef\FV@hashchar{\string#}
+\edef\FV@dollarchar{\string$}
+\edef\FV@ampchar{\string&}
+\edef\FV@underscorechar{\string_}
+\edef\FV@tildechar{\string~}
+\edef\FV@leftsquarebracket{\string[}
+\edef\FV@rightsquarebracket{\string]}
+\newcommand{\FV@EscChars}{%
+  \let\#\FV@hashchar
+  \let\%\@percentchar
+  \let\{\@charlb
+  \let\}\@charrb
+  \let\$\FV@dollarchar
+  \let\&\FV@ampchar
+  \let\_\FV@underscorechar
+  \let\\\@backslashchar
+  \let~\FV@tildechar
+  \let\~\FV@tildechar
+  \let\[\FV@leftsquarebracket
+  \let\]\FV@rightsquarebracket
+} %$ <- highlighting
+\define@key{FV}{breakafter}{%
+  \ifstrempty{#1}%
+   {\let\FV@BreakAfter\@empty
+    \let\FancyVerbBreakStart\relax
+    \let\FancyVerbBreakStop\relax}%
+   {\def\FV@BreakAfter{#1}%
+    \let\FancyVerbBreakStart\FV@Break
+    \let\FancyVerbBreakStop\FV@EndBreak
+    \let\FV@Break@Token\FV@Break@AfterToken}%
+}
+\fvset{breakafter={}}
+\newboolean{FV@BreakAfterGroup}
+\define@booleankey{FV}{breakaftergroup}%
+ {\FV@BreakAfterGrouptrue}%
+ {\FV@BreakAfterGroupfalse}%
+\fvset{breakaftergroup=true}
+\def\FV@BreakAfterPrep{%
+  \ifx\FV@BreakAfter\@empty\relax
+  \else
+    \gdef\FV@BreakAfter@Def{}%
+    \begingroup
+    \def\FV@BreakAfter@Process##1##2\FV@Undefined{%
+      \expandafter\FV@BreakAfter@Process@i\expandafter{##1}%
+      \expandafter\ifx\expandafter\relax\detokenize{##2}\relax
+      \else
+        \FV@BreakAfter@Process##2\FV@Undefined
+      \fi
+    }%
+    \def\FV@BreakAfter@Process@i##1{%
+      \g@addto@macro\FV@BreakAfter@Def{%
+        \@namedef{FV@BreakAfter@Token\detokenize{##1}}{}}%
+    }%
+    \FV@EscChars
+    \expandafter\FV@BreakAfter@Process\FV@BreakAfter\FV@Undefined
+    \endgroup
+    \FV@BreakAfter@Def
+  \fi
+}
+\expandafter\def\expandafter\FV@FormattingPrep\expandafter{%
+  \expandafter\FV@BreakAfterPrep\FV@FormattingPrep}
+\define@key{FV}{breakanywheresymbolpre}{%
+  \ifstrempty{#1}%
+    {\def\FancyVerbBreakAnywhereSymbolPre{}}%
+    {\def\FancyVerbBreakAnywhereSymbolPre{\hbox{#1}}}}
+\fvset{breakanywheresymbolpre={\,\footnotesize\ensuremath{_\rfloor}}}
+\define@key{FV}{breakanywheresymbolpost}{%
+  \ifstrempty{#1}%
+    {\def\FancyVerbBreakAnywhereSymbolPost{}}%
+    {\def\FancyVerbBreakAnywhereSymbolPost{\hbox{#1}}}}
+\fvset{breakanywheresymbolpost={}}
+\define@key{FV}{breakaftersymbolpre}{%
+  \ifstrempty{#1}%
+    {\def\FancyVerbBreakAfterSymbolPre{}}%
+    {\def\FancyVerbBreakAfterSymbolPre{\hbox{#1}}}}
+\fvset{breakaftersymbolpre={\,\footnotesize\ensuremath{_\rfloor}}}
+\define@key{FV}{breakaftersymbolpost}{%
+  \ifstrempty{#1}%
+    {\def\FancyVerbBreakAfterSymbolPost{}}%
+    {\def\FancyVerbBreakAfterSymbolPost{\hbox{#1}}}}
+\fvset{breakaftersymbolpost={}}
+\newcommand{\FancyVerbBreakAnywhereBreak}{%
+  \discretionary{\FancyVerbBreakAnywhereSymbolPre}%
+   {\FancyVerbBreakAnywhereSymbolPost}{}}
+\newcommand{\FancyVerbBreakAfterBreak}{%
+  \discretionary{\FancyVerbBreakAfterSymbolPre}%
+   {\FancyVerbBreakAfterSymbolPost}{}}
+\newsavebox{\FV@LineBox}
+\newsavebox{\FV@LineIndentBox}
+\let\FV@LineIndentChars\@empty
+\def\FV@GetNextChar{\let\FV@NextChar=}
+\def\FV@CleanRemainingChars#1\FV@Undefined{}
+\def\FV@GetLineIndent{\afterassignment\FV@CheckIndentChar\FV@GetNextChar}
+\def\FV@CheckIndentChar{%
+  \ifx\FV@NextChar\FV@Undefined
+    \let\FV@Next=\relax
+  \else
+    \expandafter\ifx\FV@NextChar\FV@Space
+      \g@addto@macro{\FV@LineIndentChars}{\FV@Space}%
+      \let\FV@Next=\FV@GetLineIndent
+    \else
+      \expandafter\ifx\FV@NextChar\FV@Tab
+        \g@addto@macro{\FV@LineIndentChars}{\FV@Tab}%
+        \let\FV@Next=\FV@GetLineIndent
+      \else
+        \let\FV@Next=\FV@CleanRemainingChars
+      \fi
+    \fi
+  \fi
+  \FV@Next
+}
+\def\FV@Break{%
+  \def\FV@Tmp{}%
+  \FV@Break@Scan
+}
+\def\FV@EndBreak{\FV@Tmp}
+\begingroup
+\catcode`\$=3%
+\gdef\FV@Break@Scan{%
+  \@ifnextchar\FV@EndBreak%
+   {}%
+   {\ifx\@let@token$\relax
+      \let\FV@Break@Next\FV@Break@Math
+    \else
+      \ifx\@let@token\bgroup\relax
+        \let\FV@Break@Next\FV@Break@Group
+      \else
+        \let\FV@Break@Next\FV@Break@Token
+      \fi
+    \fi
+    \FV@Break@Next}%
+}
+\endgroup
+\begingroup
+\catcode`\$=3%
+\gdef\FV@Break@Math$#1${%
+  \g@addto@macro{\FV@Tmp}{$#1$}%
+  \FV@Break@Scan}
+\endgroup
+\def\FV@Break@Group#1{%
+  \g@addto@macro{\FV@Tmp}{{#1}}%
+  \FV@Break@Scan}
+\def\FV@Break@AnyToken#1{%
+  \g@addto@macro{\FV@Tmp}{\FancyVerbBreakAnywhereBreak#1}%
+  \FV@Break@Scan}
+\def\FV@Break@AfterToken#1{%
+  \ifcsname FV@BreakAfter@Token\detokenize{#1}\endcsname
+    \let\FV@Break@Next\FV@Break@AfterTokenBreak
+  \else
+    \let\FV@Break@Next\FV@Break@AfterTokenNoBreak
+  \fi
+  \FV@Break@Next{#1}%
+}
+\def\FV@Break@AfterTokenNoBreak#1{%
+  \g@addto@macro{\FV@Tmp}{#1}%
+  \FV@Break@Scan}
+\def\FV@Break@AfterTokenBreak#1{%
+  \@ifnextchar\FV@Space%
+   {\g@addto@macro{\FV@Tmp}{#1}\FV@Break@Scan}%
+   {\ifthenelse{\boolean{FV@BreakAfterGroup}}%
+     {\ifx\@let@token#1\relax
+        \g@addto@macro{\FV@Tmp}{#1}%
+        \let\FV@Break@Next\FV@Break@Scan
+      \else
+        \ifx\@let@token\bgroup\relax
+          \g@addto@macro{\FV@Tmp}{#1}%
+          \let\FV@TmpToken#1%
+          \let\FV@Break@Next\FV@Break@AfterTokenBreak@Group
+        \else
+          \g@addto@macro{\FV@Tmp}{#1\FancyVerbBreakAfterBreak}%
+          \let\FV@Break@Next\FV@Break@Scan
+        \fi
+      \fi}%
+     {\g@addto@macro{\FV@Tmp}{#1\FancyVerbBreakAfterBreak}%
+      \let\FV@Break@Next\FV@Break@Scan}%
+    \FV@Break@Next}%
+}
+\def\FV@Break@AfterTokenBreak@Group#1{%
+  \g@addto@macro{\FV@Tmp}{{#1}}%
+  \ifstrempty{#1}%
+   {\let\FV@Break@Next\FV@Break@AfterTokenBreak@Group@i}%
+   {\let\FV@Break@Next\FV@Break@Scan}%
+  \FV@Break@Next}
+\def\FV@Break@AfterTokenBreak@Group@i{%
+  \@ifnextchar\FV@TmpToken%
+   {\FV@Break@Scan}%
+   {\g@addto@macro{\FV@Tmp}{\FancyVerbBreakAfterBreak}%
+    \FV@Break@Scan}}
+\def\FV@makeLineNumber{%
+  \hss
+  \FancyVerbFormatBreakSymbolLeft{\FancyVerbBreakSymbolLeft}%
+  \hbox to \FV@BreakSymbolSepLeft{\hfill}%
+  \rlap{\hskip\linewidth
+    \hbox to \FV@BreakSymbolSepRight{\hfill}%
+    \FancyVerbFormatBreakSymbolRight{\FancyVerbBreakSymbolRight}%
+    \FV@SetLineBreakLast
+  }%
+}
+\def\FV@SaveLineBox#1{%
+  \savebox{\FV@LineBox}{%
+    \advance\linewidth by -\FV@BreakIndent
+    \hbox to \FV@BreakIndent{\hfill}%
+    \ifthenelse{\boolean{FV@BreakAutoIndent}}%
+     {\let\FV@LineIndentChars\@empty
+      \FV@GetLineIndent#1\FV@Undefined
+      \savebox{\FV@LineIndentBox}{\FV@LineIndentChars}%
+      \hbox to \wd\FV@LineIndentBox{\hfill}%
+      \advance\linewidth by -\wd\FV@LineIndentBox}%
+     {}%
+    \ifdefempty{\FancyVerbBreakSymbolLeft}{}%
+     {\hbox to \FV@BreakSymbolIndentLeft{\hfill}%
+      \advance\linewidth by -\FV@BreakSymbolIndentLeft}%
+    \ifdefempty{\FancyVerbBreakSymbolRight}{}%
+     {\advance\linewidth by -\FV@BreakSymbolIndentRight}%
+    \parbox[t]{\linewidth}{%
+      \raggedright
+      \leftlinenumbers*
+      \begin{internallinenumbers*}%
+      \let\makeLineNumber\FV@makeLineNumber
+      \noindent\hspace*{-\FV@BreakIndent}%
+      \ifdefempty{\FancyVerbBreakSymbolLeft}{}{%
+        \hspace*{-\FV@BreakSymbolIndentLeft}}%
+      \ifthenelse{\boolean{FV@BreakAutoIndent}}%
+       {\hspace*{-\wd\FV@LineIndentBox}}%
+       {}%
+      \strut#1\nobreak\strut
+      \end{internallinenumbers*}
+    }%
+    \ifdefempty{\FancyVerbBreakSymbolRight}{}%
+     {\hbox to \FV@BreakSymbolIndentRight{\hfill}}%
+  }%
+}
+\def\FancyVerbFormatText#1{#1}
+\def\FV@ListProcessLine@Break#1{%
+  \hbox to \hsize{%
+  \kern\leftmargin
+  \hbox to \linewidth{%
+  \ifx\FV@RightListFrame\relax\else
+    \advance\linewidth by -\FV@FrameSep
+    \advance\linewidth by -\FV@FrameRule
+  \fi
+  \ifx\FV@LeftListFrame\relax\else
+    \advance\linewidth by -\FV@FrameSep
+    \advance\linewidth by -\FV@FrameRule
+  \fi
+  \sbox{\FV@LineBox}{\FancyVerbFormatLine{\FancyVerbFormatText{#1}}}%
+  \ifdim\wd\FV@LineBox>\linewidth
+    \setcounter{FancyVerbLineBreakLast}{0}%
+    \FV@SaveLineBox{\FancyVerbFormatText{%
+      \FancyVerbBreakStart#1\FancyVerbBreakStop}}%
+    \ifdefempty{\FancyVerbBreakSymbolRight}{}{%
+      \let\FV@SetLineBreakLast\relax
+      \FV@SaveLineBox{\FancyVerbFormatText{%
+        \FancyVerbBreakStart#1\FancyVerbBreakStop}}}%
+    \FV@LeftListNumber
+    \FV@LeftListFrame
+    \FancyVerbFormatLine{\usebox{\FV@LineBox}}%
+    \FV@RightListFrame
+    \FV@RightListNumber
+  \else
+    \FV@LeftListNumber
+    \FV@LeftListFrame
+    \FancyVerbFormatLine{%
+      \parbox[t]{\linewidth}{\noindent\strut\FancyVerbFormatText{#1}\strut}}%
+    \FV@RightListFrame
+    \FV@RightListNumber
+  \fi}%
+  \hss}\baselineskip\z@\lineskip\z@}
+\ifcsname KV@FV@linenos\endcsname\else
+\define@booleankey{FV}{linenos}%
+  {\@nameuse{FV@Numbers@left}}{\@nameuse{FV@Numbers@none}}
+\fi
+\fi
+\newsavebox{\mintednsp@bgbox}
+\newenvironment{mintednsp@colorbg}[1]{
+    %\setlength{\fboxsep}{-\fboxrule}
+    \def\mintednsp@bgcol{#1}
+    \noindent
+    \begin{lrbox}{\mintednsp@bgbox}
+    \begin{minipage}{\linewidth-2\fboxsep}}
+ {\end{minipage}
+    \end{lrbox}%
+    \colorbox{\mintednsp@bgcol}{\usebox{\mintednsp@bgbox}}}
+\newwrite\mintednsp@code
+\newcommand{\mintednsp@savecode}[1]{
+  \immediate\openout\mintednsp@code\mintednsp@jobname.pyg\relax
+  \immediate\write\mintednsp@code{\expandafter\detokenize\expandafter{#1}}%
+  \immediate\closeout\mintednsp@code}
+\newcounter{mintednsp@FancyVerbLineTemp}
+\newcommand{\mintednsp@write@detok}[1]{%
+  \immediate\write\FV@OutFile{\detokenize{#1}}}
+\newcommand{\mintednsp@FVB@VerbatimOut}[1]{%
+  \setcounter{mintednsp@FancyVerbLineTemp}{\value{FancyVerbLine}}%
+  \@bsphack
+  \begingroup
+    \FV@UseKeyValues
+    \FV@DefineWhiteSpace
+    \def\FV@Space{\space}%
+    \FV@DefineTabOut
+    \let\FV@ProcessLine\mintednsp@write@detok
+    \immediate\openout\FV@OutFile #1\relax
+    \let\FV@FontScanPrep\relax
+    \let\@noligs\relax
+    \FV@Scan}
+\newcommand{\mintednsp@FVE@VerbatimOut}{%
+  \immediate\closeout\FV@OutFile\endgroup\@esphack
+  \setcounter{FancyVerbLine}{\value{mintednsp@FancyVerbLineTemp}}}%
+\ifcsname MintedPygmentize\endcsname\else
+  \newcommand{\MintedPygmentize}{nsp}
+\fi
+\newcommand{\mintednsp@pygmentize}[2][\mintednsp@outputdir\mintednsp@jobname.pyg]{%
+  \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}%
+    {\def\mintednsp@codefile{\mintednsp@outputdir\mintednsp@jobname.pyg}}%
+    {\def\mintednsp@codefile{#1}}%
+  \ifthenelse{\boolean{mintednsp@isinline}}%
+    {\def\mintednsp@optlistcl@inlines{%
+      \mintednsp@optlistcl@g@i
+      \csname mintednsp@optlistcl@lang\mintednsp@lang @i\endcsname}}%
+    {\let\mintednsp@optlistcl@inlines\@empty}%
+  \def\mintednsp@cmd{%
+    \ifmintednsp@kpsewhich\ifwindows powershell\space\fi\fi
+    \MintedPygmentize\space -nw -ns -e "pretty_printer('\mintednsp@codefile',target='latex',outfile='\mintednsp@outputdir\mintednsp@infile');quit"
+    % "E1" \mintednsp@optlistcl@g \csname mintednsp@optlistcl@lang\mintednsp@lang\endcsname
+    % "E2" \mintednsp@optlistcl@inlines
+    % "E3" \mintednsp@optlistcl@cmd 
+    % "E4" "\mintednsp@outputdir\mintednsp@infile" 
+    % "E5" 
+    % \ifmintednsp@kpsewhich
+    %   \ifwindows
+    %     \detokenize{$}(kpsewhich "\mintednsp@codefile")%
+    %   \else
+    %     \detokenize{`}kpsewhich "\mintednsp@codefile"
+    %       \detokenize{||} "\mintednsp@codefile"\detokenize{`}%
+    %   \fi
+    % \else
+    %   "\mintednsp@codefile"
+    % \fi
+  }%
+  % For debugging, uncomment: %%%%
+  \immediate\typeout{\mintednsp@cmd}%
+  % %%%%
+  \ifthenelse{\boolean{mintednsp@cache}}%
+    {%
+      \ifx\XeTeXinterchartoks\mintednsp@undefined
+        \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}%
+          {\edef\mintednsp@hash{\pdf@filemdfivesum{#1}%
+            \pdf@mdfivesum{\mintednsp@cmd autogobble}}}%
+          {\edef\mintednsp@hash{\pdf@filemdfivesum{#1}%
+            \pdf@mdfivesum{\mintednsp@cmd}}}%
+      \else
+        \immediate\openout\mintednsp@code\mintednsp@jobname.mintednspcmd\relax
+        \immediate\write\mintednsp@code{\mintednsp@cmd}%
+        \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}%
+          {\immediate\write\mintednsp@code{autogobble}}{}%
+        \immediate\closeout\mintednsp@code
+        %Cheating a little here by using ASCII codes to write `{` and `}`
+        %in the Python code
+        \def\mintednsp@hashcmd{%
+          \detokenize{python -c "import hashlib;
+            hasher = hashlib.sha1();
+            f = open(\"}\mintednsp@outputdir\mintednsp@jobname.mintednspcmd\detokenize{\", \"rb\");
+            hasher.update(f.read());
+            f.close();
+            f = open(\"}#1\detokenize{\", \"rb\");
+            hasher.update(f.read());
+            f.close();
+            f = open(\"}\mintednsp@outputdir\mintednsp@jobname.mintednspmd5\detokenize{\", \"w\");
+            macro = \"\\edef\\mintednsp@hash\" + chr(123) + hasher.hexdigest() + chr(125) + \"\";
+            f.write(\"\\makeatletter\" + macro + \"\\makeatother\\endinput\n\");
+            f.close();"}}%
+        \immediate\write18{\mintednsp@hashcmd}%
+        \mintednsp@input{\mintednsp@outputdir\mintednsp@jobname.mintednspmd5}%
+      \fi
+      \edef\mintednsp@infile{\mintednsp@cachedir/\mintednsp@hash.pygtex}%
+      \IfFileExists{\mintednsp@infile}{}{%
+        \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}{%
+          %Need a version of open() that supports encoding under Python 2
+          \edef\mintednsp@autogobblecmd{%
+            \detokenize{python -c "import sys;
+            import textwrap;
+            from io import open;
+            f = open(\"}#1\detokenize{\", \"r\", encoding=\"}\mintednsp@encoding\detokenize{\");
+            t = f.read();
+            f.close();
+            f = open(\"}\mintednsp@outputdir\mintednsp@jobname.pyg\detokenize{\", \"w\", encoding=\"}\mintednsp@encoding\detokenize{\");
+            f.write(textwrap.dedent(t));
+            f.close();"}%
+          }%
+          \immediate\write18{\mintednsp@autogobblecmd}}{}%
+        \immediate\write18{\mintednsp@cmd}}%
+      \expandafter\mintednsp@addcachefile\expandafter{\mintednsp@hash.pygtex}%
+      \mintednsp@inputpyg}%
+    {%
+      \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}{%
+        %Need a version of open() that supports encoding under Python 2
+        \edef\mintednsp@autogobblecmd{%
+          \detokenize{python -c "import sys;
+          import textwrap;
+          from io import open;
+          f = open(\"}#1\detokenize{\", \"r\", encoding=\"}\mintednsp@encoding\detokenize{\");
+          t = f.read();
+          f.close();
+          f = open(\"}\mintednsp@outputdir\mintednsp@jobname.pyg\detokenize{\", \"w\", encoding=\"}\mintednsp@encoding\detokenize{\");
+          f.write(textwrap.dedent(t));
+          f.close();"}%
+        }%
+        \immediate\write18{\mintednsp@autogobblecmd}}{}%
+      \immediate\write18{\mintednsp@cmd}%
+      \mintednsp@inputpyg}%
+}
+\def\FV@SpaceMMode{ }
+\def\mintednsp@BreakAfterPrep@extension{%
+  \ifcsname FV@BreakAfter@Token\@backslashchar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZbs}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\FV@underscorechar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZus}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\@charlb\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZob}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\@charrb\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZcb}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{^}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZca}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\FV@ampchar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZam}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{<}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZlt}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{>}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZgt}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\FV@hashchar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZsh}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\@percentchar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZpc}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\FV@dollarchar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZdl}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{-}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZhy}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{'}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZsq}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{"}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZdq}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\FV@tildechar\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZti}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{@}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZat}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{[}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZlb}}{}%
+  \fi
+  \ifcsname FV@BreakAfter@Token\detokenize{]}\endcsname
+    \@namedef{FV@BreakAfter@Token\detokenize{\PYGZrb}}{}%
+  \fi
+}
+\newcommand{\mintednsp@inputpyg}{%
+  \let\FV@BreakAfterPrep@orig\FV@BreakAfterPrep
+  \def\FV@BreakAfterPrep{%
+    \FV@BreakAfterPrep@orig\mintednsp@BreakAfterPrep@extension}%
+  \everymath\expandafter{\the\everymath\let\FV@Space\FV@SpaceMMode}%
+  \ifthenelse{\equal{\mintednsp@get@opt{breakbytokenanywhere}{false}}{true}}%
+    {\setkeys{mintednsp@opt@cmd}{breakbytoken=true}}{}%
+  \ifthenelse{\boolean{FV@BreakAnywhere}}%
+    {\expandafter\let\expandafter\mintednsp@orig@PYG@breakanywhere%
+       \csname PYG\mintednsp@get@opt{style}{default}\endcsname
+     \expandafter\def\csname PYG\mintednsp@get@opt{style}{default}\endcsname##1##2{%
+       \mintednsp@orig@PYG@breakanywhere{##1}%
+         {\FancyVerbBreakStart##2\FancyVerbBreakStop}}}{}%
+  \ifx\FV@BreakAfter\@empty
+  \else
+    \expandafter\let\expandafter\mintednsp@orig@PYG@breakafter%
+      \csname PYG\mintednsp@get@opt{style}{default}\endcsname
+    \expandafter\def\csname PYG\mintednsp@get@opt{style}{default}\endcsname##1##2{%
+      \mintednsp@orig@PYG@breakafter{##1}%
+       {\FancyVerbBreakStart##2\FancyVerbBreakStop}}%
+  \fi
+  \ifthenelse{\boolean{mintednsp@isinline}}%
+   {\ifthenelse{\equal{\mintednsp@get@opt{breaklines}{false}}{true}}%
+    {\let\FV@BeginVBox\relax
+     \let\FV@EndVBox\relax
+     \def\FV@BProcessLine##1{\FancyVerbFormatLine{##1}}%
+     \ifthenelse{\equal{\mintednsp@get@opt{breakbytoken}{false}}{true}}%
+      {\mintednsp@inputpyg@breakbytoken
+       \mintednsp@inputpyg@inline}%
+      {\mintednsp@inputpyg@inline}}%
+    {\mintednsp@inputpyg@inline}}%
+   {\ifthenelse{\equal{\mintednsp@get@opt{breaklines}{false}}{true}}%
+     {\ifthenelse{\equal{\mintednsp@get@opt{breakbytoken}{false}}{true}}%
+       {\mintednsp@inputpyg@breakbytoken
+        \mintednsp@inputpyg@block}%
+       {\mintednsp@inputpyg@block}}%
+     {\mintednsp@inputpyg@block}}%
+}
+\def\mintednsp@inputpyg@breakbytoken{%
+  \expandafter\let\expandafter\mintednsp@orig@PYG@breakbytoken%
+    \csname PYG\mintednsp@get@opt{style}{default}\endcsname
+  \ifthenelse{\equal{\mintednsp@get@opt{breakbytokenanywhere}{false}}{true}}%
+   {\let\mintednsp@orig@allowbreak\allowbreak
+    \def\allowbreak{\let\allowbreak\mintednsp@orig@allowbreak}%
+    \expandafter\def\csname PYG\mintednsp@get@opt{style}{default}\endcsname##1##2{%
+      \allowbreak{}\leavevmode\hbox{\mintednsp@orig@PYG@breakbytoken{##1}{##2}}}}%
+   {\expandafter\def\csname PYG\mintednsp@get@opt{style}{default}\endcsname##1##2{%
+      \leavevmode\hbox{\mintednsp@orig@PYG@breakbytoken{##1}{##2}}}}%
+}
+\def\mintednsp@inputpyg@inline{%
+  \expandafter\let\expandafter\PYG%
+    \csname PYG\mintednsp@get@opt{style}{default}\endcsname
+  \ifthenelse{\equal{\mintednsp@get@opt{bgcolor}{}}{}}%
+   {\mintednsp@input{\mintednsp@outputdir\mintednsp@infile}}%
+   {\colorbox{\mintednsp@get@opt{bgcolor}{}}{%
+      \mintednsp@input{\mintednsp@outputdir\mintednsp@infile}}}%
+}
+\def\mintednsp@inputpyg@block{%
+  \expandafter\let\expandafter\PYG%
+    \csname PYG\mintednsp@get@opt{style}{default}\endcsname
+  \ifthenelse{\equal{\mintednsp@get@opt{bgcolor}{}}{}}%
+   {\mintednsp@input{\mintednsp@outputdir\mintednsp@infile}}%
+   {\begin{mintednsp@colorbg}{\mintednsp@get@opt{bgcolor}{}}%
+    \mintednsp@input{\mintednsp@outputdir\mintednsp@infile}%
+    \end{mintednsp@colorbg}}}
+\newcommand{\mintednsp@langlinenoson}{%
+  \ifcsname c@mintednsp@lang\mintednsp@lang\endcsname\else
+    \newcounter{mintednsp@lang\mintednsp@lang}%
+  \fi
+  \setcounter{mintednsp@FancyVerbLineTemp}{\value{FancyVerbLine}}%
+  \setcounter{FancyVerbLine}{\value{mintednsp@lang\mintednsp@lang}}%
+}
+\newcommand{\mintednsp@langlinenosoff}{%
+  \setcounter{mintednsp@lang\mintednsp@lang}{\value{FancyVerbLine}}%
+  \setcounter{FancyVerbLine}{\value{mintednsp@FancyVerbLineTemp}}%
+}
+\ifthenelse{\boolean{mintednsp@langlinenos}}{}{%
+  \let\mintednsp@langlinenoson\relax
+  \let\mintednsp@langlinenosoff\relax
+}
+\newcommand{\setmintednsp}[2][]{%
+  \ifthenelse{\equal{#1}{}}%
+    {\setkeys{mintednsp@opt@g}{#2}}%
+    {\mintednsp@configlang{#1}%
+      \setkeys{mintednsp@opt@lang}{#2}}}
+\newcommand{\setmintednspinline}[2][]{%
+  \ifthenelse{\equal{#1}{}}%
+    {\setkeys{mintednsp@opt@g@i}{#2}}%
+    {\mintednsp@configlang{#1}%
+      \setkeys{mintednsp@opt@lang@i}{#2}}}
+\setmintednspinline[php]{startinline=true}
+\newcommand{\usemintednspstyle}[2][]{\setmintednsp[#1]{style=#2}}
+\begingroup
+\catcode`\ =\active
+\catcode`\^^I=\active
+\gdef\mintednsp@defwhitespace@retok{\def {\noexpand\FV@Space}\def^^I{\noexpand\FV@Tab}}%
+\endgroup
+\newcommand{\mintednsp@writecmdcode}[1]{%
+  \immediate\openout\mintednsp@code\mintednsp@jobname.pyg\relax
+  \immediate\write\mintednsp@code{\detokenize{#1}}%
+  \immediate\closeout\mintednsp@code}
+\newrobustcmd{\mintinlinensp}[2][]{%
+  \begingroup
+  \setboolean{mintednsp@isinline}{true}%
+  \mintednsp@configlang{#2}%
+  \setkeys{mintednsp@opt@cmd}{#1}%
+  \mintednsp@fvset
+  \begingroup
+  \let\do\@makeother\dospecials
+  \catcode`\{=1
+  \catcode`\}=2
+  \catcode`\^^I=\active
+  \@ifnextchar\bgroup
+    {\mintednsp@inline@iii}%
+    {\catcode`\{=12\catcode`\}=12
+      \mintednsp@inline@i}}
+\def\mintednsp@inline@i#1{%
+  \endgroup
+  \def\mintednsp@inline@ii##1#1{%
+    \mintednsp@inline@iii{##1}}%
+  \begingroup
+  \let\do\@makeother\dospecials
+  \catcode`\^^I=\active
+  \mintednsp@inline@ii}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\newcommand{\mintednsp@inline@iii}[1]{%
+    \endgroup
+    \begingroup
+    \mintednsp@defwhitespace@retok
+    \everyeof{\noexpand}%
+    \endlinechar-1\relax
+    \let\do\@makeother\dospecials
+    \catcode`\ =\active
+    \catcode`\^^I=\active
+    \xdef\mintednsp@tmp{\scantokens{#1}}%
+    \endgroup
+    \let\FV@Line\mintednsp@tmp
+    \def\FV@SV@mintednsp@tmp{%
+      \FV@Gobble
+      \expandafter\FV@ProcessLine\expandafter{\FV@Line}}%
+    \ifthenelse{\equal{\mintednsp@get@opt{breaklines}{false}}{true}}%
+     {\let\FV@BeginVBox\relax
+      \let\FV@EndVBox\relax
+      \def\FV@BProcessLine##1{\FancyVerbFormatLine{##1}}%
+      \BUseVerbatim{mintednsp@tmp}}%
+     {\BUseVerbatim{mintednsp@tmp}}%
+    \endgroup}}%
+  {\newcommand{\mintednsp@inline@iii}[1]{%
+    \endgroup
+    \mintednsp@writecmdcode{#1}%
+    \RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}%
+    \setcounter{mintednsp@FancyVerbLineTemp}{\value{FancyVerbLine}}%
+    \mintednsp@pygmentize{\mintednsp@lang}%
+    \setcounter{FancyVerbLine}{\value{mintednsp@FancyVerbLineTemp}}%
+    \endgroup}}
+\newrobustcmd{\mintnsp}[2][]{%
+  \begingroup
+  \mintednsp@configlang{#2}%
+  \setkeys{mintednsp@opt@cmd}{#1}%
+  \mintednsp@fvset
+  \begingroup
+  \let\do\@makeother\dospecials
+  \catcode`\{=1
+  \catcode`\}=2
+  \catcode`\^^I=\active
+  \@ifnextchar\bgroup
+    {\mint@iii}%
+    {\catcode`\{=12\catcode`\}=12
+      \mint@i}}
+\def\mint@i#1{%
+  \endgroup
+  \def\mint@ii##1#1{%
+    \mint@iii{##1}}%
+  \begingroup
+  \let\do\@makeother\dospecials
+  \catcode`\^^I=\active
+  \mint@ii}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\newcommand{\mint@iii}[1]{%
+    \endgroup
+    \begingroup
+    \mintednsp@defwhitespace@retok
+    \everyeof{\noexpand}%
+    \endlinechar-1\relax
+    \let\do\@makeother\dospecials
+    \catcode`\ =\active
+    \catcode`\^^I=\active
+    \xdef\mintednsp@tmp{\scantokens{#1}}%
+    \endgroup
+    \let\FV@Line\mintednsp@tmp
+    \def\FV@SV@mintednsp@tmp{%
+      \FV@CodeLineNo=1\FV@StepLineNo
+      \FV@Gobble
+      \expandafter\FV@ProcessLine\expandafter{\FV@Line}}%
+    \mintednsp@langlinenoson
+    \UseVerbatim{mintednsp@tmp}%
+    \mintednsp@langlinenosoff
+    \endgroup}}%
+  {\newcommand{\mint@iii}[1]{%
+    \endgroup
+    \mintednsp@writecmdcode{#1}%
+    \mintednsp@langlinenoson
+    \mintednsp@pygmentize{\mintednsp@lang}%
+    \mintednsp@langlinenosoff
+    \endgroup}}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\newenvironment{mintednsp}[2][]
+    {\VerbatimEnvironment
+      \mintednsp@configlang{#2}%
+      \setkeys{mintednsp@opt@cmd}{#1}%
+      \mintednsp@fvset
+      \mintednsp@langlinenoson
+      \begin{Verbatim}}%
+    {\end{Verbatim}%
+      \mintednsp@langlinenosoff}}%
+  {\newenvironment{mintednsp}[2][]
+    {\VerbatimEnvironment
+      \let\FVB@VerbatimOut\mintednsp@FVB@VerbatimOut
+      \let\FVE@VerbatimOut\mintednsp@FVE@VerbatimOut
+      \mintednsp@configlang{#2}%
+      \setkeys{mintednsp@opt@cmd}{#1}%
+      \mintednsp@fvset
+      \begin{VerbatimOut}[codes={\catcode`\^^I=12}]{\mintednsp@jobname.pyg}}%
+    {\end{VerbatimOut}%
+        \mintednsp@langlinenoson
+        \mintednsp@pygmentize{\mintednsp@lang}%
+        \mintednsp@langlinenosoff}}
+\ifthenelse{\boolean{mintednsp@draft}}%
+  {\newcommand{\inputmintednsp}[3][]{%
+    \begingroup
+    \mintednsp@configlang{#2}%
+    \setkeys{mintednsp@opt@cmd}{#1}%
+    \mintednsp@fvset
+    \VerbatimInput{#3}%
+    \endgroup}}%
+  {\newcommand{\inputmintednsp}[3][]{%
+    \begingroup
+    \mintednsp@configlang{#2}%
+    \setkeys{mintednsp@opt@cmd}{#1}%
+    \mintednsp@fvset
+    \mintednsp@pygmentize[#3]{#2}%
+    \endgroup}}
+\newcommand{\newmintednsp}[3][]{
+  \ifthenelse{\equal{#1}{}}
+    {\def\mintednsp@envname{#2code}}
+    {\def\mintednsp@envname{#1}}
+  \newenvironment{\mintednsp@envname}
+    {\VerbatimEnvironment
+      \begin{mintednsp}[#3]{#2}}
+    {\end{mintednsp}}
+  \newenvironment{\mintednsp@envname *}[1]
+    {\VerbatimEnvironment\begin{mintednsp}[#3,##1]{#2}}
+    {\end{mintednsp}}}
+\newcommand{\newmint}[3][]{
+  \ifthenelse{\equal{#1}{}}
+    {\def\mintednsp@shortname{#2}}
+    {\def\mintednsp@shortname{#1}}
+  \expandafter\newcommand\csname\mintednsp@shortname\endcsname[2][]{
+    \mint[#3,##1]{#2}##2}}
+\newcommand{\newmintednspfile}[3][]{
+  \ifthenelse{\equal{#1}{}}
+    {\def\mintednsp@shortname{#2file}}
+    {\def\mintednsp@shortname{#1}}
+  \expandafter\newcommand\csname\mintednsp@shortname\endcsname[2][]{
+    \inputmintednsp[#3,##1]{#2}{##2}}}
+\newcommand{\newmintinline}[3][]{%
+  \ifthenelse{\equal{#1}{}}%
+    {\def\mintednsp@shortname{#2inline}}%
+    {\def\mintednsp@shortname{#1}}%
+    \expandafter\newrobustcmd\csname\mintednsp@shortname\endcsname{%
+      \begingroup
+      \let\do\@makeother\dospecials
+      \catcode`\{=1
+      \catcode`\}=2
+      \@ifnextchar[{\endgroup\mintednsp@inliner[#3][#2]}%
+        {\endgroup\mintednsp@inliner[#3][#2][]}}%
+    \def\mintednsp@inliner[##1][##2][##3]{\mintinline[##1,##3]{##2}}%
+}
+\ifthenelse{\boolean{mintednsp@newfloat}}%
+ {\@ifundefined{mintednsp@float@within}%
+    {\DeclareFloatingEnvironment[fileext=lol,placement=h]{listing}}%
+    {\def\mintednsp@tmp#1{%
+       \DeclareFloatingEnvironment[fileext=lol,placement=h, within=#1]{listing}}%
+     \expandafter\mintednsp@tmp\expandafter{\mintednsp@float@within}}}%
+ {\@ifundefined{mintednsp@float@within}%
+    {\newfloat{listing}{h}{lol}}%
+    {\newfloat{listing}{h}{lol}[\mintednsp@float@within]}}
+\ifmintednsp@newfloat\else
+\newcommand{\listingscaption}{Listing}
+\floatname{listing}{\listingscaption}
+\newcommand{\listoflistingscaption}{List of Listings}
+\providecommand{\listoflistings}{\listof{listing}{\listoflistingscaption}}
+\fi
+\AtEndOfPackage{%
+  \ifthenelse{\boolean{mintednsp@draft}}{}{%
+    \ifnum\pdf@shellescape=1\relax\else
+      \PackageError{mintednsp}%
+       {You must invoke LaTeX with the
+        -shell-escape flag}%
+       {Pass the -shell-escape flag to LaTeX. Refer to the mintednsp.sty
+        documentation for more information.}%
+    \fi
+    \setmintednsp{style=default}%
+  }%
+}
+\AtEndPreamble{%
+  \ifthenelse{\boolean{mintednsp@draft}}{}{%
+    \TestAppExists{nsp}%
+    \ifAppExists\else
+      \PackageError{mintednsp}%
+       {You must have `nsp' installed
+        to use this package}%
+       {Refer to the installation instructions in the mintednsp
+        documentation for more information.}%
+    \fi
+  }%
+}
+\AtEndDocument{
+  \ifx\XeTeXinterchartoks\mintednsp@undefined
+  \else
+    \DeleteFile[\mintednsp@outputdir]{\mintednsp@jobname.mintednspcmd}%
+    \DeleteFile[\mintednsp@outputdir]{\mintednsp@jobname.mintednspmd5}%
+  \fi
+%  \DeleteFile[\mintednsp@outputdir]{\mintednsp@jobname.pyg}%
+%  \DeleteFile[\mintednsp@outputdir]{\mintednsp@jobname.out.pyg}%
+}
+\endinput
+%%
+%% End of file `mintednsp.sty'.

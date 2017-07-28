@@ -28,4 +28,7 @@ cmsy*.png
 msbm*.png
 manualse*.html
 auto
-_minted-manual
+_mintednsp-manual
+manual.pyg
+
+
