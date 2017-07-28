@@ -59,10 +59,6 @@ struct _ast_wrap {
 };
 
 static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset);
-static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset);
-#if 0
-static int _nsp_ast_pprint_statements_newline_ended(ast_wrap *ast,int elt, int offset);
-#endif
 static void nsp_print_string_as_read_for_html(const char *str, char string_delim, int target);
 static int _nsp_ast_pprint_check_newline(ast_wrap *ast,int elt,int pos, int offset);
 static void nsp_print_comment_for_html(const char *str,int target);
@@ -82,6 +78,8 @@ static int _nsp_ast_printlength(ast_wrap *ast, int indent, int pos, int posret);
 static char *_nsp_ast_get_space(ast_wrap *ast);
 static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int indent, int pos, 
 				      int posret, char *sep, int breakable, const char *breakstr);
+static int _nsp_ast_pprint_statements1(ast_wrap *ast, int start, int last, int indent, int pos, 
+				       int posret, char *sep, int breakable, const char *breakstr);
 
   
 void nsp_ast_generic_pretty_printer(NspAst *ast, int indent, int color, int target, int space, int columns)
@@ -719,7 +717,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	case EMPTYMAT:  return pos+Sciprintf2(indent, _nsp_ast_get_space(ast),"[]");break;
 	case EMPTYCELL:
 	  {
-	    const char *obcb = (ast->target == nsp_pprint_latex) ? "\\nspob{}\\\\nspcb{}": "{}";
+	    const char *obcb = (ast->target == nsp_pprint_latex) ? "\\nspob{}\\nspcb{}": "{}";
 	    Sciprintf2(indent, _nsp_ast_get_space(ast), obcb);
 	    return pos+indent+2;
 	  }
@@ -892,7 +890,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
 	  break;
 	case STATEMENTS1 :
 	  newpos=pos;
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->get_arity(ast),0,newpos,posret,"",TRUE,"\n");
+	  newpos= _nsp_ast_pprint_statements1(ast,1,ast->get_arity(ast),0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case PARENTH :
@@ -1004,7 +1002,7 @@ static int _nsp_ast_pprint(ast_wrap *ast, int indent, int pos, int posret, int t
  */
 
 static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int indent, int pos, 
-				int posret, char *sep, int breakable, const char *breakstr)
+				      int posret, char *sep, int breakable, const char *breakstr)
 {
   int j, len, newpos=pos, last_line = 0;
   const char *space = _nsp_ast_get_space(ast);
@@ -1046,6 +1044,34 @@ static int _nsp_ast_pprint_statements(ast_wrap *ast, int start, int last, int in
       newpos = _nsp_ast_pprint(&ast1,indent,newpos,posret,0);
       if ( j != last ) newpos += Sciprintf(sep);
       last_line = ast1.get_line(&ast1);
+    }
+  return newpos;
+}
+
+static int _nsp_ast_pprint_statements1(ast_wrap *ast, int start, int last, int indent, int pos, 
+				int posret, char *sep, int breakable, const char *breakstr)
+{
+  int j, len, newpos=pos;
+  int last_is_comment = _nsp_ast_pprint_arg_comment_ended(ast,last);
+  for ( j = start ; j <= last ; j++)
+    {
+      len =  _nsp_ast_printlength_arg(ast,j,indent,newpos,posret);
+      if (breakable==TRUE && ( posret < newpos ) && ( newpos > ast->columns || len > ast->columns))
+	{
+	  Sciprintf(breakstr);newpos= Sciprintf2(posret, _nsp_ast_get_space(ast),"");
+	}
+      newpos = _nsp_ast_pprint_arg(ast,j,indent,newpos,posret,0);
+      if ( j != last )
+	{
+	  newpos += Sciprintf(sep);
+	}
+      else
+	{
+	  if ( last_is_comment )
+	    {
+	      Sciprintf("%s","\n");newpos=0;
+	    }
+	}
     }
   return newpos;
 }
@@ -1139,9 +1165,6 @@ static int _nsp_ast_pprint_one_line_statements(ast_wrap *ast,int elt, int offset
 #endif
 }
 
-/* This routine returns true is the statements are ended by an operator with return 
- * i.e  RETURN_OP, COMMA_RET_OP, SEMICOLON_RET_OP
- */
 #if 0
 static int _nsp_ast_pprint_statements_newline_ended(ast_wrap *ast,int elt, int offset)
 {

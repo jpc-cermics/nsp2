@@ -157,7 +157,8 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	}
       else if ( T->tokenv.id == RETURN_OP || T->tokenv.id == COMMENT )
 	{
-	  if (nsp_parse_add(&plist1,RETURN_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
+	  /* when following argument is a comment we insert a comma op instead of return op */
+	  if (nsp_parse_add(&plist1,(T->tokenv.id == RETURN_OP) ? RETURN_OP: COMMA_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
 	  if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
 	  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	  if ( T->tokenv.id == COMMENT) 
