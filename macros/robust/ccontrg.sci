@@ -64,8 +64,8 @@ function [K]=ccontrg(PP,r,Gamma);
   //DETERMINATION OF DK
   //-------------------
   
-  [u,s,v]=svd(d12); r12=maxi(size(find(diag(s) > 1.0e-10)));
-  [w,p,z]=svd(d21); r21=maxi(size(find(diag(p) > 1.0e-10)));
+  [u,s,v]=svd(d12); r12=max(size(find(diag(s) > 1.0e-10)));
+  [w,p,z]=svd(d21); r21=max(size(find(diag(p) > 1.0e-10)));
   u1=u(:,1:r12); v1=v(:,1:r12); w1=w(:,1:r21); z1=z(:,1:r21);
   s1=s(1:r12,1:r12); ph1=p(1:r21,1:r21);
   d11tr=u'*d11*z;
@@ -102,7 +102,7 @@ function [K]=ccontrg(PP,r,Gamma);
       (gs*eye(p1,p1)-td11*td11')*(d11*d21p+d12*dk);
   ttt=py'*ttt;
   
-  nmin=maxi(norm(hd11),norm(td11));
+  nmin=max(norm(hd11),norm(td11));
   ncom=norm(d11+d12*dk*d21);
   
   
@@ -143,7 +143,7 @@ function [go,xo]=parrt(a,b,c,rx,cx);
   //		gs I - A'*A
   
   
-  go=maxi(norm([a b]),norm([a;c]));
+  go=max(norm([a b]),norm([a;c]));
   [ra,cb]=size(b); [rc,ca]=size(c); xo=0;
   
   

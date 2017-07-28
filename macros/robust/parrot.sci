@@ -19,6 +19,6 @@ function [Kopt,gamaopt]=parrot(D,r)
   D21=D(l2,k1);
   D22=D(l2,k2);
   D1=[D11,D12];D2=[D11;D21];
-  gamaopt=maxi( maxi(svd(D1)),maxi(svd(D2)) );
+  gamaopt=max( max(svd(D1)),max(svd(D2)) );
   Kopt=-D22-D21*inv(gamaopt*gamaopt*eye(size(D11'*D11))-D11'*D11)*D11'*D12;
 endfunction

@@ -22,7 +22,7 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
   if Sl(7)=='d' then hinfnorm=dhnorm(Sl);frequency=[];return;end
   [a,b,c,d]=abcd(Sl);
   eiga=spec(a);
-  if maxi(real(eiga)) >= -1e-12 then
+  if max(real(eiga)) >= -1e-12 then
     printf('Warning : system is not stable ! ');
   end
   if nargin==1 then rerr=1e-8; end
@@ -34,11 +34,11 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
   l = [];
   // compute starting value
   q = ((imag(eiga) + 0.01 * ones(eiga)) ./ real(eiga)) ./ abs(eiga);
-  [q,i] = maxi(q); w = abs(eiga(i));
+  [q,i] = max(q); w = abs(eiga(i));
   svw = norm( c * ((w*aj*eye(size(a))-a)\b) + d );
   sv0 = norm( -c * (a\b) + d );
   svdd = norm(d);
-  [lb,i] = maxi([svdd sv0 svw]);l=lb;
+  [lb,i] = max([svdd sv0 svw]);l=lb;
   w = [1.d30 0 w ]; M = w(i);
   // to avoid numerical problems with Rinv and Sinv if lb == norm(d), lb must be
   // enlarged to at least (1+1e-3)*lb;
@@ -53,7 +53,7 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
     idx = find(abs(real(evH)) < 1e-8 & imag(evH) >= 0);
     imev= imag(evH(idx));
     [imev] = sort(imev);
-    q = maxi(size(imev));
+    q = max(size(imev));
     if q <= 1 then
       // q=1 can only happen in the first step if H-norm==maxsv(D) or H-norm==maxsv(0)
       // due to inaccurate eigenvalue computation (so gam must be an upper bound).
@@ -62,10 +62,10 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
     else
       M =  0.5 * (imev(1:q-1) + imev(2:q)); M = M(1:isiso:q-1);
       sv=[];
-      for j = 1:maxi(size(M)),
-	sv = [sv maxi(svd(d + c*((M(j)*aj*eye(size(a)) - a)\b)))];
+      for j = 1:max(size(M)),
+	sv = [sv max(svd(d + c*((M(j)*aj*eye(size(a)) - a)\b)))];
       end
-      lb = maxi(sv);l=[l;lb];
+      lb = max(sv);l=[l;lb];
     end
   end
   if M == 1.d30 then

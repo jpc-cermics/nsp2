@@ -1643,8 +1643,8 @@ int int_mximpl (Stack stack, int rhs, int opt, int lhs)
 static int int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *first, *last, *M;
-  int n;
-  CheckRhs (3, 3);
+  int n = 100;
+  CheckStdRhs (2, 3);
   CheckLhs (1, 1);
   if ((first = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
@@ -1652,10 +1652,13 @@ static int int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
   if ((last = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
   CheckSameDims (NspFname(stack), 1, 2, first, last);
-  if (GetScalarInt (stack, 3, &n) == FAIL)
-    return RET_BUG;
-  CheckNonNegative(NspFname(stack), n, 3);
-
+  if ( rhs - opt == 3 )
+    {
+      if (GetScalarInt (stack, 3, &n) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack), n, 3);
+    }
+  
   if ((M = nsp_matrix_create_linspace (first->R, last->R, first->mn, n)) == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) M);
@@ -1669,8 +1672,8 @@ static int int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
 static int int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *first, *last, *M;
-  int n;
-  CheckRhs (3, 3);
+  int n = 50;
+  CheckStdRhs(2, 3);
   CheckLhs (1, 1);
   if ((first = GetRealMat (stack, 1)) == NULLMAT)
     return RET_BUG;
@@ -1678,10 +1681,12 @@ static int int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
   if ((last = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
   CheckSameDims (NspFname(stack), 1, 2, first, last);
-  if (GetScalarInt (stack, 3, &n) == FAIL)
-    return RET_BUG;
-  CheckNonNegative(NspFname(stack), n, 3);
-
+  if ( rhs - opt == 3 )
+    {
+      if (GetScalarInt (stack, 3, &n) == FAIL)
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack), n, 3);
+    }
   if ((M = nsp_matrix_create_logspace (first->R, last->R, first->mn, n)) == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) M);

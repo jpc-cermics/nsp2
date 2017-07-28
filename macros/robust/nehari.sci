@@ -36,9 +36,9 @@ function [nk]=nophkel(sl,tol)
   lf=spec(sl(2)),
   if min(abs(lf))<=tol then
     error('Error: Imaginary axis poles!'),end,
-    if maxi(real(lf))<tol then nk=0,return,end,
+    if max(real(lf))<tol then nk=0,return,end,
     sl=dtsi(sl);
     lc=ctr_gram(sl),lo=obs_gram(sl),
-    vp=spec(lc*lo),vmax=maxi(real(vp)),
+    vp=spec(lc*lo),vmax=max(real(vp)),
     nk=sqrt(vmax)
 endfunction

@@ -61,7 +61,7 @@ function elts=pfss(S,rmax,cord)
          if oneortwo==1 then
            class=[class,abs(spec(A))];end
          if oneortwo > 1 then
-           class=[class,maxi(abs(spec(A)))];end
+           class=[class,max(abs(spec(A)))];end
        end
        [cl,indi]=sort(-class);
        elts1=elts;

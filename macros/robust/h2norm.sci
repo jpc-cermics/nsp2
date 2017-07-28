@@ -13,7 +13,7 @@ function [nh]=h2norm(g,tol)
   if g1(1)=='linearsys' then
     if norm(g(5))>0 then error('Error: non zero D'),end
     sp=spec(g(2)),
-    if maxi(real(sp))>=-tol then
+    if max(real(sp))>=-tol then
       error('Error: unstable system!'),
     end,
     w=obs_gram(g(2),g(4),'c'),
@@ -32,7 +32,7 @@ function [nh]=h2norm(g,tol)
 	    error('Error: improper system'),
 	  end
 	  pol=roots(d),
-	  if maxi(real(pol))>-tol then
+	  if max(real(pol))>-tol then
 	    error('Error: unstable system!'),end,
 	    nt=horner(n,-s),dt=horner(d,-s),
 	    nh(i,j)=residu(n*nt,d,dt),

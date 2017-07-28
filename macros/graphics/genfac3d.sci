@@ -14,7 +14,7 @@ function [xx,yy,zz]=genfac3d(x,y,zmat,mask)
 //  genfac3d() 
 //!
 // Copyright INRIA
-// [lhs,rhs]=argn(0)
+
   if nargin <=0 then
     s_mat=['t=(0:10)''*%pi/5;';
 	   '  zmat=sin(t)*cos(t'');';

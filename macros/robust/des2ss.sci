@@ -16,7 +16,8 @@ function [s1]=des2ss(a,b,c,d,e,tol)
   if nargin == 5 then tol=1.e-8;end
   [ns,vns] = size(a);
   if norm(e,1) < %eps then s1=syslin([],[],[],[],-c/a*b + d);return;end
-  [ue,se,ve,rk] = svd(e,tol*norm(e,1));
+  [ue,se,ve,rk] = svd(e,tol=tol*norm(e,1));
+  se = diag(se); // scicoslab svd
   k=ns-rk;
   if k==0 then ei=inv(e),s1=syslin([],ei*a,ei*b,c,d),return,end
   u1=ue(:,1:ns-k); u2=ue(:,ns-k+1:ns);

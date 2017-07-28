@@ -130,7 +130,7 @@ function black(varargin,varargopt)
   ymx=max(d)
   rect=[ymn;xmn;ymx;xmx]
   //[xmn,xmx,npx]=graduate(-360,0)
-  //[ymn,ymx,npy]=graduate(mini(d),maxi(d))
+  //[ymn,ymx,npy]=graduate(min(d),max(d))
   rect=[xmn,ymn,xmx,ymx]
   // xsetech(wrect=[0,0,1,0.5],frect=rect,fixed=%t);
   plot2d(phi',d',line_color=(1:mn),rect=rect);

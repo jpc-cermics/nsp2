@@ -3,15 +3,15 @@ function [] = sgrid(zeta,wn,col)
 // sgrid(Z,Wn)
 // sgrid('new') 
 // Copyright INRIA
-  [lhs,rhs]=argn(0)
-  if rhs < 3 ; col=3;end
-  if rhs==0 then 
+
+  if nargin < 3 ; col=3;end
+  if nargin==0 then 
     [a,limits]=xgetech()
     wmax = 10 .^(floor(log10(max(abs(limits)))));
     wn= 0:1:10;
     zeta = linspace(0,1,10);
   end
-  if rhs==1 then 
+  if nargin==1 then 
     if type(zeta)<>10 then 
       error("Error: sgrid with one argument should be sgrid(''new'')');
       return
@@ -22,7 +22,7 @@ function [] = sgrid(zeta,wn,col)
     xbasc();
     plot2d(0,0,0,"011"," ",[-20,-20,20,20]);
   end
-  if rhs>= 2 then 
+  if nargin>= 2 then 
     [a,limits]=xgetech()
     wmax = 10 .^(floor(log10(max(abs(limits)))));
   end 

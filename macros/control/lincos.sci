@@ -131,14 +131,14 @@ function sys=lincos(scs_m,x0,u0,param)
   nu=0;for k=pointi' do nu=nu+size(state.outtb(k),'*'),end
   ny=0;for k=pointo' do ny=ny+size(state.outtb(k),'*'),end
 
-  if rhs < 3 then
+  if nargin < 3 then
     x0=zeros(nx,1);u0=zeros(nu,1);
   else
     if size(x0,'*') <> nx | size(u0,'*') <> nu then
       error('Error: u0 or x0 does not have the correct size')
     end
   end
-  if rhs==4 then
+  if nargin==4 then
     del=param(1)+param(1)*1E-4*abs([x0;u0])
     t=param(2)
   else

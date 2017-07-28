@@ -112,14 +112,14 @@ end
 // and the variables LOW and UPP keep record of these initial values so that
 // the window can be extended if necessary.
  
-if maxi(s)*min(s) > 0 then
+if max(s)*min(s) > 0 then
 // A is stable or antistable: use associated Lyapunov equations
 // to derive lower and upper bounds.
    p=lyap(a',-b*b','c');
    q=lyap(a,-c'*c,'c');
    s=sqrt(abs(spec(p*q)));
  
-   lower=maxi(nd,maxi(s)); LOW=0;
+   lower=max(nd,max(s)); LOW=0;
    upper=nd+2*sum(diag(s));   UPP=100*upper;
  
 else
@@ -321,7 +321,7 @@ for i=1:nf,
   else                 evals=[evals,a(i)/bi]; end
 end
  
-if nai>nz then dist=0; else dist=min(abs(real(evals)))/maxi(abs(evals)); end
+if nai>nz then dist=0; else dist=min(abs(real(evals)))/max(abs(evals)); end
  
  
 else   //option = 'freq'
@@ -336,7 +336,7 @@ if min(svd(f(nf-nz+1:nf,nf-nz+1:nf))) < TOL then
 //-----------------------------------------------
 // f(nf-nz+1:nf,nf-nz+1:nf)= I - (D'*D)/||G||**2 -> case ||D||=||G||
  
-   noa=maxi(abs(a));  na=0;     //na -> # pairs (0,0)
+   noa=max(abs(a));  na=0;     //na -> # pairs (0,0)
    frequ=[-1];  //||G|| is always attained for s=infinity in this case
    for i=1:nf,
       bi=b(i);
@@ -351,8 +351,8 @@ if min(svd(f(nf-nz+1:nf,nf-nz+1:nf))) < TOL then
       frequ=[-2];
       if na>=nz, printf('G is all-pass'); end
    else if  ~isempty(evals) then
-      maxabs=maxi(abs(evals));
-      for i=1:maxi(size(evals)),
+      maxabs=max(abs(evals));
+      for i=1:max(size(evals)),
          if abs(real(evals(i))) <= TOL*maxabs,
                          frequ=[frequ,abs(imag(evals(i)))]; end
       end,
@@ -367,8 +367,8 @@ else // case ||D|| < ||G||
       if abs(bi) > 100*TOL, evals=[evals,a(i)/bi]; end
    end
  
-   maxabs=maxi(abs(evals));
-   for i=1:maxi(size(evals)),
+   maxabs=max(abs(evals));
+   for i=1:max(size(evals)),
       if abs(real(evals(i))) <= TOL*maxabs,
                      frequ=[frequ,abs(imag(evals(i)))]; end
    end
@@ -395,7 +395,7 @@ function [c]=cond_test(e,f,frequ,TOL);
 [nf,vnf]=size(f);
 c=1;
  
-for i=1:maxi(size(frequ)),
+for i=1:max(size(frequ)),
    s=svd(f-%i*frequ(i)*e);
    c=min(c,s(nf)/s(1));
    if c < TOL then return; end
@@ -408,7 +408,7 @@ function [l]=list_set(l,TOL);
 //  eliminates redundant elements in a list. Two entries are considered
 //  identical when their difference is smaller then TOL (in relative terms)
 //! 
-nl=maxi(size(l));
+nl=max(size(l));
 i=1;
  
 while i < nl,

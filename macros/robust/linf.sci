@@ -44,7 +44,7 @@ function [n]=linf(g,eps,tol)
   end,
   hsvp=sqrt(spec(pp*qq)),hsvp=sort(real(hsvp)),
   hsvm=sqrt(spec(pm*qm)),hsvm=sort(real(hsvm)),
-  gl=maxi([norm(d),hsvp(tp),hsvm(tm)]),
+  gl=max([norm(d),hsvp(tp),hsvm(tm)]),
   gu=norm(d)+2*(sum(hsvp)+sum(hsvm)),
   //2. binary search
   //----------------------

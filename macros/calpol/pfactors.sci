@@ -71,7 +71,7 @@ function [resn,g]=pfactors(pol,flag)
       while %t do
 	wkk=w(kk);
 	if abs(imag(wkk))<=%eps then
-	  [themin,which]=mini([abs(wkk),1/(abs(wkk))]);
+	  [themin,which]=min([abs(wkk),1/(abs(wkk))]);
 	  if which==2 then g=-g*real(wkk);end
 	  resn(k)=poly(sign(real(wkk))*themin,pol.get_var[]);
 	  kk=kk+1;k=k+1;

@@ -53,8 +53,8 @@ function [X1,X2,zero]=ric_desc(H,E)
     zr=X2'*A'*X1+X1'*A*X2+X1'*H(1:n1,n1+1:n2)*X1-X2'*H(n1+1:n2,1:n1)*X2;
     zero=norm(zr,1);
   end
-  if LHS==1 then X1=X1/X2;end
-  if RHS==2 then
+  if nargout==1 then X1=X1/X2;end
+  if nargin==2 then
     [m2,n2]=size(H);n1=n2/2;
     if m2<>n2 then error("Error: firts argument should be square\n");end
     n1=n2/2;
@@ -62,10 +62,10 @@ function [X1,X2,zero]=ric_desc(H,E)
     // [UV,n]= qz(H,E,sort='d');
     [A,E,Q,UV,n]= qz(H,E,sort='d');
     X2=UV(1:n,1:n);X1=UV(n+1:2*n,1:n);
-    if lhs == 3 then
+    if nargout == 3 then
       A=H(1:n1,1:n1);G=E(1:n,n+1:2*n);C=-H(n+1:2*n,1:n);B=real(sqrtm(G));R=eye(A);
       X=X1/X2;zero=A'*X*A-(A'*X*B/(R+B'*X*B))*(B'*X*A)+C-X; 
     end
   end
-  if lhs == 1 then X=X1/X2;end
+  if nargout == 1 then X=X1/X2;end
 endfunction

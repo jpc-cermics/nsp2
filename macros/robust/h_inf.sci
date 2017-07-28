@@ -51,9 +51,9 @@ function [Sk,rk,mu]=h_inf(P,r,mumin,mumax,nmax)
   Dk12=Uci*Dk12;
   Dk21=Dk21*Yci;
   //Convert to descriptor form:
-  Sk=des2ss(Ak,[Bk1,Bk2],[Ck1;Ck2],[Dk11,Dk12;Dk21,Dk22],E);Sk(7)='c';
+  Sk=des2ss(Ak,[Bk1,Bk2],[Ck1;Ck2],[Dk11,Dk12;Dk21,Dk22],E);
+  Sk.dom = 'c';
   //    Sk in transfer representation if P is.
-
   if nargout<3 then Sk=Sk(1:r(2),1:r(1));rk=mu;
     //    Case D22 different from zero
     if norm(coeff(D22),1) <> 0 then Sk=Sk/.D22;end
@@ -109,7 +109,7 @@ function [P2,mu_inf,Uci,Yci,D22]=h_init(P,r)
   [nt,dt]=trzeros(P12),rzt=real(nt./dt),
   if size(nt,'*') > 0 then
     if min(abs(rzt)) < sqrt(%eps) then 
-      printf('Warning P12 has a zero on/close the imaginary axis'),
+      printf('Warning P12 has a zero on/close the imaginary axis\n'),
     end,
   end,
 
@@ -164,7 +164,7 @@ function [P2,mu_inf,Uci,Yci,D22]=h_init(P,r)
   if  ~isempty(M11) then g1=norm(M11);end
   if  ~isempty(M22) then g2=norm(M22);end
 
-  gama_inf=maxi(g1,g2);
+  gama_inf=max(g1,g2);
   if gama_inf==0 then mu_inf=1/%eps/%eps, else mu_inf=1/(gama_inf*gama_inf);end
 
   P2=syslin('c',A,[B1,B2],[C1;C2],[D11,D12;D21,0*D22]);
@@ -180,7 +180,7 @@ function [P6ad,Finfad,muad,Uc#iad,Yc#iad]=h_iter(P2,r,mumin,mumax,nmax)
     niter=niter+1;
     mu=(mumin+mumax)/2;
     [P6,Finf,tv,Uc#i,Yc#i]=h_test(P2,r,mu)
-    test=maxi(tv)
+    test=max(tv)
     if test > 0 then
       mumax=mu
     else
@@ -232,7 +232,7 @@ function [P6,Kinf,tv,Uc#i,Yc#i]=h_test(P2,r,mu)
   C1=C1+D12*Kinf*C2;
   D11=D11+D12*Kinf*D21;
 
-  if norm(D11) >= gama then printf('Warning: gamma too small');
+  if norm(D11) >= gama then printf('Warning: gamma too small\n');
     P6=[]; Kinf=[];Uc#i=[];Yc#i=[];return;end
 
     //P3=list(A,B1,B2,C1,C2,D11,D12,D21,D22) with norm(D11) < gama.
@@ -318,15 +318,13 @@ function [P6,Kinf,tv,Uc#i,Yc#i]=h_test(P2,r,mu)
     dx=min(abs(real(spec(H))));
     //printf(dx);
     if dx < 1.d-9 then
-      printf('An eigenvalue of H (controller) is close to Imaginary axis !');
-      printf(dx);
+      printf('An eigenvalue of H (controller) is close to Imaginary axis ! %f\n',dx);
       indic=1;test=1;
     end
     if indic ==0 then
       [X1,X2,errx]=ric_desc(H);
       if errx > 1.d-4 then
-	printf('Riccati solution inaccurate ');
-	printf(errx);
+	printf('Riccati solution inaccurate error=%f\n',errx);
       end
       //Optimal observer :
 
@@ -343,58 +341,54 @@ function [P6,Kinf,tv,Uc#i,Yc#i]=h_test(P2,r,mu)
       dy=min(abs(real(spec(J))));
       //printf(dy);
       if dy < 1.d-9 then
-	printf('An eigenvalue of J (observer) is close to Imaginary axis !');
-	printf(dy);
+	printf('An eigenvalue of J (observer) is close to Imaginary axis ! %f\n',dy);
 	indic=1 ;test=1;
       end
       if indic==0 then
 	[Y1,Y2,erry]=ric_desc(J);
         if erry > 1.d-4 then 
-          printf('Riccati solution inaccurate ');
-          printf(erry);
+          printf('Riccati solution inaccurate error=%f\n',erry);
         end
 	//Tests
 	//
 	//     E=(Y2'*X2-mu*Y1'*X1);
 	//     printf(min(svd(E)),'(5x,''min(svd(E)) = '',f10.2)')
-	[al1,be1]=spec(A*X2 -B2*(S*X2 +B2'*X1 ),X2);
-	[al2,be2]=spec(Y2'*A-(Y2'*L+Y1'*C2')*C2,Y2');
-	[al3,be3]=spec(mu_test*Y1'*X1,Y2'*X2);
+	[al1,be1]=gspec(A*X2 -B2*(S*X2 +B2'*X1 ),X2);
+	[al2,be2]=gspec(Y2'*A-(Y2'*L+Y1'*C2')*C2,Y2');
+	[al3,be3]=gspec(mu_test*Y1'*X1,Y2'*X2);
 
 	//Here division by zero may appear...
 	//If such division appear try to uncomment the 3 following lines:
-	w1=find(be1==0);be1(w1)=%eps*ones(be1(w1));
-	w2=find(be2==0);be2(w2)=%eps*ones(be2(w2));
-	w3=find(be3==0);be3(w3)=%eps*ones(be3(w3));
-
-	test1=maxi(real(al1./be1));
-	test2=maxi(real(al2./be2));
-	test3=maxi(real(al3./be3))-1;
+	be1(be1==0)=%eps;
+	be2(be2==0)=%eps;
+	be3(be3==0)=%eps;
+	
+	test1=max(real(al1./be1));
+	test2=max(real(al2./be2));
+	test3=max(real(al3./be3))-1;
 	tv   =[test1,test2,test3]
       end
     end
 
     //printf(1/sqrt(mu),'(10x,'' Try gama = '',f18.10)');
-    [answer,no]=maxi(tv);
-    //if exists('tv')==1 then printf([tv,maxi(tv)],'(4f15.10)');end
-    if exists('tv')==1 then 
+    [answer,no]=max(tv);
+    //if exists('tv')==1 then printf([tv,max(tv)],'(4f15.10)');end
+    if exists('tv') then 
       if answer>0 then 
 	if no==1 then
-	  printf([1/sqrt(mu),answer],'('' gama = '',f18.10,'' Unfeasible (Hx hamiltonian)  test = '',e15.5)');
+	  printf('( gama = %18.10f, Unfeasible (Hx hamiltonian)  test = %15.5e)\n', 1/sqrt(mu),answer);
 	end
 	if no==2 then
-	  printf([1/sqrt(mu),answer],'('' gama = '',f18.10,'' Unfeasible (Hy hamiltonian)  test = '',e15.5)');
+	  printf('( gama = %18.10f, Unfeasible (Hy hamiltonian)  test = %15.5e)\n', 1/sqrt(mu),answer);
 	end
 	if no==3 then
-	  printf([1/sqrt(mu),answer],'('' gama = '',f18.10,'' Unfeasible (spectral radius) test = '',e15.5)');
+	  printf('( gama = %18.10f, Unfeasible (spectral radius) test = %15.5e)\n', 1/sqrt(mu),answer);
 	end
       else 
-	printf([1/sqrt(mu),answer],'('' gama = '',f18.10,''              OK              test = '',e15.5)');
+	printf('( gama = %18.10f,  OK test = %15.5e)\n', 1/sqrt(mu),answer);
       end
     end
     P6=syslin('c',A,[B1,B2],[C1;C2],[D11,D12;D21,D22])
-
-
 endfunction
 
 function [Sk,polesH,polesJ]=h_contr(P,r,mu,U2i,Y2i)
@@ -442,12 +436,11 @@ function [Sk,polesH,polesJ]=h_contr(P,r,mu,U2i,Y2i)
   dx=min(abs(real(polesH)));
   //printf(dx);
   if dx < 1.d-6 then
-    printf('An eigenvalue of H (controller) is close to Imaginary axis !');
+    printf('An eigenvalue of H (controller) is close to Imaginary axis ! %f\n',dx);
   end
   [X1,X2,errx]=ric_desc(H);
   if errx > 1.d-4 then 
-    printf('Riccati solution inaccurate ');
-    printf(errx);
+    printf('Riccati solution inaccurate error=%f\n',errx);
   end
 
   //Optimal observer :
@@ -460,12 +453,11 @@ function [Sk,polesH,polesJ]=h_contr(P,r,mu,U2i,Y2i)
   dy=min(abs(real(polesJ)));
   //printf(dy);
   if dy < 1.d-6 then
-    printf('An eigenvalue of J (observer) is close to Imaginary axis !');
+    printf('An eigenvalue of J (observer) is close to Imaginary axis ! %f\n',dy);
   end
   [Y1,Y2,erry]=ric_desc(J);
   if erry > 1.d-4 then 
-    printf('Riccati solution inaccurate ');
-    printf(erry);
+    printf('Riccati solution inaccurate err=%f\n', erry);
   end
 
   //Controller in descriptor form
@@ -481,8 +473,8 @@ function [Sk,polesH,polesJ]=h_contr(P,r,mu,U2i,Y2i)
 
   Dk11=0*Ck1*Bk1;
   Dk22=0*Ck2*Bk2;
-  Dk12=eye(Ck1*Bk2);
-  Dk21=eye(Ck2*Bk1);
+  Dk12=eye(size(Ck1*Bk2));
+  Dk21=eye(size(Ck2*Bk1));
 
   //Scaling back
 
