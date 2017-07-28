@@ -62,7 +62,7 @@ that sort places Nan value at the end for an increasing order sort).
 \begin{examples}
 
 \paragraph{with flag="g"}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = [ -1, -1, 2, 3, 6.5 ]
 issorted(x)
 issorted(x,strict_order=%t)
@@ -76,10 +76,10 @@ issorted(x,order_nan=%t) // should be true
 x = ["bar", "foo","foo", "toto"]
 issorted(x)
 issorted(x, strict_order=%t)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{with flag="c" or  flag="r"}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = rand(3,4)
 issorted(x,flag="c")
 x = sort(x,"c","i")
@@ -88,10 +88,10 @@ issorted(x,flag="c")
 issorted(x,flag="r")
 x = sort(x,"r","i")
 issorted(x,flag="r")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{with flag="lc" or  flag="lr"}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = [1, 2, 2, %pi;
      1, 2, 2, 4 ];
 issorted(x,flag="lr",strict_order=%t)
@@ -103,7 +103,7 @@ x = [1,   1, 1;
      0.5, 1, 2;
      0.2,-2, 6]
 issorted(x,flag="lc")
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

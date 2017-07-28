@@ -143,7 +143,7 @@ calculations (in the following $npr$ will denote the number of components of the
 %--example 
 \begin{examples}
 \paragraph{example 1} sample quantiles versus exact quantiles for the Gaussian distribution
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 5000;
 pr = linspace(0.01,0.99,80)';
 X = randn(n,1);  // a sample from N(0,1)
@@ -152,10 +152,10 @@ qe = cdfnor("X",zeros(size(pr)),ones(size(pr)),pr,1-pr);
 // compare curves
 xbasc()
 plot2d(pr,[q,qe],style=[2,5],leg="sample quantile@exact quantile",leg_pos="dr")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} compute quartiles of a sample (and so the inter quartile range (iqr) and the median)
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 500;
 X = grand(1,n,"exp",5);
 pr = [0.25,0.5,0.75];
@@ -164,7 +164,7 @@ iqr = q(3) - q(1)
 md = q(2)
 // md should be equal to:
 median(X)
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

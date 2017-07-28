@@ -44,7 +44,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');w=ssrand(1,1,3);w.A = w.A-2*eye(size(w.A));
     t=0:0.05:5;
     //impulse(w) = step (s * w)
@@ -60,7 +60,7 @@
     //input defined by a time function
     function u=input(t);u=abs(sin(t));endfunction;
     xbasc();plot2d([t',t'],[(csim(input,t,w))',0*t'])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

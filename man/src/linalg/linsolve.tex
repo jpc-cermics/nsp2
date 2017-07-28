@@ -45,14 +45,14 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(5,3)*rand(3,8);
     b=A*ones(8,1);[x,kerA]=linsolve(A,b); // compatible b
     if norm(A*x+b) > 1000*%eps then pause;end  
     if norm(A*kerA) > 1000*%eps then pause;end  
     // b=ones(5,1);[x,kerA]=linsolve(A,b);A*x+b   // incompatible b
     A=rand(5,5);[x,kerA]=linsolve(A,b), -inv(A)*b  //x is unique
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

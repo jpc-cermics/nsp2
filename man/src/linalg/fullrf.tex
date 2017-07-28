@@ -49,14 +49,14 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(5,2)*rand(2,5);
     [Q,M]=fullrf(A);
     if norm(Q*M-A,1) > 100*%eps then pause;end
     [X,d]=rowcomp(A);Y=X';
     s=svd([A,Y(:,1:d),Q]) //span(Q) = span(A) = span(Y(:,1:2))
     if size(find(s > 100*%eps),'*') <> 2 then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

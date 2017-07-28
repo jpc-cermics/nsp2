@@ -34,7 +34,7 @@
 
 \begin{mandescription}
  The functions \verb+fprintfMat+ and \verb+fscanfMat+ are shortcuts for respectively:
- \begin{Verbatim}
+ \begin{mintednsp}{nsp}
    // fprintfMat
    // F = fopen(filename,mode="w")
    // F.put_matrix[M,format=str1,sep=str2,header=title]
@@ -44,7 +44,7 @@
    // F = fopen(filename,mode="r")
    // [M,title] = F.get_matrix[]
    // F.close[]
-\end{Verbatim}
+\end{mintednsp}
 so we will only try to explain how \verb+put_matrix+ and \verb+get_matrix+ work.
 \end{mandescription}
 
@@ -129,7 +129,7 @@ any number of blank or tab characters and/or one coma or semicolon.
 
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
 x = (1:9)'; pr = pdf("geom",n,0.7);
 Mat = [x,pr];
 title = ["some probabilities of G(0.7) (the geometric distribution)";
@@ -152,7 +152,7 @@ fprintfMat("toto.dat",Mat,header=comment,format="%.17g")
 // read  back to nsp
 M = fscanfMat("toto.dat")
 max(abs((M-Mat)./Mat))  // error should be 0
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

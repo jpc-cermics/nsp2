@@ -78,7 +78,7 @@ The matrix 2-norm is not available for sparse matrix.
 \end{mandescription}
 \begin{examples}
 \paragraph{example 1} a simple example
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x=[1,1];
 // 1-norm
 norm(x,1)  // or norm(x,'1')
@@ -86,10 +86,10 @@ norm(x,1)  // or norm(x,'1')
 norm(x,2)  // or norm(x,'2') or simply norm(x)
 // Inf-norm
 norm(x,%inf)  // or norm(x,'Inf')
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} invariance of a 2-norm by an orthonormal tranformation
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // make an orthonormal matrix
 Q=qr(rand(5,5));
 // a random vector
@@ -100,7 +100,7 @@ nx = norm(x,2)
 ny = norm(Q*x, 2)
 // nx and ny should be near equal
 abs((nx-ny)/nx)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 %\begin{manseealso}

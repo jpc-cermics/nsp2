@@ -64,7 +64,7 @@ Stability (resp. pole placement) requires stabilizability
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     nx=6;nz=3;nu=2;ny=1;
     A=diag(1:6);A(2,2)=-7;A(5,5)=-9;B2=[1,2;0,3;0,4;0,5;0,0;0,0];
     C1=[zeros(nz,nz),eye(nz,nz)];D12=[0,1;0,2;0,3];
@@ -86,7 +86,7 @@ Stability (resp. pole placement) requires stabilizability
     [Closed,F,G]=ddp(Sys,1:nz,B1,D1,'st',alfa,beta);
     closed=syslin('c',A+B2*F,B1+B2*G,C1+D12*F,D11+D12*G);
     ss2tf(closed)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

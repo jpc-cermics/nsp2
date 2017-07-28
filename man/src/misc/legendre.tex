@@ -63,25 +63,25 @@ following the column order.
 %--example 
 \begin{examples}
 \paragraph{example 1} plot the 6 first Legendre polynomials:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = linspace(-1,1,200)';
 y = legendre(0:5, 0, x);
 xbasc()
 plot2d(x,y', leg="p0@p1@p2@p3@p4@p5@p6")
 xtitle("the 6 th first Legendre polynomials")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} plot of the associated Legendre functions of degree 5 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = linspace(-1,1,200)';
 y = legendre(5, 0:5, x, "norm");
 xbasc()
 plot2d(x,y', leg="p5,0@p5,1@p5,2@p5,3@p5,4@p5,5")
 xtitle("the (normalised) associated Legendre functions of degree 5")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} plot spherical harmonics
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // define Ylm functions
 function [y] = harm_sph_Y(l,m,phi,theta)
    pl = legendre(l, abs(m), cos(phi), "norm")
@@ -93,7 +93,7 @@ function [y] = harm_sph_Y(l,m,phi,theta)
    end      
 endfunction
 // la suite un autre jour
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

@@ -27,12 +27,12 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     H=[2/s,(s+1)/(s^2-5)];
     Sys=tf2ss(H)
     clean(ss2tf(Sys))
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -54,30 +54,30 @@
 \begin{examples}
 
 \noindent A first example.
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x=-10:10; y=-10:10;m =rand(21,21);
     grayplot(x,y,m,rect=[-20,-20,20,20])
-  \end{Verbatim}
+  \end{mintednsp}
 
 \noindent A second example. The values of \verb!m! are not remapped and
 thus values above \verb!32! are ignored.
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x=-10:10; y=-10:10;m = 64*rand(21,21);
     xset('colormap',jetcolormap(32));
     grayplot(x,y,m,rect=[-20,-20,20,20] ,remap=%f);
-  \end{Verbatim}
+  \end{mintednsp}
 
 \noindent A third example with a function. The z-values of the surface are remapped.
 Remapped values in the range given by \verb!zminmax! and associated to colors in the range
 \verb!colminmax! and values above or below are painted with colors given by \verb!colout!
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function z=f(x,y); z = 30*sin(x)*cos(y);endfunction
     t=-%pi:0.1:%pi;
     xset('colormap',jetcolormap(32));
     grayplot(t,t,f,remap=%t,shade=%t,zminmax=[6,24],colminmax=[6,24],colout=[36,35])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 
 %-- see also

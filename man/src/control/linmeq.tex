@@ -107,7 +107,7 @@ V. Sima, Katholieke Univ. Leuven, Belgium, May 1999, May, Sep. 2000. V. Sima, Un
 \begin{examples}
 \begin{itemize}
   \item (1a) and (1b)
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       n=40;m=30;
       A=rand(n,n);C=rand(n,m);B=rand(m,m);
       X = linmeq(1,A,B,C);
@@ -115,27 +115,27 @@ V. Sima, Katholieke Univ. Leuven, Belgium, May 1999, May, Sep. 2000. V. Sima, Un
       flag=[1,0,0]
       X = linmeq(1,A,B,C,flag);
       norm(A*X*B+X-C,1)
-    \end{Verbatim}
+    \end{mintednsp}
   \item (2a) and (2b)
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       n=40;
       A=rand(n,n);C=rand(A);C=C+C';
       X = linmeq(2,A,C);
       norm(A'*X + X*A -C,1)
       X = linmeq(2,A,C,[1 0]);
       norm(A'*X*A -X-C,1)
-    \end{Verbatim}
+    \end{mintednsp}
   \item (3a)
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       n=40;
       A=rand(n,n);
       A=A-(max(real(spec(A)))+1)*eye(size(A)); //shift eigenvalues
       C=rand(A);
       X=linmeq(3,A,C);
       norm(A'*X'*X+X'*X*A +C'*C,1)
-    \end{Verbatim}
+    \end{mintednsp}
   \item (3b)
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       A = [-0.02, 0.02,-0.10, 0.02,-0.03, 0.12;
       0.02, 0.14, 0.12,-0.10,-0.02,-0.14;     
       -0.10, 0.12, 0.05, 0.03,-0.04,-0.04;     
@@ -145,7 +145,7 @@ V. Sima, Katholieke Univ. Leuven, Belgium, May 1999, May, Sep. 2000. V. Sima, Un
       C=rand(A);
       X=linmeq(3,A,C,[1 0]);
       norm(A'*X'*X*A - X'*X +C'*C,1)
-    \end{Verbatim}
+    \end{mintednsp}
   \end{itemize}
 \end{examples}
 % -- see also

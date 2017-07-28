@@ -37,16 +37,16 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   function y=f(x); y = exp(-x.^2);endfunction;
   intg(0,x,f)*2/sqrt(%pi) - gamma(x);
-\end{Verbatim}
+\end{mintednsp}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x); y = digamma(x);endfunction;
 a=0.1;b=4;
 y= abs(intg(a,b,f) - (lngamma(b) -lngamma(a)))
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 %-- see also

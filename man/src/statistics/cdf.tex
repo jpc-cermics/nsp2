@@ -178,7 +178,7 @@ $b > 0$.
 \begin{examples}
   
 \paragraph{example 1} an example with the gaussian distribution
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // plot pdf and cdf on [-5,5]
 x = linspace(-5,5,200)';
 y = pdf("nor",x,0,1);
@@ -193,10 +193,10 @@ max(abs(x-xx)./abs(x))  // max relative error
 [p,q] = cdf("nor",x,0,1);
 xx = icdf("nor",p,0,1,Q=q);
 max(abs(x-xx)./abs(x))
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} an example with the binomial distribution
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 50; p = 0.45; // we work with Bin(n=50,p=0.45)
 X = -1:n+1; Xp = nearfloat("pred",X);
 x = redim([Xp;X],-1,1);
@@ -226,7 +226,7 @@ x.equal[xx]
 // 2/ now use Q: we get additionnal accuracy and we recover x
 xx = icdf("bin",P,n,p,Q=Q);
 x.equal[xx]
-\end{Verbatim}
+\end{mintednsp}
  
 \end{examples}
 

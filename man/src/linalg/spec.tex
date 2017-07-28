@@ -69,7 +69,7 @@ $\lambda_j$ eigenvalue (\verb+lambda(j)+) : $A v^j = \lambda_j v^j$.
 
 \begin{examples}
 \paragraph{example 1} a simple example (we form a matrix with eigenvalues 1,2,3,4,5):
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 X=rand(5,5);
 vp = [1;2;3;4;5];
 A = X*diag(vp)*inv(X);
@@ -79,10 +79,10 @@ A*V - V*diag(lambda)
 // reorder V such that V(:,j) is the eigenvector associated to the eigenvalue j
 V(:,round(lambda))=V;
 V./X  // each colomn must have the same coefficients
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} hyper-plane symetry:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 u = rand(4,1); u = u/norm(u);
 // A is the matrix of the symetry around the hyper-plane orthogonal to u
 // (aka as an hyper-plane reflection or an Houselholder transformation)
@@ -92,22 +92,22 @@ A = eye(4,4) - 2*u*u';
 [lambda,V]=spec(A)
 // the eigenspace associated to -1 must be span(u):
 V(:,1)./u
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} a rotation matrix in the plane (here eigenvalues are necessary complex):
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 theta=%pi/3; ct=cos(theta); st=sin(theta);
 A=[ct,-st;st,ct];
 [lambda,V]=spec(A)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} a defective case (1 is an eigenvalue of multiplicity 3 
 and the associated eigenspace must be span([1;0;0]):
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=[1,1,0;0,1,1;0,0,1];
 [lambda,V]=spec(A)
 orth(V)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

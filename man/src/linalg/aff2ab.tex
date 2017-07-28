@@ -62,7 +62,7 @@
 %--example 
 \begin{examples}
   Lyapunov equation solver (one unknown variable, one constraint)
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function Y=lyapunov(X,D)
       [A,Q]=D(:);Xm=X(:); Y=list(A'*Xm+Xm*A-Q);
     endfunction;
@@ -72,10 +72,10 @@
     lyapunov(Xv,D)
     Xm=Xv(:); 
     if norm(A'*Xm+Xm*A-Q)> 1.e-10 then;pause;end
-  \end{Verbatim}
+  \end{mintednsp}
     Lyapunov equation solver with redundant constraint X=X'
     (one variable, two constraints) D is global variable.
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function Y=ly2(X,D)
       [A,Q]=D(:);Xm=X(:); Y=list(A'*Xm+Xm*A-Q,Xm'-Xm);
     endfunction;
@@ -85,13 +85,13 @@
     res = ly2(Xv,D); 
     if norm(res(1)) > 1.e-10 then;pause;end
     if norm(res(2)) > 1.e-10 then;pause;end
-  \end{Verbatim}
+  \end{mintednsp}
   Francis equations, find matrices \verb!X1! and \verb!X2! such that:
     \begin{align*}
       A1*X1 & - X1*A2 + B*X2 -A3 = 0\\
       D1*X1 & -D2 = 0 
     \end{align*}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function Y=bruce(X,D)
       [A1,A2,A3,B,D1,D2]=D(:),...
       [X1,X2]=X(:);Y=list(A1*X1-X1*A2+B*X2-A3,D1*X1-D2);
@@ -105,9 +105,9 @@
     res = bruce(Xsol,D);
     if norm(res(1)) > 1.e-10 then;pause;end
     if norm(res(2)) > 1.e-10 then;pause;end
-  \end{Verbatim}
+  \end{mintednsp}
   Find all X which commute with A
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function y=f(X,D) 
       y=list(D(:)*X(:)-X(:)*D(:));
     endfunction;
@@ -116,7 +116,7 @@
     Xsol=vec2list(Xf+KerAf*rand(q,1),dimX);
     C=Xsol(:); 
     if norm(A*C-C*A) > 1.e-10 then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

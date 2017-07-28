@@ -64,7 +64,7 @@ matrices and \verb+zpotrf+ for the complex case.
 
 \begin{examples}
 \paragraph{example 1} with positive definite matrices 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(5,5);A=A*A';
 R = chol(A);
 norm(R'*R-A)
@@ -72,14 +72,14 @@ A=rand(5,5)+%i*rand(5,5);
 A=A*A';
 R=chol(A);
 norm(R'*R-A)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} Example with a not positive definite matrix
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(5,3);A=A*A';
 [R,p] = chol(A);
 q=p-1;norm(R'*R-A(1:q,1:q))
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

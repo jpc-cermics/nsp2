@@ -47,11 +47,11 @@
 %--example 
 \begin{examples}
 \paragraph{Chebyshev, ripple in the passband}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     n=13;epsilon=0.2;omegac=3;sample=0:0.05:10;
     h=cheb1mag(n,omegac,epsilon,sample);
     xbasc();plot2d(sample,h,style=2);xtitle('','frequencies','magnitude')
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

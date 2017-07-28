@@ -64,7 +64,7 @@ controled by the optional mode parameter~:
 
 \begin{examples}
   \paragraph{example 1} simple examples
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     n=10;b=rand(n,2);A=rand(n,n);
     x=solve(A,b,mode="std"); 
     if norm(A*x-b) > 1.e-10 then pause;end 
@@ -91,14 +91,14 @@ controled by the optional mode parameter~:
     // hermitian positive definite 
     x=solve(A*A',b,mode="sympos"); 
     if norm(A*A'*x-b) > 1.e-7 then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 
   \paragraph{example 2} Using solve with factorisations. When you factorize a square 
   matrix with \manlink{lu}{lu} or \manlink{chol}{chol} (or \manlink{qr}{qr}) you can
   use the backslash operator \verb+\+ to solve the triangular systems with efficiency
   (backslash detects the triangular matrix structure and call the good routine) but 
   using directly \verb+solve+ (with the good option) is faster.
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     n=800;b=rand(n,2);A=randn(n,n);
     [L,U,p] = lu(A); 
     // solving the 2 triangular system with backslash
@@ -116,7 +116,7 @@ controled by the optional mode parameter~:
     // solving the 2 triangular system with solve
     tic(); x = solve(C, solve(C,b,mode="upT"), mode="up"); toc()
     norm(A*x-b,1)/norm(b)
-  \end{Verbatim}
+  \end{mintednsp}
 
 \end{examples}
 

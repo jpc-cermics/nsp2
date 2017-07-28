@@ -41,7 +41,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     h=syslin('c',(s-1)/(s^3+5*s+20))
     frq=0:0.05:3;repf=repfreq(h,frq=frq);
@@ -65,7 +65,7 @@
     [Sys2,err]=frep2tf(frq,repf,3,dom);
     [frq,rep2]=repfreq(Sys2,frq=frq); //Frequency response of Sys2
     xbasc();plot2d1(frq',abs([repf;rep2])');
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

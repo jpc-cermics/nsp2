@@ -94,7 +94,7 @@ last is $c_{-1}$).
  
 \begin{examples}
  \paragraph{simple example}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
 // build a pure periodic signal from a trigonometric polynomial
 // and recover its coefficients using fft
 function x = poly_trigo(t, T, coef, num)
@@ -141,7 +141,7 @@ xbasc()
 plot2d3((-12:12)',c,style=2, rect=[-13,-1.2,13,1.2])
 plot2d3(num+0.2, coef, frameflag=0,style=5)
 xtitle("blue: coefs from fft, red: exact coefs")
-  \end{Verbatim}
+  \end{mintednsp}
  \end{examples}
 
 % \begin{examples}

@@ -48,7 +48,7 @@ C = intersect(A,B)
 \begin{examples}
 
 \paragraph{example 1} with vectors of numbers:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
 B = [2, 0.5, 3, 912];
 C = intersect(A,B)
@@ -56,10 +56,10 @@ C = intersect(A,B)
 // we must have C = A(kA) and C = B(kB) up to a permutation
 C.equal[sort(A(kA),"g","i")]
 C.equal[sort(B(kB),"g","i")]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} with vectors of strings:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = ["toto", "foo", "bar", "tumbi", "foobar", "bar", "toto", "foo", "bar"]
 B = [ "foo", "bar", "nsp", "tumbi" ]
 C = intersect(A,B)
@@ -67,10 +67,10 @@ C = intersect(A,B)
 // we must have C = A(kA) and C = B(kB) up to a permutation
 C.equal[sort(A(kA),"g","i")]
 C.equal[sort(B(kB),"g","i")]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} with vectors of cells:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
 A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
 B = {  "tumbi", 5 ,"foo", 2,  [0,1;1,0] }
 C = intersect(A,B)
@@ -78,10 +78,10 @@ C = intersect(A,B)
 // we must have C = A(kA) and C = B(kB)
 C.equal[A(kA)]
 C.equal[B(kB)]
-  \end{Verbatim}
+  \end{mintednsp}
 
 \paragraph{example 4} with lists:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
 B = list(  "tumbi", 5 ,"foo", 2,  [0,1;1,0] )
 C = intersect(A,B)
@@ -89,11 +89,11 @@ C = intersect(A,B)
 // we must have C = A(kA) and C = B(kB)
 C.equal[A.sublist[kA]]
 C.equal[B.sublist[kB]]
-\end{Verbatim}
+\end{mintednsp}
 
 
 \paragraph{example 5} intersection of rows or columns:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // for columns
 A = grand(2,6,"uin",-1,1)
 B = grand(2,7,"uin",-1,1)
@@ -108,7 +108,7 @@ B = grand(5,2,"uin",-1,1)
 // we must have C = sort([A(kA,:);B(kB,:)],"lr","i")
 C.equal[A(kA,:)]
 C.equal[B(kB,:)]
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

@@ -45,15 +45,15 @@
 
 \begin{examples}
 \paragraph{Franck}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   n=6;
   A=testm('franck',n);
   Ai=testm('franck^-1',n);
   norm(A*Ai - eye(n,n))
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Hilbert}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   n=6;
   A=testm('hilbert',n);
   Ai=testm('hilbert^-1',n);
@@ -61,17 +61,17 @@
 
   Ah=hankel( 1 ./((1:n)+1-1), 1./(n + (1:n)-1))
   Ah.equal[A]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Magic} 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   n=6;
   A=testm('magic',n);
   t1=sort(A,'g','i') == (1:n^2)
   Ar = sum(A,'r'); Ac = sum(A,'c')';
   t2= Ar.equal[Ac] 
   t3=and(sum(A,'r') == Ar(1) )
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

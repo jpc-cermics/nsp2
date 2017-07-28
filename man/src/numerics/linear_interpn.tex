@@ -70,7 +70,7 @@
 
 \begin{examples}
 \paragraph{example 1}  1d linear interpolation
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = linspace(0,2*%pi,11);
 y = sin(x);
 xx = linspace(-2*%pi,4*%pi,400)';
@@ -79,10 +79,10 @@ xbasc()
 plot2d(xx,yy,style=2)
 plot2d(x,y,style=-9, strf="000")
 xtitle("linear interpolation of sin(x) with 11 interpolation points")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} bilinear interpolation
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 8;
 x = linspace(0,2*%pi,n); y = x;
 z = 2*sin(x')*sin(y);
@@ -95,10 +95,10 @@ plot3d(xx, xx, zp, flag=[2 6 4])
 param3d1(xg,yg, z, style=-9*ones(1,n), flag=[0 0])
 xtitle("Bilinear interpolation of 2sin(x)sin(y)")
 xselect()
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} bilinear interpolation and experimentation with all the out\_mode features
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 nx = 20; ny = 30;
 x = linspace(0,1,nx);
 y = linspace(0,2, ny);
@@ -133,11 +133,11 @@ subplot(2,3,6)
    plot3d(xp, yp, zp5, leg="x@y@z", flag = [2 4 4])
    xtitle("by_nan")
 xselect()
-\end{Verbatim}
+\end{mintednsp}
 
 
 \paragraph{example 4 : trilinear interpolation}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function v=f(x,y,z)
    v=(x-0.5).^2 + (y-0.5).^3 + (z-0.5).^2
 endfunction
@@ -171,7 +171,7 @@ xset("font size",3)
 xtitle("tri-linear interpolation of "+func)
 xset("font size",1)
 xselect()
-\end{Verbatim}
+\end{mintednsp}
  
 \end{examples}
 

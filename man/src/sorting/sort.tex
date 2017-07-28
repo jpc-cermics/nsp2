@@ -131,7 +131,7 @@ you need such a feature:
 \begin{examples}
 
 \paragraph{example 1} sort of a vector of numbers:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
 
 // increasing sort
@@ -148,19 +148,19 @@ y.equal[x(p)]  // must be true
 x(2)= %nan;x(3)=%inf; x(7)=%nan; x(8)=-%inf
 y = sort(x,dir="i")
 y = sort(x,dir="d")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} sort a vector of strings:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
 y = sort(x,dir="i")
 y = sort(x,dir="d")
 [y,p] = sort(x,dir="i")
 y.equal[x(p)]  // must be true
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} lexical sorts
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [0.5, -1, 2; 0.3, 4, 0.7; 0.3, -1, 2]
 // increasing row lexical sort
 B = sort(A,type="ldr",dir="i") // or B = sort(A,"ldr","i")
@@ -170,10 +170,10 @@ B.equal[A(p,:)]  // must be true
 B = sort(A,type="ldc",dir="i")
 [B,p] = sort(A,"ldc","i")
 B.equal[A(:,p)]  // must be true
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} speed issues
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // a case where all or near all vector components are different
 x = rand(1e6,1);
 // g sort (should be slower than gb here)
@@ -191,7 +191,7 @@ t=cputime(); y = sort(x,"g","i"); cputime()-t
 t=cputime(); y = sort(x,"gb","i"); cputime()-t
 // merge sort
 t=cputime(); y = sort(x,"gm","i"); cputime()-t
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

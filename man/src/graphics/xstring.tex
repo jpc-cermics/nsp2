@@ -60,14 +60,14 @@
 
 \noindent A first example
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     xsetech(frect=[0,0,2,2],iso=%t);
     xstring(1,1,["Nsp";"Graphics"])
-  \end{Verbatim}
+  \end{mintednsp}
 
 \noindent A second example where the string rotation is around \verb!(x,y)!.
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     xsetech(frect=[0,0,2,2],iso=%t);
     xset('font size',3);
     for A=[0:30:330];
@@ -75,12 +75,12 @@
       xstring(x,y,'Nsp',A,0,color=A/10);
       xsegs([1;x],[1;y]);
     end
-  \end{Verbatim}
+  \end{mintednsp}
 
 \noindent A second example where the string rotation is around the center of the
   given box\verb!(x,y,w,h)!.
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     xsetech(frect=[-1.0,-1.0,1.0,1.0],iso=%t);
     w=0.2,h=0.2;
     for A=[0:30:330];
@@ -93,7 +93,7 @@
        xstring(x-w/2,y-h/2,'Nsp',fill=%t,w=w,h=h,angle=A,color=A/10);
        xsegs([0;x],[0;y]);
     end
-  \end{Verbatim}
+  \end{mintednsp}
 
 \end{examples}
 

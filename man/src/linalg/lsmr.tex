@@ -141,7 +141,7 @@
 
 \begin{examples}
   \paragraph{example 1} A first basic test
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = rand(40,20);
     b = ones(40,1);
     [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f);
@@ -164,10 +164,10 @@
     xx = A\b;
     // compute relative difference
     norm(x-xx)/norm(x)
-  \end{Verbatim}
+  \end{mintednsp}
   
   \paragraph{example 2} Another test, solve a square sparse linear system
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = 2*speye(1e4,1e4) + sprand(1e4,1e4,1e-3);
     b = ones(1e4,1);
     [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f);
@@ -178,7 +178,7 @@
     [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f,atol=1e-12,btol=1e-12);
     // compute relative residual
     norm(A*x-b)/norm(b)
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

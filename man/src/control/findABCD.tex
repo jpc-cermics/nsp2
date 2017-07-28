@@ -67,7 +67,7 @@ in findABCD;  METH = 1 must be used in findR, for METH = 3 in findABCD.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     //generate data from a given linear system
     A = [ 0.5, 0.1,-0.1, 0.2;
       0.1, 0,  -0.1,-0.1;      
@@ -87,7 +87,7 @@ in findABCD;  METH = 1 must be used in findR, for METH = 3 in findABCD.
     SYS1.X0 = inistate(SYS1,Y',U');
     Y1=flts(U,SYS1);
     xbasc();plot2d((1:nsmp)',[Y',Y1'])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

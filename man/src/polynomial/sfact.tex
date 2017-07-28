@@ -47,19 +47,19 @@
 \begin{examples}
   \begin{itemize}
   \item polynomial (\verb1x1!) example
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       z=poly(0,'z');
       p=(z-1/2)*(2-z)
       w=sfact(p);
       w* (horner(w,1/z,ttmode=%t)).num
-    \end{Verbatim}
+    \end{mintednsp}
   \item polynomial matrix example
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       F1=[z-1/2,z+1/2,z^2+2;1,z,-z;z^3+2*z,z,1/2-z];
       P=F1*gtild(F1,'d'); 
       F=sfact(P) 
       if norm(coeff(P-F*gtild(F,"d")))>100*%eps  then pause,end
-    \end{Verbatim}
+    \end{mintednsp}
 \end{itemize}
 \end{examples}
 %-- see also

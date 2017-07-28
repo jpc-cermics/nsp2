@@ -46,12 +46,12 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(3,3);x=poly(0,'x');
     [n,d]=nlev(A,'x')
     clean(d + poly(A,'x'))
     clean( n*(x*eye(size(A))-A) -d*eye(size(A)),1.e-10)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

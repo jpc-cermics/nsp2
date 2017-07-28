@@ -59,31 +59,31 @@ y = unique(x)
 \end{mandescription}
 \begin{examples}
   \paragraph{example 1} with a vector of numbers
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
     [y, ind, occ] = unique(x)
-  \end{Verbatim}
+  \end{mintednsp}
 
   \paragraph{example 2} with a vector of strings:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
     [y, ind, occ] = unique(x);
-  \end{Verbatim}
+  \end{mintednsp}
 
   \paragraph{example 3} with a vector of cells:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
     [y, ind, occ] = unique(x);
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} with a list:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
   [y, ind, occ] = unique(x)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 5} using unique for rows or columns:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   // for columns
   A = grand(2,8,"uin",-1,1)
   B = unique(A,which="columns")  // or simply which="c"
@@ -93,11 +93,11 @@ y = unique(x)
   A = grand(8,2,"uin",-1,1)
   B = unique(B,which="rows")     // or simply which="r"
   [B,ind,occ] = unique(A,which="rows")
-\end{Verbatim}
+\end{mintednsp}
 
 
 \paragraph{example 6} using unique for basic statistics:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   // generate a big sample of the binomial distribution B(6,0.4)
   m = 1e5;
   x = grand(m,1,"bin",6,0.4); 
@@ -123,7 +123,7 @@ y = unique(x)
   xbasc()
   plot2d2(1:numel(occ),occ,style=2,rect=[0,0,25,max(occ)+100])
   xtitle("occurence for each 24 permutations should be around 1000")
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

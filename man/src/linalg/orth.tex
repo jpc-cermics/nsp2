@@ -63,7 +63,7 @@ and max singular values.
 \end{mandescription}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=randn(6,5);
 ImA=orth(A) // should be 6 x 5 matrix 
 // verify orthonormality  
@@ -74,7 +74,7 @@ A(:,$) = sum(A(:,1:$-1),2);
 ImA=orth(A) // should be now 6 x 4 
 // verify orthonormality  
 ImA'*ImA
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

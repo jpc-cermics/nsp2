@@ -51,7 +51,7 @@ $C$ is output as a row vector if  A is a row vector, otherwise $C$ is a column v
 \begin{examples}
 
 \paragraph{example 1} with vectors of numbers:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
 B = [2, 0.5];
 C = setdiff(A,B)
@@ -61,40 +61,40 @@ C.equal[A(ind)]
 
 // same example but ind is output as a IMat "int32" vector
 [C, ind] = setdiff(A,B, ind_type="int")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} with vectors of strings:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
 B = [ "foo", "bar" ]
 C = setdiff(A,B)
 [C, ind] = setdiff(A,B)
 // we must have C = A(ind)
 C.equal[A(ind)]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} with vectors of cells:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
 B = { "foo", 2,  [0,1;1,0] }
 C = setdiff(A,B)
 [C, ind] = setdiff(A,B)
 // we must have C = A(ind)
 C.equal[A(ind)]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} with lists:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
 B = list( "foo", 2,  [0,1;1,0] )
 C = setdiff(A,B)
 [C, ind] = setdiff(A,B)
 // we must have C = A(ind)
 C.equal[A.sublist[ind]]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 5} setdiff of rows or columns:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // for columns
 A = grand(2,6,"uin",-1,1)
 B = grand(2,7,"uin",-1,1)
@@ -108,7 +108,7 @@ B = grand(5,2,"uin",-1,1)
 [C,ind] = union(A,B,which="rows",ind_type="int")  // or simply which="r"
 // we must have C = A(ind,:)
 C.equal[A(ind,:)]
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

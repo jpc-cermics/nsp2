@@ -68,7 +68,7 @@
 %--example 
 \begin{examples}
 \paragraph{AND basic examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [%t, %f, %t; %t, %t, %f; %t, %t, %t]
 and(A)
 and(A,dim=1)
@@ -86,10 +86,10 @@ ok=execstr('bool = i > 0  &   x(i) < 0.5',errcatch=%t);
 // ok must be false
 if ok then pause;end 
 lasterror();
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{OR basic examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [%t, %f, %f; %t, %t, %f; %f, %f, %f]
 or(A)
 or(A,dim=1)
@@ -107,7 +107,7 @@ ok=execstr('bool = i > 0 | x(i) < 0.5',errcatch=%t);
 // ok must be false
 if ok then pause;end 
 lasterror();
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

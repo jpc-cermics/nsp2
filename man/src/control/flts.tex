@@ -43,7 +43,7 @@ maximum degree of denominator
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     sl=syslin('d',1,1,1);u=1:10;
     y=flts(u,sl); 
     plot2d2((1:size(u,'c'))',y')
@@ -91,7 +91,7 @@ maximum degree of denominator
     //With H:
     yh1=flts(u(:,1:4),H);yh2=flts(u(:,5:10),H,[u(:,2:4); yh1(:,2:4)]);
     norm([yh1,yh2]-rh)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

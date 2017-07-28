@@ -42,13 +42,13 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     G=[1,s;1+s^2,3*s^3];
     [N,B,C]=pol2des(G);
     G1=clean(C*inv(s*N-eye(size(N)))*B),
     G2=G1.num
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

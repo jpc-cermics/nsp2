@@ -20,7 +20,7 @@
 \end{parameters}
 \begin{mandescription}
   Given the linear system in state-space representation 
-  \verb!Sl! (\ref{syslin}, with a \verb!D! matrix which is either
+  \verb!Sl!, with a \verb!D! matrix which is either
   polynomial or constant, but not zero \verb!ss2des!
   returns a descriptor system as a hash table containing keys \verb!(A,B,C,D,E)!
   such that: \verb!Sl=C*(s*E-A)^(-1)*B!.
@@ -30,7 +30,7 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     G=[1/(s+1),s;1+s^2,3*s^3];
     Sl=tf2ss(G);
@@ -39,7 +39,7 @@
     Des=des2ss(S);
     clean(Des.D)
     Des1=des2ss(S1)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

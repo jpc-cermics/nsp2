@@ -94,7 +94,7 @@ as described. It is practical since very often one needs both the min and max of
 %--example 
 \begin{examples}
 \paragraph{first form}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = rand(4,5) 
 
 // min and max of all elements
@@ -120,10 +120,10 @@ x = [1, %nan, 2, %nan]
 [m,km] = min(x)
 [M,kM] = max(x)
 [m,M,km,kM] = minmax(A)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{second form}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(2,2) 
 B = rand(2,2) 
 C = rand(2,2) 
@@ -137,7 +137,7 @@ m = min(A,B,C)
 // in this example we want to limit a random matrix between 0.2 and 0.8 
 A = rand(2,4) 
 B = min(0.8,max(0.2,A))
-\end{Verbatim} 
+\end{mintednsp} 
 
 \end{examples}
 

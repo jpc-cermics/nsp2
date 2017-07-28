@@ -60,7 +60,7 @@ The method itype[] applied on a IMat lets to known the integer type and returns
 one of these 8+6=14 strings.
 
 To summarize here are some basic examples:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // define an imatrix of int32 integer type directly
 A = [ 1i, -6i, 123i ;
      -5i, 13i,  67i]
@@ -83,7 +83,7 @@ intmin(1u)
 intmax(1u)
 intmin(m2i(1,"int8"))
 intmax(1u64)
-\end{Verbatim}
+\end{mintednsp}
 
 %// if you mix both i, u, i64 and u64 : the final integer type is given by the first parsed 
 %// biggest (in number of bits) integer type, for instance:
@@ -154,11 +154,11 @@ transposition (\verb+A'+) are available.
 the intmax limit) and underflow  (an operation leading to an integer less than
 the intmin limit) don't raise any warning or error. Results are computed following the
 rules of modular arithmetic, for instance:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 intmax(1i) + 1i  // should be equal to intmin(1i)
 intmax(1u64) + 1u64 // should be equal to 0 (which is intmin(1u64))
 m2i(127,"int8") + m2i(1,"int8")  // should be equal to -128  (which is intmin(m2i(1,"int8")))
-\end{Verbatim}
+\end{mintednsp}
 
 It is worth noting that for addition and substraction one of the operands could be a scalar:
 \verb=s+M= or \verb=M+s= returns a matrix of same format than \verb+M+

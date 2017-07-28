@@ -37,7 +37,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     G=ssrand(1,1,3);K=ssrand(1,1,3);
     [Se,Re,Te]=sensi(G,K);
     Se1=inv(eye(size(G*K))+G*K);  //Other way to compute
@@ -52,7 +52,7 @@
         ss2tf(G*inv(eye(size(KG))+KG));
         ss2tf(K*G*inv(eye(size(KG))+KG))];
     clean(w1-w2)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

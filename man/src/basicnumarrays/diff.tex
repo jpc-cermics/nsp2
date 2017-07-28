@@ -50,17 +50,17 @@ of a matrix \verb+A+, precisely ($A$ being $m \times n$):
 %--example 
 \begin{examples}
 \paragraph{example 1} basic examples
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = 0:6;
 diff(x)
 x = (0:6).^2;
 diff(x,order=1)
 diff(x,order=2)
 diff(x,order=3)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} approximate derivatives of a function
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 12;
 x = linspace(0,2*%pi,n);
 y = sin(x);
@@ -74,7 +74,7 @@ xm = 0.5*(x(1:$-1) + x(2:$));
 // the exact derivative
 d_exact = cos(xm)
 abs(d - d_exact)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

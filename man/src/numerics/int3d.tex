@@ -83,15 +83,15 @@ to benefit of the speed up).
 \begin{examples}
   
 \paragraph{example 1} integrating on the unit cube 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function v=f(x,y,z);v=cos(x+y+z);endfunction
 [Ia,ea] = int3d([0,1],[0,1],[0,1],f)
 I = -sin(3) + 3*(sin(2)-sin(1)) // exact result  
 abs(Ia-I)
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} integrating on the unit simplex
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 X = [0;1;0;0];
 Y = [0;0;1;0];
 Z = [0;0;0;1];
@@ -99,7 +99,7 @@ function v=f(x,y,z);v=1-x-y-z;endfunction
 [Ia,ea] = int3d(X,Y,Z,f)
 I = 1/24 // exact result  
 abs(Ia-I)
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 3} passing additionnal parameters to the integrand function.
 A test function from the J. Berntsen, R. Cools, T. O. Espelid paper is the
@@ -111,7 +111,7 @@ This function is integrated on the 3d unit simplex and exact result is (for $\al
 $$
 I = \int_0^1 \int_0^{1-x} \int_0^{1-x-y} f(x,y,z) dz dy dx = \frac{1}{6 (1+\alpha_1)(1+\alpha_2)(1+\alpha_3)}
 $$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function v=foo(x,y,z,alpha);
    v = 1./(1 + alpha(1)*x+alpha(2)*y+alpha(3)*z).^4;
 endfunction
@@ -146,7 +146,7 @@ function v=foo(x,y,z,alpha1,alpha2,alpha3);
 endfunction
 [Ia,ea] = int3d(X,Y,Z,foo,args={30,13,91},vecteval=%t)
 abs(I - Ia)
-\end{Verbatim}
+\end{mintednsp}
 
 
 \end{examples}

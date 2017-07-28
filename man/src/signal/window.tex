@@ -80,32 +80,32 @@
 \begin{examples}
   \begin{itemize}
   \item Hamming window
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       N=64;
       w=window('hm',N);
       subplot(121);plot2d(1:N,w,line_color=2);xgrid();
       subplot(122)
       n=256;[W,fr]=frmag(w,n);
       plot2d(fr,20*log(W)/log(10),line_color=2);xgrid();
-    \end{Verbatim}
+    \end{mintednsp}
   \item Kaiser window
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       N=64;
       w=window('kr',N,6);
       subplot(121);plot2d(1:N,w,line_color=2);xgrid();
       subplot(122)
       n=256;[W,fr]=frmag(w,n);
       plot2d(fr,20*log(W)/log(10),line_color=2);xgrid();
-    \end{Verbatim}
+    \end{mintednsp}
   \item Chebyshev window
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       N=64;
       [w,df]=window('ch',N,[0.005,-1]);
       subplot(121);plot2d(1:N,w,line_color=2);xgrid();
       subplot(122)
       n=256;[W,fr]=frmag(w,n);
       plot2d(fr,20*log(W)/log(10),line_color=2);xgrid();
-    \end{Verbatim}
+    \end{mintednsp}
   \end{itemize}
 \end{examples}
 %-- see also

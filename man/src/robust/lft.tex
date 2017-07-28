@@ -38,7 +38,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     P=[1/s, 1/(s+1); 1/(s+2),2/s]; K= 1/(s-1);
     lft(P,K)
@@ -50,7 +50,7 @@
     //Improper plant (PID control)
     W=[1,1;1,1/(s^2+0.1*s)];K=1+1/s+s
     lft(W,[1,1],K); ss2tf(lft(tf2ss(W),[1,1],tf2ss(K)))
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

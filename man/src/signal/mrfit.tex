@@ -51,7 +51,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     w=0.01:0.01:2;s=poly(0,'s');
     // syslin('c',Num,Den);
     G=syslin('c',2*(s^2+0.1*s+2),(s^2+s+1)*(s^2+0.3*s+1)); 
@@ -60,7 +60,7 @@
     Gid=mrfit(w,mag,4);
     frespfit=repfreq(Gid.num,Gid.den,frq=w);
     xbasc();plot2d([w',w'],[mag(:),abs(frespfit(:))])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

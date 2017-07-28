@@ -44,7 +44,7 @@ $$
 %--example 
 \begin{examples}
 \paragraph{example 1} a simple example (we form 2 orthonormal vectors) :
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = randn(5,1);
 y = randn(5,1);
 // step 0
@@ -59,10 +59,10 @@ y = y/norm(y)
 norm(x)  // should be 1
 norm(y)  // should be 1
 dot(x,y) // should be near 0
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} same example with complex vectors
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = randn(5,1) + %i*randn(5,1);
 y = randn(5,1) + %i*randn(5,1);
 // step 0
@@ -78,12 +78,12 @@ y = y/norm(y)
 norm(x)  // should be 1
 norm(y)  // should be 1
 dot(x,y) // should be near 0
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} fastest way to compute the 2-norm of the rows or
  columns vectors of a matrix : in this case you cannot use norm because
  norm computes a matrix norm in this case.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = randn(5,7);
 norm_cols_A = sqrt(dot(A,A,dim=1))
 // test
@@ -102,7 +102,7 @@ A = randn(800,800) + %i*rand(800,800);
 tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()
 // the other method (should be slower)
 tic(); norm_cols_A = sqrt(sum(conj(A).*A,dim=1)); toc()
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

@@ -83,7 +83,7 @@
 \paragraph{Note} See first basic examples on the  \manlink{splin}{splin} help page.
 
 \paragraph{example 1}  illustration of $C^2$ and $C^1$ continuity of spline and subspline
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 a = -8; b = 8;
 function y=sinc(x),k=find(x==0),y=sin(x)./x,y(k)=1,endfunction
 x = linspace(a,b,20)';
@@ -104,10 +104,10 @@ xtitle("spline interpolation (derivatives)")
 subplot(3,1,3)
 plot2d(xx, [yy2k yy2f], style=[2,5], leg="not_a_knot spline@fast sub-spline")
 xtitle("spline interpolation (second derivatives)")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} illustration of the different extrapolation possibilities
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = linspace(0,1,11)';
 y = cosh(x-0.5);
 d = splin(x,y);
@@ -119,7 +119,7 @@ yy3 = interp(xx,x,y,d,outmode="periodic"); // or interp(xx,x,y,d,"periodic");
 xbasc()
 plot2d(xx,[yy0 yy1 yy2 yy3],style=2:5,frameflag=2,leg="C0@linear@natural@periodic")
 xtitle("different ways to evaluate a spline outside its domain")
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

@@ -87,25 +87,25 @@
 
 \noindent A simple example
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x=-%pi:0.01:%pi;
 plot2d(x, sin(x));
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent multiple plots
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x=-%pi:0.01:%pi;
 plot2d(x, [sin(x)', cos(x)'], leg='sin@cos', style=[3,4], leg_pos='ul');
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent using \verb!rect!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x=-3:0.01:3
 xtitle('density of the normal distribution')
 plot2d(x, exp(-x.*x/2)/sqrt(2*%pi), rect=[-3,0,3,1]);
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

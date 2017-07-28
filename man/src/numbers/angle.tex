@@ -28,17 +28,18 @@ to $\pi$ and not $-\pi$).
 
 %--example
 \begin{examples}
-\begin{program}\HCode{theta = grand(1,9,'unf',-\%pi,\%pi)\Hnewline
-z=rand(1,9).*exp(\%i*theta);\Hnewline
-a = angle(z)\Hnewline
-// without any floating point error a should be equal to theta\Hnewline
-abs(theta - a)\Hnewline
-angle(2)  // should be 0\Hnewline
-a = angle(-2)  // should be pi\Hnewline
-a - \%pi\Hnewline
-a = angle(complex(-2,-1e-15)) // should be near -pi\Hnewline
-a + \%pi}
-\end{program}
+\begin{mintednsp}{nspxxx}
+theta = grand(1,9,'unf',- %pi, %pi)
+z=rand(1,9).*exp( %i*theta);
+a = angle(z)
+// without any floating point error a should be equal to theta
+abs(theta - a)
+angle(2)  // should be 0
+a = angle(-2)  // should be pi
+a - %pi
+a = angle(complex(-2,-1e-15)) // should be near -pi
+a + %pi
+\end{mintednsp}
 \end{examples}
 
 %-- see also

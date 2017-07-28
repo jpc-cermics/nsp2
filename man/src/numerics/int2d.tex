@@ -96,15 +96,15 @@ the rectangle.
 \begin{examples}
   
 \paragraph{example 1} a simple example, integrating on the unit square: 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function z=f(x,y);z=cos(x+y);endfunction
 [Ia,ea,ier] = int2d([0,1],[0,1],f) 
 I = -cos(2)+2*cos(1)-1 // exact result  
 abs(Ia-I) //near exact absolute error
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 1bis} the same example using triangles
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function z=f(x,y);z=cos(x+y);endfunction
 // the unit square is divided in 2 triangles:
 X = [0,1;1,1;0,0];
@@ -112,10 +112,10 @@ Y = [0,0;0,1;1,1];
 [Ia,ea,ier] = int2d(X,Y,f)
 I = -cos(2)+2*cos(1)-1 // exact result  
 abs(Ia-I) //near exact absolute error
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} a more difficult one's, always on the unit square:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function z=f(x,y);z=cos(10*x+20*y);endfunction
 
 I = (-cos(30)+cos(10)+cos(20)-1)/200 // exact result  
@@ -133,11 +133,11 @@ abs(Ia-I)
 tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()
 // timing with vectorial evaluation (this should be faster)
 tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t); toc()
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 3} passing additional parameters to the integrand function.
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // one parameter
 function z=f(x,y,a);z=cos(a*x+20*y);endfunction
 [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t,args={10})
@@ -149,7 +149,7 @@ Ia - (-cos(30)+cos(10)+cos(20)-1)/200
 function z=f(x,y,a,b);z=cos(a*x+b*y);endfunction
 [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t,args={10,20})
 Ia - (-cos(30)+cos(10)+cos(20)-1)/200
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} integrating a singularity. Here we try to compute:
 $$
@@ -157,7 +157,7 @@ $$
 $$ 
 In this case we could always use \verb+iclose=%t+ because the singularity is
 located only at one vertex $(0,0)$:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function z=f(x,y);z = 1./(x+y); endfunction
 X = [0;1;0]; Y = [0;0;1];
 [Ia,ea,ier] = int2d(X,Y,f,limit=1000)
@@ -166,7 +166,7 @@ abs(Ia-1)
 // show once again the speed-up using vector evaluation of f
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000); toc()
 tic(); [Ia,ea,ier] = int2d(X,Y,f,limit=1000,vecteval=%t); toc()
-\end{Verbatim}
+\end{mintednsp}
 Rmk: a singularity at the origin could be removed using polar
 coordinates but in case of the unit triangle it may be better
 to use $x = u(1-v), y = uv$, $dxdy = u dudv$ because $u$ and $v$

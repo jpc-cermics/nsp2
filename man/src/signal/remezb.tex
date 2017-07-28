@@ -53,7 +53,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     // Choose the number of cosine functions and create a dense grid 
     // in [0,.24) and [.26,.5)
     nc=21;ngrid=nc*16;
@@ -72,9 +72,9 @@
     hn(nc+1:2*nc-1)=an(2:nc)/2;
     // Plot the filter's magnitude response
     xbasc();plot2d(.5*(0:255)/256,frmag(hn,256));
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     // Choose the number of cosine functions and create a dense grid in [0,.5)
     nc=21; ngrid=nc*16;
     fg=.5*(0:(ngrid-1))/ngrid;
@@ -93,7 +93,7 @@
     xbasc();   plot2d(.5*(0:255)/256,frmag(hn,256));
     // --example 
     xbasc();plot2d([],sincd(10,1)) 
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

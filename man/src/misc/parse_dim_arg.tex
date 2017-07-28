@@ -47,7 +47,7 @@ meaningful message you can provide the optional argument
 % --example 
 \begin{examples}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function mu = freqmean(x,freq,dim=0)
    dim = parse_dim_arg(dim,names=["dim","freqmean"])
    if dim == -1 || dim > 2 then
@@ -66,7 +66,7 @@ mu = freqmean(x,f,dim="c");
 if execstr('mu = freqmean(x,f,dim=-3)',errcatch=%t) then pause;end
 if execstr('mu = freqmean(x,f,dim=3)',errcatch=%t) then pause;end
 lasterror();
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

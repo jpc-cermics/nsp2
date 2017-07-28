@@ -44,7 +44,7 @@ is computed.
 %--example 
 \begin{examples}
 \paragraph{first form examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 nchoosek(6,4)
 
 // should be equal to 6!/(4!*2!) and n! could be computed by prod(1:n)
@@ -52,18 +52,18 @@ prod(1:6)/(prod(1:4)*prod(1:2))
 
 // test symmetry
 nchoosek(6,2)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{examples}
 \paragraph{second form}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // all subsets with 3 elements of {1,2,3,4,5}
 nchoosek(1:5,3)
 
 // all subsets with 2 elements of {"biniou","grand-mere","gratte"}
 nchoosek(["biniou","grand-mere","gratte"],2)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 

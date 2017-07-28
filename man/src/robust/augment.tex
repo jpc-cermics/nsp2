@@ -78,7 +78,7 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     G=ssrand(2,3,2); //Plant
     K=ssrand(3,2,2); //Compensator
     [P,r]=augment(G,'T');
@@ -94,7 +94,7 @@
     Oloop=Ktf*Gtf;
     T1n=Oloop*inv(eye(size(Oloop))+Oloop);
     clean(T1tf(1,1)-T1n(1,1))
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

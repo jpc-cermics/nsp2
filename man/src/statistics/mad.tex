@@ -54,14 +54,14 @@ outliers.
 \end{mandescription}
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // use mad to estimate the std : if X are gaussian random variates
 // then a consistent estimator is mad / cdfnor("X",0,1,3/4,1/4)
 sigma= 2 
 X = grand(1,40,"nor",2,sigma);
 mad(X)/cdfnor("X",0,1,3/4,1/4)
 std(X)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 %-- see also

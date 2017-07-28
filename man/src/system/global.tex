@@ -37,14 +37,14 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function y=f(x); global(a=5); y=x+a; endfunction;
     f(0);
     clearglobal a;
     global(a=10);
     f(0);
     exists('a','global');
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

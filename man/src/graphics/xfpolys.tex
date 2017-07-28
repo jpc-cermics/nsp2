@@ -70,7 +70,7 @@
 \begin{examples}
 
 \noindent Using a \verb!fill! argument
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(frect=[-10,-10,210,40]);
   x1=[0,10,20,30,20,10,0]';
   y1=[15,30,30,15,0,0,15]';
@@ -78,22 +78,22 @@
   ypols=[y1 y1 y1 y1];
   xset('thickness',3);
   xfpolys(xpols,ypols,[-1,0,10,13])
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent Using options
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(frect=[-10,-10,210,40]);
   x1=[0,10,20,30,20,10,0]';
   y1=[15,30,30,15,0,0,15]';
   xpols=[x1 x1 x1 x1]; xpols=xpols+[0,60,120,180].*.ones(size(x1));
   ypols=[y1 y1 y1 y1];
   xfpolys(xpols,ypols,color=[-2,-1,5,6], fill_color=[4,-2,10,13],thickness=3);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent Mixing \verb!plot2d! and \verb!xfpolys!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function plot2d_polys(x,y,n,s,varargopt)
   plot2d(x,y,varargopt(:));
   z=ones(1,size(x,'*'));
@@ -109,7 +109,7 @@ function plot2d_polys(x,y,n,s,varargopt)
 endfunction
 
 x=1:20;y=x.*sin(x);plot2d_polys(x,y/3,5,1.0,line_color=5)
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

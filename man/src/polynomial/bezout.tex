@@ -43,7 +43,7 @@
 \begin{examples}
   \begin{itemize}
   \item polynomial case 
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       x=poly(0,'x');
       p1=(x+1)*(x-3)^5;p2=(x-2)*(x-3)^3;
       [thegcd,U]=bezout(p1,p2) 
@@ -51,16 +51,16 @@
       clean([p1,p2]*U)
       thelcm=p1*U(1,2)
       lcm([p1,p2])
-    \end{Verbatim}
+    \end{mintednsp}
   \item integer case 
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       i1=m2i(2*3^5); i2=m2i(2^3*3^2);
       [thegcd,U]=bezout(i1,i2) 
       V=m2i([2^2*3^5, 2^3*3^2,2^2*3^4*5]);
       [thegcd,U]=gcd(V)
       V*U
       lcm(V)
-    \end{Verbatim}
+    \end{mintednsp}
   \end{itemize}
 \end{examples}
 %-- see also

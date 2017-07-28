@@ -54,7 +54,7 @@ case the function extract the $k$ th diagonal of the matrix $A$ as a column vect
 %--example 
 \begin{examples}
 \paragraph{first form examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 v=rand(4,1) 
 diag(v) 
 diag(v,-1) 
@@ -67,15 +67,15 @@ A = 2*eye(n) - diag(v,1) + diag(v,-1)
 n = 5;
 v = sparse(ones(n-1,1));
 A = 2*speye(n,n) - diag(v,1) + diag(v,-1)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{second form examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(4,5) 
 diag(A) 
 diag(A,-1) 
 diag(A,1)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 %-- see also

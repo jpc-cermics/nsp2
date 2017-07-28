@@ -99,7 +99,7 @@ where an additional transformation is performed on the columns of \verb!A!.
 \end{mandescription}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(5,5);
 [L,U,p,rc]=lu(A);
 
@@ -118,7 +118,7 @@ norm(A*x2-b2)
 b3=rand(5,4);
 x3 = U\(L\b3(p,:));
 A*x3 - b3
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

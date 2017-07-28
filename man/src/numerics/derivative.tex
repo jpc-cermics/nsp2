@@ -95,7 +95,7 @@ See example 3 (see also \manlink{intg}{intg} example section).
 \begin{examples}
   
 \paragraph{example 1} a simple example with $f(x)=cos(x)exp(-x)$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x);y=cos(x)*exp(-x);endfunction
 
 function y=df(x);y=-(sin(x)+cos(x))*exp(-x);endfunction
@@ -128,12 +128,12 @@ abs((yppa-ypp)/ypp)
 // compute errors 
 abs((ypa-yp)/yp) 
 abs((yppa-ypp)/ypp)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} a more complicated function:
 $$f(x,y,z) = \frac{\cos(x) z}{1+y^2} + e^{-x^2} y^3 (2z^2-1)$$.
 In the following we note $X = [x,y,z]^{\top}$:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function v = f(X)
    v = cos(X(1))/(1+X(2)^2)*X(3) + exp(-X(1)^2)*X(2)^3*(2*X(3)^2-1)
 endfunction
@@ -169,11 +169,11 @@ norm(H-Ha)/norm(Ha)
 [Ja,Ha] = derivative(f,X,order=4)
 norm(J-Ja)/norm(J)
 norm(H-Ha)/norm(Ha)
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 3} an easy example which shows how to pass
 supplementary arguments:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x,A,b);y=dot(0.5*(A*x)-b,x);endfunction
 
 A = [1,2;2,-0.5]; b=[1;-1]; 
@@ -184,7 +184,7 @@ x = randn(2,1);
 // order 2 and 4  but are not due to numerical noise by cancellation 
 J - (A*x-b)' 
 H - A
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

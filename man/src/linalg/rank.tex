@@ -47,20 +47,20 @@ default value of tol is proportional to norm(A).
 
 \begin{examples}
 \paragraph{example 1} a generic 10 x 5 matrix of rank 2:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
      A=rand(10,2)*rand(2,5);
      rk=rank(A);
      sv=svd(A);
      [m,n]=size(A);rscal=max(m,n)*sv(1)*%eps;
      rk=rank(A,tol=rscal);
-  \end{Verbatim}
+  \end{mintednsp}
 \paragraph{example 2} a 2 x 2 diagonal matrix with rank 1
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=diag([%eps 0]);
     rk=rank(A);
     rk=rank(A*%eps);  //One cannot just trust relative tolerance
     //if this A is the result of a computation, the rank is probably 0! 
-  \end{Verbatim}
+  \end{mintednsp}
 
 \end{examples}
 

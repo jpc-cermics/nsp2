@@ -35,7 +35,7 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     s=poly(0,'s');
     G=[1/(s+1),s;1+s^2,3*s^3];
     De=tf2des(G);
@@ -44,7 +44,7 @@
     Tf2=des2tf(De2)
     A=De2.A;B=De2.B;C=De2.C;D=De2.D;E=De2.E;
     Tf3=C*inv(s*E-A)*B+D
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

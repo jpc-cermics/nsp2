@@ -50,18 +50,18 @@
 
 \noindent A first example \verb!xrects(rects,cols)!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   plot2d([-100,500],[-50,50],style=[-1,-1],strf="022")
   cols=[-34,-33,-32,-20:5:20,32,33,34];
   x=400*(0:14)/14; step=20;
   rects=[x;10*ones(size(x));step*ones(size(x));30*ones(size(x))];
   xrects(rects,cols)
   xnumb(x,15*ones(size(x)),cols)
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent A second example with optional arguments
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   plot2d([-100,500],[-50,50],style=[-1,-1],strf="022")
   x=400*(0:14)/14; step=20;
   rects=[x;10*ones(size(x));step*ones(size(x));30*ones(size(x))];
@@ -69,11 +69,11 @@
   color=[6*ones(1,5),ones(1,5),4*ones(1,5)];
   thickness=[4*ones(1,5),ones(1,5),4*ones(1,5)];
   xrects(rects,background=background,color=color,thickness=thickness);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent An hinton diagram (idea from matplotlib)
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function hinton(A,varargopt)
   xsetech(axesflag=2);
   xset('colormap',graycolormap(8));
@@ -88,7 +88,7 @@ function hinton(A,varargopt)
 endfunction
 
 hinton(randn(20,20));
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 %-- see also

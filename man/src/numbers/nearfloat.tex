@@ -36,29 +36,31 @@
 between 2 neighboring floating numbers increases by a factor
 of $b$ at each positive or negative power of the base $b$.
 Here $b$ is assumed to be 2.   
-\begin{program}\HCode{format("long e")\Hnewline
-// 0.125 = 2^(-3)\Hnewline
-inc_before = 0.125 - nearfloat("pred",0.125)\Hnewline
-inc_after = nearfloat("succ",0.125) - 0.125\Hnewline
-inc_after/inc_before\Hnewline
-// 1 = 2^0\Hnewline
-inc_before = 1 - nearfloat("pred",1)\Hnewline
-inc_after = nearfloat("succ",1) - 1\Hnewline
-inc_after/inc_before\Hnewline
-// 8 = 2^3\Hnewline
-inc_before = 8 - nearfloat("pred",8)\Hnewline
-inc_after = nearfloat("succ",8) - 8\Hnewline
-inc_after/inc_before}
-\end{program}
+\begin{mintednsp}{nspxxx}
+format("long e")
+// 0.125 = 2^(-3)
+inc_before = 0.125 - nearfloat("pred",0.125)
+inc_after = nearfloat("succ",0.125) - 0.125
+inc_after/inc_before
+// 1 = 2^0
+inc_before = 1 - nearfloat("pred",1)
+inc_after = nearfloat("succ",1) - 1
+inc_after/inc_before
+// 8 = 2^3
+inc_before = 8 - nearfloat("pred",8)
+inc_after = nearfloat("succ",8) - 8
+inc_after/inc_before;
+\end{mintednsp}
 
 \paragraph{example 2}
-\begin{program}\HCode{format("long e")\Hnewline
-// successor of huge (should be Inf)\Hnewline
-huge = number_properties("huge")\Hnewline
-nearfloat("succ",huge)\Hnewline
-// predecessor of Inf (should be huge)\Hnewline
-nearfloat("pred",\%inf) - huge}
-\end{program}
+\begin{mintednsp}{nspxxx}
+format("long e")
+// successor of huge (should be Inf)
+huge = number_properties("huge")
+nearfloat("succ",huge)
+// predecessor of Inf (should be huge)
+nearfloat("pred",%inf) - huge
+\end{mintednsp}
 
 \end{examples}
 

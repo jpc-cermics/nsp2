@@ -42,7 +42,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     m=0.8;z=%asn(1/sqrt(m),m);K=real(z);Ktilde=imag(z);
     x2max=1/sqrt(m);
     x1=0:0.05:1;x2=1:((x2max-1)/20):x2max;x3=x2max:0.05:10;
@@ -53,7 +53,7 @@
     //
     function y=f(t), y=1/sqrt((1-t^2)*(1-m*t^2));endfunction;
     intg(0,0.9,f)-%asn(0.9,m)  //Works for real case only!
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- Author
 \begin{authors}

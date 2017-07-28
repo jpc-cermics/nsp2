@@ -83,7 +83,7 @@ the function they are normalized such that they sum up to $1$.
 
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 m = 500;
 Mu = [-2;5];
 Cv = [0.5, 0.3; 0.3, 2];
@@ -92,7 +92,7 @@ Cv = [0.5, 0.3; 0.3, 2];
 X = grand(m,"mn",Mu,Cv)'; // transpose to get the good format for cov
 estimed_mean = mean(X,dim=1)  // should tend to Mu when m -> + oo
 estimed_cov = cov(X)          // should tend to Cv when m -> + oo
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 %-- see also

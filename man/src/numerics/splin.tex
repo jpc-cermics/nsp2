@@ -103,37 +103,37 @@
 
   \begin{examples}
 \paragraph{example 1} interpolating the Runge function.
-\begin{program}\HCode{function y=runge(x), y = 1./(1 + x.^2), endfunction;\Hnewline
-a = -5; b = 5; n = 11; m = 400;\Hnewline
-x = linspace(a, b, n)';\Hnewline
-y = runge(x);\Hnewline
-d = splin(x, y);\Hnewline
-xx = linspace(a, b, m)';\Hnewline
-yyi = interp(xx, x, y, d);\Hnewline
-yye = runge(xx);\Hnewline
-xbasc()\Hnewline
-plot2d(xx, [yyi yye], style=[2 5], leg="interpolation spline@exact function")\Hnewline
-plot2d(x, y, style=-9)\Hnewline
-xtitle("interpolation of the Runge function")\Hnewline
-}
-    \end{program}
+\begin{mintednsp}{nspxxx}
+function y=runge(x), y = 1./(1 + x.^2), endfunction;
+a = -5; b = 5; n = 11; m = 400;
+x = linspace(a, b, n)';
+y = runge(x);
+d = splin(x, y);
+xx = linspace(a, b, m)';
+yyi = interp(xx, x, y, d);
+yye = runge(xx);
+xbasc()
+plot2d(xx, [yyi yye], style=[2 5], leg="interpolation spline@exact function")
+plot2d(x, y, style=-9)
+xtitle("interpolation of the Runge function")
+    \end{mintednsp}
 \paragraph{example 2} behavior of different splines on some random datas.
- \begin{program}\HCode{a = 0; b = 1;        // interval of interpolation\Hnewline
-n = 10;              // nb of interpolation  points\Hnewline
-m = 800;             // discretisation for evaluation\Hnewline
-x = linspace(a,b,n)'; // abscissae of interpolation points\Hnewline
-y = rand(x);          // ordinates of interpolation points\Hnewline
-xx = linspace(a,b,m)';\Hnewline
-yk = interp(xx, x, y, splin(x,y,"not_a_knot"));\Hnewline
-yf = interp(xx, x, y, splin(x,y,"fast"));\Hnewline
-ym = interp(xx, x, y, splin(x,y,"monotone"));\Hnewline
-xbasc()\Hnewline
-plot2d(xx, [yf ym yk], style=[5 2 3], strf="121", leg="fast@monotone@not a knot spline")\Hnewline
-plot2d(x,y,style=-9, strf="000")  // to show interpolation points\Hnewline
-xtitle("Various spline and sub-splines on random datas")\Hnewline
-xselect()\Hnewline
- }
-\end{program}
+ \begin{mintednsp}{nspxxx}
+a = 0; b = 1;        // interval of interpolation
+n = 10;              // nb of interpolation  points
+m = 800;             // discretisation for evaluation
+x = linspace(a,b,n)'; // abscissae of interpolation points
+y = rand(x);          // ordinates of interpolation points
+xx = linspace(a,b,m)';
+yk = interp(xx, x, y, splin(x,y,"not_a_knot"));
+yf = interp(xx, x, y, splin(x,y,"fast"));
+ym = interp(xx, x, y, splin(x,y,"monotone"));
+xbasc()
+plot2d(xx, [yf ym yk], style=[5 2 3], strf="121", leg="fast@monotone@not a knot spline")
+plot2d(x,y,style=-9, strf="000")  // to show interpolation points
+xtitle("Various spline and sub-splines on random datas")
+xselect()
+\end{mintednsp}
 
   \end{examples}
 

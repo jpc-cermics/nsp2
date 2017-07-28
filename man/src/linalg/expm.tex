@@ -48,7 +48,7 @@ using routines from R. B. Sidje 's expokit package.
 \begin{examples}
 
 \paragraph{simple example}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 M = randn(4,4);
 lambda = [-5; -0.2; 3; 10];
 A = M*diag(lambda)*inv(M);
@@ -59,13 +59,13 @@ C =  M*diag(exp(lambda))*inv(M);
 // compare
 abs(B-C)
 err = norm(B-C)/norm(C)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Using expm to solve an ode.} The solution of the linear ode, $\dot{u}(t) = A u(t)$, $u(0)=u_0$,
 is $u(t) = e^{tA} u(0)$. The solution at time instants $t_k = k \Delta t$ could be
 obtained by computing the exponential of the matrix $\Delta t A$ and the recurrence 
 $u(t_k) = \exp(\Delta t A) u(t_{k-1})$:  
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [-0.1, -1  ,  0;...
       1  , -0.1,  1;...
       0  , -1  , -0.1];
@@ -87,7 +87,7 @@ col = xget("color")
 xset("color",5) // red
 param3d(u0(1),u0(2),u0(3),style=-3,flag=[0,0]) 
 xset("color",col)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

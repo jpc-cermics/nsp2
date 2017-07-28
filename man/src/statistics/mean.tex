@@ -73,7 +73,7 @@ mean can be retrieved as second argument of these functions.
 %--example 
 \begin{examples}
 \paragraph{example 1} empirical mean got from random samples of known probability distributions 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 500;
 X = randn(n,1);  // a sample from N(0,1)
 mean(X)   // should tend to zero when n -> +oo
@@ -83,33 +83,33 @@ mean(X)   // should tend to 100*0.35 when n -> +oo
 
 X = grand(n,1,"geom",0.2); // a sample from G(0.2)
 mean(X)   // should tend to 1/0.2 = 5 when n -> +oo
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} mean of each row and each column
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 X = rand(6,4);
 // mean of the columns
 mean(X,dim=1)
 // mean of the rows
 mean(X,dim=2)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} trimmed mean
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 X = [-7,1,0.0.5,-0.4,0.2,0.9,1.2,12];
 // usual mean
 mean(X)
 // trimmed mean (1 extremal value removed at both ends)
 mean(X,trim=1/length(X))
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} weighted mean
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 20; p = 0.4
 X = 0:n;
 wgt = pdf("bin",X, n,p);
 mean(X, weights=wgt)  // should be exactly n*p=0.8
-\end{Verbatim}
+\end{mintednsp}
 
 
 \end{examples}

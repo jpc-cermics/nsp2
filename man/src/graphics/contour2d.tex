@@ -26,10 +26,10 @@
       Note that the \verb!zmin! and \verb!zmax!
       levels are not drawn (generically they are reduced to points)
       but they can be added with
-      \begin{Verbatim}
+      \begin{mintednsp}{nsp}
         [im,jm] = find(z == zmin); // or zmax
         plot2d(x(im)',y(jm)',-9)
-      \end{Verbatim}
+      \end{mintednsp}
       \vname{-}If \verb!nv! is a vector, \verb!nv(i)! gives
       the value of the ith level curve.
     \end{varlist}
@@ -69,17 +69,17 @@
 
 \noindent A first example
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   contour2d(1:10,1:10,rand(10,10),5,rect=[0,0,11,11],style=1:5)
   // changing the format of the printing of the levels
   xset("fpf","%.2f");
   F=get_current_figure();
   F.invalidate[];
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent A second example
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xset('colormap',jetcolormap(11));
   x=linspace(0,2*%pi,20);y=linspace(1,10,50);
   levels=-10:2:10;
@@ -87,17 +87,17 @@
   contour2d(x,y,sin(x)'*y,levels,style=1:11)
   for i=1:11, plot2d(0,0,line_color=i,leg=string(levels(i)),leg_pos='urm');end
   xtitle("level curves of function sin(x)*y");
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent A third example with \verb!contourf!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xset('colormap',jetcolormap(11));
   x=linspace(0,2*%pi,20);y=linspace(1,10,50);
   levels=-10:2:10;
   contourf(x,y,sin(x)'*y,nv=levels);
   xtitle("level curves of function sin(x)*y");
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 %-- see also

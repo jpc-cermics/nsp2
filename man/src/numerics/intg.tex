@@ -108,22 +108,22 @@ of just one) you can use \verb+sing=linspace(a,b,11)+.
 \begin{examples}
   
 \paragraph{example 1} a simple example 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f1(x);y=exp(x);endfunction
 [I,ea] = intg(0,1,f1)
 abs(I-(%e-1)) // exact absolute error
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} comparizon with the error function
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f2(x);y=2*exp(-x^2)/sqrt(%pi);endfunction
 [Ia,ea] = intg(0,0.5,f2)
 I = erf(0.5)
 abs(I - Ia)
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 3} passing extra parameters (see also example 5). 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // a function with one parameter
 function y=g(x,a);y=a*x;endfunction
 // in this case the usual syntax :
@@ -136,7 +136,7 @@ abs(Ia - 2*%pi^2)
 function y=g(x,a,w);y=a*x + sin(w*x);endfunction
 [Ia,ea] = intg(0,2*%pi,g,args={1,1}) // exact result is 2*pi^2
 abs(Ia - 2*%pi^2)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} a difficult problem. Here we try to integrate:
 $$
@@ -150,7 +150,7 @@ $$
 $$
 so we know the exact result ($I=\cos(1)$). We write the function in a vectorial
 manner so as to experiment also with the \verb+vecteval+ option. 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction
 
 // 1/ reduce the tolerance
@@ -167,13 +167,13 @@ tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000); toc()
 
 // 5/ the same using vecteval=%t (it must be faster)
 tic(); [Ia,ea,ier] = intg(0,1,f, rtol=1e-7, limit=10000, vecteval=%t); toc()
-\end{Verbatim}
+\end{mintednsp}
 
   
 \paragraph{example 5} In this example we try to integrate probability 
 density functions, theorical results must be all equal to 1 (see the
 \manlink{pdf}{pdf} help page). 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // a function to handle all pdf functions with intg
 function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
 
@@ -191,14 +191,14 @@ function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
 
 // integrate the beta (2,6) density
 [Ia, ea, ier] = intg(0, 1, f, args={{"bet",2,6}})
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 6} Integration with singularities.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x);y = log(abs(x)); endfunction
 [Ia,ea,ier] = intg(-1,1,f, sing=0) // exact result is -2
 Ia+2
-\end{Verbatim}
+\end{mintednsp}
 
 
 \end{examples}

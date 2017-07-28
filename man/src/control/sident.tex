@@ -88,7 +88,7 @@ and  A, B, C, D, and K  are real matrices of appropriate dimensions.
 4. The n-by-l Kalman predictor gain matrix K and the covariance matrices Q, Ry, and S are computed for t $>$ 0.
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     //generate data from a given linear system
     A = [ 0.5, 0.1,-0.1, 0.2;
       0.1, 0,  -0.1,-0.1;      
@@ -118,7 +118,7 @@ and  A, B, C, D, and K  are real matrices of appropriate dimensions.
     SYS1.X0 = inistate(SYS1,Y',U');
     Y1=flts(U,SYS1);
     xbasc();plot2d((1:nsmp)',[Y',Y1'])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

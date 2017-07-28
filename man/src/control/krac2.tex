@@ -23,13 +23,13 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     h=syslin('c',352*poly(-5,'s')/poly([0,0,2000,200,25,1],'s','c'));
     xbasc();evans(h.num,h.den,100)
     g=krac2(h)
     hf1= h /. g(1);roots(hf1.den)
     hf2= h /. g(2);roots(hf2.den)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

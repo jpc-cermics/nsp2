@@ -41,7 +41,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     n=8;omega = exp(-2*%pi*%i/n);
     j=0:n-1;F=omega.^(j'*j);  //Fourier matrix
     x=1:8;x=x(:);
@@ -51,7 +51,7 @@
     inv(F)*x
     ifft(x)
     dft(x,1)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -42,15 +42,15 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     [a,b]=sscanf(2,["8 9 10";"11 12 14"],"%d %d");
     S=string(rand(4,3));
     S=catenate(S,col=" "); // change to column matrix
     format=catenate(smat_create(1,3,"%f"),sep=" ");
     [a,b,c]=sscanf(-1,S,format)
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     n=10;
     A=int(100*rand(4,n));
     S=string(A);
@@ -60,7 +60,7 @@
     L(1:n)=sscanf(-1,S,format);
     L.compact[];
     A.equal[L(1)]
-  \end{Verbatim}
+  \end{mintednsp}
 
 \end{examples}
 % -- see also

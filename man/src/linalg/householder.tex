@@ -51,11 +51,11 @@
   \manlink{qr}{qr} \manlink{givens}{givens}  
 \end{manseealso}
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     v=(1:5)';
     u=householder(v);
     if rank( [(eye(size(u*u'))-2*u*u')*v,eye(size(v))]) <> 1 then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 \begin{authors}
   François Delebecque

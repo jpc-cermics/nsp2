@@ -31,10 +31,10 @@
   \end{varlist}
 \end{mandescription} 
 \begin{examples}
-  \begin{Verbatim}
-    T=localtime();
-    D =gdate_create(T.day,T.mon+1,T.year+1900);
+  \begin{mintednsp}{nsp}
+    T  =localtime();
+    D=gdate_create(T.day,T.mon+1,T.year+1900);
     D1 = gdate_create();
     D.compare[D1]
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}

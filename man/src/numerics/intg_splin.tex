@@ -42,7 +42,7 @@ $$
   %--example 
   \begin{examples}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 a = -8; b = 8;
 function y=sinc(x),k=find(x==0),y=sin(x)./x,y(k)=1,endfunction
 x = linspace(a,b,40)';
@@ -57,7 +57,7 @@ I = intg(a,b,sinc)
 
 // compute relative error
 e = abs((Ik-I)/I)
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

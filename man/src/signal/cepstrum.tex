@@ -45,12 +45,12 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     w=0.1:0.1:5;mag=1+abs(sin(w));
     fresp=cepstrum(w,mag);
     xclear();
     plot2d([w',w'],[mag(:),abs(fresp)])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

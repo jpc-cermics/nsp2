@@ -38,14 +38,14 @@
 \end{mandescription}
 %--example
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x=2*%pi*linspace(0,1,30);x($)=[];
     x1=[sin(x);(1.5+x).*sin(x)];
     y1=[cos(x);(1.5+x).*cos(x)];
     xsetech(frect=[-8,-8,6,10],fixed=%t,clip=%t,iso=%t);
     xset('colormap',jetcolormap(32));
     xarrows(x1,y1,arsize=0.5,style=1:length(x));
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- Author
 \begin{authors}

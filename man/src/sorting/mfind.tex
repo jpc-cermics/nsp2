@@ -54,7 +54,7 @@ f(x) = \left\{ \begin{array}{ll}
   x-\pi/2 & \mbox{ if } x \ge  \pi/2 
 \end{array}\right.
 $$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x) 
    y = zeros(size(x)); 
    [ind1, ind2, ind3, indNan] = mfind(x,"<=",0,"<=",%pi/2,"<=",%inf, ind_type="int"); 
@@ -70,7 +70,7 @@ plot2d(x,y);
 f(%nan) 
 f(%inf) 
 f(-%inf) 
-\end{Verbatim}
+\end{mintednsp}
 
  
 \end{examples}

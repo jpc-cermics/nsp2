@@ -39,21 +39,22 @@
   monotinicity of P with the other parameter.
 \end{mandescription}
 
-\begin{program}\HCode{x=linspace(0,1,100);\Hnewline
-A =2;\Hnewline
-B =3;\Hnewline
-y= cdfbet("PQ",x,1-x,A*ones(x),B*ones(x));\Hnewline
-\Hnewline
-function y=f(x)\Hnewline
-  y = gamma(A+B)/(gamma(A)*gamma(B))*x^(A-1)*(1-x)^(B-1)\Hnewline
-endfunction;\Hnewline
-\Hnewline
-z=x;\Hnewline
-for i=1:length(x)\Hnewline
-  z(i) = intg(0,x(i),f);\Hnewline
-end\Hnewline
-err=max(abs(y-z));}
-\end{program}
+\begin{mintednsp}{nspxxx}
+x=linspace(0,1,100);
+A =2;
+B =3;
+y= cdfbet("PQ",x,1-x,A*ones(x),B*ones(x));
+
+function y=f(x)
+  y = gamma(A+B)/(gamma(A)*gamma(B))*x^(A-1)*(1-x)^(B-1)
+endfunction;
+
+z=x;
+for i=1:length(x)
+  z(i) = intg(0,x(i),f);
+end
+err=max(abs(y-z));
+\end{mintednsp}
 
 \begin{authors}
   Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 

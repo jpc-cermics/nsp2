@@ -62,7 +62,7 @@
   \end{itemize}
 \end{mandescription}
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   A=randn(6,5);
   kerA=kernel(A) // should be 5 x 0 empty matrix 
   if or(size(kerA)<>[5,0]) then pause;end
@@ -70,7 +70,7 @@
   A(:,$) = sum(A(:,1:$-1),2);
   kerA=kernel(A) // should be now 5 x 1
   if or(size(kerA)<>[5,1]) then pause;end
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 \begin{manseealso}
   \manlink{qr}{qr}, \manlink{orth}{orth}

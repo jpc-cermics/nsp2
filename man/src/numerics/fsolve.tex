@@ -114,7 +114,7 @@ $$
   f(x) = x - e^{-(1+x)}, \; f'(x) = 1 + e^{-(1+x)}
 $$ 
 has exactly one root located in $(0,1)$.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f(x);y = x - exp(-1-x);endfunction
 
 // simple call to fsolve
@@ -126,14 +126,14 @@ function y=df(x);y = 1 + exp(-1-x);endfunction
 
 // playing with xtol, ftol
 [r,fr,info] = fsolve(0,f,jac=df,ftol=%eps,xtol=0)
-\end{Verbatim}
+\end{mintednsp}
  
 \paragraph{example 2} two equations, two unknowns. In the second example
 of the \manlink{ode}{ode} help page (The Brusselator) one can looks for
 the stationnary point(s) of the ode. In fact it is straitforward to see
 that there is one unique such point $(2;(5+eps)/2)$ but lets use fsolve
 anyway.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function [f] = brusselator(u,eps)
    f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...
         (5+eps)*u(1) - u(1)^2*u(2)]
@@ -144,7 +144,7 @@ eps = 2;
 // compute the relative error
 ze = [2 ; (5+eps)/2];
 norm(z-ze)/norm(ze)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

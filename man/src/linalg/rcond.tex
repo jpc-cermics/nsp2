@@ -69,7 +69,7 @@ to detect potential numerical problem. See example 2.
 
 \begin{examples}
 \paragraph{example 1}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(51,51);
 rc=rcond(A)
 // make a singular system:
@@ -78,10 +78,10 @@ rc=rcond(A)
 // solve a Ax=b linear system (the bad conditionning is detected)
 b = rand(51,1);
 x = A\b;
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} a badly conditionned triangular matrix
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // make such a triangular matrix
 T = triu(rand(500,500));
 b = rand(500,1);
@@ -95,7 +95,7 @@ norm(T*x-b)/norm(b)
 x = lsq(T,b);
 // the relative residual is now better
 norm(T*x-b)/norm(b)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

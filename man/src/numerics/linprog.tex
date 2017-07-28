@@ -120,8 +120,8 @@ solution without starting from scratch if you output the fourth \verb+extra+
 parameter which contains current basis information. For that purpose you
 need to set the \verb+basis_info+ solver option this way:
 \begin{Verbatim}
-sopt = hash(basis_info=extras.basis_info [, others_options]);
-[xopt, fopt, flag, extras] = linprog(....., solver_options=sopt);
+  sopt = hash(basis_info=extras.basis_info [, others_options]);
+  [xopt, fopt, flag, extras] = linprog(....., solver_options=sopt);
 \end{Verbatim}
 For a MIP the only way to help the solver in a second run, is to provide 
 it the feasible solution found in the first call using \verb+heur_sol=xopt+ 
@@ -239,22 +239,22 @@ $$
       x_1 +  x_2  + 2 x_3 +  2 x_4 & \le & 20
 \end{array} \iff  A x \le b
 $$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 c= [50; 40; 70; 80];
 A = [ 2 4 8  6;
      10 8 6 10;
       1 1 2  2];
 b = [100; 160;  20];
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max")
-\end{Verbatim}
+\end{mintednsp}
 On such problems there is a trivial basis to start simplex : each structural variable
 is a non-basic variable at its lower bound 0 (status flag is 2) and each auxiliary variable 
 is a basic variable (status flag is 1). 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 init_basis = hash(str=[2,2,2,2],aux=[1,1,1]);
 sopt = hash(basis_info = init_basis)
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max",solver_options=sopt)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} A knapsak problem, see
 \href{http://rosettacode.org/wiki/Knapsack_problem/Bounded}{this page} for more explanations.
@@ -271,7 +271,7 @@ $$
       0 \le x_i \le u_i, \quad x_i \in \N, \quad i = 1, \dots, n
 \end{array}
 $$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 Pb = { "map"   	        ,9    ,150   ,1;
        "compass"        ,13   ,35    ,1;
        "water" 	        ,153  ,200   ,2;
@@ -307,7 +307,7 @@ for k=1:numel(xopt)
       printf("    %d %s\n",xopt(k),Pb{k,1})
    end
 end
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

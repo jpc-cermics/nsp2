@@ -105,7 +105,7 @@ calling sequence assumes that \verb!xmean = ymean = 0!.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x=%pi/10:%pi/10:102.4*%pi;
     y=[.8*sin(x)+.8*sin(2*x)+randn(x);
        .8*sin(x)+.8*sin(1.99*x)+randn(x)];
@@ -113,9 +113,9 @@ calling sequence assumes that \verb!xmean = ymean = 0!.
     for j=1:2,for k=1:2,c=[c;corr(y(k,:),y(j,:),64)];end;end;
     c=matrix(c,2,128);cov=[];
     for j=1:64,cov=[cov;c(:,(j-1)*2+1:2*j)];end;
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
    if %f then
       x=randn(1,256);y=-x;
       function [z]=xx(inc,is)  z=x(is:is+inc-1);endfunction
@@ -130,9 +130,9 @@ calling sequence assumes that \verb!xmean = ymean = 0!.
       norm(m3,1),norm(m4,1)
       norm(c3-c1,1),norm(c4-c2,1);
    end
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x1=x(1:128);x2=x(129:256);
     y1=y(1:128);y2=y(129:256);
     w0=0*ones(1,64);   //32 coeffs
@@ -142,9 +142,9 @@ calling sequence assumes that \verb!xmean = ymean = 0!.
     [w1,xu]=corr('updt',x1,w0);w2=corr('updt',x2,w1,xu);
     zz=real(ifft(w2))/256;c6=zz(1:32);
     // norm(c6-c2,1)
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
    if %f then
       // test for Fortran or C external 
       function [y]=xmacro(sec,ist) y=sin(ist:(ist+sec-1));endfunction;
@@ -160,7 +160,7 @@ calling sequence assumes that \verb!xmean = ymean = 0!.
       [cc2,mm2]=corr('fft','corexx','corexy',100,2^3);
       [maxi(abs(cc-cc1)),maxi(abs(mm-mm1)),maxi(abs(cc-cc2)),maxi(abs(mm-mm2))]
     end
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -43,24 +43,24 @@
 \begin{examples}
   \begin{itemize}
   \item polynomial case
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       s=poly(0,'s');
       p=[s,s*(s+1)^2,2*s^2+s^3];
       [pgcd,u]=gcd(p);
       clean(p*u)
-    \end{Verbatim}
+    \end{mintednsp}
   \item integer case
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       V=m2i([2^2*3^5, 2^3*3^2,2^2*3^4*5]);
       [thegcd,U]=gcd(V)
       V*U
-    \end{Verbatim}
+    \end{mintednsp}
   \item scalar case
-    \begin{Verbatim}
+    \begin{mintednsp}{nsp}
       V=[2^2*3^5, 2^3*3^2,2^2*3^4*5];
       [thegcd,U]=gcd(V)
       V*U
-    \end{Verbatim}
+    \end{mintednsp}
   \end{itemize}
 \end{examples}
 %-- see also

@@ -66,7 +66,7 @@ The following methods are available for Umfpack objects:
   \end{varlist}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 Af = sprand(10,10,0.8);
 A= umfpack_create(Af);
 A.isreal[]
@@ -76,7 +76,7 @@ b=rand(10,2);
 xu= A.solve[b]; 
 norm(Af*xu- b) 
 xu1 = umfpack_solve(Af,b);
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

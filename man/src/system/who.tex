@@ -37,12 +37,12 @@
   return a string matrix filled with variable names instead of a hash table.
 \end{mandescription} 
 \begin{examples}
-  \begin{Verbatim} 
+  \begin{mintednsp}{nsp} 
     for i=1:100; execstr('x'+string(i)+'='+string(i));end ;
     who 
     H= who(hash=%t);
     editvar('H');
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 
 

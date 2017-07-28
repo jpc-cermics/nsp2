@@ -49,7 +49,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     x=randn(1:1024-33+1);
     //make low-pass filter with eqfir
     nf=33;bedge=[0 .1;.125 .5];des=[1 0];wate=[1 1];
@@ -61,7 +61,7 @@
     sm=cspect(100,200,'tr',y);
     smsize=max(size(sm));fr=(1:smsize)/smsize;
     xbasc();plot2d(fr,log(sm))
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

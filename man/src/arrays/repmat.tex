@@ -43,19 +43,19 @@ If the matrix $A$ is $m_A \times n_A$ the matrix $B$ is  $ m m_A \times n n_A$.
 \begin{examples}
 
 \paragraph{simple examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [1,2,3;4,5,6]
 repmat(A,4,3)
 
 A = ["a", "ab", "abc"]
 repmat(A,3,2)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{computing distance between a set of points in 3d space}
 
 In the following an array $dist$ is build where $dist(i,j)$ is the 
 euclidian distance between points $i$ and $j$.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 6;
 P = randn(3,n);
 Xp = P(1,:); Yp = P(2,:); Zp = P(3,:);
@@ -63,7 +63,7 @@ Dx = repmat(Xp,n,1) - repmat(Xp',1,n);
 Dy = repmat(Yp,n,1) - repmat(Yp',1,n);
 Dz = repmat(Zp,n,1) - repmat(Zp',1,n);
 dist = sqrt( Dx.^2 + Dy.^2 + Dz.^2)
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

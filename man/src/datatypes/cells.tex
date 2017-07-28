@@ -132,7 +132,7 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
 \begin{examples}
 \begin{itemize}
 \item Creation, extraction, insertion with \verb+{.}+:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   M=rand(4,4);
   A={8,9,M,"nsp"};  
   b=A{1} 	
@@ -143,16 +143,16 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
   A{1:2,1}=(56,67);
   A{1:2,1:2}=(1,2,3,4);
   D{3}=8;
-\end{Verbatim}
+\end{mintednsp}
 
 \item Using \verb+{.}+ to provide a sequence of arguments to a function
-\begin{Verbatim} 
+\begin{mintednsp}{nsp} 
   function y=f(varargin);y=length(varargin);endfunction;
   A={8,9,M,"nsp"}; // creation 
   f(A{:})
-\end{Verbatim}
+\end{mintednsp}
 \item Creation, extraction, insertion with \verb+(.)+:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   A={}; 
   A([1,3]) = {7,8} // affectation 
   A([1:3]) // extraction of a sub cell array
@@ -160,20 +160,20 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
   A={1,2;3,4}
   { A{:,1}}   // 1x2 
   A(:,1)      // 2x1 
-\end{Verbatim}
+\end{mintednsp}
 
 \item using \verb+map+:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   A={7,8,rand(4,6),'foo'}; 
   function y=len(x);y=length(x);endfunction;
   Res=map(A,len);
   function y=plus_val(x,args);y=x+args(1);endfunction;
   Res=map({7,8,rand(2,2)},plus_val,list(45))
-\end{Verbatim}
+\end{mintednsp}
 
 \item using \verb!ce2m! and \verb!m2ce!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   A=testmatrix('magic',5);
   C=m2ce(A,[1,2,5],[1,3,6]);
 
@@ -190,7 +190,7 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
   A1=ce2m(C,notm=%inf);
   
   A1=ce2m(C,indice=100,noti=67,notm=%inf);
-\end{Verbatim}
+\end{mintednsp}
 
 \end{itemize}
 

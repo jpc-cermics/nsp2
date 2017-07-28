@@ -46,11 +46,11 @@
 % --example 
 \begin{examples}
   \paragraph{Example with two recurrent classes (with 2 and 1 states) and 2 transient states}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     P=genmarkov([2,1],2,'perm')
     [perm,L]=classmarkov(P);
     P(perm,perm)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -78,7 +78,7 @@ most powerfull for that purpose).
 % --example 
 \begin{examples}
 \paragraph{example 1} interpolation of cos(x)cos(y). 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 7;  // a regular grid with n x n interpolation points will be used;
 x = linspace(0,2*%pi,n); y = x;
 z = cos(x')*cos(y);
@@ -94,10 +94,10 @@ plot3d(xx, yy, zz, flag=[2 4 4])
 param3d1(X,Y,z,style=-9*ones(1,n), flag=[0 0])
 str = sprintf(" with %d x %d interpolation points. ermax = %g",n,n,emax) 
 xtitle("spline interpolation of cos(x)cos(y)"+str)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} different interpolation functions on random datas
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 6;
 x = linspace(0,1,n); y = x;
 z = rand(n,n);
@@ -123,10 +123,10 @@ subplot(2,2,4)
    plot3d1(xp, yp, ZP4, flag=[2 2 4])
    xtitle("monotone")
 xselect()
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} ``not a knot'' spline and monotone sub-spline on a step function
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 a = 0; b = 1; c = 0.25; d = 0.75;
 // create interpolation grid
 n = 11;
@@ -148,7 +148,7 @@ subplot(1,2,1)
 subplot(1,2,2)
    plot3d1(xp, xp, zp2, flag=[-2 6 4])
    xtitle("subspline (monotone)")
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

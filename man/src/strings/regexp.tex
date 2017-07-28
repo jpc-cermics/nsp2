@@ -48,10 +48,10 @@ substitutions.
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{[a,b]=regexp('pipopopopa','p(i[po]+)(pa)')\Hnewline}
-    \HCode{regsub('pipopopopa','p(i[po]+)(pa)','poo}\verb!\\!\HCode{1')} 
-  \end{program}
+  \begin{mintednsp}{nsp}
+    [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')
+    regsub('pipopopopa','p(i[po]+)(pa)','pop\\1')
+  \end{mintednsp}
 \end{examples}
 
 % -- see also
-

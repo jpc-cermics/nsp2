@@ -84,10 +84,10 @@ indexing or for linear indexing (see \manlink{indexing arrays}{indexing arrays} 
 The convention is simply that true values are replaced by their corresponding index while 
 false values are not used. So the boolean vector \verb+[%t, %f, %f, %t, %f, %t]+ is 
 converted as the index vector \verb+[1, 4, 6]+. The actual usage is for expression like:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
      x = randn(1,8)
      x( x < 0 ) = 0  // set all negative values to zero
-\end{Verbatim}
+\end{mintednsp}
  
 
 \begin{manseealso}

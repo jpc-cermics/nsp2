@@ -62,7 +62,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=[1,0,0,4;
       5,6,7,8;
       0,0,11,12;
@@ -73,7 +73,7 @@
     [uo,Y]=unobs(Sl.A,Sl.C);UO=Y(:,1:uo);  //Unobservable part
     [Xp,dimc,dimu,dim]=spantwo(CO,UO);     //Kalman decomposition
     Slcan=ss2ss(Sl,inv(Xp));
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

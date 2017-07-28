@@ -192,7 +192,7 @@ $$
   \dot{x}(t) = - x, \; x(0) = 1\,.
 $$ 
 The solution is known to be ($x(t) = exp(-t)$);
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=f1(t,x);y=-x;endfunction
 
 // output solution at specific time (task=1 (default))
@@ -208,7 +208,7 @@ x - exp(-tt)
 // same thing using the dopri5 solver
 [x,tt] = ode(1,0,4,f1,task=2,type="rkd5")
 x - exp(-tt)
-\end{Verbatim}
+\end{mintednsp}
   
   
 \paragraph{example 2} The Brusselator. We want to solve:
@@ -221,7 +221,7 @@ $$
 \right.
 $$
 for some initial condition $u(0) = u0$ and some parameter $\epsilon$.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function [f] = Brusselator(t,u,eps)
     f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...
          (5+eps)*u(1) - u(1)^2*u(2)]
@@ -235,7 +235,7 @@ u = ode(u0, 0, t, Brusselator, rtol = 1e-9, atol = 1e-10, args=eps);
 // plot solution in the phase space
 plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])
 plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')
-\end{Verbatim}
+\end{mintednsp}
   
   
 \paragraph{example 3} pure, damped or amplified oscillators. The second order differential
@@ -261,7 +261,7 @@ u(t) =  \left[ \begin{array}{c} u_1(t) \\  u_2(t)\end{array} \right]  \equiv  \l
 \dot{u}(t) =  \left[ \begin{array}{c} \dot{u}_1(t) \\ \dot{u}_2(t) \end{array} \right] =
     \left( \begin{array}{c} u_2(t) \\  -k u_1(t) - 2 \alpha u_2(t) \end{array} \right) = f(u)
 $$
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function [f] = oscillator(t,u,k,alpha)
    f = [ u(2); -k*u(1) - 2*alpha*u(2)];
 endfunction
@@ -283,7 +283,7 @@ xtitle("position fct of time","t","x(t)")
 subplot(2,2,4)
 plot2d(t',[up(2,:)',ud(2,:)',ua(2,:)'],style=[2,3,5], leg="pure@damped@amplified")
 xtitle("velocity fct of time","t","dx/dt(t)")
-\end{Verbatim}
+\end{mintednsp}
  
 \paragraph{example 4} using a function coded in C. To speed up the computation it is possible to code the rhs
 function (and its Jacobian if needed) in C or fortran language. To be done !

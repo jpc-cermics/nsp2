@@ -34,7 +34,7 @@
 \end{mandescription}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // compute then display the cumulative distribution function
 Xn = 18; pr = 0.45;
 x = 0:Xn+1; xp = nearfloat("pred",x);
@@ -43,7 +43,7 @@ v = ones(size(x));
 P=cdfbin("PQ",x,Xn*v,pr*v,(1-pr)*v); // you can use cdf("bin",x,Xn,pr)
 xbasc()
 plot2d(x,P,style=2,leg="cdf(x)")
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{authors}

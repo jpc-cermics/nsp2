@@ -96,7 +96,7 @@ to the permutation matrix $P$ (\verb+p+ is such that $AP$ is equal to \verb+A(:,
 
 \begin{examples}
 \paragraph{example 1} solving a least square problem:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(10,5);
 b=rand(10,1);
 // solving min ||Ax - b|| with a simple economic sized A = QR factorization
@@ -106,10 +106,10 @@ x = R\(Q'*b);
 [Q,R,p]=qr(A,mode="e");
 x = R\(Q'*b);
 x(p) = x; // apply the permutation
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} rank detection
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // build a random matrix and make one column a linear combinaison of some others
 A=rand(5,4);
 A(:,2) = 0.1*A(:,1) - 3*A(:,4); // A must be now of rank 3
@@ -119,7 +119,7 @@ sv = svd(A);
 // sval(1) and sval(2) are rough estimations of sv(1) and sv(3)
 esvmax = abs((sval(1)-sv(1))/sv(1))  // relative error for the max sv estimation
 esvmin = abs((sval(2)-sv(3))/sv(3))  // relative error for the min sv estimation
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

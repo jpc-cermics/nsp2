@@ -110,7 +110,7 @@ value \verb+V[i]+ has \verb+(I[i],J[i])+ coordinates.
 
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 //
 A=sparse((1:10)'*[1 1],ones(1,10));
 norm(eye(10,10)-full(A));
@@ -131,7 +131,7 @@ b = randn(n,1)
 x = A\b
 // compute residual norm
 norm(A*x-b)/norm(b)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

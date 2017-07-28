@@ -9,7 +9,7 @@
 % -- Calling sequence section
 %\begin{calling_sequence}
 \subsection*{Constructor}
-\index{fopen}\label{fopen}
+\index{fopen}%\label{fopen}
 \begin{verbatim}
 F = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
 \end{verbatim}
@@ -120,12 +120,12 @@ The \emph{File} data type is used for file I/O operations.
 \end{itemize}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 F=fopen("stdout")
 F.printf["using stdout"]
 F.put_matrix[rand(4,4)]
 F.close[]
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

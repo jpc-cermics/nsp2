@@ -70,7 +70,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     P=genmarkov([2,1],2,'perm');
     [perm,L]=classmarkov(P);
     // check the result 
@@ -80,7 +80,7 @@
     if norm(M(1:n,1:n)-M1) > 100*%eps then pause;end
     if norm(M(n+1:$,n+1:$) - P(L{nc},L{nc}))  > 100*%eps then pause;end
 
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

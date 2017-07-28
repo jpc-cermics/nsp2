@@ -125,7 +125,7 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
 \begin{examples}
 \begin{itemize}
 \item Creation and methods:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 L = list(1,2,"c",%f, %t, rand(2,1))
 // or  L = list_create(1,2,"c",%f, %t, rand(2,1)) 
 n = length(L)
@@ -147,17 +147,17 @@ L.reverse[]; L
 L.compact[]; L
 // build a sublist with the first and third elements
 LL = L.sublist[[1,3]]
-\end{Verbatim}
+\end{mintednsp}
 
 \item \verb+map+
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y=len(x);y=length(x);endfunction;
 L=list(4,1:10,'foo');
 map(L,len)
-\end{Verbatim}
+\end{mintednsp}
 
 \item \verb+foldr+ and \verb+foldl+
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // reverse a list using foldr 
 function z=rev(x,y);z=list_concat(y,x);endfunction ;
 L=list(1,2,3,4);
@@ -166,7 +166,7 @@ S=foldr(L,list(),rev)
 function z=lplus(x,y);z=x+y;endfunction ;
 L=list(1,2,3,4);
 S=foldr(L,0,lplus)
-\end{Verbatim}
+\end{mintednsp}
 \end{itemize}
 \end{examples}
 

@@ -53,7 +53,7 @@ C = union(A,B)
 
 \begin{examples}
   \paragraph{example 1} with vectors of numbers:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = [0.5, -1, 2];
     B = [2, 2, -2, 4.4];
     C = union(A,B)
@@ -62,32 +62,32 @@ C = union(A,B)
     C.equal[sort([A(kA),B(kB)],"g","i")]
     // index vectors kA and kB can be of IMat type
     [C, kA, kB] = union(A,B,ind_type="int");
-  \end{Verbatim}
+  \end{mintednsp}
 
   \paragraph{example 2} with vectors of strings:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = ["beer", "red vine"]
     B = [ "foo", "bar", "beer"]
     C = union(A,B)
     [C, kA, kB] = union(A,B)
     // we must have C = sort([A(kA),B(kB)],"g","i")
     if ~C.equal[sort([A(kA),B(kB)],"g","i")] then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 
   \paragraph{example 3} with vectors of cells:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = {"toto", [0,1], 1, 2, 1, "bar"}
     B = { "foo",  3, [0,1], [2;3]}
     C = union(A,B)
-  \end{Verbatim}
+  \end{mintednsp}
   \paragraph{example 4} with lists:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = list("toto", [0,1], 1, 2, 1, "bar")
     B = list( "foo", 3, [0,1], [2;3] )
     C = union(A,B)
-  \end{Verbatim}
+  \end{mintednsp}
   \paragraph{example 5} unions of rows or columns:
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     // for columns
     A = grand(2,6,"uin",-1,1)
     B = grand(2,7,"uin",-1,1)
@@ -101,7 +101,7 @@ C = union(A,B)
     [C,kA,kB] = union(A,B,which="rows")  // or simply which="r"
     // we must have C = sort([A(kA,:);B(kB,:)],"lr","i")
     if ~C.equal[sort([A(kA,:);B(kB,:)],"lr","i")] then pause;end
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

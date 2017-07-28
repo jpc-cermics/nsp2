@@ -39,7 +39,7 @@ with \verb!(A33,C3)! observable (dimension \verb!nx-n!), \verb!A22! stable
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=[2,1,1;0,-2,1;0,0,3];
     C=[0,0,1];
     X=rand(3,3);A=inv(X)*A*X;C=C*X;
@@ -47,7 +47,7 @@ with \verb!(A33,C3)! observable (dimension \verb!nx-n!), \verb!A22! stable
     [k,n,U,W1]=dt_ility(W);
     W1.A
     W1.C
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

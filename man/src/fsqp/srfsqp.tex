@@ -58,18 +58,18 @@
   the gradients of the functions grob and cntr by finite difference.
   Notations:
   
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     ipar=[nf,nineqn,nineq,neqn,neq,modefsqp,miter,iprint];
     srpar=[nfsr,ncsrl,ncsrn];
     rpar=[bigbnd,eps,epsneq,udelta];
-  \end{Verbatim}
+  \end{mintednsp}
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function fj=obj(j,x)
     function  gj=cntr(j,x)
     function gradf=grob(j,x)
     function gradgj=grcn(j,x)
-  \end{Verbatim}
+  \end{mintednsp}
 
   obj(j,x) returns the value of the jth objective, given x.
   cntr(j,x) returns the value of the jth constraint, given x.
@@ -80,7 +80,7 @@
   evaluate these functions in a vector way. For instance the function
   cntr can be replaced by the following cntr2 function:
   
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function cj=cntr2(j,x)
     if x_is_new() then
     all_objectives=allobj(x);
@@ -94,7 +94,7 @@
     else
     cj=all_constraints(j);
     end
-  \end{Verbatim}
+  \end{mintednsp}
 
   Here, the function allcntr(x) returns a vector all\_constraints whose
   jth component all\_constraints(j) is cntr(j).
@@ -105,9 +105,9 @@
 
 %--example
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     //See the script file example2.sce
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 
 %-- see also

@@ -83,7 +83,7 @@ the function they are normalized such that they sum up to $1$.
 %--example 
 \begin{examples}
 \paragraph{example 1} empirical variance got from random samples of known probability distributions 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 500;
 X = randn(n,1);  // a sample from N(0,1)
 var(X)   // should tend to 1 when n -> +oo
@@ -100,10 +100,10 @@ std(X)   // should tend to sqrt(100*0.35*0.65)  when n -> +oo
 X = grand(n,1,"geom",0.2); // a sample from G(0.2)
 var(X)   // should tend to (1-0.2)/0.2^2 = 20 when n -> +oo
 std(X)   // should tend to sqrt(20) when n -> +oo
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} var of each row and each column
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 X = rand(6,4);
 // var of the columns
 var(X,dim=1)
@@ -113,17 +113,17 @@ var(X,dim=1)
 var(X,dim=2)
 // var and mean of the rows
 [V,mu] = var(X,dim=2)
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} weighted variance
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 20; p = 0.4
 X = 0:n;
 wgt = pdf("bin",X, n,p);
 var(X, weights=wgt, unbiased=%f)  // should be exactly n*p*(1-p)=4.8
 // var and (mean mean should be exactly n*p=8)
 [V,mu] = var(X, weights=wgt, unbiased=%f) 
-\end{Verbatim}
+\end{mintednsp}
 
 
 \end{examples}

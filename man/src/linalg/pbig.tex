@@ -64,14 +64,14 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=diag([1,2,3]);X=rand(A);A=inv(X)*A*X;
     [Q,M]=pbig(A,1.5,'d');
     spec(M*A*Q);
     QM=Q*M;
     [Q1,M1]=fullrf(eye(size(QM))-QM);
     spec(M1*A*Q1)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

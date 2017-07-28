@@ -23,12 +23,12 @@ reads file contents and store the result line by line in a string matrix.
 \end{mandescription}
 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A = string([1,2;3,4]);
     putfile('A.txt',A);
     A1= getfile('A.txt');
     A1== A(:)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 
 % -- see also

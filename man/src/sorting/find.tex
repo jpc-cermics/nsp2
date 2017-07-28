@@ -56,7 +56,7 @@ index vector is generally more powerfull.
 \begin{examples}
   
 \paragraph{example 1}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x= [0, 0.3, 0.11, -0.4, 0.5, 2, 0.6, 0.7]
 ind = find( 0.2 < x  &  x < 0.7 )  // ind as double
 ind = find( 0.2 < x  &  x < 0.7, ind_type="int")  // ind as int
@@ -65,12 +65,12 @@ ind = find( 0.2 < x  &  x < 0.7, ind_type="int")  // ind as int
 x = matrix(x,2,4)
 ind=find( 0.2 < x  &  x < 0.7 ) // must give the same than before 
 [i,j]=find( 0.2 < x  &  x < 0.7 )
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} using find to evaluate (on a vector) a function with a
 piecewise definition: $f(x) = (x-a)/(b-a)$, for  $x \in
 [a,b]$, $f(x) = (c-x)/(c-b)$, for $x \in [b,c]$ and otherwise $f(x) = 0$. 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 a=-1; b=0; c=2;
 x = linspace(-2,3,101)';
 y = zeros(size(x));
@@ -80,7 +80,7 @@ ind_b_c = find( b < x  &  x <= c, "int");
 y(ind_b_c) = (c-x(ind_b_c))/(c-b);
 xbasc()
 plot2d(x,y,style=2)
-\end{Verbatim}
+\end{mintednsp}
   
 \end{examples}
 

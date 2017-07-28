@@ -28,7 +28,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     sl=ssrand(2,2,5);[A,B,C,D]=abcd(sl);poles=spec(A)
     [Q,M]=pbig(A,0,'c');  //keeping unstable poles
     slred=projsl(sl,Q,M);spec(slred.A)
@@ -44,7 +44,7 @@
     [Q,M]=pbig(W,nk2(2)-%eps,'c');    //keeping 2 eigenvalues of W
     slr=projsl(sl,Q,M);  //reduced model
     hankelsv(slr)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

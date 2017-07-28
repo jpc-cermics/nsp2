@@ -50,7 +50,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     w=0.01:0.01:2;s=poly(0,'s');
     n= 2*(s^2+0.1*s+2);
     d= (s^2+s+1)*(s^2+0.3*s+1);
@@ -58,7 +58,7 @@
     [n1,d1]=frfit(w,fresp,4);
     frespfit=repfreq(n1,d1,frq=w);
     bode(w,[fresp;frespfit])
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

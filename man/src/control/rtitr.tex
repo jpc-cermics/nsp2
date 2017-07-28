@@ -56,7 +56,7 @@ The default values of \verb!up! and \verb!yp! are zero:
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     z=poly(0,'z');
     Num=1+z;Den=1+z;u=[1,2,3,4,5];
     rtitr(Num,Den,u)-u
@@ -113,7 +113,7 @@ The default values of \verb!up! and \verb!yp! are zero:
     h=ss2tf(s);num=h.num;den=h.den;den=den(1,1)*eye(2,2);
     u=1;u(3,10)=0;r3=flts(u,s);
     r=rtitr(num,den,u);norm(r3-r,1)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

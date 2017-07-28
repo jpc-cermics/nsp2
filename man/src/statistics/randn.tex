@@ -36,7 +36,7 @@ G and WW Tsang, The Ziggurat Method for Generating Random Variables, Journal of 
 %-- see also
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 n = 50000;
 X = randn(n,1);  // a sample from N(0,1)
 
@@ -47,7 +47,7 @@ histplot(20,X)
 x = linspace(-4,4,200)';
 y = pdf("nor",x,0,1);
 plot2d(x,y,style=5)
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 \begin{manseealso}

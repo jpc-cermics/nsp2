@@ -34,12 +34,12 @@
   parameters.
   The list of objectives should be: (use empty list when necessary: list() )
   
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     list_obj=list(...
     list(f_1,...,f_nf0),...     //regular objectives
     list(F_1,...,F_nfsr)        //SR objectives
     )
-  \end{Verbatim}
+  \end{mintednsp}
 
   The f\_i's are functions: y=f\_i(x) should return the value of the ith
   regular objective as a function of x. y can be a column vector if
@@ -50,7 +50,7 @@
   
   The list of constraints functions should be as follows:
   
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     list_cntr=list(...
     list(g_1,...,g_ng0),...     //regular nonlinear inequality
     list(G_1,...,G_ncsrn),...   //SR      nonlinear inequality
@@ -59,7 +59,7 @@
     list(h_1,...,h_nh0),...     //nonlinear         equality
     list(A_1,...,A_na0)         //linear            equality
     )
-  \end{Verbatim}
+  \end{mintednsp}
 
   Functions g\_i's, c\_i's, h\_1 can return column vectors y (e.g. y=g\_1(x)) 
   if several constraints are stacked together.

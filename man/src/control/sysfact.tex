@@ -30,7 +30,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     //Kalman filter
     Sys=ssrand(3,2,4);
     Sys.D=rand(3,2);
@@ -43,7 +43,7 @@
     [X,d,F,U,k,Z]=abinv(Sys);
     ss2tf(Sys*Z)
     ss2tf(Sys*sysfact(Sys,F,'post')*U)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

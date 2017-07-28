@@ -26,7 +26,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     z=poly(0,'z');
     h=(1-2*z)/(z^2-0.2*z+1);
     sl=tf2ss(h);
@@ -34,7 +34,7 @@
     x1=dsimul(sl,u)   //Impulse response
     u=ones(1,20);
     x2=dsimul(sl,u);  //Step response
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

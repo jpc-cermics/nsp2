@@ -53,13 +53,13 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(6,2)*rand(2,5);      // rank(A)=2
     B=[A(:,1),rand(6,2)]*rand(3,3);   //two additional independent vectors
     [X,dim,dimA]=spanplus(A,B);
     if dimA<>2 then pause;end 
     if dim<>4 then pause;end 
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -44,7 +44,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     function [alpha,beta]=alpha_beta(n,m,m1)
       if 2*int(n/2)==n then beta=K1; else beta=0;end;
       alpha=%k(1-m1)/%k(1-m);
@@ -60,7 +60,7 @@
     z=alpha*%asn(sample/omegac,m)+beta*ones(size(sample));
     xbasc();plot2d(sample,ell1mag(epsilon,m1,z),style=2,rect=[0,-0.2,20,1.2])
     xgrid();
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

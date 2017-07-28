@@ -43,7 +43,7 @@
 
 \noindent A simple example
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(frect=[-1,-1,1,1]);
   arcs=[-1.0 0.0 0.5; // upper left x
   1.0 0.0 0.5; // upper left y
@@ -52,20 +52,20 @@
   0.0 0.0 0.0; // angle 1
   180*64 360*64 90*64]; // angle 2
   xarcs(arcs,color=[1,2,3],thickness=[3,3,3],background=[-2,5,6])
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent Random circles and ellipses
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   n=100;x=rand(1,n);y=rand(1,n);w=0.1*rand(1,n);h=0.1*rand(1,n);
   arcs=[x;y;w;h;0*ones(1,n);360*64*ones(1,n)];
   xset('colormap',jetcolormap(32));
   xarcs(arcs,color=rand(1,n)*32,background=rand(1,n)*32);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent Mixing plot2d and xarcs 
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function plot2d_arcs(x,y,s,varargopt)
   plot2d(x,y,varargopt(:));
   z=ones(1,size(x,'*'));
@@ -77,7 +77,7 @@ function plot2d_arcs(x,y,s,varargopt)
 endfunction
 
   x=1:20;y=x.*sin(x);plot2d_arcs(x,y/3,0.3,line_color=6);
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

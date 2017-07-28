@@ -37,7 +37,7 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function rep = color_number(color)
    table = ["black","red","blue","orange","yellow","green","brown"]
    rep = is_string_in_array(color,table,names=["color","color_number"])
@@ -45,7 +45,7 @@ endfunction
 color_number("y") // should be 5
 color_number("bl") // ambiguous abbreviation (an error should be set)
 color_number("blu") //should be 3
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

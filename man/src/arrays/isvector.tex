@@ -59,7 +59,7 @@ If you want to test the row or column form of a vector, use \manlink{size}{size}
 \end{mandescription}
 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = randn(3,1)
 if ~isvector(A) then pause;end
 if isscalar(A) then pause;end
@@ -67,7 +67,7 @@ if isscalar(A) then pause;end
 B = zeros(1,0)
 if ~isempty(B) then pause;end // should return true
 if ~isvector(B) then pause;end // should return true
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 % -- see also

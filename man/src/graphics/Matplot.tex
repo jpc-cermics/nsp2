@@ -50,20 +50,20 @@
 
 \noindent A simple example
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xset('colormap',jetcolormap(100));
   Matplot(testmatrix('magic',10))
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent Vizualize the current colormap
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   Matplot((1:xget("lastpattern")))
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent An example with \verb!Matplot1!.
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   N=32;
   C=[jetcolormap(N);graycolormap(N);hotcolormap(N)];
   xset('colormap',C);
@@ -72,14 +72,14 @@
   xstring(-8,1.4,'hotcolormap');
   xstring(-8,2.0,'graycolormap');
   xstring(-8,2.6,'jetcolormap');
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent An example with remap
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   N=32;C=[jetcolormap(N)]; xset('colormap',C);
   Matplot(1:32,remap=%t,zminmax=[10,20],colminmax=[20,32]);
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

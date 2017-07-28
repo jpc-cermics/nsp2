@@ -58,24 +58,24 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     X=rand(4,2)*rand(2,4)
     s= svd(X)
     sqrt(spec(X*X'))
     [U,S,V,rk]=svd(X);
     S1=zeros(size(X));S1.set_diag[S,0];
     norm(U*S1*V' - X)
-  \end{Verbatim}
-  \begin{Verbatim}
+  \end{mintednsp}
+  \begin{mintednsp}{nsp}
     X=rand(4,7);
     [U,S,V]=svd(X,mode='e');
     norm(U*diag(S)*V' -X) 
-  \end{Verbatim}
-  \begin{Verbatim}
+  \end{mintednsp}
+  \begin{mintednsp}{nsp}
     X=rand(7,4);
     [U,S,V]=svd(X,mode='e');
     norm(U*diag(S)*V' -X) 
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

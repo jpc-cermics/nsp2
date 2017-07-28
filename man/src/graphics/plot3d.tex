@@ -106,40 +106,40 @@
 
 \noindent a first simple example with \verb!plot3d!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t));
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent a first simple example with \verb!plot3d1! (the default
 colormap is a jetcolormap).
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent same example with mesh only
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t),mesh_only=%t);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent same example without mesh
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t),mesh=%f);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent same example with a function
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   function z=f(x,y,args) z=sin(args(1)*x)*cos(args(2)*y);endfunction;
   // the optional argument arg is used to pass extra arguments to function f.
   t=-%pi:0.3:%pi;plot3d(t,t,f,args=list(1,2));
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent computing facets and plot facets with colors
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -147,11 +147,11 @@ colormap is a jetcolormap).
   // remode shade i.e one color per face
   xclear();
   plot3d(xx,yy,zz,colors=linspace(1,40,400),colormap=hotcolormap(40),shade=%f);
-\end{Verbatim}
+\end{mintednsp}
 
 multiple plots by combining facets
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   t=-%pi:0.3:%pi;
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -159,11 +159,11 @@ multiple plots by combining facets
   [m,n]=size(xx);
   [xx1,yy1,zz1]=genfac3d(t,t,z);
   plot3d([xx,xx1],[yy,yy1],[zz,zz1],colors=[20*ones(1,n),30*ones(1,n)],colormap=hotcolormap(40));
-\end{Verbatim}
+\end{mintednsp}
 
 multiple plots using opengl
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xinit(opengl=%t);
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -172,7 +172,7 @@ multiple plots using opengl
   z=sin(2*t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
   plot3d(xx,yy,zz,colors=[30*ones(1,n)],colormap=hotcolormap(40));
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
 %-- see also

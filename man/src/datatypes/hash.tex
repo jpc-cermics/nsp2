@@ -85,7 +85,7 @@ objects.
 \begin{examples}
 \begin{itemize}
 \item Basic operations.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
  A = rand(4,4);
  H = hash_create(5,A,B=34,C="foo")  
  // or shortly H = hash(5,A,B=34,C="foo")
@@ -97,19 +97,19 @@ objects.
  H.A = 56 
  str = 'A'
  H(str) = 45;
-\end{Verbatim}
+\end{mintednsp}
 \item Using a hash table to provide optional named arguments.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
  function y=f(a=1,b=2,c=3);y=[a,b,c];endfunction;
  H = hash_create(a=67,b=45);
  [a,b,c]=f(H(:));
-\end{Verbatim}
+\end{mintednsp}
 \item Using method \verb+find+ to fill a cell or scalar matrix.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   H= hash_create(Cervin=4478, Eiger=3970, LesDrus=3754);
   K= H.__keys;
   n = size(K,'*');
-  // fill a cell with all the 
+  // fill a cell with all the members of H
   V=cell(0,0);
   V{1,1:n}=H.find[K];
   // fill a scalar matrix with all the hash table values 
@@ -118,7 +118,7 @@ objects.
   // fills a list with all the hash table values 
   L=list();
   L(1:n)= H.find[K];
-\end{Verbatim}
+\end{mintednsp}
 \end{itemize}
 \end{examples}
 

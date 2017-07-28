@@ -36,7 +36,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     rate=44100;
     t = linspace(0,3,3*rate);
     y = sin(2*%pi*440*t); // mono 
@@ -48,7 +48,7 @@
     freq=[440*(2.^(p(:,2)-3+(p(:,1)-10)/12))]; // C3,E3,G3
     y= [0.4,0.3,0.1]*sin(2*%pi*freq*t);
     play(y,sync=%t);
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 \begin{manseealso}
   \manlink{record}{record} 

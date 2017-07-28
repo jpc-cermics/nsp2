@@ -84,26 +84,26 @@ a first example with $\int_0^\infty f(u)du$.
 \int_0^\infty f(u)du
 \]
 
-\begin{program}
+\begin{Verbatim}
   \verb+// backslash in program \\+
   \HCode{\Hnewline
     u=prbs_a(50,10);\Hnewline
     plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);\Hnewline
     \%z ;// a percent un verbatim 
   }
-\end{program}
+\end{Verbatim}
 
 \noindent a second example 
 
-\begin{program}
-\HCode{u=prbs_a(50,10);\Hnewline 
-  plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);}
-\end{program}
+\begin{mintednsp}{nspxxx}
+  u=prbs_a(50,10);
+  plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
+\end{mintednsp}
 
-\begin{program}
-  \HCode{[a,b]=regexp('pipopopopa','p(i[po]+)(pa)')\Hnewline}
-  \verb!regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')! 
-\end{program}
+\begin{mintednsp}{nspxxx}
+  [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')
+  regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')
+\end{mintednsp}
 
 \end{examples}
 
@@ -135,18 +135,16 @@ a first example with $\int_0^\infty f(u)du$.
 
 \paragraph{Using VerbatimInput}
 
-%\begin{program}
 \VerbatimInput{\mansrc model/model-verb.txt}
-%\end{program}
 
 \paragraph{Using Verbatim}
 
 % we can call macros in Verbatim using the commandchars arguments 
 % \def\redtext#1{{\textcolor{red}{#1}}}
-%\begin{Verbatim}[commandchars=@\[\]]
+%\begin{mintednsp}{nsp}[commandchars=@\[\]]
 % @redtext[pooo] poo 
-%\end{Verbatim}
-\begin{Verbatim}
+%\end{mintednsp}
+\begin{mintednsp}{nsp}
 //	Verbatim code 
 //	to be inserted 
 //	in html
@@ -168,7 +166,7 @@ function y=f(x)
     c=567
   end
 endfunction
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Using t4ht special}
 

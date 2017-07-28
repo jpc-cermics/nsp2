@@ -50,7 +50,7 @@
 \begin{examples}
 \paragraph{First example}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
 l2=list('entry','entry title',1,['initial']); // 1 is unused 
 l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size
@@ -63,11 +63,11 @@ l6=list('open','file open',1,['','*.eps','*.pdf']); // answer, filter
 l7=list('folder','choose a folder',1,['']); // answer, filter unused 
 L= list(l1,l2,l3,l4,l5,l6,l7);
 [Lres,L]=x_choices('Toggle Menu',L,%t);
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Second example}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
 // v8=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
 v8=[5,0,100,0.5,10,20,3,3];    
@@ -76,11 +76,11 @@ l3=list('range','double with range',0,v8);// l(3) is unused
 L= list(l1,l2,l3);
 [Lres,L]=x_choices('Toggle Menu',L,%t);
 [Lres,L]=x_choices('Toggle Menu',L,%f);
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{Third example with a recursive call}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
 // v8=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
 v8=[5,0,100,0.5,10,20,3,3];    
@@ -92,6 +92,6 @@ l1=list('matrix','enter matrix',60,string(rand(6,2)));// l(3) is for entry size
 l2=list('button','New panel',0,L);
 L=list(l1,l2);
 [Lres,L]=x_choices('Toggle Menu',L,%t);
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 

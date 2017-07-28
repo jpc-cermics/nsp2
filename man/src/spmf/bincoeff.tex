@@ -26,23 +26,23 @@
 % -- Authors
 \begin{examples}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   N=10; n= N*ones(1,N+1),k=0:N;
   c=bincoeff(n,k);
   d= gamma(n+1) ./ (gamma(k+1).*gamma(n-k+1));
   max(abs(c-d))
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{we check the following identity}
 \[
 (1+x)^n = \sum_{k=0}^n \binom{n}{k} x^k
 \]
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   n=10;
   c=bincoeff(n*ones(1,n+1),0:n);
   x=2; 
   y=sum( c .* x.^(0:n));
   y == (1+x)^n
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}

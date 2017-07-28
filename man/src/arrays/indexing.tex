@@ -48,11 +48,11 @@ The ``column major order'' (in blue) means simply that elements of the first
 column are ordered first (from top to bottom) followed by those of
 the second column, etc... This way of adressing array will be called
 linear indexing. An exemple:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = rand(3,4)
 A(2,2) = -2   // usual assignment (to the value -2) of the matrix element in position (2,2)
 A(5) = 100    // assignment of the same matrix element (to the value 100) using linear indexing
-\end{Verbatim}
+\end{mintednsp}
 Conversion between usual indexing and linear indexing can be done 
 using the functions \manlink{sub2ind}{sub2ind}, \manlink{ind2sub}{ind2sub} (see 
 also \manlink{ndind2ind}{ndind2ind}).
@@ -82,9 +82,9 @@ Usual arithmetic operations are available with the dollar, for instance
       \item If $v$ is a (row or column) vector of length $n$ and  $ind$ a vector 
       of $k$ indices (also called an {\bf index vector}) 
       with values $ind(i)$ between $1$ and $n$ then:
-      \begin{Verbatim}
+      \begin{mintednsp}{nsp}
       w = v(ind)
-      \end{Verbatim}
+      \end{mintednsp}
       creates a new vector $w$ with $k$ elements such that $w(i) = v(ind(i))$, $1 \le i \le k$.
      Note that the new vector $w$ has row form if $v$ is a row vector
      and has column form otherwise (if $v$ is a column vector but also 
@@ -92,40 +92,40 @@ Usual arithmetic operations are available with the dollar, for instance
      vector with all its elements equal to 1). The form of the index vector
      (row, column or even matrix) don't play any role in the form
      of $w$. Some examples:
-     \begin{Verbatim}
+     \begin{mintednsp}{nsp}
      v = randn(1,6)
      w = v([1,3,5]) // extracts odd elements
      w = v(1:2:6)   // same thing (but with the index vector built using the a:inc:b mechanism)
-     w = v(1:2:$)   // same then before but using the dollar symbol in place of its explicit value
+     w = v(1:2:$)   // same than before but using the dollar symbol in place of its explicit value
      w = v([2,4,6]) // extract even elements
      w = v(2:2:$)   // same thing
      w = v($:-1:1)  // reverse the vector
      w = v([1,1,3,3])
-     \end{Verbatim}
+     \end{mintednsp}
  
      \item If $A$ is a matrix of size $m \times n$, $indr$ an index vector of $r$ indices (with values
      between $1$ and $m$) and $indc$ an index vector of $c$ indices (with values between $1$ and $n$)
           then:
-     \begin{Verbatim}
+     \begin{mintednsp}{nsp}
          B = A(indr,indc)
-     \end{Verbatim}
+     \end{mintednsp}
      creates a new matrix $B$ of size $r \times c$ such that $B(i,j) = A(indr(i),indc(j))$, $1 \le i \le r$
      and $1 \le j \le c$. Some examples:
-     \begin{Verbatim}
+     \begin{mintednsp}{nsp}
      A = randn(3,4)
      B = A([1,3],[1,3])
      B = A(2, :)   // extraction of the 2d row (: is a shortcut to denote all the corresponding range)
      B = A(:,3)    // extraction of the 3d column
      B = A([1,2],[4,1])
-     \end{Verbatim}
+     \end{mintednsp}
  
      \end{itemize}
 
 \item {\bf assignment} in sub-vector or sub-matrix works the same way, for instance in:
-      \begin{Verbatim}
+      \begin{mintednsp}{nsp}
       v(ind) = w
       A(indr,indc) = B
-      \end{Verbatim}
+      \end{mintednsp}
       $w$ and $B$ should have (respectively) the same matrix dimensions than what should be obtain with the extractions
       \verb+v(ind)+ and \verb+A(indr,indc)+ but some additionnal features/tricks exist:
       \begin{itemize}
@@ -137,12 +137,12 @@ Usual arithmetic operations are available with the dollar, for instance
             this rather bad trick} ; special values are used to fill the array where not defined initially 
             (0 for numerical arrays), see examples.
       \end{itemize}
-     \begin{Verbatim}
+     \begin{mintednsp}{nsp}
      A = randn(3,4)
      A([1,2],[3,4]) = [-20,30;-30,20]  // usual assignment
      A([1,2],[3,4]) = 0  // the rhs could be a scalar
      A(2,6) = 2   // an example of assignment outside the current matrix dim => enlargement
-     \end{Verbatim}
+     \end{mintednsp}
 \end{itemize}
 
 \paragraph{Indexing using boolean vectors as index vectors}  
@@ -152,10 +152,10 @@ of numerical ones either for usual indexing or for linear indexing. The conventi
 that true values are replaced by their corresponding index while false values are not used.
 So the boolean vector \verb+[%t, %f, %f, %t, %f, %t]+ is converted as the index vector
 \verb+[1, 4, 6]+. The actual usage is for expression like:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
      x = randn(1,8)
      x( x < 0 ) = 0  // set all negative values to zero
-\end{Verbatim}
+\end{mintednsp}
      
 
 \paragraph{Element, row or column deletion}
@@ -168,13 +168,13 @@ Finally it is possible to delete:
 \end{itemize}
 Here \verb+ind+ is an index vector and all corresponding elements/rows/columns are removed.
 Some examples:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
      x = randn(1,9)
      x(x<0) = []  // remove negative values
      A = rand(3,4)
      A(2,:) = []  // remove row 2
      A(:,[1,3]) = []  // remove column 1 and 3
-\end{Verbatim}
+\end{mintednsp}
 
 
 

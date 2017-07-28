@@ -42,21 +42,21 @@
 
 A first example
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     xsetech(frect=[-2,-2,2,2]);
     xfrect(-1,1,2,2,color=6,thickness=4,stroke_color=3);
-  \end{Verbatim}
+  \end{mintednsp}
 
 A second example
 
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     xsetech(frect=[-2,-2,2,2]);
     xfrect(-1,1,2,2,color=-1,thickness=4,stroke_color=3);
     // we change the default color
     xset('color',10);
     F=get_current_figure();
     F.invalidate[];// force redrawing;
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -39,7 +39,7 @@ and \verb!T21! is co-inner.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     ny=2;nu=3;nx=4;
     P22=ssrand(ny,nu,nx);
     bigQ=rand(nx+nu,nx+nu);bigQ=bigQ*bigQ';
@@ -49,7 +49,7 @@ and \verb!T21! is co-inner.
     Q=ssrand(nu,ny,1);Q.A=-1;  //Stable Q
     K=lft(J,r,Q);
     A=h_cl(P,r,K); spec(A)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

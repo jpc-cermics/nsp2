@@ -44,18 +44,19 @@
   This is formula 26.2.12 of Abramowitz and Stegun.
 \end{mandescription}
 
-\begin{program}\HCode{x=linspace(-5,5,100);\Hnewline
-mu =1;\Hnewline
-sig =0.5;\Hnewline
-y= cdfnor("PQ",x,mu*ones(x),sig*ones(x));\Hnewline
-\Hnewline
-function y=f(x)\Hnewline
-  y= (1/2)*(1 + erf((x-mu)/(sig*sqrt(2))));\Hnewline
-endfunction;\Hnewline
-\Hnewline
-z=f(x);\Hnewline
-err=max(abs(y-z));}
-\end{program}
+\begin{mintednsp}{nspxxx}
+x=linspace(-5,5,100);
+mu =1;
+sig =0.5;
+y= cdfnor("PQ",x,mu*ones(x),sig*ones(x));
+
+function y=f(x)
+  y= (1/2)*(1 + erf((x-mu)/(sig*sqrt(2))));
+endfunction;
+
+z=f(x);
+err=max(abs(y-z));
+\end{mintednsp}
 
 \begin{authors}
   Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 

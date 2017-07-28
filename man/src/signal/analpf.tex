@@ -57,14 +57,14 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     //Evaluate magnitude response of continuous-time system 
     hs=analpf(4,'cheb1',[.1 0],5);
     fr=0:.1:15;
     hf=freq(hs.num,hs.den,%i*fr);
     hm=abs(hf);
     plot2d(fr,hm)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- Author
 \begin{authors}

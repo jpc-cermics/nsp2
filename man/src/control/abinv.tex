@@ -106,7 +106,7 @@
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     nu=3;ny=4;nx=7;
     nrt=2;ngt=3;ng0=3;nvt=5;rk=2;
     flag=list('on',nrt,ngt,ng0,nvt,rk);
@@ -159,7 +159,7 @@
     closed=syslin('c',A+B*F,Q+B*R,C+D*F,T+D*R); // closed loop: d--$>$y
     ss2tf(closed)       // Closed loop is zero
     spec(closed.A)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 % -- see also
 \begin{manseealso}

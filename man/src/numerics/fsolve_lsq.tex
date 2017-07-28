@@ -175,7 +175,7 @@ and we want to identify the 2 parameters $A$ and $\tau$ (\verb+fsolve_lsq+ is no
 mandatory for such a model because it can be linearized by taking the $\log$ but
 it is a simple example to begin with). 
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 function y = expdecay(t, A, tau)
    y = A*exp(-t/tau) 
 endfunction
@@ -231,7 +231,7 @@ norm(Jfx-Jfxe,1)/norm(Jfxe)
 
 // call fsolve using jac=
 xopt = fsolve_lsq(x0,fun, m, jac=Jfun, args={wm,tm,ym})
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

@@ -42,16 +42,15 @@ variable and otherwise returns false.
 
 %--example 
 \begin{examples}
-
-\begin{program}\HCode{isreal([1,2])\Hnewline
-isreal(1+0*\%i)\Hnewline
-isreal(1+0*\%i,\%t)\Hnewline
-A = sprand(3,3,0.4)\Hnewline
-isreal(A)\Hnewline
-B = A + \%i*(0*A)\Hnewline
-isreal(B)\Hnewline
-isreal(B,\%t)}
-\end{program}
-
+  \begin{mintednsp}{nsp}
+    isreal([1,2])
+    isreal(1+0*%i)
+    isreal(1+0*%i,%t)
+    A = sprand(3,3,0.4)
+    isreal(A)
+    B = A + %i*(0*A)
+    isreal(B)
+    isreal(B,%t)
+  \end{mintednsp}
 \end{examples}
 

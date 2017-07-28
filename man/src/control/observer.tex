@@ -55,7 +55,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     nx=5;nu=1;ny=1;un=3;us=2;Sys=ssrand(ny,nu,nx,list('dt',us,us,un));
     //nx=5 states, nu=1 input, ny=1 output, 
     //un=3 unobservable states, us=2 of them unstable.
@@ -99,7 +99,7 @@
     Plant = syslin('c',A,B,C,D);
     Obs = observer(Plant,L);
     spec(Obs.A)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

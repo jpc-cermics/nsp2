@@ -49,7 +49,7 @@
 \begin{examples}
 \begin{itemize}
   \item \verb!logm!
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(4,4); 
     A=A*diag([1:4])*inv(A);
     B=logm(A)
@@ -61,9 +61,9 @@
     A=rand(4,4)+%i*rand(4,4);
     A=A*A';
     norm(expm(logm(A))-A)
-  \end{Verbatim}
+  \end{mintednsp}
   \item \verb!sqrtm!
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(4,4); 
     A=A*diag([1:4])*inv(A);
     B=sqrtm(A)
@@ -72,7 +72,7 @@
     A=rand(4,4); A=A*A';
     B=sqrtm(A);
     norm(B*B-A)
-  \end{Verbatim}
+  \end{mintednsp}
 \end{itemize}
 \end{examples}
 %-- see also

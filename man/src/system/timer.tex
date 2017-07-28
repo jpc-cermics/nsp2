@@ -29,7 +29,7 @@
   instruction was executed. 
 \end{mandescription}
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     A=rand(200,200);timer();inv(A);Tinv=timer();
     n=100;t=zeros(1,n);
     tic();
@@ -39,7 +39,7 @@
       t(i) = toc(tStart);
     end
     avt = toc()/n // average time 
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}
 %-- see also
 

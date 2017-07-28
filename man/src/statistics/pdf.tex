@@ -215,16 +215,16 @@ $$
 \begin{examples}
   
 \paragraph{example 1} draw N(0,1) 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 x = linspace(-5,5,200)';
 y = pdf("nor",x,0,1);
 xclear(); plot2d(x,y,style=2);
 xtitle("The N(0,1) density function")
-\end{Verbatim}
+\end{mintednsp}
   
 \paragraph{example 2} draw Gamma(5,1) empirically (with simulation and
 an histogram) and exactly (with pdf):
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // generate a rather big sample of Gamma(5,1) variates
 X = grand(1e7,1,"gam",5,1);
 // draw an histogram using 200 classes
@@ -234,12 +234,12 @@ x = linspace(0,20,200)';
 y = pdf("gam",x,5,1);
 xset("thickness",2);plot2d(x,y,style=3,strf="000");xset("thickness",1)
 xtitle("Gamma (5,1) histogram and density")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} using pdf and \verb+grand(..,"disc",..)+ to simulate
 binomial random variates (when many random variates must be generated
 this is faster than using directly \verb+grand(..,"bin",..)+):
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // compute B(500,0.3) probabilities
 p = pdf("bin",0:500,500,0.3);
 // now simulate B(500,0.3)
@@ -255,12 +255,12 @@ xtitle("B(500,0.3) with grand(..,""disc"",...)")
 subplot(1,2,2); histplot(classes,Y)
 plot2d2(classes,p(101:201),style=5)
 xtitle("B(500,0.3) with grand(..,""bin"",...)")
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 5} using pdf and \verb+grand(..,"disc",..)+ to simulate
 hypergeometric random variates. This is useful as grand doesn't yet
 support direct hypergeometric random generation.
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // compute H(600,700,800) probabilities
 p = pdf("hyp",0:600,600,700,800);
 // now simulate 
@@ -271,7 +271,7 @@ xclear();
 histplot(classes,X)
 plot2d2(classes,p(241:322),style=5)
 xtitle("H(600,700,800) with grand(..,""disc"",...)")
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

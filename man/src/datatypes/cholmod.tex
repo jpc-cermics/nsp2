@@ -139,11 +139,11 @@ The following methods are available for Cholmod objects~:
         factorization have been computed it returns the matrix $L$ (which has a unit diagonal) with
         the diagonal matrix $D$ stored on its diagonal. In this case if you want to retrieve
         the exact matrix $L$ and $D$ use:
-        \begin{Verbatim}
+        \begin{mintednsp}{nsp}
         [L,m,p] = C.get_ld[]
         D = diag(L);  // use D = diag(diag(L)) to get D as a (diagonal) matrix 
         L.set_diag[spones(D)]
-        \end{Verbatim}
+        \end{mintednsp}
         As the example shows you can get also the minor and the permutation as second and third
         output arguments.
   \vname{get_minor}: returns the value of $m$ (0 if the factorization has been completly built).
@@ -171,7 +171,7 @@ computed initially a ``LLt'' factorization (of a real matrix) it is silently tra
  
 \begin{examples}
  \paragraph{simple example}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
 n = 5;
 v = sparse(ones(n-1,1));
 A = 2*speye(n,n) - diag(v,1) - diag(v,-1);
@@ -218,7 +218,7 @@ L.set_diag[sparse(ones(n,1))]
 L*D*L' - A(p,p)  // should be a zero matrix (up to some precision)
 
 
-  \end{Verbatim}
+  \end{mintednsp}
  \end{examples}
 
 \begin{manseealso}

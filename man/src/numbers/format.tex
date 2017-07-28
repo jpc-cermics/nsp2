@@ -62,14 +62,14 @@
 
   \item[form 2] lets to retrieve the 3 parameters field, prec, eflag which define the display format.
       This is useful if you want to modify locally the format :
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // save current format
 [save_field,save_prec,save_eflag] = format("get");
 // set a different format and do some operations
 .....
 // reset initial format
 format(save_field,save_prec,save_eflag)
-\end{Verbatim}
+\end{mintednsp}
       
   \end{description} 
     
@@ -79,7 +79,7 @@ format(save_field,save_prec,save_eflag)
 
 \begin{examples}
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 %pi
 format("medium")
 %pi
@@ -102,7 +102,7 @@ format("long")
 // but  0.200000000000000011102230246251565404236316680908203125
 format(57,55,%f)
 0.2
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 
   %-- see also

@@ -38,7 +38,7 @@ the original matrix.
 
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A=rand(2,3)
 
 B = scale_rows(A,[0.5,2])    // or scale_rows(A,[0.5,2],op="*") 
@@ -48,7 +48,7 @@ A.scale_rows[[0.5,2],op="/"]; A  // we should recover initial matrix A
 B = scale_cols(A,[0.5,2,4])  // or scale_cols(A,[0.5,2,4],op="*") 
 A.scale_cols[[0.5,2,4]]; A   // or scale_cols[[0.5,2,4],op="*"] 
 A.scale_cols[[0.5,2,4],op="/"]; A   // we should recover initial matrix A
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

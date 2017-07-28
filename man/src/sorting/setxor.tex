@@ -49,47 +49,47 @@ $C$, is a row vector if both A and B are row vectors, otherwise it is a column v
 \begin{examples}
 
 \paragraph{example 1} with vectors of numbers:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
 B = [2, 0.5, 3, 912];
 C = setxor(A,B)
 [C, kA, kB] = setxor(A,B)
 // we must have C = A(kA) U B(kB) 
 C.equal[union(A(kA),B(kB))]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 2} with vectors of strings:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = ["toto", "foo", "bar", "tumbi", "foobar", "bar", "toto", "foo", "bar"]
 B = [ "foo", "bar", "nsp", "tumbi" ]
 C = setxor(A,B)
 [C, kA, kB] = setxor(A,B)
 // we must have C = A(kA) U B(kB) 
 C.equal[union(A(kA),B(kB))]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 3} with vectors of cells:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
 B = {  "tumbi", 5 ,"foo", 2,  [0,1;1,0] }
 C = setxor(A,B)
 [C, kA, kB] = setxor(A,B)
 // we must have C = A(kA) U B(kB) 
 C.equal[union(A(kA),B(kB))]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 4} with lists:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
 B = list(  "tumbi", 5 ,"foo", 2,  [0,1;1,0] )
 C = setxor(A,B)
 [C, kA, kB] = setxor(A,B)
 // we must have C = A(kA) U B(kB) 
 C.equal[union(A.sublist[kA],B.sublist[kB])]
-\end{Verbatim}
+\end{mintednsp}
 
 \paragraph{example 5} setxor of rows or columns:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // for columns
 A = grand(2,6,"uin",-1,1)
 B = grand(2,7,"uin",-1,1)
@@ -102,7 +102,7 @@ B = grand(5,2,"uin",-1,1)
 [C,kA,kB] = setxor(A,B,which="rows")  // or simply which="r"
 C.equal[sort([A(kA,:);B(kB,:)],dir="i",type="ldr")]
 
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

@@ -48,23 +48,25 @@ b = M.has[elem]
 \begin{examples}
   
 \paragraph{example 1} using has with a list or a cells array. 
-\begin{program}\HCode{L=list(0, "toto", [0;0], \%t)\Hnewline
-L.has["toto"]\Hnewline
-L.has[\%f]\Hnewline
-[b,ind] = L.has["toto"]\Hnewline
-// same example with an array of cells\Hnewline
-C = {0, "toto", [0;0], \%t}\Hnewline
-C.has["toto"]\Hnewline
-C.has[\%f]\Hnewline
-[b,ind] = C.has["toto"]\Hnewline
-[b,i,j] = C.has["toto"]}
-\end{program}
+\begin{mintednsp}{nspxxx}
+L=list(0, "toto", [0;0], %t)
+L.has["toto"]
+L.has[%f]
+[b,ind] = L.has["toto"]
+// same example with an array of cells
+C = {0, "toto", [0;0], %t}
+C.has["toto"]
+C.has[%f]
+[b,ind] = C.has["toto"]
+[b,i,j] = C.has["toto"]
+\end{mintednsp}
    
 \paragraph{example 2} using has with a numerical matrix
-\begin{program}\HCode{M=[0,-1, 2, 4, 9]\Hnewline
-M.has[[2,3,4]]\Hnewline
-[b,ind]=M.has[[2,3,4]]}
-\end{program}
+\begin{mintednsp}{nspxxx}
+M=[0,-1, 2, 4, 9]
+M.has[[2,3,4]]
+[b,ind]=M.has[[2,3,4]]
+\end{mintednsp}
    
 \end{examples}
 

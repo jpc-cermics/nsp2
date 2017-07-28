@@ -60,7 +60,7 @@ increasing order and start with 0.0 and end with 1.0.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{Verbatim}
+  \begin{mintednsp}{nsp}
     f=[0,0.4,0.4,0.6,0.6,1];H=[0,0,1,1,0,0];Hz=yulewalk(8,f,H);
     fs=1000;fhz = f*fs/2;  
     xbasc(0);xset('window',0);plot2d(fhz',H');
@@ -68,5 +68,5 @@ increasing order and start with 0.0 and end with 1.0.
     [frq,repf]=repfreq(Hz.num,Hz.den,frq=0:0.001:0.5);
     xbasc(1);xset('window',1);plot2d(fs*frq',abs(repf'));
     xtitle('Obtained Frequency Response (Magnitude)')
-  \end{Verbatim}
+  \end{mintednsp}
 \end{examples}

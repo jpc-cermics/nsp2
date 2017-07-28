@@ -46,7 +46,7 @@ using \verb+blas_ger+ should be faster.
 
 %--example 
 \begin{examples}
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 // how to add or substract a different scalar to each row of a matrix 
 A=rand(3,4)
 // here we want to add 1 to row 1, 2 to row 2, etc...
@@ -66,7 +66,7 @@ tic(); B = A + alpha*x*y; toc()
 tic(); A.blas_ger[alpha,x,y]; toc()
 // A and B should be equal
 B.equal[A]
-\end{Verbatim}
+\end{mintednsp}
 
 \end{examples}
 

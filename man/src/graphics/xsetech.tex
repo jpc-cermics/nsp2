@@ -65,30 +65,30 @@
 
 \noindent two subwindows 
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(wrect=[0,0,1.0,0.5],frect=[-5,-3,5,3])
   plot2d([1:10]',[1:10]',style=1,strf="001")
   xsetech(wrect=[0,0.5,1.0,0.5],axesflag=4)
   plot2d([1:10]',[1:10]',strf='014',rect=[-6,-6,6,6]);
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent four subwindows
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(wrect=[0,0,0.5,0.5],a3d=%t); plot3d()
   xsetech(wrect=[0.5,0,0.5,0.5]); plot2d()
   xsetech(wrect=[0.5,0.5,0.5,0.5]); grayplot()
   xsetech(wrect=[0,0.5,0.5,0.5]); histplot()
-\end{Verbatim}
+\end{mintednsp}
 
 \noindent using \verb!arect!
 
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
   xsetech(wrect=[0,0,1.0,0.5],arect=1/8*ones(1,4));
   x=1:0.1:10;plot2d(x',sin(x)');
   xsetech(wrect=[0,0.5,1.0,0.5],arect=[2/8,2/8,1/16,1/4]);
   x=1:0.1:10;plot2d(x',sin(x)');
-\end{Verbatim}
+\end{mintednsp}
 \end{examples}
 %-- see also
 \begin{manseealso}

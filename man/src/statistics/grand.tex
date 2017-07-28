@@ -326,7 +326,7 @@ Actions common to all generators are:
  the default internally coded initial state), you can change the initial state using 
   \verb+grand("setsd",k)+ with a simple positive integer $k$ built from 
   the current day and time. This could be done this way:
-\begin{Verbatim}
+\begin{mintednsp}{nsp}
 //  To start ``randomly'' only the current generator
 time = localtime(); 
 // sum all entries of time
@@ -341,7 +341,7 @@ k=0; for key = time.__keys',k = k + time.find[key]; end
 // apply the new state
 gen = ["mt", "kiss", "clcg2", "clcg4", "well1024a", "fsultra"];
 for g=gen; grand("setgen",g);grand("setsd",k);end
-\end{Verbatim}
+\end{mintednsp}
 
 
 
