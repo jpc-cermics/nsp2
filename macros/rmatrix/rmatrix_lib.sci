@@ -314,6 +314,7 @@ function d=det_r(r)
 // copyright scilab 
   [n,d]=lcmdiag(r);
   d = det(n) / det(d);
+  d.set_var[r.get_var[]];
 endfunction
 
 

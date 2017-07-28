@@ -66,20 +66,21 @@ function res=det_p(P,k = [])
     C=horner(P,ksi,vdim = %t);
     for kk=1:k do fi=[fi,det(C{kk})];end
     F=ifft(fi);
-    Temp1=m2p(clean(real(F),epsa,epsr))+%i*m2p(clean(imag(F),epsa,epsr));
+    Temp1 =m2p(clean(real(F),epsa,epsr),var=P.get_var[]);
+    Temp1 = Temp1+ %i*m2p(clean(imag(F),epsa,epsr),var=P.get_var[]);
   else
     // Cas Réel
     C=horner(P,ksi,vdim = %t);
     //for kk=1:k,fi=[fi,det(freq(P,ones(P),ksi(kk)))];end
     for kk=1:k do fi=[fi,det(C{kk})];end
-    Temp1=m2p(clean(real(ifft(fi)),epsa,epsr));
+    Temp1=m2p(clean(real(ifft(fi)),epsa,epsr),var=P.get_var[]);
   end
   if isempty(k) then
     // k was estimated. we set to zero the coefficients
     // with degree above maj.
     Temp2=Temp1.coeffs{1};
     Temp2(maj+1:$)=[];
-    res=m2p(Temp2);
+    res=m2p(Temp2,var=P.get_var[]);
   else
     // k is given
     res=Temp1;

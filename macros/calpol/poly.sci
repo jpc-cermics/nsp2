@@ -22,7 +22,7 @@ function y=poly(x,varargin,varargopt)
   if length(varargin) >= 1 then opts.var=varargin(1);end
   if length(varargin) >= 2 then opts.roots= (varargin(2)== 'roots' || varargin(2) == 'r');end
   opts.merge[varargopt];
-
+  
   if size(x,1) <> 1 && size(x,2) <> 1 && size(x,1)==size(x,2) then
     y=det(eye(size(x))*m2p([0,1],var=opts.var)-x);
     return ;
