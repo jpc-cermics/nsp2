@@ -21,14 +21,14 @@ function []=gainplot(sl,fmin,fmax,pas,comments)
 	  fmin_default=1.d-3;
 	  fmax_default=1.d3;
 	  if dom=='c' then fmax_default=1.d3 else fmax_default=1/(2*dt),end
-	  [frq,repf]=repfreq(sl,fmin_default,fmax_default);sl=[] 
+	  [frq,repf]=repfreq(sl,fmin=fmin_default,fmax=fmax_default);sl=[] 
 	  [d,phi]=dbphi(repf);
 	case 2 then
 	  // sl,frq
 	  if min(fmin)<=0 then
 	    error('bode: requires strictly positive frequency vector')
 	  end   
-	  [frq,repf]=repfreq(sl,fmin);fmin=[];sl=[]
+	  [frq,repf]=repfreq(sl,fmin=fmin);fmin=[];sl=[]
 	  [d,phi]=dbphi(repf);
 	case 3 then
 	  //sl,frq,comments ou sl,fmin,fmax
@@ -36,7 +36,7 @@ function []=gainplot(sl,fmin,fmax,pas,comments)
 	    if fmin<=0 then
               error('bode: requires strictly positive frequency range')
 	    end      
-	    [frq,repf]=repfreq(sl,fmin,fmax,pas_def),sl=[]
+	    [frq,repf]=repfreq(sl,fmin=fmin,fmax=fmax,step=pas_def),sl=[]
 	    [d,phi]=dbphi(repf);
 	  else
 	    comments=fmax;
@@ -49,7 +49,7 @@ function []=gainplot(sl,fmin,fmax,pas,comments)
 		warning('There are frequencies beyond Nyquist f!');
 	      end
 	    end
-	    [frq,repf]=repfreq(sl,fmin);fmin=[];sl=[]
+	    [frq,repf]=repfreq(sl,fmin=fmin);fmin=[];sl=[]
 	    [d,phi]=dbphi(repf);
 	  end
 	case 4 then 
@@ -59,13 +59,13 @@ function []=gainplot(sl,fmin,fmax,pas,comments)
 	  if min(fmin)<=0 then
 	    error('bode: requires strictly positive frequency vector')
 	  end    
-	  [frq,repf]=repfreq(sl,fmin,fmax,pas)
+	  [frq,repf]=repfreq(sl,fmin=fmin,fmax=fmax,step=pas)
 	  [d,phi]=dbphi(repf);
 	case 5 then,
 	  if min(fmin)<=0 then
 	    error('bode: requires strictly positive frequency vector')
 	  end    
-	  [frq,repf]=repfreq(sl,fmin,fmax,pas)
+	  [frq,repf]=repfreq(sl,fmin=fmin,fmax=fmax,step=pas)
 	  [d,phi]=dbphi(repf);
 	else 
 	  error('Error: Invalid number of arguments sys,fmin,fmax [,pas] [,com]')
