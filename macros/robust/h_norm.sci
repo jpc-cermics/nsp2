@@ -28,12 +28,17 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
   if nargin==1 then rerr=1e-8; end
   [no,ns] = size(c); [ns,ni] = size(b);
   if min(ni,no) == 1 then isiso = 2; else isiso = 1; end
-  [p,a] = hess(a); [u,d,v] = svd(d); b = p' * b * v; c = u' * c * p;
+  [p,a] = hess(a); [u,d1,v] = svd(d);
+  d2=zeros(size(d));d2.set_diag[d1,0];
+  d=d2;
+  b = p' * b * v; c = u' * c * p;
   dtd = diag(d'*d); ddt = diag(d*d'); dtc = d' * c;
-  aj = sqrt(-1)*eye(ns); R1 = ones(ni,1); S1 = ones(no,1);
+  aj = sqrt(-1);// *eye(ns);// XXX strange because ns is scalar
+  // and eye(ns) returns 1 in scicoslab 
+  R1 = ones(ni,1); S1 = ones(no,1);
   l = [];
   // compute starting value
-  q = ((imag(eiga) + 0.01 * ones(eiga)) ./ real(eiga)) ./ abs(eiga);
+  q = ((imag(eiga) + 0.01 * ones(size(eiga))) ./ real(eiga)) ./ abs(eiga);
   [q,i] = max(q); w = abs(eiga(i));
   svw = norm( c * ((w*aj*eye(size(a))-a)\b) + d );
   sv0 = norm( -c * (a\b) + d );
@@ -74,7 +79,7 @@ function [hinfnorm,frequency]=h_norm(Sl,rerr)
     printf('Hinfnorm is probably exactly max sv(D)\n')
     printf('The system might be all-pass\n')
   end
-  if exists('ub')==0 then ub=lb;end
+  if exists('ub') then ub=lb;end
   hinfnorm = 0.5 * (ub+lb); frequency = M;
 
 endfunction
