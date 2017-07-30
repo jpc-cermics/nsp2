@@ -6,17 +6,18 @@ function [Stmp,Ws]=colregul(Sl,Alfa,Beta)
   // Sl is asummed left invertible i.e. ss2tf(Sl) full column rank
   //!
   // Copyright INRIA
-
   if nargin <= 1 then Alfa=0;Beta=0;end
   flag=0;
   if type(Sl,'short')=='r' then
     flag=1;
     Sl=tf2ss(Sl);
   end
-  s=poly(0,'s');
+  if type(D,'short')=='p' then var=D.get_var[];else var='s';end;
+  s=poly(0,var);
   D=Sl(5);// will 
   n=size(D);n1=n(1);n2=n(2);
   Ws=syslin([],[],[],[],eye(n2,n2));
+  Ws.D.set_var[var];
   Stmp=Sl;
   if type(D,'short')=='p' then
     m=max(D.degree[]);
@@ -35,7 +36,7 @@ function [Stmp,Ws]=colregul(Sl,Alfa,Beta)
     end
   end
   D=Stmp.D;
-  if type(D,'short')=='p' then D=coeff(Stmp(5),0);end
+  if type(D,'short')=='p' then D=coeff(Stmp.D,0);end
   [W,r]=colcomp(D);
   if r==n1 then
     Ws=Ws*W;Stmp=Stmp*W;

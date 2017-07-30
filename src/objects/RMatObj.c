@@ -821,7 +821,7 @@ static int int_meth_set_dom(void *self, Stack stack, int rhs, int opt, int lhs)
 {
   int id;
   NspRMatrix *R=self;
-  const char *dom_table[] =       {"c","d","u",NULL};
+  const char *dom_table[] =       {"c","d","u","s", NULL};
   CheckStdRhs(1,1);
   CheckLhs(0,0);
   if ( IsSMatObj(stack,1))

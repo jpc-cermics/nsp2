@@ -4,12 +4,12 @@ function extractman(name)
     F=fopen(path,mode="r");
     S=F.get_lines[-1];
     F.close[];
-    I=strstr(S,"begin{Verbatim")
+    I=strstr(S,"begin{mintednsp}")
     I1=find(I<>0);
-    J=strstr(S,"end{Verbatim")
+    J=strstr(S,"end{mintednsp}")
     J1=find(J<>0);
     if size(I1,'*')<>size(J1,'*') then 
-      error("unclosed verbatim\n");
+      error("unclosed mintednsp\n");
     end
     txt=m2s([])
     for i=1:size(I1,'*');

@@ -304,7 +304,8 @@ function [SS]=mult_linearsys_linearsys(S1,S2)
     D1=coeff(S1.D);D2=coeff(S2.D);
     B1C2= S1.B * S2.C
     SS=linear_system([S1.A,B1C2;0*B1C2',S2.A],[S1.B*D2;S2.B],...
-		     [S1.C,D1*S2.C],D1*D2,[S1.X0;S2.X0],dom=S1.dom,sample=S1.dt),
+		     [S1.C,D1*S2.C],D1*D2,[S1.X0;S2.X0],dom=S1.dom,sample=S1.dt);
+    SS.D.set_var[S1.D.get_var[]];
     return
   end
   //improper systems

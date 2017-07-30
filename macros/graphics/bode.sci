@@ -132,14 +132,14 @@ function bode(varargin,varargopt)
 endfunction
 
 function bode_r(r,varargopt)
-  if ~varargopt.iskey['dt'] then varargopt.dt= r.dt;end 
+  if ~varargopt.iskey['dt'] then varargopt.dt= abs(r.dt);end 
   if ~varargopt.iskey['dom'] then varargopt.dom= r.dom;end 
   bode(r.num,r.den, varargopt(:));
 endfunction
 
 function bode_linearsys(sl,varargopt)
   h=ss2tf(sl);
-  if ~varargopt.iskey['dt'] then varargopt.dt= sl.dt;end 
+  if ~varargopt.iskey['dt'] then varargopt.dt= abs(sl.dt) ;end
   if ~varargopt.iskey['dom'] then varargopt.dom= sl.dom;end 
   bode(h.num,h.den,varargopt(:))
 endfunction
