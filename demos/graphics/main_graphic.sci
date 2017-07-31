@@ -62,8 +62,8 @@ function selection_cb(selection,args)
   // code is a call to a funcion
   // we convert it to string
   // execstr("text=pl2s("+code+");")
-  if %f then 
-    // black and white 
+  if %t then 
+    // black and white: insert_markup not in gtk 2
     execstr("text=pl2s("+code+");");
     text= text(2:$-1,:);
     buffer.set_text [ catenate(text,sep='\n')];
