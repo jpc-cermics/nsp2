@@ -161,6 +161,25 @@ MANTESTS= \
 	man-linalg.dia \
 	man-robust.dia \
 	man-control.dia \
+	man-arrays.dia \
+	man-arrays.dia \
+	man-basicnumarrays.dia \
+	man-datatypes.dia \
+	man-fsqp.dia \
+	man-graphics.dia \
+	man-gui.dia \
+	man-list.dia \
+	man-misc.dia \
+	man-model.dia \
+	man-numbers.dia \
+	man-numerics.dia \
+	man-polynomial.dia \
+	man-sorting.dia \
+	man-sounds.dia \
+	man-spmf.dia \
+	man-statistics.dia \
+	man-strings.dia \
+	man-system.dia \
 
 test-manuals: $(MANTESTS)
 

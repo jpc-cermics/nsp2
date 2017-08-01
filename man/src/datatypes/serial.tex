@@ -65,6 +65,7 @@ be used with care.
   A = serialize(L,'m');
   L1=unserialize(A);
   ok = execstr('unserialize(rand(1,10))',errcatch=%t);
+  if ~ok then lasterror();end
 \end{mintednsp}
 \item Serialize and compress.
 \begin{mintednsp}{nsp}
@@ -79,7 +80,7 @@ be used with care.
   S=serialize(A);
   str=S.tobase64[];
   S=base64toserial(str);
-  A1=S.unzerialize[];
+  A1=S.unserialize[];
 \end{mintednsp}
 \end{itemize}
 \end{examples}

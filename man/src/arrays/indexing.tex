@@ -82,9 +82,9 @@ Usual arithmetic operations are available with the dollar, for instance
       \item If $v$ is a (row or column) vector of length $n$ and  $ind$ a vector 
       of $k$ indices (also called an {\bf index vector}) 
       with values $ind(i)$ between $1$ and $n$ then:
-      \begin{mintednsp}{nsp}
+      \begin{nspcode}
       w = v(ind)
-      \end{mintednsp}
+      \end{nspcode}
       creates a new vector $w$ with $k$ elements such that $w(i) = v(ind(i))$, $1 \le i \le k$.
      Note that the new vector $w$ has row form if $v$ is a row vector
      and has column form otherwise (if $v$ is a column vector but also 
@@ -106,9 +106,9 @@ Usual arithmetic operations are available with the dollar, for instance
      \item If $A$ is a matrix of size $m \times n$, $indr$ an index vector of $r$ indices (with values
      between $1$ and $m$) and $indc$ an index vector of $c$ indices (with values between $1$ and $n$)
           then:
-     \begin{mintednsp}{nsp}
+     \begin{nspcode}
          B = A(indr,indc)
-     \end{mintednsp}
+     \end{nspcode}
      creates a new matrix $B$ of size $r \times c$ such that $B(i,j) = A(indr(i),indc(j))$, $1 \le i \le r$
      and $1 \le j \le c$. Some examples:
      \begin{mintednsp}{nsp}
@@ -122,10 +122,10 @@ Usual arithmetic operations are available with the dollar, for instance
      \end{itemize}
 
 \item {\bf assignment} in sub-vector or sub-matrix works the same way, for instance in:
-      \begin{mintednsp}{nsp}
+      \begin{nspcode}
       v(ind) = w
       A(indr,indc) = B
-      \end{mintednsp}
+      \end{nspcode}
       $w$ and $B$ should have (respectively) the same matrix dimensions than what should be obtain with the extractions
       \verb+v(ind)+ and \verb+A(indr,indc)+ but some additionnal features/tricks exist:
       \begin{itemize}

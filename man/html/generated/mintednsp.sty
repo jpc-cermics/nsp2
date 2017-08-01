@@ -1023,7 +1023,7 @@
   \immediate\closeout\FV@OutFile\endgroup\@esphack
   \setcounter{FancyVerbLine}{\value{mintednsp@FancyVerbLineTemp}}}%
 \ifcsname MintedPygmentize\endcsname\else
-  \newcommand{\MintedPygmentize}{nsp}
+  \newcommand{\MintedPygmentize}{../../../bin/nsp}
 \fi
 \newcommand{\mintednsp@pygmentize}[2][\mintednsp@outputdir\mintednsp@jobname.pyg]{%
   \ifthenelse{\equal{\mintednsp@get@opt{autogobble}{false}}{true}}%
@@ -1489,7 +1489,7 @@
 }
 \AtEndPreamble{%
   \ifthenelse{\boolean{mintednsp@draft}}{}{%
-    \TestAppExists{nsp}%
+    \TestAppExists{../../../bin/nsp}%
     \ifAppExists\else
       \PackageError{mintednsp}%
        {You must have `nsp' installed
