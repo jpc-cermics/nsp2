@@ -48,7 +48,7 @@
 x=linspace(-5,5,100);
 mu =1;
 sig =0.5;
-y= cdfnor("PQ",x,mu*ones(x),sig*ones(x));
+y= cdfnor("PQ",x,mu*ones(size(x)),sig*ones(size(x)));
 
 function y=f(x)
   y= (1/2)*(1 + erf((x-mu)/(sig*sqrt(2))));

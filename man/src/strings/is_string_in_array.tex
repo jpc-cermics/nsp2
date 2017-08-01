@@ -43,7 +43,8 @@ function rep = color_number(color)
    rep = is_string_in_array(color,table,names=["color","color_number"])
 endfunction
 color_number("y") // should be 5
-color_number("bl") // ambiguous abbreviation (an error should be set)
+ok = execstr("color_number(""bl"")",errcatch=%t); // ambiguous abbreviation (an error should be set)
+if ~ok then lasterror();end
 color_number("blu") //should be 3
 \end{mintednsp}
 \end{examples}

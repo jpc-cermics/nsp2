@@ -41,6 +41,7 @@
 \begin{examples}
 \noindent A first example
   \begin{mintednsp}{nsp}
+    xclear();
     x=-10:10; y=-10:10;m =rand(21,21);
     xset("colormap",hotcolormap(64))
     Sgrayplot(x,y,m, colorbar=%t);
@@ -49,6 +50,7 @@
 \noindent A second example
 
   \begin{mintednsp}{nsp}
+    xclear();
     n = 30;
     nt = 100;
     x = linspace(0,2*%pi,n);
@@ -69,6 +71,7 @@
   \noindent Using functions for describing surfaces
 
   \begin{mintednsp}{nsp}
+    xclear();
     function z=surf1(x,y), z=x*y, endfunction
     function z=surf2(x,y), z=x^2-y^2, endfunction
     function z=surf3(x,y), z=x^3+y^2, endfunction
@@ -91,7 +94,7 @@
   \end{mintednsp}
 
   % \noindent Adding some level curves
-  % \begin{mintednsp}{nsp}
+  % \begin{nspcode}
   %   function z=surf3(x,y), z=x^3+y^2, endfunction
   %   x = linspace(-1,1,60);
   %   y = linspace(-1,1,60);
@@ -99,7 +102,7 @@
   %   Sfgrayplot(x,y,surf3,strf="041")
   %   fcontour2d(x,y,surf3,rect=[-0.1, 0.025, 0.4],style=[1 1 1],strf="000")
   %   xtitle("f(x,y) = x^3+y^2")
-  % \end{mintednsp}
+  % \end{nspcode}
 
 \end{examples}
 %-- see also

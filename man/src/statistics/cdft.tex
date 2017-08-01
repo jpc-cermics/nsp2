@@ -40,7 +40,7 @@
 \begin{mintednsp}{nspxxx}
 x=linspace(-10,10,100);
 df = 3;
-y= cdft("PQ",x,df*ones(x));
+y= cdft("PQ",x,df*ones(size(x)));
 function y=f(x)
   y = gamma((df+1)/2)/( sqrt(df*%pi) *gamma(df/2))*(1+x^2/df)^(-(df+1)/2);
 endfunction;

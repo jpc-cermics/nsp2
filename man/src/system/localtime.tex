@@ -33,7 +33,7 @@
 \begin{examples}
   \begin{mintednsp}{nsp}
     T  =localtime();
-    D=gdate_create(T.day,T.mon+1,T.year+1900);
+    D=gdate_create(T.wday,T.mon+1,T.year+1900);
     D1 = gdate_create();
     D.compare[D1]
   \end{mintednsp}

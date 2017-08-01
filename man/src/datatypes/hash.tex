@@ -87,12 +87,12 @@ objects.
 \item Basic operations.
 \begin{mintednsp}{nsp}
  A = rand(4,4);
- H = hash_create(5,A,B=34,C="foo")  
- // or shortly H = hash(5,A,B=34,C="foo")
+ H = hash_create(5,A,B=34,C="foo"); 
+ // or shortly H = hash(5,A,B=34,C="foo");
  H.delete['A',['B','C']];
- H.enter[A,Z='foo',C=3.56];
+ H.enter[A,B='foo',C=3.56];
  [a,b,c]=H.find['A',['B','C']]
- [a,b,c]=H.iskey['A',['B','C']]
+ [a,bc]=H.iskey['A',['B','C']]
  H.merge[hash_create(P=89,Q=67)];
  H.A = 56 
  str = 'A'
@@ -102,7 +102,7 @@ objects.
 \begin{mintednsp}{nsp}
  function y=f(a=1,b=2,c=3);y=[a,b,c];endfunction;
  H = hash_create(a=67,b=45);
- [a,b,c]=f(H(:));
+ y=f(H(:));
 \end{mintednsp}
 \item Using method \verb+find+ to fill a cell or scalar matrix.
 \begin{mintednsp}{nsp}

@@ -54,7 +54,7 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{mintednsp}{nsp} 
+  \begin{nspcode}
     // get the subkeys of a node 
     [n,Tn]=registry("HKEY_LOCAL_MACHINE","Software\\GTK");
     // get the value-names of a leaf 
@@ -71,7 +71,7 @@
     zk=registry("HKEY_LOCAL_MACHINE","Software\\Test","K");
     // delete a leaf 
     registry("HKEY_LOCAL_MACHINE","Software\\Test",delete=%t);
-  \end{mintednsp}
+  \end{nspcode}
 \end{examples}
 %-- see also
 

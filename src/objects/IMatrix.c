@@ -1567,7 +1567,6 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
   int nr = cm->m;
   int nc = cm->n;
   fmt->curr_real_fw = nsp_imatrix_format_length(cm);
-  /* Sciprintf("Using %d\n",  fmt->curr_real_fw ); */
   if (fmt->plus_format && ! user_pref.pr_as_read_syntax)
     {
       nsp_matrix_plus_format(cm,nr,nc,BMij_plus_format,indent);
@@ -1576,7 +1575,7 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
     {
       int column_width,total_width,inc , offset;
       int max_width ,winrows ;
-      /* fmt->curr_real_fw=5; */
+      /* fmt->curr_real_fw=5;  */
       column_width = fmt->curr_real_fw + 2;
       offset =  indent + 4; /* 4 = " |...| " */
       total_width = nc * column_width + offset;
@@ -1607,21 +1606,23 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
 static int nsp_imatrix_format_length(NspIMatrix *M)
 {
   double dmin=0,dmax=0;
-  int i,sign=0,len;
+  int i,zsign=0,len;
   nsp_int_union imin,imax;
-#define IMAT_MAX_MIN(name,type,arg)				\
-  imin.name = M->name[0];					\
-  imax.name = M->name[0];					\
-  for ( i = 0; i < M->mn ; i++ )				\
-    {								\
-      if  ( imin.name > M->name[i] ) imin.name = M->name[i];	\
-      if  ( imax.name < M->name[i] ) imax.name = M->name[i];	\
-    }								\
-  dmin = ( imin.name != 0) ? log((double) Abs(imin.name))/log(10) : 0;	\
-  sign = ( imin.name > 0)  ? 0 : 1 ;				\
-  dmax = ( imax.name != 0) ? log((double) Abs(imax.name))/log(10.0) : 0; \
+#define IMAT_MAX_MIN(name,type,arg)					\
+  imin.name = M->name[0];						\
+  imax.name = M->name[0];						\
+  for ( i = 0; i < M->mn ; i++ )					\
+    {									\
+      if  ( imin.name > M->name[i] ) imin.name = M->name[i];		\
+      if  ( imax.name < M->name[i] ) imax.name = M->name[i];		\
+    }									\
+  dmin = (double) imin.name;						\
+  dmax = (double) imax.name;						\
+  dmin = ( imin.name != 0) ? log(Abs(dmin))/log(10.0) : 0;		\
+  zsign = ( imin.name > 0)  ? 0 : 1 ;					\
+  dmax = ( imax.name != 0) ? log(Abs(dmax))/log(10.0) : 0;		\
   break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_MAX_MIN,"");
-  len = Max(dmax+1,dmin + sign+1);
+  len = Min(Max(dmax+1,dmin + zsign+1),128); 
   return len;
 }

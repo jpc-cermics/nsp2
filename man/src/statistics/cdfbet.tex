@@ -43,7 +43,7 @@
 x=linspace(0,1,100);
 A =2;
 B =3;
-y= cdfbet("PQ",x,1-x,A*ones(x),B*ones(x));
+y= cdfbet("PQ",x,1-x,A*ones(size(x)),B*ones(size(x)));
 
 function y=f(x)
   y = gamma(A+B)/(gamma(A)*gamma(B))*x^(A-1)*(1-x)^(B-1)

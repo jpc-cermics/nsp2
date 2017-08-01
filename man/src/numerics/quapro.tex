@@ -99,9 +99,11 @@ to download a toolbox and ask the authors for using it.
     C=[C1;C2] ; //
     b=[b1;b2] ;  //
     me=3;
-    [x,lagr,f]=quapro(Q,p,C,b,ci,cs,me)
-    //Only linear constraints (1 to 4) are active (lagr(1:6)=0):
-    [x,lagr,f]=quapro(Q,p,C,b,[],[],me)   //Same result as above 
+    if exists('quapro','function') then 
+     [x,lagr,f]=quapro(Q,p,C,b,ci,cs,me)
+     //Only linear constraints (1 to 4) are active (lagr(1:6)=0):
+     [x,lagr,f]=quapro(Q,p,C,b,[],[],me)   //Same result as above 
+    end
 \end{mintednsp} 
 \end{examples}
 %-- see also

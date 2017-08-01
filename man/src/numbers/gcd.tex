@@ -47,16 +47,15 @@
     p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
     cp=[1,2,5,1];
     cq=[1,0,2,0];
-    u= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
-    v= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+    p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+    q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
     cpq = min(cq,cp);
     g = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
-    [z,f1,f2,res] = gcd(p,q,delta=1.e-9);
-    norm(u/norm(u) - z*f1)
-    norm(v/norm(v)- z*f2)
-
-    z.normalize[];
-    norm(z -g) 
+    [gc,f1,f2,res] = gcd(p,q,delta=1.e-9);
+    norm(p/norm(p) - gc*f1)
+    norm(q/norm(q)- gc*f2)
+    gc.normalize[];
+    norm(gc -g) 
   \end{mintednsp}
 \end{examples}
 %-- see also

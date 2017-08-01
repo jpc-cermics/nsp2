@@ -40,7 +40,7 @@ The scaled complementary error function \verb+erfcx+ is defined by:
 \begin{examples}
 \begin{mintednsp}{nsp}
   function y=f(x); y = exp(-x.^2);endfunction;
-  intg(0,x,f)*2/sqrt(%pi) - erf(x);
+  x=2;intg(0,x,f)*2/sqrt(%pi) - erf(x);
 \end{mintednsp}
 \end{examples}
 %-- see also

@@ -130,27 +130,27 @@ any number of blank or tab characters and/or one coma or semicolon.
 % --example 
 \begin{examples}
   \begin{mintednsp}{nsp}
-x = (1:9)'; pr = pdf("geom",n,0.7);
+x = (1:9)'; pr = pdf("geom",x,0.7);
 Mat = [x,pr];
 title = ["some probabilities of G(0.7) (the geometric distribution)";
          "X pr(X)"];
-fprintfMat("toto.dat",Mat,header=title)
+fprintfMat("TMPDIR/toto.dat",Mat,header=title)
 
 // read  back into nsp
-[M,title] = fscanfMat("toto.dat")
+[M,title] = fscanfMat("TMPDIR/toto.dat");
 max(abs((M-Mat)./Mat))  // should not be 0
 
 // use the nsp long format (it uses 16 decimal digits for the significant part)
 format("long")
-fprintfMat("toto.dat",Mat,header=comment)
+fprintfMat("TMPDIR/toto.dat",Mat,header=title)
 // read  back to nsp
-M = fscanfMat("toto.dat")
+M = fscanfMat("TMPDIR/toto.dat");
 max(abs((M-Mat)./Mat))  // error should be less than before but not 0
 
 // to recover back exactly one needs 17 decimal digits for the significant part
-fprintfMat("toto.dat",Mat,header=comment,format="%.17g")
+fprintfMat("TMPDIR/toto.dat",Mat,header=title,format="%.17g")
 // read  back to nsp
-M = fscanfMat("toto.dat")
+M = fscanfMat("TMPDIR/toto.dat");
 max(abs((M-Mat)./Mat))  // error should be 0
 \end{mintednsp}
 \end{examples}
