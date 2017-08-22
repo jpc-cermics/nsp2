@@ -60,7 +60,7 @@ function sys=lincos(scs_m,x0,u0,param)
   // end
 
   for i=1:size(scs_m.objs) do
-    if typeof(scs_m.objs(i))=='Block' then
+    if scs_m.objs(i).type =='Block' then
       if scs_m.objs(i).gui=='IN_f' then
         scs_m.objs(i).gui='INPUTPORT';
         IN=[IN,scs_m.objs(i).model.ipar]

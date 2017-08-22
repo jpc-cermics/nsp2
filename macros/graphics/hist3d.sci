@@ -7,7 +7,7 @@ function hist3d(f,T,A,leg,flags,ebox)
     write(%io(2),s_mat);execstr(s_mat);
     return;
   end
-  if typeof(f)=='list' then 
+  if type(f,'short')=='l' then 
     [f,x,y]=f(1:3);
     sx=prod(size(x));
     sy=prod(size(y));

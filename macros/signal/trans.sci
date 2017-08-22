@@ -28,13 +28,13 @@ function [hzt]=trans(pd,zd,gd,tr_type,frq)
 // Author: C. Bunks  date: 9 Sept 1988
 //corrections: C. Bunks date 14 Feb. 1998
 // 
-  if typeof(pd)=="rational" then
+  if type(pd,'short')=="r" then
     hz=pd;
     tr_type=zd
     frq=gd
     pd=roots(hz.den)
     zd=roots(hz.num)
-    gd=coeff(hz.num,degree(hz.num))/coeff(hz.den,degree(hz.den))
+    gd=coeff(hz.num,hz.num.degree[])/coeff(hz.den,hz.den.degree[])
   end
   z=poly(0,'z');fc=.25;fu=frq(1);fl=frq(2);
   //make filter type using all-pass change of variables
@@ -58,7 +58,7 @@ function [hzt]=trans(pd,zd,gd,tr_type,frq)
     num=(k+1)-2*alpha*z+(1-k)*z^2;
     den=(k+1)*z^2-2*alpha*z+(1-k);
   else
-    error('Unknown filter type --- program termination'),
+    error(sprintf('Error: unknown filter type ''%s'' in function trans',tr_type));
   end
   [pt,zt,gt]=bilt(pd,zd,gd,num,den);
   hzt= p2r(gt*real(poly(zt,'z')),real(poly(pt,'z')),var='z');// ,'d');
