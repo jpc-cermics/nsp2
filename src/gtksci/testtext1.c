@@ -1512,7 +1512,7 @@ static View *nsptv_create_view (Buffer *buffer)
   view->read_queue= NULL;
   view->write_queue= NULL;
 #endif
-
+  
 
   return view;
 }
@@ -1831,7 +1831,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
     /* fd=fileno(stdin); */
     tty = isatty(fileno(stdin));
     init_flag = FALSE;
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(__APPLE__)
     tty=1;
 #endif
   }

@@ -148,7 +148,8 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
     fd=fileno(stdin);
     tty = isatty(fileno(stdin));
     init_flag = FALSE;
-#ifdef __MINGW32__
+#if (defined(__MINGW32__) || defined(__APPLE__))
+    /* 2017: apple added since the result is wrong when starting a bundle */
     tty=1;
 #endif
   }
@@ -185,7 +186,7 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
       /* fprintf(stdout,"[[%s]]\n",buffer);  */
       return;
     }
-      
+
   if ( sigsetjmp(my_env,1)) 
     {
       /* return from longjmp: we get here if there's a menu command 
