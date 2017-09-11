@@ -1418,6 +1418,9 @@ static View *nsptv_create_view (Buffer *buffer)
   nsptv_buffer_ref (buffer);
 
   view->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_wmclass(GTK_WINDOW(view->window),"Nsp","Nsp");
+  gtk_window_set_title(GTK_WINDOW(view->window),"Nsp");
+    
   g_object_set_data (G_OBJECT (view->window), "view", view);
 
   g_signal_connect (view->window, "delete_event",

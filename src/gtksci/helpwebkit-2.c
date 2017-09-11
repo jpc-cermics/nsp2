@@ -88,6 +88,7 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
     }
 
     gtk_widget_grab_focus(webView);
+    gtk_window_set_wmclass(GTK_WINDOW(mainWindow),"helpbrowser", "Nsp");
     gtk_widget_show(mainWindow);
 }
 
