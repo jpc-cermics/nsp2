@@ -2,7 +2,7 @@ function load_toolbox(name,register=%t)
 
   function register_toolbox(name)
     if ~file('exists','~/.nsp') then 
-      file("mkdir","~/.nsp');
+      file("mkdir","~/.nsp");
       F=fopen("~/.nsp/startup.sce",mode="w");
       F.close[];
     else
@@ -93,7 +93,7 @@ function load_toolbox(name,register=%t)
     end
   else
     if size(tb,'*')== 0 then 
-      error("Error: cannot find a toolbox named "+name+" !")
+      printf("%s toolbox not loaded (not found in toolboxes)\n",name)
     else
       error("Error: The name "+name+" is ambiguous");
     end
