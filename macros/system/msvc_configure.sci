@@ -49,8 +49,8 @@ function [msvc_compiler,name,configured]=msvc_configure(verbose=%f)
     if or([ok1,ok2,ok3]) then
       return;
     else
-      printf('\nWarning : Microsoft Visual C++ 2008 Express Edition has been detected,\n");
-      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n");
+      printf('\nWarning : Microsoft Visual C++ 2008 Express Edition has been detected,\n');
+      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n');
       printf('Please install this SDK if you want to use dynamic link with scilab.\n');
       lasterror(); // The error message is cleared
     end
@@ -69,8 +69,8 @@ function [msvc_compiler,name,configured]=msvc_configure(verbose=%f)
     if or([ok1,ok2,ok3]) then
       return;
     else
-      printf('\nWarning: Microsoft Visual C++ 2005 Express Edition has been detected,\n");
-      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n");
+      printf('\nWarning: Microsoft Visual C++ 2005 Express Edition has been detected,\n');
+      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n');
       printf('Please install this SDK if you want to use dynamic link with scilab.\n');
       lasterror(); // The error message is cleared
     end
@@ -133,7 +133,9 @@ function mc=msvc_select(verbose=%f)
 endfunction
 
 function table= msvc_table()
-  table = ['Software\\Microsoft\\VCExpress\\14.0\\Setup\\VS', 'msvc140'
+  table = ['Software\\Microsoft\\VCExpress\\15.0\\Setup\\VS', 'msvc150'
+	   'Software\\Microsoft\\VisualStudio\\15.0\\Setup\\VS', 'msvc150'
+	   'Software\\Microsoft\\VCExpress\\14.0\\Setup\\VS', 'msvc140'
 	   'Software\\Microsoft\\VisualStudio\\14.0\\Setup\\VS', 'msvc140'
 	   'Software\\Microsoft\\VCExpress\\12.0\\Setup\\VS', 'msvc120express';
 	   'Software\\Microsoft\\VisualStudio\\12.0\\Setup\\VS',  'msvc120pro';
@@ -160,7 +162,10 @@ function table= msvc_table()
 	   'SOFTWARE\\Microsoft\\DevStudio\\5.0\\Directories',  'msvc50'];
   
   if %win32 && %win64 then 	   
-    table = [table; "Software\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\Setup\\VS","msvc140pro";
+    table = [table;
+	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\15.0\\Setup\\VS","msvc150pro";
+	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\15.0\\Setup\\VS","msvc150express";
+	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\Setup\\VS","msvc140pro";
 	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\14.0\\Setup\\VS","msvc140express";
 	     
 	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\12.0\\Setup\\VS","msvc120pro";
@@ -179,7 +184,12 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name,target,verbose)
 // msvc_compiler is set to '' if the visual version corresponding to name
 // is not found.
 // configure is set to %t if setting env variables succeeded.
-
+  
+  if rep == 'msvc150' then 
+    [msvc_compiler,configured]=msvc_check_product_2017(rep,name,target,verbose);
+    return;
+  end
+  
   configured = %f;
   ok=execstr("vsdir=registry(''HKEY_LOCAL_MACHINE'',name,''ProductDir'');",errcatch=%t);
   if ok then
@@ -229,6 +239,76 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name,target,verbose)
     if verbose then 
       printf("Cannot find C compiler env. variables with ""vcvarsall.bat %s""\n",target);
     end
+  end
+endfunction
+
+function [msvc_compiler,configured]=msvc_check_product_2017(rep,name,target,verbose)
+  // 2017 is special since we have no entries in regedit 
+  // we search in standard pathes thus it will not work if the
+  // installation is not standard
+  
+  if verbose then
+    printf('Check for Microsoft Visual Studio 2017\n');
+  end
+    
+  configured = %f;
+  efiles = [ 'VC/Auxiliary/Build']
+  efiles = [ 'Community/'; 'Professional/' ; 'Enterprise/'] + efiles;
+  efiles = 'Microsoft Visual Studio/2017/' + efiles;
+  files = [ 'C:/Program Files/' + efiles;
+	    'C:/Program Files (x86)/' + efiles];
+  msvc_compiler=m2s([]);
+  for k=1:size(files,'r')
+    if verbose then
+      printf('search for file %s\n',files(k));
+    end
+    if file('exists',files(k)+'/vcvarsall.bat') then
+      if verbose then
+	printf('found %s\n',files(k));
+      end
+      // execute vcvarsall to set env variables
+      VC= sprintf("%s",files(k));
+      cmd = sprintf('""%s/bin/vc.bat"" ""%s"" %s',getenv('NSP'),VC,target);
+      //  S=unix_g(cmd)
+      [ok,S,stderr,msgerr,exitst]=spawn_sync(cmd);
+      if ~ok then
+	S=m2s([]);
+	continue;
+      end
+            
+      vars= ['DevEnvDir';
+	     'INCLUDE';
+	     'LIB';
+	     'LIBPATH';
+	     'PATH';
+	     'VCINSTALLDIR';
+	     'VS100COMNTOOLS';
+	     'VSINSTALLDIR';
+	     'WindowsSdkDir'];
+      for i=1:size(vars,'*') do
+	tag = vars(i)+'=';
+	ntag= length(tag);
+	for j=1:size(S,1) do
+	  if toupper(part(S(j,:),1:ntag)) == toupper(tag) then
+	    val = part(S(j,:),(ntag+1):length(S(j,:)));
+	    setenv(vars(i),val);
+	    //	printf("set %s=%s\n",vars(i),val);
+	    continue
+	  end
+	end
+      end
+      if getenv('VCINSTALLDIR','')<>'' then
+	configured = %t
+	if verbose then 
+	  printf("C compiler env. variables found with ""vcvarsall.bat %s""\n",target);
+	end
+	msvc_compiler = rep ; 
+	return
+      end
+    end
+  end
+  if verbose then 
+    printf("Cannot find 2017 compiler\n");
   end
 endfunction
 
