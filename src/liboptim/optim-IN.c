@@ -298,14 +298,18 @@ int int_optim (Stack stack, int rhs, int opt, int lhs)
 	}
       switch ( mode ) 
 	{
-	case 1: if ( imp != 0 ) 
-	    Sciprintf("normal stop, at last iteration f decreases by less than %g\n",epsf);break;
+	case 1:
+	  if ( imp != 0 ) 
+	    Sciprintf("normal stop, at last iteration f decreases by less than %g\n",epsf);
+	  break;
 	case 2: Scierror("Error: incoherent optim call\n"); goto bug;
 	case 3: if ( imp != 0 ) Sciprintf("reduce the x scale\n"); break;
 	case 4: if ( imp != 0 ) Sciprintf("maximum number of iterations is reached\n"); break;
 	case 5: if ( imp != 0 ) Sciprintf("maximum number of calls to f is reached\n"); break;
-	case 6: if ( imp != 0 ) 
-	    Sciprintf("optimization stops because too small variations for x\n");break;
+	case 6:
+	  if ( imp != 0 ) 
+	    Sciprintf("optimization stops because too small variations for x\n");
+	  break;
 	case 7: if ( imp != 0 ) Sciprintf("fprf2 failed\n");break;
 	case 8: if ( imp != 0 ) Sciprintf("we are starting to loop\n");break;
 	}

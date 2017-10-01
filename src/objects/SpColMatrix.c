@@ -3514,10 +3514,16 @@ static int  RowCountNonNull(NspMatrix *A, int i)
   switch ( A->rc_type ) 
     {
     case 'r' :
-      for ( j = 0 ; j < A->n ; j++ )  if (A->R[i+j*(A->m)] != 0.00 ) count++; break;
+      for ( j = 0 ; j < A->n ; j++ )
+	{
+	  if (A->R[i+j*(A->m)] != 0.00 ) count++;
+	}
+      break;
     case 'c' :
       for ( j = 0 ; j < A->n ; j++ )  
-	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
+	{
+	  if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
+	}
       break;
     }
   return(count);
@@ -3539,10 +3545,12 @@ static int  ColCountNonNull(NspMatrix *A, int j)
   switch ( A->rc_type ) 
     {
     case 'r' :
-      for ( i = 0 ; i < A->m ; i++ )  if (A->R[i+j*(A->m)] != 0.00 ) count++; break;
+      for ( i = 0 ; i < A->m ; i++ )
+	if (A->R[i+j*(A->m)] != 0.00 ) count++;
+      break;
     case 'c' :
       for ( i = 0 ; i < A->m ; i++ )  
-	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
+	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00) count++;
       break;
     }
   return(count);
@@ -5408,10 +5416,15 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 	{
 	  switch ( A->rc_type ) 
 	    {
-	    case 'r' : if ( Abs(A->D[i]->R[j])   < eps) A->D[i]->J[j] = -1;n=1; break ;
+	    case 'r' :
+	      if ( Abs(A->D[i]->R[j])   < eps) A->D[i]->J[j] = -1;
+	      n=1;
+	      break ;
 	    case 'c' : 
 	      /* using complex absolute value  */
-	      if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
+	      if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;
+	      n=1;
+	      break ;
 	      /* 
 	       * if ( Abs(A->D[i]->C[j].r) < eps ) A->D[i]->C[j].r = 0.0;
 	       * if ( Abs(A->D[i]->C[j].i) < eps ) A->D[i]->C[j].i = 0.0;
@@ -8134,9 +8147,11 @@ static NspSpColMatrix *nsp_spcolmatrix_isnan_gen(NspSpColMatrix *A,int flag, Fis
 	    {
 	      switch ( A->rc_type ) 
 		{
-		case 'r' : if ( F( A->D[i]->R[k]))  Res->D[0]->R[A->D[i]->J[k]] =1; break;
+		case 'r' : if ( F( A->D[i]->R[k]))  Res->D[0]->R[A->D[i]->J[k]] =1;
+		  break;
 		case 'c' : if ( F( A->D[i]->C[k].r) ||F( A->D[i]->C[k].i)) 
-		    Res->D[0]->R[A->D[i]->J[k]] = 1;break;
+		    Res->D[0]->R[A->D[i]->J[k]] = 1;
+		  break;
 		}
 	    }
 	}

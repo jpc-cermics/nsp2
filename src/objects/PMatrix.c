@@ -3741,11 +3741,14 @@ int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int le
 		  if (do_print) Sciprintf("+");
 		  count++;
 		}
-	      if (do_print)Sciprintf("(");count++;
+	      if (do_print)Sciprintf("(");
+	      count++;
 	      count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->C[i].r, fw,do_print,TRUE);
-	      if (do_print)Sciprintf("+");count++;
+	      if (do_print)Sciprintf("+");
+	      count++;
 	      count +=nsp_pr_any_float_vs_p(fmt->curr_imag_fmt, m->C[i].i, fw,do_print,TRUE);
-	      if (do_print)Sciprintf("i)");count +=2;
+	      if (do_print)Sciprintf("i)");
+	      count +=2;
 	      leading = FALSE;
 	       if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 

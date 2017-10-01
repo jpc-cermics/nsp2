@@ -262,7 +262,8 @@ void nsp_spawn_info(NspSpawn *M, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("Spawn %s {\n", NSP_OBJECT(M)->name);
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\n");
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  Sciprintf("}\n");
 }
 
 /*
@@ -280,7 +281,8 @@ int nsp_spawn_print(NspSpawn *M, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("Spawn %s {\n", NSP_OBJECT(M)->name);
   Sciprintf("%s", M->obj->prog);
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");Sciprintf("}\n");
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  Sciprintf("}\n");
   return TRUE;
 }
 

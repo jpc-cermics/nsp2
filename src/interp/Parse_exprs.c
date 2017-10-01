@@ -163,7 +163,8 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	  if ( T->tokenv.id == COMMENT) 
 	    {
-	      if (nsp_parse_add_comment(plist,T->tokenv.buf)==FAIL) return(FAIL); count++;
+	      if (nsp_parse_add_comment(plist,T->tokenv.buf)==FAIL) return(FAIL);
+	      count++;
 	    }
 	  if (nsp_parse_add(plist,STATEMENTS1,count,T->tokenv.Line)==FAIL) return(FAIL);
 
@@ -320,13 +321,15 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
 		  if ( plist2 == NULL) 
 		    {
-		      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);count++;
+		      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
+		      count++;
 		      plist2_last = plist2; 
 		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
 		    }
 		  else 
 		    {
-		      if (nsp_parse_add_list(&plist2_last,&plist1)== FAIL) return(FAIL);count++;
+		      if (nsp_parse_add_list(&plist2_last,&plist1)== FAIL) return(FAIL);
+		      count++;
 		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
 		    }
 		}
@@ -2332,7 +2335,8 @@ static int IsComa(Tokenizer *T,int *op)
     *op = PARENTH ;   if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
   }
   else 
-    *op = 0 ;    return(FAIL);
+    *op = 0 ;
+  return(FAIL);
 }
 
 
@@ -2514,7 +2518,8 @@ static int IsDiagMatOp(Tokenizer *T,int *op,char opt)
   switch ( T->tokenv.id) 
     {
     case '#' : *op = diagconcat;
-      if ( T->NextToken(T) == FAIL) return(FAIL);return(OK);
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+      return(OK);
     default: *op= diagconcat ; return(FAIL);
     }
 }
