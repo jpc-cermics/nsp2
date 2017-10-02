@@ -95,7 +95,7 @@ function mc=msvc_select(verbose=%f)
   msvc_compiler='unknown'; // default value
   name = 'unknown';
   configured=%f;
-  if ~%win32 then return;end
+  if ~%win32 then mc = m2s([]); return;end
   
   table= msvc_table();
   table_ok=[];
