@@ -1927,7 +1927,7 @@ extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M) ;
 
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
-  char buf[1024],formati[256],format[256];
+  char buf[1024],formati[512],format[256];
   /* nsp_const_string def="%f", format=def; */
   /* nsp_const_string  defi ="%f +%fi",     */
   int i;

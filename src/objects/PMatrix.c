@@ -3657,11 +3657,10 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   return TRUE ;
 }
 
-
 static int nsp_print_exponent_utf8(int i, int do_print)
 {
   int j;
-  char str[8];
+  char str[16];
   static unsigned char codes[][4]={{226,   129,   176,0},
 				   {194,   185,   0,  0},
 				   {194,   178,   0,  0},
