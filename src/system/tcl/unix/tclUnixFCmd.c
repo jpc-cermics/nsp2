@@ -1014,7 +1014,7 @@ GetPermissionsAttribute( objIndex, fileName, attributePtrPtr)
     NspObject **attributePtrPtr;	    /* A pointer to return the object with. */
 {
     struct stat statBuf;
-    char returnString[6];
+    char returnString[7];
 
     if (stat(fileName, &statBuf) != 0) {
       Scierror("Error: could not stat file \"%s\": %s\n", fileName,nsp_posix_error());

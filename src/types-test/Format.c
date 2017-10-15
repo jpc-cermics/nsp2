@@ -308,7 +308,7 @@ static void graduate1(const double *xmi,const double *xma, double *xi, double *x
       if ( *np2 <= 20 ) 
 	{
 	  /* try to have 0 in the graduation if present */
-	  if ( ~( *xmi == -*xma  && *np2 % 2 == 0 ))
+	  if ( !( *xmi == -*xma  && *np2 % 2 == 0 ))
 	    break;
 	}
       else
