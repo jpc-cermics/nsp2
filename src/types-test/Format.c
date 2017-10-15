@@ -302,14 +302,13 @@ static void graduate1(const double *xmi,const double *xma, double *xi, double *x
       gradua(xmi,xma,kminr,kmaxr,ar,&npr,&b) ;
       *xi= (*kminr)*exp10((double) *ar);
       *xa= (*kmaxr)*exp10((double) *ar);
-      /** fprintf(stderr,"\tRes=[%20.10f,%20.10f]-->[%d,%d,10^%d,%d]\n",*xi,*xa
-	  ,*kminr,*kmaxr,*ar,npr); */
+      /* fprintf(stderr,"\tRes=[%20.10f,%20.10f]-->[%d,%d,10^%d,%d]\n",*xi,*xa ,*kminr,*kmaxr,*ar,npr); */
       *np2= npr;
       if ( *np2 <= 20 ) 
 	{
 	  /* try to have 0 in the graduation if present */
-	  if ( !( *xmi == -*xma  && *np2 % 2 == 0 ))
-	    break;
+	  break;
+	  /* wrong test if ( ~( *xmi == -*xma  && *np2 % 2 == 0 ))  { break; } */
 	}
       else
 	b--;
