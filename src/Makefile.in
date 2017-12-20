@@ -20,15 +20,31 @@ ALLSCIDIRS = \
 	libminpack liboptim libpvm libblas liblapack libxdr libsndfile \
 	libumfpack libportaudio libgraphviz libglpk libqhull @AMOS_CEPHES_LIB@ \
 
+# for building 
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS)
-ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS)
+# for cleaning everything
+ALL_SUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS)
 
 SILENT=$(findstring -s,$(MFLAGS))
 DIR=
 
-all clean distclean ::
+all ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i && if test "x$(SILENT)" != "x-s"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "make $@ in sub directory $$i failed"; \
+	       	   case '${MFLAGS}' in *[k]*) echo "carrying on compilation (-k used)";; *) exit $$IER;;esac;\
+	   	esac;\
+	done
+
+clean distclean ::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(ALL_SUBDIRS) ;\
 	do \
 		(cd $$i && if test "x$(SILENT)" != "x-s"; then echo "making $@ in $(DIR)$$i ";fi && \
 		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \

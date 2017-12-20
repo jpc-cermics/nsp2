@@ -13,3 +13,4 @@ distclean::
 	@$(RM) -f ../../bin/zterm
 
 clean::
+

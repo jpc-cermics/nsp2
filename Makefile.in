@@ -84,7 +84,7 @@ all ::
 	   	esac;\
 	done
 
-SUBDIRS_CLEAN= $(SUBDIRS) src
+SUBDIRS_CLEAN=  src pvm3 $(SUBDIRS)
 
 clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \

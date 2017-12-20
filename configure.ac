@@ -65,7 +65,10 @@ AC_ARG_WITH(gi,
     [  --with-gi               add  gobject-introspection lib (default=no) ])
 
 AC_ARG_WITH(gtk3,
-    [  --with-gtk3             prefer gtk3 to gtk2 ])
+    [  --with-gtk3             prefer gtk3 to gtk2 (default value)])
+
+AC_ARG_WITH(gtk2,
+    [  --with-gtk2             prefer gtk2 to gtk3 ])
 
 #########################################
 ## optional packages which can be omited
@@ -116,11 +119,21 @@ AC_ARG_WITH(packages,
 AC_ARG_WITH(gtk,
     [  --without-gtk	       do not compile with graphics/gtk support ])
 
+# deprecated
+
+GRAPHICS_LIB_OLD=
+
+# use gtk2 (the default is gtk3)
+
+if test xx"$with_gtk2" = xx; then
+   with_gtk3=yes
+else
+   with_gtk3=
+fi
+
 if test xx"$with_gtk3" = xx; then
-   GRAPHICS_LIB_OLD=
    with_gtk3=no
 else
-   GRAPHICS_LIB_OLD=
    with_gtk3=yes
    AC_DEFINE(WITH_GTK3,[],[using gtk3])	
    with_gtkglext=no
@@ -2230,9 +2243,6 @@ TOOLBOX=scicos-4.4;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 # add codegen-peval if found
 TOOLBOX=codegen-peval
-AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
-# add modnum if found
-TOOLBOX=modnum_43;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 # add modnum if found
 TOOLBOX=modnum_nsp;
