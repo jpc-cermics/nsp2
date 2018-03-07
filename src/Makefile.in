@@ -17,7 +17,8 @@ ALLSCIDIRS = \
 	system graphics-old graphics-new menus gtksci \
 	gzvt2 modules gobjects types-test librand \
 	libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
-	libminpack liboptim libpvm libblas liblapack libxdr libsndfile \
+	libminpack liboptim libcontrol libslicot libcalelm libsignal \
+	libpvm libblas liblapack libxdr libsndfile \
 	libumfpack libportaudio libgraphviz libglpk libqhull @AMOS_CEPHES_LIB@ \
 
 # for building 
