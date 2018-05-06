@@ -31,6 +31,7 @@
 #include <nsp/gtksci.h>
 #include <nsp/system.h>
 #include <nsp/graphics-new/Graphics.h>
+#include <nsp/graphics-new/color.h>
 #include <nsp/parse.h>
 #include <nsp/gsort-p.h>
 #include <nsp/gtk/gobject.h> /* FIXME: nsp_gtk_eval_function */
@@ -3934,13 +3935,15 @@ static const char *xget_Table[] = {
   NULL
 };
 
+static void xget_default_colormap(double *val,int color_id);
+
 static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
 {
   int color_arg=-1;
-  NspFigureData *Gc;
-  NspFigure *F;
-  BCG *Xgc;
-  NspMatrix *M;
+  NspFigureData *Gc=NULL;
+  NspFigure *F=NULL;
+  BCG *Xgc=NULL;
+  NspMatrix *M=NULL;
   int rep, flagx=0, val,i, cl[5],m3,vals[2];
 
   if ( rhs <= 0) { return nsp_graphic_demo(NspFname(stack),"xsetm();",0);}
@@ -3965,11 +3968,15 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  F = nsp_check_for_current_figure();
-  Xgc=nsp_check_graphic_context();
-  if ( F == NULL) return RET_BUG;
-  Gc = F->obj->gc;
-
+  /* we can obtain a default colomap even if no figure are found */
+  if ( rep != xget_colormap)
+    {
+      F = nsp_check_for_current_figure();
+      Xgc=nsp_check_graphic_context();
+      if ( F == NULL) return RET_BUG;
+      Gc = F->obj->gc;
+    }
+  
   switch (rep)
     {
     case xget_alufunction:
@@ -4005,27 +4012,39 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
       return 1;
       break;
     case xget_colormap:
-      /* flagx can be used if != 0 , to only get color flagx */
-      flagx = Max(flagx,0);
-      /* get colors from current figure or current Xgc if no figure
-       * on Xgc
-       */
-      if ( flagx != 0)
+      if ( Xgc != NULL )
 	{
-	  /* just get one color */
-	  if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
-	  StackStore(stack,(NspObject *) M,rhs+1);
-	  NSP_OBJECT(M)->ret_pos = 1;
+	  /* flagx can be used if != 0 , to only get color flagx */
+	  flagx = Max(flagx,0);
+	  /* get colors from current figure or current Xgc if no figure
+	   * on Xgc
+	   */
+	  if ( flagx != 0)
+	    {
+	      /* just get one color */
+	      if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	      StackStore(stack,(NspObject *) M,rhs+1);
+	      NSP_OBJECT(M)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      /* get all colors */
+	      /* first call to just get m3 */
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL,flagx);
+	      if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
+	      /* second call to get the colors */
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	      StackStore(stack,(NspObject *) M,rhs+1);
+	      NSP_OBJECT(M)->ret_pos = 1;
+	    }
 	}
       else
 	{
-	  /* get all colors */
-	  /* first call to just get m3 */
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL,flagx);
-	  if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
-	  /* second call to get the colors */
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	  /* default colormap */
+	  if ((M = nsp_matrix_create(NVOID,'r',(flagx != 0) ? 1:DEFAULTNUMCOLORS ,3))== NULLMAT)
+	    return RET_BUG;
+	  xget_default_colormap(M->R,flagx);
 	  StackStore(stack,(NspObject *) M,rhs+1);
 	  NSP_OBJECT(M)->ret_pos = 1;
 	}
@@ -4176,6 +4195,27 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+static void xget_default_colormap(double *val,int color_id)
+{
+  int i,m= DEFAULTNUMCOLORS;
+  if ( val == NULL ) return;
+  if ( color_id != 0 )
+    {
+      i=Min(Min(DEFAULTNUMCOLORS,color_id),1);
+      val[0] = (default_colors[3*i]/(double) 255);
+      val[1] = (default_colors[3*i+1]/(double) 255);
+      val[2] = (default_colors[3*i+2]/(double) 255);
+    }
+  else
+    {
+      /* get all colors */
+      for (i = 0; i < m; i++) {
+	val[i] = (default_colors[3*i]/(double) 255);
+	val[i+ m] = (default_colors[3*i+1]/(double) 255);
+	val[i+ 2*m] = (default_colors[3*i+2]/(double) 255);
+      }
+    }
+}
 
 /**
  * int_xinit:
