@@ -1133,8 +1133,8 @@ if test xx"$with_gtk" = xx; then
     # path, then we don't want to generate a full path
     # for gtk-config or to directly generate the
     # result of `gtk-config --cflags`.
-    GTKCFLAGS='`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags`'
-    GTKLIBS='`$PKG_CONFIG $GTK_PKGS_LIBS --libs`'
+    GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+    GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
     AC_DEFINE(WITH_GTK,[],[gtk library])
     GUILIB='gtksci'
     GZVT='gzvt2'
@@ -1176,8 +1176,8 @@ if test xx"$with_gtk" = xx; then
     # path, then we don't want to generate a full path
     # for gtk-config or to directly generate the
     # result of `gtk-config --cflags`.
-    GTKCFLAGS='`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags`'
-    GTKLIBS='`$PKG_CONFIG $GTK_PKGS_LIBS --libs`'
+    GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+    GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
     AC_DEFINE(WITH_GTK,[],[gtk library])
     GUILIB='gtksci'
     GZVT='gzvt2'
