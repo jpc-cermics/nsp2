@@ -73,7 +73,7 @@ struct _scicos_sim {
   outtb_el *elems;
   /* extra arguments for oz */
   int noz;         /* length of ozl */
-  void **ozptr;    /* pointer to data */
+  void **ozh  ;    /* pointer to data */
   int *ozsz;       /* sizes */
   int *oztyp;      /* types */
   /* extra arguments */
@@ -93,7 +93,7 @@ struct _scicos_sim {
   int *outptr;
   int *inplnk;
   int *outlnk;
-  int *oziptr; /* used for keeping tracks of oz: it is called ozptr in nsp csim */
+  int *ozptr; /* used for keeping tracks of oz */
   double *rpar;
   int *rpptr;
   int *ipar;
