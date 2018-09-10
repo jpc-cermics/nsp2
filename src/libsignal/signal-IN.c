@@ -85,7 +85,7 @@ NspMatrix *reshapeFilters (const double *InR, const double *InI, int m)
 {
   int i,j;
   NspMatrix *loc;
-  if (( loc = nsp_matrix_create(NVOID,'r',1, m)) == NULL)
+  if (( loc = nsp_matrix_create(NVOID,'c',1, m)) == NULL)
     return NULL;
   for (i = 0, j = 0; j < m ; i++, j++)
     {
@@ -155,7 +155,7 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
   
   /*  ripple in stopband ( 0 < deltas < 1 )*/
   if (GetScalarDouble (stack, 5, &DeltaS) == FAIL) return RET_BUG;
-
+  
   //alloc temporary variables
   for (i = 0; i < OUT_COUNT; i++)
     {
@@ -184,7 +184,10 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < 5 ; i++)
     {
       if ( lhs >= i+2 )
-	MoveObj(stack,i+2,NSP_OBJECT(Out[i]));
+	{
+	  if ( nsp_matrix_resize(Out[i], 1 , iDegCount) == FAIL) goto err;
+	  MoveObj(stack,i+2,NSP_OBJECT(Out[i]));
+	}
       else
 	nsp_matrix_destroy(Out[i]);
     }

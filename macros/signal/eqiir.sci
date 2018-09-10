@@ -66,8 +66,7 @@ function [cells,fact,zzeros,zpoles]=eqiir(ftype,approx,om,deltap,deltas)
   if max(size(om))==2 then
     om=matrix([matrix(om,1,2),0,0],1,4),
   end
-  [fact,b2,b1,b0,c1,c0,zzeros,zpoles]=...
-      syredi(ityp,iapro,om,deltap,deltas);
+  [fact,b2,b1,b0,c1,c0,zzeros,zpoles]= syredi(ityp,iapro,om,deltap,deltas);
   nb=max(size(b0));
   coeffs=[b0;b1;b2;c0;c1];
   coeffs=coeffs(:,1:nb);
@@ -82,9 +81,10 @@ function [cells,fact,zzeros,zpoles]=eqiir(ftype,approx,om,deltap,deltas)
   if iapro==1| iapro==2  then
     zzeros=[];
     [k,j]=size(cells);
-    w=cells(2);
-    for k=w;
-      zzeros=[zzeros,roots(k)'];
+    w=cells.num;
+    // for k= not implemented for polynomials or rationals 
+    for k=1:size(w,'*');
+      zzeros=[zzeros,roots(w(k))'];
     end
   end
 endfunction
