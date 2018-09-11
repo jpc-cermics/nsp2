@@ -124,6 +124,9 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
   
   CheckRhs(5,5);
   CheckLhs(0,8);
+
+  for (i = 0; i < OUT_COUNT; i++) Out[i] = NULL;
+  
   if (GetScalarInt (stack, 1, &Type) == FAIL) return RET_BUG;
   if (GetScalarInt (stack, 2, &Appro) == FAIL) return RET_BUG;
   /* cuttof frequencies ( 4-row vector )*/
@@ -156,7 +159,7 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
   /*  ripple in stopband ( 0 < deltas < 1 )*/
   if (GetScalarDouble (stack, 5, &DeltaS) == FAIL) return RET_BUG;
   
-  //alloc temporary variables
+  /* alloc temporary variables */
   for (i = 0; i < OUT_COUNT; i++)
     {
       if (( Out[i] = nsp_matrix_create(NVOID,'r',1, OutSize[i]))== NULL) goto err;
@@ -174,13 +177,14 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
     {
       switch ( iErr)
 	{
-	case -7: Scierror ("Error: specs => invalid order filter.\n"); return RET_BUG;
-	case -9: Scierror ("Error: specs => too high order filter.\n");return RET_BUG;
-	default: Scierror ("Error: error in function syredi.\n"); return RET_BUG;
+	case -7: Scierror ("Error: specs => invalid order filter.\n"); goto err;
+	case -9: Scierror ("Error: specs => too high order filter.\n");goto err;
+	default: Scierror ("Error: error in function syredi.\n");goto err;
 	}
     }
+  
   if ((nsp_move_double(stack,1,Fact))== FAIL) goto err;
-    
+  
   for ( i = 0 ; i < 5 ; i++)
     {
       if ( lhs >= i+2 )
@@ -189,22 +193,37 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,i+2,NSP_OBJECT(Out[i]));
 	}
       else
-	nsp_matrix_destroy(Out[i]);
+	{
+	  nsp_matrix_destroy(Out[i]);
+	}
     }
   if ( lhs >= 7 )
     {
       /*  zeros */
       NspMatrix *Res = reshapeFilters (Out[5]->R, Out[6]->R, iZeroCount);
+      if ( Res == NULL) goto err;
       MoveObj(stack,7,NSP_OBJECT(Res));
     }
   if ( lhs >= 8 )
     {
       /* poles */
       NspMatrix *Res = reshapeFilters (Out[7]->R, Out[8]->R, iZeroCount);
+      if ( Res == NULL) goto err;
       MoveObj(stack,8,NSP_OBJECT(Res));
     }
+
+  /* free temporary variables */
+  for (i = Max(lhs,0) -1 ; i < OUT_COUNT; i++)
+    {
+      nsp_matrix_destroy(Out[i]);
+    }
+
   return Max(lhs,1);
  err:
+  for (i = 0 ; i < OUT_COUNT; i++)
+    {
+      if ( Out[i] != NULL) nsp_matrix_destroy(Out[i]);
+    }
   return RET_BUG;
 }
 
