@@ -29,7 +29,7 @@
 #include "optim.h"
 
 static void n1qn1_clean(opt_simul_data *obj);
-static int n1qn1_prepare(int n,NspObject *fcn,NspObject *args,opt_simul_data *obj);
+static int n1qn1_prepare(int m, int n,NspObject *fcn,NspObject *args,opt_simul_data *obj);
 static void n1qn1_lfcn(int *ind, int *n, double *x, double *f, double *g,void *n1qn1_obj_d);
 
 static NspObject *get_function(Stack stack, int pos,opt_simul_data *data);
@@ -83,7 +83,7 @@ int int_optim (Stack stack, int rhs, int opt, int lhs)
 
   algo = check_optim_algo(stack,NspFname(stack),alg);
   
-  if ( n1qn1_prepare(X->mn,fcn,args,&optim_data)==FAIL) return RET_BUG;
+  if ( n1qn1_prepare(X->m,X->n,fcn,args,&optim_data)==FAIL) return RET_BUG;
 
   if ((g =nsp_matrix_create(NVOID,'r',X->mn,1)) == NULLMAT) goto bug;
 
@@ -355,7 +355,7 @@ static optim_algo check_optim_algo(Stack stack,const char *fname,const char *alg
  * if m >= 0 then for lmdiff or lmderr
  **/
 
-static int n1qn1_prepare(int n,NspObject *fcn,NspObject *args,opt_simul_data *obj)
+static int n1qn1_prepare(int m,int n,NspObject *fcn,NspObject *args,opt_simul_data *obj)
 {
   if (( obj->fcn =nsp_object_copy(fcn)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->fcn,"n1qn1_fcn")== FAIL)) return FAIL;
@@ -368,7 +368,8 @@ static int n1qn1_prepare(int n,NspObject *fcn,NspObject *args,opt_simul_data *ob
     {
       obj->args = NULL;
     }
-  if ((obj->x = nsp_matrix_create("x",'r',n,1))== NULL) return FAIL;
+  if ( m == 1) { m=n; n=1;}
+  if ((obj->x = nsp_matrix_create("x",'r',m,n))== NULL) return FAIL;
   if ((obj->ind = nsp_matrix_create("ind",'r',1,1))== NULL) return FAIL;
   return OK;
 }
