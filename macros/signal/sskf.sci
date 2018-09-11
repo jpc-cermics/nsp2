@@ -30,7 +30,8 @@ function [xe]=sskf(y,f,h,q,r,x0)
 
 //get steady-state Kalman gain
   
-  x=ricc(f',h'/r*h,q,'disc') // steady state err cov
+  // x=ricc(f',h'/r*h,q,'disc') // steady state err cov
+  x=riccati(f',h'/r*h,q,'d') // steady state err cov
   k=x*h'/(h*x*h'+r)
 
   // estimate state

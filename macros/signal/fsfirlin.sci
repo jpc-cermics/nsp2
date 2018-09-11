@@ -29,7 +29,9 @@ function [hst]=fsfirlin(hd,flag)
 
   n1=prod(size(hd));//filter length
   if int(n1/2)==n1/2 then 
-    n=2*n1;n=2*n1+1;
+    n=2*n1;
+  else
+    n=2*n1+1;
   end
   scd=sincd(n,flag);//calculates the function Sin(N*x)/Sin(x)
   hst=hd(1)*scd(4*n+1:6*n+1);

@@ -62,9 +62,9 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
       z=poly(0,'z');
       h=poly(h,'z','c');
       h=gtild(h,'d')*(1/z^(hs-1));
-      ht=16;
+      ht=type(h,'short');
     end
-    //if ht==16 then h is a rational polynomial
+    //if ht=='r' then h is a rational polynomial
     //(perhaps in cascade form)
     if ht== 'r' then
       z=h.num.get_var[];
@@ -92,7 +92,7 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
   //re-organize if h is in cascade form
   
   if hcs>1 then
-    xc=[coeff(h(2)),coeff(h(3))];
+    xc=[coeff(h.num),coeff(h.den)];
     a2i=xc(1:hcs);
     a1i=xc(hcs+1:2*hcs);
     b2i=xc(3*hcs+1:4*hcs);

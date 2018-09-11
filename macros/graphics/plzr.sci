@@ -10,7 +10,7 @@ function plzr(a,b,c,d)
   end
   dr=spec(a)
   [al,be]=tr_zer(a,b,c,d)
-  nr=al./be
+  nr=al./be; nr=nr(:);
   ni=imag(nr);nr=real(nr)
   di=imag(dr);dr=real(dr)
   //
@@ -31,7 +31,7 @@ function plzr(a,b,c,d)
   rect=[mnx, -my, mxx, my];
   xsetech(frect=rect);
   if prod(size(nr))<>0 then
-    plot2d(nr,ni,[-9,3],"100",'Zeros')
+    plot2d(nr,ni,style=-9,mark_size=8,leg='Zeros')
     strf='100'
     pos=6
   else
