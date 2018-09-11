@@ -317,34 +317,15 @@ int int_remez (Stack stack, int rhs, int opt, int lhs)
   return Max (lhs, 1);
 }
 
+/* [cov,mean]=corr('fft',xmacro,[ymacro],n,sect) */
 
 int int_corr_fft (Stack stack, int rhs, int opt, int lhs)
 {
 #if 0
-  /* [cov,mean]=corr('fft',xmacro,[ymacro],n,sect) */
-  types::InternalType * pXFunction = NULL;
-  types::InternalType * pYFunction = NULL;
-  int iErr = 0;
-  int iSect = 0;
-  int iOutSize = 0;
-  int iTotalSize = 0;
-  int iSize = 0;
-  int iMode = 0;
-  double *
-    xa = NULL;
-  double *
-    xi = NULL;
-  double *
-    xr = NULL;
-  double *
-    zr = NULL;
-  double *
-    zi = NULL;
-  char *
-    dx = NULL;
-  char *
-    dy = NULL;
+  int iErr = 0, iSect = 0, iOutSize = 0, iTotalSize = 0, iSize = 0, iMode = 0;
+  double *xa = NULL, *xi = NULL, *xr = NULL, *zr = NULL, *zi = NULL;
   bool bOK = false;
+  
   CheckRhs(4,5);
   //get parameter sect
   int
