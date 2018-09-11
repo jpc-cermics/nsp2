@@ -752,7 +752,7 @@ NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp)
 {
   int i;
   NspRMatrix *Loc;
-  if ( ! ( (A->mn == 1 && B->mn >0 ) || (A->mn >0 &&  B->mn == 1) || ( A->n = B->n && A->m == B->m )))
+  if ( ! ( (A->mn == 1 && B->mn >0 ) || (A->mn >0 &&  B->mn == 1) || ( A->n == B->n && A->m == B->m )))
     {
       Scierror("Error: the two arguments should have same sizes\n");
       return NULL;
