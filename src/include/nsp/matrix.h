@@ -144,8 +144,8 @@ extern NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,cons
 extern int nsp_matrix_fill_with (NspMatrix *A, const NspMatrix *B); 
 extern int nsp_matrix_resize (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_scalar_to_mn (NspMatrix *A, int m, int n); 
-extern int nsp_matrix_latex_print (const NspMatrix *Mat); 
-extern int nsp_matrix_latex_tab_print(const NspMatrix *Mat); 
+extern int nsp_matrix_latex_print (NspMatrix *Mat); 
+extern int nsp_matrix_latex_tab_print(NspMatrix *Mat); 
 extern int nsp_matrix_redim (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_enlarge (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_concat_right(NspMatrix *A, const NspMatrix *B); 

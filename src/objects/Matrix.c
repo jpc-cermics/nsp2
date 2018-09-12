@@ -794,37 +794,42 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
  * Return value: %TRUE or %FALSE
  */
 
-int nsp_matrix_latex_print(const NspMatrix *Mat)
+int nsp_matrix_latex_print(NspMatrix *Mat)
 {
   int i,j;
-  if ( Mat->rc_type == 'r' ) 
-    {
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-	Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
-      else 
-	Sciprintf("{\\left(\\begin{array}{");
-      for (i=0; i <  Mat->n;i++) Sciprintf("c");
-      Sciprintf("}\n");
-      for (i=0; i < Mat->m; i++)
-	{
-	  for (j=0; j < Mat->n - 1; j++)
-	    { 
-	      Sciprintf("%g\t& ",Mat->R[i+j*Mat->m]);
-	    }
-	  Sciprintf("%g\t",Mat->R[i+(Mat->n-1)*Mat->m]);
-	  if ( i != Mat->m -1 ) 
-	    Sciprintf("\\\\\n");
-	  else 
-	    Sciprintf("\n");
-	}
-      Sciprintf("\\end{array}\\right)}\n");
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-    }
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  nsp_matrix_set_format(&fmt,Mat);
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+    Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
   else 
+    Sciprintf("{\\left(\\begin{array}{");
+  for (i=0; i <  Mat->n;i++) Sciprintf("c");
+  Sciprintf("}\n");
+
+  for (i=0; i < Mat->m; i++)
     {
-      Sciprintf("Fixme : to be done\n");
+      for (j=0; j < Mat->n - 1; j++)
+	{ 
+	  if ( Mat->rc_type == 'r' ) 
+	    nsp_pr_float(&fmt,Mat->R[i+j*Mat->m]);
+	  else
+	    nsp_pr_complex(&fmt,Mat->C[i+j*Mat->m]);
+	  Sciprintf(" &");
+	}
+      /* Sciprintf("%g\t",Mat->R[i+(Mat->n-1)*Mat->m]); */
+      if ( Mat->rc_type == 'r' ) 
+	nsp_pr_float(&fmt,Mat->R[i+(Mat->n-1)*Mat->m]);
+      else
+	nsp_pr_complex(&fmt,Mat->C[i+(Mat->n-1)*Mat->m]);
+      if ( i != Mat->m -1 ) 
+	Sciprintf("\\\\\n");
+      else 
+	Sciprintf("\n");
     }
+  Sciprintf("\\end{array}\\right)}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
 
@@ -836,34 +841,41 @@ int nsp_matrix_latex_print(const NspMatrix *Mat)
  * syntax. 
  */
 
-int nsp_matrix_latex_tab_print(const NspMatrix *Mat)
+int nsp_matrix_latex_tab_print(NspMatrix *Mat)
 {
   int i,j;
-  if ( Mat->rc_type == 'r' ) 
-    {
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:");
-      Sciprintf("\\begin{tabular}{|l|");
-      for (i=0; i < Mat->n ;i++) Sciprintf("c|");
-      Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(Mat)->name);
-      for (i=0; i < Mat->n -1 ;i++) Sciprintf("$C_{%d}$\t&",i+1);
-      Sciprintf("$C_{%d}$\\\\ \\hline\n",Mat->n);
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  nsp_matrix_set_format(&fmt,Mat);
 
-      for (i=0; i < Mat->m; i++)
-	{
-	  Sciprintf("$L_{%d}$\t&",i+1);
-	  for (j=0; j < Mat->n - 1; j++)
-	    { 
-	      Sciprintf("$%g$\t& ",Mat->R[i+j*Mat->m]);
-	    }
-	  Sciprintf("$%g$\t\\\\ \\hline\n",Mat->R[i+(Mat->n-1)*Mat->m]);
-	}
-      Sciprintf("\\end{tabular}\n");
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\005");
-    }
-  else 
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:");
+  Sciprintf("\\begin{tabular}{|l|");
+  for (i=0; i < Mat->n ;i++) Sciprintf("c|");
+  Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(Mat)->name);
+  for (i=0; i < Mat->n -1 ;i++) Sciprintf("$C_{%d}$\t&",i+1);
+  Sciprintf("$C_{%d}$\\\\ \\hline\n",Mat->n);
+  
+  for (i=0; i < Mat->m; i++)
     {
-      Sciprintf("Fixme : to be done\n");
+      Sciprintf("$L_{%d}$\t&",i+1);
+      for (j=0; j < Mat->n - 1; j++)
+	{
+	  Sciprintf("$");
+	  if ( Mat->rc_type == 'r' ) 
+	    nsp_pr_float(&fmt,Mat->R[i+j*Mat->m]);
+	  else
+	    nsp_pr_complex(&fmt,Mat->C[i+j*Mat->m]);
+	  Sciprintf("$ & ");
+	}
+      Sciprintf("$");
+      if ( Mat->rc_type == 'r' ) 
+	nsp_pr_float(&fmt,Mat->R[i+(Mat->n-1)*Mat->m]);
+      else
+	nsp_pr_complex(&fmt,Mat->C[i+(Mat->n-1)*Mat->m]);
+      Sciprintf(" \\\\ \\hline\n");
     }
+  Sciprintf("\\end{tabular}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\005");
   return TRUE;
 }
 

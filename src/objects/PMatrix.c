@@ -47,6 +47,8 @@
 
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
 static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2);
+static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M);
+static int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
 
 /**
  * nsp_polynom_copy:
@@ -415,6 +417,56 @@ int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_leve
       rep = nsp_pmatrix_print_internal (&fmt,Mat,indent);
     }
   return rep;
+}
+
+/**
+ * nsp_pmatrix_latex_print:
+ * @Mat: a #NspPMatrix
+ * 
+ * print the #NspPMatrix @A using the default Sciprintf() function and LaTeX 
+ * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
+ */
+
+int nsp_pmatrix_latex_print(NspPMatrix *Mat)
+{
+  int i,j, fw;
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  Mp_set_format (&fmt,Mat);
+  fw = fmt.curr_real_fw;
+    
+  if ( Mat->rc_type == 'r' ) 
+    {
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+	Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+      else 
+	Sciprintf("{\\left(\\begin{array}{");
+      for (i=0; i <  Mat->n;i++) Sciprintf("c");
+      Sciprintf("}\n");
+      for (i=0; i < Mat->m; i++)
+	{
+	  for (j=0; j < Mat->n - 1; j++)
+	    { 
+	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m],fw,0,TRUE );
+	      Sciprintf(" & ");
+	    }
+	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m],fw,0,TRUE);
+	  if ( i != Mat->m -1 ) 
+	    Sciprintf("\\\\\n");
+	  else 
+	    Sciprintf("\n");
+	}
+      Sciprintf("\\end{array}\\right)}\n");
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+    }
+  else 
+    {
+      Sciprintf("Fixme : to be done\n");
+    }
+  return TRUE;
 }
 
 /**
@@ -3808,7 +3860,56 @@ static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_prin
   return 0;
 }
 
+/* latex printing of a polynom 
+ * we don't care about counting for latex 
+ */
 
+static int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
+{
+  int i , leading = TRUE;
+  for ( i=0 ; i < m->mn ; i++) 
+    {
+      if ( m->rc_type == 'r') 
+	{
+	  if (  m->R[i] != 0.00 || m->mn == 1  )
+	    {
+	      if ( leading == FALSE && m->R[i] >= 0.00 ) 
+		{
+		  Sciprintf("+");
+		}
+	      nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->R[i], fw,do_print,(i==0) ?TRUE:FALSE);
+	      leading = FALSE;
+	      if ( i > 0 ) 
+		{
+		  const char *name= ( vname == NULL) ? "x": vname;
+		  Sciprintf("%s",name);
+		  Sciprintf("^{%d} ", i);
+		}
+	    }
+	}
+      else
+	{
+	  if ( ( m->C[i].r != 0.00 || m->C[i].i != 0.00)  || m->mn == 1  )
+	    {
+	      if ( leading == FALSE ) 
+		{
+		  Sciprintf("+");
+		}
+	      Sciprintf("(");
+	      nsp_pr_complex(fmt,m->C[i]);
+	      Sciprintf(")");
+	      leading = FALSE;
+	      if ( i > 0 ) 
+		{
+		  const char *name= ( vname == NULL) ? "x": vname;
+		  Sciprintf("%s",name);
+		  Sciprintf("^{%d} ", i);
+		}
+	    }
+	}
+    }
+  return 0;
+}
 
 
 /**
