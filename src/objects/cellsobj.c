@@ -108,7 +108,8 @@ NspTypeCells *new_type_cells(type_mode mode)
 
   top->save  = (save_func *)nsp_cells_xdr_save;
   top->load  = (load_func *)nsp_cells_xdr_load;
-
+  top->latex = (print_func *) nsp_cells_latex_print;
+  
   /* specific methods for smatrix */
   type->init = (init_func *) init_cells;
   /* 

@@ -371,6 +371,34 @@ int nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
   return TRUE;
 }
 
+int nsp_cells_latex_print(const NspCells *Mat)
+{
+  const char *pname = NSP_OBJECT(Mat)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  if (strcmp(pname,NVOID) != 0) Sciprintf("%s\n", pname);
+  if ( Mat->mn != 0) 
+    {
+      char epname[128];
+      int i,j;
+      Sciprintf1(1,"\\begin{itemize}\n");
+      for ( j = 0 ; j < Mat->n; j++ ) 
+	for ( i = 0 ; i < Mat->m; i++ ) 
+	  {
+	    NspObject *object = Mat->objs[i+Mat->m*j];
+	    Sciprintf("\\item[(%d,%d)]",i+1,j+1);
+	    if ( object != NULL ) 
+	      {
+		if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+		sprintf(epname,"(%d,%d)",i+1,j+1);
+		nsp_object_latex(object,2,NULL,1);
+		if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+	      }
+	  }
+      Sciprintf1(1,"\\end{itemize}\n");
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+    }
+  return TRUE;
+}
 
 /**
  * nsp_cells_enlarge:
