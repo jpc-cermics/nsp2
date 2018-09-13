@@ -48,7 +48,7 @@
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
 static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2);
 static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M);
-static int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
+extern int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
 
 /**
  * nsp_polynom_copy:
@@ -3864,7 +3864,7 @@ static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_prin
  * we don't care about counting for latex 
  */
 
-static int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
+int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
 {
   int i , leading = TRUE;
   for ( i=0 ; i < m->mn ; i++) 

@@ -47,8 +47,10 @@
 
 #define POLY_EXP /* use utf8 exponents */ 
 
+extern int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
 static int nsp_rmatrix_print_internal (nsp_num_formats *fmt,NspRMatrix *M, int indent);
 static int nsp_pcopy_rational(int n, nsp_rational *s1, nsp_rational *s2);
+static void Mp_set_format(nsp_num_formats *fmt,NspRMatrix *M);
 
 /**
  * nsp_rational_copy:
@@ -378,6 +380,63 @@ int nsp_rmatrix_print(NspRMatrix *Mat, int indent,const char *name, int rec_leve
       rep = nsp_rmatrix_print_internal (&fmt,Mat,indent);
     }
   return rep;
+}
+
+/**
+ * nsp_rmatrix_latex_print:
+ * @Mat: a #NspRMatrix
+ * 
+ * print the #NspRMatrix @A using the default Sciprintf() function and LaTeX 
+ * syntax. 
+ *
+ * Return value: %TRUE or %FALSE
+ */
+
+int nsp_rmatrix_latex_print(NspRMatrix *Mat)
+{
+  int i,j, fw;
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  Mp_set_format (&fmt,Mat);
+  fw = fmt.curr_real_fw;
+    
+  if ( Mat->rc_type == 'r' ) 
+    {
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+	Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+      else 
+	Sciprintf("{\\left(\\begin{array}{");
+      for (i=0; i <  Mat->n;i++) Sciprintf("c");
+      Sciprintf("}\n");
+      for (i=0; i < Mat->m; i++)
+	{
+	  for (j=0; j < Mat->n - 1; j++)
+	    {
+	      Sciprintf("\\frac{");
+	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m]->num,fw,0,TRUE );
+	      Sciprintf("}{");
+	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m]->den,fw,0,TRUE );
+	      Sciprintf("} & ");
+	    }
+	  Sciprintf("\\frac{");
+	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m]->num,fw,0,TRUE);
+	  Sciprintf("}{");
+	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m]->den,fw,0,TRUE);
+	  Sciprintf("}");
+	  if ( i != Mat->m -1 ) 
+	    Sciprintf("\\\\\n");
+	  else 
+	    Sciprintf("\n");
+	}
+      Sciprintf("\\end{array}\\right)}\n");
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+    }
+  else 
+    {
+      Sciprintf("Fixme : to be done\n");
+    }
+  return TRUE;
 }
 
 /**

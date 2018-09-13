@@ -92,6 +92,7 @@ NspTypeRMatrix *new_type_rmatrix(type_mode mode)
   top->save  = (save_func *)nsp_rmatrix_xdr_save;
   top->load  = (load_func *)nsp_rmatrix_xdr_load;
   top->create = (create_func*) int_rmatrix_create; 
+  top->latex = (print_func*) nsp_rmatrix_latex_print;
   top->full_copy  =  (copy_func *)nsp_rmatrix_copy;                   /* copy object */  
 
   /* specific methods for rmatrix */
