@@ -43,12 +43,13 @@ function cels=casc(x,z)
 //  !   7 + 10z + z     8 + 11z + z     9 + 12z + z  !
 // Author: F. D.  date: August 1988
 // 
-  if nargin == 1 then z='z';end 
-  cels={};
+  if nargin == 1 then z='z';end
+  // create an empty rational matrix
+  cels = p2r(m2p([]));
   for i=1:size(x,'c');
     col=x(:,i);
     nf=[col(1:2);1];
     nd=[col(3:4);1];
-    cels{i}= p2r(poly(nf,z,'c'),poly(nd,z,'c'));
+    cels(i)= p2r(poly(nf,z,'c'),poly(nd,z,'c'));
   end
 endfunction

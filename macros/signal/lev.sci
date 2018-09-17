@@ -45,14 +45,13 @@ function [ar,sigma2,rc]=lev(r)
   ar=-r(2)/r(1);
   rc(1)=ar;
   sigma2=(1-ar*conj(ar))*r(1);
-  
   //iterative solution to yule-walker equations
   
   for k=2:rsize-1,
-    ak1(k)=-(r(k+1)+ar(1:k-1)'*r(k:-1:2)')/sigma2;
-    rc(k)=ak1(k);
-    ak1(1:k-1)=ar(1:k-1)+ak1(k)*conj(ar(k-1:-1:1));
-    sigma2=(1-ak1(k)*conj(ak1(k)))*sigma2;
+    ak1(k,1)=-(r(k+1)+ar(1:k-1)'*r(k:-1:2)')/sigma2;
+    rc(k)=ak1(k,1);
+    ak1(1:k-1,1)=ar(1:k-1)+ak1(k,1)*conj(ar(k-1:-1:1));
+    sigma2=(1-ak1(k,1)*conj(ak1(k,1)))*sigma2;
     ar=ak1;
   end
 endfunction
