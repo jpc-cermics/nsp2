@@ -78,7 +78,6 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
 	z=h.get_var[];
       end
       //get the derivative of h(z)
-      pause zzz
       hzd=derivat(h);
       //get the group delay of h(z)
       z=poly(0,z);
