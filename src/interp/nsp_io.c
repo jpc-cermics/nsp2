@@ -372,7 +372,7 @@ int Sciprint_diary(const char *fmt, va_list ap)
 }
 
 /**
- * Sciprint_diary:
+ * Sciprint_diary_only:
  * @fmt: a string
  * @ap: variable list of arguments
  *

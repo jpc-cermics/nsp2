@@ -1687,8 +1687,8 @@ static int int_object_finfo(Stack stack, int rhs, int opt, int lhs)
   return int_object_print_gen(stack,rhs,opt,lhs,file_out,TRUE);
 }
 
-/*
- *
+/* diary('file-name') open a diary 
+ * diary() close a diary 
  */
 
 static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
