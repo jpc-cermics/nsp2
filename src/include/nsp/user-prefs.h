@@ -23,6 +23,7 @@ struct _user_preferences
   nsp_print_mode mode;  /* std, latex or latex tables */
   int active ;          /* only print if active is true */
   int color;            /* use terminal coded colors */
+  int latex;            /* use latex printing */
 };
 
 INLIBNSP user_preferences user_pref;

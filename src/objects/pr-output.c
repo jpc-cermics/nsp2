@@ -45,6 +45,7 @@ user_preferences user_pref= {
   print_std  ,/* std, latex or latex tables */
   TRUE, /* only print if active is true */
   TRUE, /* use color by default in print */
+  FALSE, /* do not use latex by default in print */
 };
 
 

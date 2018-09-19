@@ -1339,7 +1339,10 @@ int int_object_ret(Stack stack, int rhs, int opt, int lhs)
   int i;
   for ( i= 0 ; i < rhs ; i++)
     {
-      (*Ob)->type->pr(*Ob,0,NULL,0);
+      if ( user_pref.latex == TRUE && (*Ob)->type->latex != NULL )
+	(*Ob)->type->latex(*Ob,0,NULL,0);
+      else
+	(*Ob)->type->pr(*Ob,0,NULL,0);
       Ob++;
     }
   return 0;
@@ -1433,10 +1436,40 @@ int int_object_implements(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
 /* generic function for printing objects and
  * redirection of output to string, file or stdout
  */
+
+static int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE,base64=FALSE;
+
+static int int_object_options(Stack stack, int rhs, int opt, int lhs)
+{
+  int as_read_1=FALSE,latex_1=FALSE,table_1=FALSE,depth_1=INT_MAX,indent_1=0,tree_1=FALSE,color_1=TRUE,base64_1=FALSE;
+  
+  nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+			    { "color",s_bool,NULLOBJ,-1},
+			    { "depth", s_int,NULLOBJ,-1},
+			    { "indent",s_int,NULLOBJ,-1},
+			    { "latex",s_bool,NULLOBJ,-1},
+			    { "table",s_bool,NULLOBJ,-1},
+			    { "base64",s_bool,NULLOBJ,-1},
+			    { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(0,0);
+  CheckLhs(0,0);
+  if ( get_optional_args(stack, rhs, opt, print_opts,&as_read_1,&color_1,&depth_1,
+			 &indent_1,&latex_1,&table_1,&base64_1) == FAIL)
+    return RET_BUG;
+  as_read=as_read_1;
+  user_pref.latex= latex = latex_1;
+  table=table_1;
+  depth=depth_1;
+  indent=indent_1;
+  tree=tree_1;
+  color=color_1;
+  base64=base64_1;
+  return 0;
+}
 
 typedef enum { string_out, stdout_out, file_out } print_mode;
 
@@ -1452,7 +1485,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
   int cr=user_pref.color;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE,base64=FALSE;
+  // int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE,base64=FALSE;
   char *name = NULL;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 			    { "color",s_bool,NULLOBJ,-1},
@@ -2665,6 +2698,7 @@ static OpTab Obj_func[]={
   {"info",int_object_info},
   {"sinfo",int_object_sinfo},
   {"finfo",int_object_finfo},
+  {"print_options",int_object_options},
   {"print",int_object_print},
   {"sprint",int_object_sprint},
   {"fprint",int_object_fprint},
