@@ -201,6 +201,23 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
   Sciprintf("\n");
 }
 
+void NspPListPrint_latex(NspPList *P_L) // , int indent,const char *name, int rec_level)
+{
+  int color=TRUE, target = 3 /* latex */, space=FALSE, columns=90;
+  int ok, indent=0;
+  char fname[FSIZE+1];
+  const char *pname =  NSP_OBJECT(P_L)->name;
+  ok = nsp_plist_get_path(fname,P_L);
+  if ( ok == OK ) 
+    Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,fname);
+  else 
+    Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
+  // if ( user_pref.pr_depth  <= rec_level -1 ) return;
+  if ( P_L->D != NULL )
+    nsp_plist_pretty_print(P_L->D,indent+2,color,target,space,columns);
+  Sciprintf("\n");
+}
+
 
 
 
