@@ -43,23 +43,23 @@ function [hs,pols,zers,gain]=analpf(n,fdesign,rp,omega)
    case 'butt' then
     [pols,gain]=zpbutt(n,omega);
     zers=[];
-    hs=p2r(m2p(gain,var='s'),m2p(pols,var='s'));
+    hs=p2r(m2p(gain,var='s'),real(poly(pols,var='s')));
    case 'cheb1' then
     epsilon=sqrt(-1+1/(1-rp(1))**2);
     [pols,gain]=zpch1(n,epsilon,omega);
     zers=[];
-    hs=p2r(m2p(gain,var='s'),m2p(pols,var='s'));
+    hs=p2r(m2p(gain,var='s'),real(poly(pols,var='s')));
    case 'cheb2' then
     att=1/rp(2);
     [zers,pols,gain]=zpch2(n,att,omega);
-    hs=p2r(m2p(gain*m2p(real(zers),var='s')), m2p(real(pols),var='s'));
+    hs=p2r(gain*real(poly(zers,var='s')), real(poly(pols,var='s')));
    case 'ellip' then
     epsilon=sqrt(-1+1/(1-rp(1))**2);
     att=1/rp(2);
     m=find_freq(epsilon,att,n);
     omegar=omega/sqrt(m);
     [zers,pols,gain]=zpell(epsilon,att,omega,omegar);
-    hs=p2r(gain*m2p(real(zers),var='s'),m2p(real(pols),var='s'));
+    hs=p2r(gain*real(poly(zers),var='s'),real(poly(pols,var='s')));
   else
     error('Unknown design type --- program termination'),
   end
