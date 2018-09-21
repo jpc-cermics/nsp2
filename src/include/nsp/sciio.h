@@ -25,7 +25,7 @@ extern int do_printf_stdout(const FILE *ignore,const char *fmt, ...);
 extern NspObject *Sciprint2string_reset();
 
 extern int  Sciprint2string(const char *fmt, va_list ap);
-extern FILE * Sciprint_set_diary(FILE *f,int diary_echo);
+extern FILE * Sciprint_set_diary(FILE *f,int diary_echo_out, int diary_echo_exprs );
 extern int Sciprint_diary_on(void) ;
 extern int Sciprint_diary(const char *fmt, va_list ap);
 extern int Sciprint_diary_only (const char *fmt,...);

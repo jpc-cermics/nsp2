@@ -802,9 +802,9 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
   nsp_matrix_set_format(&fmt,Mat);
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-    Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+    Sciprintf("{$$%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
   else 
-    Sciprintf("{\\left(\\begin{array}{");
+    Sciprintf("{$$\\left(\\begin{array}{");
   for (i=0; i <  Mat->n;i++) Sciprintf("c");
   Sciprintf("}\n");
 
@@ -828,7 +828,7 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{array}\\right)}\n");
+  Sciprintf("\\end{array}\\right)$$}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }

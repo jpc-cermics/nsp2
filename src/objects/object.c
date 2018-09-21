@@ -1695,20 +1695,26 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 {
   static NspFile *F= NULL;
   static IOVFun def = NULL;
-  CheckRhs(0,2);
+  CheckRhs(0,3);
   CheckLhs(0,1);
   if ( rhs >= 1)
     {
-      int diary_echo = TRUE;
+      int diary_echo_out = TRUE;
+      int diary_echo_exprs = TRUE;
       char *fname;
       if ((fname= GetString(stack,1))== NULL) return RET_BUG;
       if ((F=nsp_file_open(fname,"w",FALSE,FALSE))== NULL) return RET_BUG;
       if (rhs >= 2 )
 	{
-	  if ( GetScalarBool (stack,2,&diary_echo) == FAIL) return RET_BUG;
+	  if ( GetScalarBool (stack,2,&diary_echo_out) == FAIL) return RET_BUG;
 	}
+      if (rhs >= 3 )
+	{
+	  if ( GetScalarBool (stack,3,&diary_echo_exprs) == FAIL) return RET_BUG;
+	}
+      
       /* changes io in order to write to file F */
-      Sciprint_set_diary(F->obj->file,diary_echo);
+      Sciprint_set_diary(F->obj->file,diary_echo_out,diary_echo_exprs);
       def = SetScilabIO(Sciprint_diary);
     }
   else
@@ -1720,7 +1726,7 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 	  nsp_file_destroy(F);
 	  F=NULL;
 	}
-      Sciprint_set_diary(NULL,TRUE);
+      Sciprint_set_diary(NULL,TRUE,TRUE);
       if ( def != NULL) SetScilabIO(def);
       def = NULL;
     }

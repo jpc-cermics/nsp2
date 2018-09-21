@@ -1559,7 +1559,7 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
       rows++;
     }
 
-  if ( rows == 0) 
+  if ( 0 && rows == 0) 
     {
       Scierror("get_smatrix: cannot find smatrix data\n");
       return FAIL;
@@ -1567,6 +1567,8 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
 
   if ((*S =nsp_smatrix_create_with_length(NVOID,rows,1,-1))== NULLSMAT) return FAIL;
 
+  if ( rows == 0 ) return OK;
+  
   /* second pass to read data **/
   
   nsp_fseek(F,offset,"set");

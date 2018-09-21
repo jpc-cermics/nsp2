@@ -339,13 +339,15 @@ int Sciprint2file(const char *fmt, va_list ap)
  */
 
 static FILE *nsp_diary_file = NULL;
-static int nsp_diary_echo = TRUE; /* normal out when diary is on ? */
+static int nsp_diary_echo_out = TRUE; /* normal out when diary is on ? */
+static int nsp_diary_echo_exprs = FALSE; /* echo the nsp code  ? */
 
-FILE * Sciprint_set_diary(FILE *f,int diary_echo )
+FILE * Sciprint_set_diary(FILE *f,int diary_echo_out, int diary_echo_exprs )
 {
   FILE *f1 =   nsp_diary_file;
   nsp_diary_file = f;
-  nsp_diary_echo = diary_echo;
+  nsp_diary_echo_out = diary_echo_out;
+  nsp_diary_echo_exprs = diary_echo_exprs;
   return f1;
 }
 
@@ -365,7 +367,7 @@ int Sciprint_diary(const char *fmt, va_list ap)
 {
   int n=0;
   /* to standard output */
-  if ( nsp_diary_echo ) n=DefScivprintf(fmt,ap);
+  if ( nsp_diary_echo_out ) n=DefScivprintf(fmt,ap);
   /* to diary file */
   if ( nsp_diary_file)  vfprintf(nsp_diary_file, fmt, ap );
   return n;
@@ -387,9 +389,12 @@ int Sciprint_diary_only (const char *fmt,...)
 {
   int n=0;
   va_list ap;
-  va_start(ap,fmt);
-  if ( nsp_diary_file)  n=vfprintf(nsp_diary_file, fmt, ap );
-  va_end(ap);
+  if ( nsp_diary_echo_exprs == TRUE &&  nsp_diary_file != NULL  )
+    {
+      va_start(ap,fmt);
+      n=vfprintf(nsp_diary_file, fmt, ap );
+      va_end(ap);
+    }
   return n;
 }
 
