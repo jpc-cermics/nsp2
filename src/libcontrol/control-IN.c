@@ -474,7 +474,7 @@ int int_tzer(Stack stack, int rhs, int opt, int lhs)
 
   if ( lhs >= 2)
     {
-      nsp_matrix_resize(Work2,1,Min(Nu,1));
+      nsp_matrix_resize(Work2,1,Max(Nu,1));
       MoveObj(stack,2,NSP_OBJECT(Work2));
     }
   else
