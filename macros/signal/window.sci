@@ -36,7 +36,7 @@ function [win_l,cwp]=window(wtype,n,par)
   
   no2=(n-1)/2;
   xt=(-no2:no2);
-  un=ones_deprecated(1:n);
+  un=ones(1,n);
   
   //Select the window type
   
@@ -136,7 +136,7 @@ function [win_l,cwp]=window(wtype,n,par)
     end
     
     //Calculate the window coefficients using the inverse DFT
-    
+    w=zeros(1,np1); 
     twn=2*%pi/fnf;
     xj=(0:n-1);
     for i=1:np1;
@@ -144,18 +144,18 @@ function [win_l,cwp]=window(wtype,n,par)
     end
     c1=w(1);
     w=w/c1;
+
     if ieo==1 then
-      win_l(np1:n)=w(1:np1);
+      win_l(1,np1:n)=w(1:np1);
       win_l(1:np1-1)=w(np1-1:-1:1);
     else
-      win_l(np1+1:n)=w(1:np1);
-      win_l(1:np1)=w(np1:-1:1);
+      win_l(1,np1+1:n)=w(1:np1);
+      win_l(1,1:np1)=w(np1:-1:1);
     end
-    win_l=real(win_l');
-    
+    win_l=real(win_l);
+        
+   else
     //Error in window type
-    
-  else
     error('Unknown window type'),
   end
 endfunction
