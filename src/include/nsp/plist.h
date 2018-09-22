@@ -181,6 +181,7 @@ extern void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec);
 extern void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec, int action);
 extern void nsp_plist_generic_pretty_printer(PList L, int indent, int color,int target, int space, int columns);
 
+extern void nsp_diary_print_plist(PList L);
 
 
 #endif /*  PLIST_H  */

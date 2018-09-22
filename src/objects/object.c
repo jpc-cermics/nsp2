@@ -1695,24 +1695,38 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 {
   static NspFile *F= NULL;
   static IOVFun def = NULL;
-  CheckRhs(0,3);
+  CheckStdRhs(0,1);
   CheckLhs(0,1);
-  if ( rhs >= 1)
+  if ( rhs - opt == 1)
     {
       int diary_echo_out = TRUE;
       int diary_echo_exprs = TRUE;
       char *fname;
+      int latex_1=FALSE,table_1=FALSE,depth_1=INT_MAX,indent_1=0,tree_1=FALSE,color_1=TRUE,base64_1=FALSE;
+  
+      nsp_option print_opts[] ={{ "color",s_bool,NULLOBJ,-1},
+				{ "depth", s_int,NULLOBJ,-1},
+				{ "indent",s_int,NULLOBJ,-1},
+				{ "latex",s_bool,NULLOBJ,-1},
+				{ "table",s_bool,NULLOBJ,-1},
+				{ "echo", s_bool,NULLOBJ,-1},
+				{ "display",s_bool,NULLOBJ,-1},
+				{ NULL,t_end,NULLOBJ,-1}};
+      if ( get_optional_args(stack, rhs, opt, print_opts,
+			     &color_1,&depth_1,&indent_1,&latex_1,&table_1,&diary_echo_out,&diary_echo_exprs) == FAIL)
+	return RET_BUG;
+
+      user_pref.latex= latex = latex_1;
+      table=table_1;
+      depth=depth_1;
+      indent=indent_1;
+      tree=tree_1;
+      color=color_1;
+      base64=base64_1;
+            
       if ((fname= GetString(stack,1))== NULL) return RET_BUG;
       if ((F=nsp_file_open(fname,"w",FALSE,FALSE))== NULL) return RET_BUG;
-      if (rhs >= 2 )
-	{
-	  if ( GetScalarBool (stack,2,&diary_echo_out) == FAIL) return RET_BUG;
-	}
-      if (rhs >= 3 )
-	{
-	  if ( GetScalarBool (stack,3,&diary_echo_exprs) == FAIL) return RET_BUG;
-	}
-      
+
       /* changes io in order to write to file F */
       Sciprint_set_diary(F->obj->file,diary_echo_out,diary_echo_exprs);
       def = SetScilabIO(Sciprint_diary);

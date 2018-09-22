@@ -606,10 +606,11 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 	  if (plist != NULLPLIST ) 
 	    {
 	      /*nsp_plist_print_int(plist); */ /* lisp syntax */
-	      /*nsp_plist_pretty_print(plist,0); */ /* pretty print */
+	      /*nsp_plist_pretty_print(plist,0,TRUE,4,FALSE,90);*/ /* pretty print */
 	      /*nsp_plist_print(plist,0);*/ /* fully parenthesized */
 	      if (debug) nsp_plist_pretty_print(plist,0,TRUE,4,FALSE,90);
 	      if (debug) Sciprintf("====Eval===\n");
+	      if (Sciprint_diary_on()) nsp_diary_print_plist(plist);
 	      if ((err =nsp_eval(plist,*stack,first,0,0,display)) < 0) 
 		{
 		  /* evaluation error or quit ? */

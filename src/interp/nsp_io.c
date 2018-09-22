@@ -23,6 +23,7 @@
 #include <string.h>
 #include "nsp/math.h"
 #include "nsp/object.h"
+#include "nsp/plist.h"
 #include "nsp/sciio.h"
 #include "nsp/stack.h"
 #include "nsp/smatrix.h"
@@ -378,8 +379,8 @@ int Sciprint_diary(const char *fmt, va_list ap)
  * @fmt: a string
  * @ap: variable list of arguments
  *
- * This function can be given as argument to  SetScilabIO()
- * in order to redirect output to diary file.
+ * This function is used in the parser to echo parsed 
+ * expressions. 
  *
  *
  * Returns: an integer.
@@ -389,13 +390,35 @@ int Sciprint_diary_only (const char *fmt,...)
 {
   int n=0;
   va_list ap;
-  if ( nsp_diary_echo_exprs == TRUE &&  nsp_diary_file != NULL  )
+  if ( nsp_diary_echo_exprs == TRUE &&  nsp_diary_file != NULL && ! user_pref.latex  )
     {
       va_start(ap,fmt);
       n=vfprintf(nsp_diary_file, fmt, ap );
       va_end(ap);
     }
   return n;
+}
+
+/**
+ * nsp_diary_print_plist:
+ * @L: a #PList 
+ * 
+ * used to print in the diary file the current expression 
+ * before evaluation. 
+ * 
+ **/
+
+void nsp_diary_print_plist(PList L)
+{
+  int indent=0, color=TRUE, space = FALSE,columns=90;
+  int target = ( user_pref.latex ) ? 3 : 4;
+  if ( nsp_diary_echo_exprs && user_pref.latex &&  nsp_diary_file != NULL)
+    {
+      Sciprintf("%s\n","\\begin{Verbatim}[commandchars=\\\\\\{\\}]");
+      Sciprintf("%s","-nsp->");
+      nsp_plist_pretty_print(L,indent,color,target,space, columns);
+      Sciprintf("%s\n","\\end{Verbatim}");
+    }
 }
 
 /**

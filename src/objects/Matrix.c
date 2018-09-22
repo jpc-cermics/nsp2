@@ -799,6 +799,7 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
   int i,j;
   nsp_num_formats fmt;
   nsp_init_pr_format (&fmt);
+  Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   nsp_matrix_set_format(&fmt,Mat);
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
@@ -846,6 +847,7 @@ int nsp_matrix_latex_tab_print(NspMatrix *Mat)
   int i,j;
   nsp_num_formats fmt;
   nsp_init_pr_format (&fmt);
+  Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   nsp_matrix_set_format(&fmt,Mat);
 
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:");

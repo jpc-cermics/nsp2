@@ -10,7 +10,7 @@ function y=nsptest(fname)
     if fname_dia == fname then fname_dia = fname_dia+'1';end 
   end
   fname_ref = fname_dia+'.ref';
-  diary(fname_dia,%f);
+  diary(fname_dia,echo=%f);
   // diary without standard output 
   y=exec(fname,display=%t,echo =%t,errcatch=%t,pausecatch=%t)
   diary(); 
