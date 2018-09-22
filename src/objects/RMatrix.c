@@ -404,22 +404,20 @@ int nsp_rmatrix_latex_print(NspRMatrix *Mat)
     {
       if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
       if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-	Sciprintf("{$$%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+	Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
       else 
 	Sciprintf("{$$\\left(\\begin{array}{");
-      for (i=0; i <  Mat->n;i++) Sciprintf("c");
-      Sciprintf("}\n");
       for (i=0; i < Mat->m; i++)
 	{
 	  for (j=0; j < Mat->n - 1; j++)
 	    {
-	      Sciprintf("\\frac{");
+	      Sciprintf("\\dfrac{");
 	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m]->num,fw,0,TRUE );
 	      Sciprintf("}{");
 	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m]->den,fw,0,TRUE );
 	      Sciprintf("} & ");
 	    }
-	  Sciprintf("\\frac{");
+	  Sciprintf("\\dfrac{");
 	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m]->num,fw,0,TRUE);
 	  Sciprintf("}{");
 	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m]->den,fw,0,TRUE);
@@ -429,7 +427,7 @@ int nsp_rmatrix_latex_print(NspRMatrix *Mat)
 	  else 
 	    Sciprintf("\n");
 	}
-      Sciprintf("\\end{array}\\right)$$}\n");
+      Sciprintf("\\end{pmatrix}\n$$\n}\n");
       if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
     }
   else 

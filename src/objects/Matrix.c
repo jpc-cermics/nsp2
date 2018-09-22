@@ -803,33 +803,33 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
   nsp_matrix_set_format(&fmt,Mat);
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-    Sciprintf("{$$%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
   else 
-    Sciprintf("{$$\\left(\\begin{array}{");
-  for (i=0; i <  Mat->n;i++) Sciprintf("c");
-  Sciprintf("}\n");
+    Sciprintf("{$$\\begin{pmatrix}");
 
   for (i=0; i < Mat->m; i++)
     {
       for (j=0; j < Mat->n - 1; j++)
-	{ 
+	{
+	  Sciprintf("\\verb|");
 	  if ( Mat->rc_type == 'r' ) 
 	    nsp_pr_float(&fmt,Mat->R[i+j*Mat->m]);
 	  else
 	    nsp_pr_complex(&fmt,Mat->C[i+j*Mat->m]);
-	  Sciprintf(" &");
+	  Sciprintf("| &");
 	}
-      /* Sciprintf("%g\t",Mat->R[i+(Mat->n-1)*Mat->m]); */
+      Sciprintf("\\verb|");
       if ( Mat->rc_type == 'r' ) 
 	nsp_pr_float(&fmt,Mat->R[i+(Mat->n-1)*Mat->m]);
       else
 	nsp_pr_complex(&fmt,Mat->C[i+(Mat->n-1)*Mat->m]);
+      Sciprintf("|");
       if ( i != Mat->m -1 ) 
 	Sciprintf("\\\\\n");
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{array}\\right)$$}\n");
+  Sciprintf("\\end{pmatrix}\n$$}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }

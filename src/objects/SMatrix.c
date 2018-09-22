@@ -609,23 +609,25 @@ int nsp_smatrix_latex_print(NspSMatrix *SMat)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(SMat)->name );
-  for (i=0; i <  SMat->n;i++) Sciprintf("c");
-  Sciprintf("}\n");
-
+  if ( strcmp(NSP_OBJECT(SMat)->name,NVOID) != 0) 
+    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(SMat)->name );
+  else
+    Sciprintf("{$$ \\begin{pmatrix}");
+    
   for (i=0; i < SMat->m; i++)
     {
+      char delim = '|';
       for (j=0; j < SMat->n - 1; j++)
 	{ 
-	  Sciprintf("{\\texttt \"%s\"}\t& ",SMat->S[i+j*SMat->m]);
+	  Sciprintf("{\\verb%c\"%s\"%c}\t& ",delim,SMat->S[i+j*SMat->m],delim);
 	}
-      Sciprintf("{\\texttt \"%s\"}\t",SMat->S[i+(SMat->n-1)*SMat->m]);
+      Sciprintf("{\\verb%c\"%s\"%c}\t",delim,SMat->S[i+(SMat->n-1)*SMat->m],delim);
       if ( i != SMat->m -1 ) 
 	Sciprintf("\\\\\n");
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{array}\\right)}\n");
+  Sciprintf("\\end{pmatrix}\n$$\n}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
