@@ -1911,7 +1911,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
 	  for ( j = 0; j < Ri->size ; j++)
 	    {
 	      nsp_pr_white(indent) ;Sciprintf("(%d,%d) ",i+1,Ri->J[j]+1);
-	      nsp_pr_float(fmt, Ri->R[j]);Sciprintf("\n");
+	      nsp_pr_float(fmt, Ri->R[j], FALSE);Sciprintf("\n");
 	    }
 	}
       break;
@@ -1922,7 +1922,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpRowMatrix *Sp, int indent)
 	  for ( j = 0; j < Ri->size ; j++)
 	    {
 	      nsp_pr_white(indent) ; Sciprintf("(%d,%d) ",i+1,Ri->J[j]+1);
-	      nsp_pr_complex(fmt, Ri->C[j]);
+	      nsp_pr_complex(fmt, Ri->C[j], FALSE);
 	      Sciprintf("\n");
 	    }
 	}

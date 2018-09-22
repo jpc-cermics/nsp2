@@ -507,6 +507,43 @@ void nsp_pr_any_float (const char *fmt, double d, int fw)
     }
 }
 
+void nsp_pr_any_float_latex (const char *fmt, double d, int fw)
+{
+  if (d == -0.0) d = 0.0;
+
+  if (isinf (d))
+    {
+      char *s = (d < 0.00) ? "-\\infty" : "+\\infty";
+      Sciprintf(s);
+    }
+  else if (isnan (d))
+    {
+      Sciprintf("\\verb|NaN|");
+    }
+  else
+    {
+      if ( d == 0 )
+	Sciprintf("%d",0);
+      if (fmt)
+	{
+	  char buf[256];
+	  char *s;
+	  sprintf(buf,fmt,d);
+	  if ( (s= strstr(buf,"e")) != NULL)
+	    {
+	      *s='\0';
+	      Sciprintf("%sx10^{%s}",buf,s+1);
+	    }
+	  else
+	    Sciprintf("%s",buf);	  
+	}
+      else
+	{
+	  Sciprintf("%f",d);
+	}
+    }
+}
+
 /* print a double using less than width fw when possible 
  * and return the number of spaces used.
  */
@@ -580,20 +617,26 @@ void nsp_pr_white(int fw)
   for ( i = 0 ; i < fw ; i++) Sciprintf(" ");
 }
 
-void nsp_pr_float (const nsp_num_formats *fmt,double d)
+void nsp_pr_float (const nsp_num_formats *fmt,double d, int latex )
 {
-  nsp_pr_any_float (fmt->curr_real_fmt,  d, fmt->curr_real_fw);
+  if ( latex )
+    nsp_pr_any_float_latex (fmt->curr_real_fmt,  d, fmt->curr_real_fw);
+  else
+    nsp_pr_any_float (fmt->curr_real_fmt,  d, fmt->curr_real_fw);
 }
 
-void nsp_pr_imag_float (const nsp_num_formats *fmt,double d)
+void nsp_pr_imag_float (const nsp_num_formats *fmt,double d, int latex) 
 {
-  nsp_pr_any_float (fmt->curr_imag_fmt,  d,fmt->curr_imag_fw);
+  if ( latex )
+    nsp_pr_any_float_latex  (fmt->curr_imag_fmt,  d,fmt->curr_imag_fw);
+  else
+    nsp_pr_any_float (fmt->curr_imag_fmt,  d,fmt->curr_imag_fw);
 }
 
-void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c)
+void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex)
 {
   double r = c.r;
-  nsp_pr_float (fmt,r);
+  nsp_pr_float (fmt,r,latex);
   if (! fmt->bank_format)
     {
       double i = c.i;
@@ -605,12 +648,12 @@ void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c)
       if (i < 0)
 	{
 	  Sciprintf("-");
-	  nsp_pr_imag_float (fmt,-i);
+	  nsp_pr_imag_float (fmt,-i,latex);
 	}
       else
 	{
 	  Sciprintf("+");
-	  nsp_pr_imag_float (fmt, i);
+	  nsp_pr_imag_float (fmt, i,latex);
 	}
       if (  user_pref.pr_as_read_syntax )
 	Sciprintf("*%%i");

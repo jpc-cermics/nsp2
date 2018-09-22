@@ -5273,7 +5273,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpMaxpColMatrix *Sp, int indent)
 	  for ( j = 0; j < Ri->size ; j++)
 	    {
 	      nsp_pr_white(indent) ;Sciprintf("(%d,%d) ",Ri->J[j]+1,i+1);
-	      nsp_pr_float(fmt, Ri->R[j]);Sciprintf("\n");
+	      nsp_pr_float(fmt, Ri->R[j], FALSE );Sciprintf("\n");
 	      p_rows++;
 	      if ( p_rows >= winrows ) 
 		{
@@ -5291,7 +5291,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpMaxpColMatrix *Sp, int indent)
 	  for ( j = 0; j < Ri->size ; j++)
 	    {
 	      nsp_pr_white(indent) ; Sciprintf("(%d,%d) ",Ri->J[j]+1,i+1);
-	      nsp_pr_complex(fmt, Ri->C[j]);
+	      nsp_pr_complex(fmt, Ri->C[j], FALSE );
 	      Sciprintf("\n");
 	      p_rows++;
 	      if ( p_rows >= winrows ) 

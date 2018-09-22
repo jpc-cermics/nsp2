@@ -44,12 +44,13 @@ typedef  void (*pr_mima) (const void *,char,double *,double *);
 void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_inf_or_nan, pr_mima min_max, 
 		     it_gen_f all_iin, nsp_it_init Init);
 
-extern void nsp_pr_float (const nsp_num_formats *fmt,double d);
-extern void nsp_pr_imag_float (const nsp_num_formats *fmt,double d);
-extern void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c);
+extern void nsp_pr_float (const nsp_num_formats *fmt,double d, int latex );
+extern void nsp_pr_imag_float (const nsp_num_formats *fmt,double d, int latex);
+extern void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex);
 extern void nsp_pr_white(int fw);
 extern void nsp_print_empty_matrix (int nr, int nc);
 extern void nsp_pr_any_float (const char *fmt, double d, int fw);
+extern void nsp_pr_any_float_latex (const char *fmt, double d, int fw);
 extern int  nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print);
 extern void nsp_init_pr_format (nsp_num_formats *fmt);
 extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);

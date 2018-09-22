@@ -352,7 +352,7 @@ int nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,const char *name, int rec_l
       nsp_init_pr_format (&fmt);
       nsp_matrix_set_format(&fmt,(NspMatrix *)Mat);
       if ( Mat->mn != 0 )
-	( Mat->rc_type == 'r') ? nsp_pr_float (&fmt,Mat->R[0]) : nsp_pr_complex (&fmt, Mat->C[0]);
+	( Mat->rc_type == 'r') ? nsp_pr_float (&fmt,Mat->R[0], FALSE) : nsp_pr_complex (&fmt, Mat->C[0], FALSE);
       Sciprintf(" ]\t\tmp %c (%dx%d)\n",Mat->rc_type,Mat->m,Mat->n);
     }
   return TRUE;
