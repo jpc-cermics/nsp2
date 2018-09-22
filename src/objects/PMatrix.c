@@ -436,34 +436,27 @@ int nsp_pmatrix_latex_print(NspPMatrix *Mat)
   nsp_init_pr_format (&fmt);
   Mp_set_format (&fmt,Mat);
   fw = fmt.curr_real_fw;
-    
-  if ( Mat->rc_type == 'r' ) 
-    {
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-	Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
-      else 
-	Sciprintf("{$$\\begin{pmatrix}");
-      for (i=0; i < Mat->m; i++)
-	{
-	  for (j=0; j < Mat->n - 1; j++)
-	    { 
-	      pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m],fw,0,TRUE );
-	      Sciprintf(" & ");
-	    }
-	  pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m],fw,0,TRUE);
-	  if ( i != Mat->m -1 ) 
-	    Sciprintf("\\\\\n");
-	  else 
-	    Sciprintf("\n");
-	}
-      Sciprintf("\\end{pmatrix}\n$$}\n");
-      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-    }
+
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
   else 
+    Sciprintf("{$$\\begin{pmatrix}");
+  for (i=0; i < Mat->m; i++)
     {
-      Sciprintf("Fixme : to be done\n");
+      for (j=0; j < Mat->n - 1; j++)
+	{ 
+	  pr_poly_latex(&fmt,Mat->var,Mat->S[j*Mat->m],fw,0,TRUE );
+	  Sciprintf(" & ");
+	}
+      pr_poly_latex(&fmt,Mat->var,Mat->S[i+(Mat->n-1)*Mat->m],fw,0,TRUE);
+      if ( i != Mat->m -1 ) 
+	Sciprintf("\\\\\n");
+      else 
+	Sciprintf("\n");
     }
+  Sciprintf("\\end{pmatrix}\n$$}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
 
