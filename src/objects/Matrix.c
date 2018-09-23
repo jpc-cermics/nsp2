@@ -794,6 +794,8 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
  * Return value: %TRUE or %FALSE
  */
 
+static void nsp_print_latex_float(nsp_num_formats fmt,const NspMatrix *M,int i);
+
 int nsp_matrix_latex_print(NspMatrix *Mat)
 {
   int i,j;
@@ -811,27 +813,38 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
     {
       for (j=0; j < Mat->n - 1; j++)
 	{
-	  Sciprintf("\\verb|");
-	  if ( Mat->rc_type == 'r' ) 
-	    nsp_pr_float(&fmt,Mat->R[i+j*Mat->m], FALSE);
-	  else
-	    nsp_pr_complex(&fmt,Mat->C[i+j*Mat->m], FALSE);
-	  Sciprintf("| &");
+	  nsp_print_latex_float(fmt, Mat, i+j*Mat->m);
+	  Sciprintf(" &");
 	}
-      Sciprintf("\\verb|");
-      if ( Mat->rc_type == 'r' ) 
-	nsp_pr_float(&fmt,Mat->R[i+(Mat->n-1)*Mat->m], FALSE);
-      else
-	nsp_pr_complex(&fmt,Mat->C[i+(Mat->n-1)*Mat->m], FALSE);
-      Sciprintf("|");
+      nsp_print_latex_float(fmt, Mat, i+(Mat->n-1)*Mat->m);
       if ( i != Mat->m -1 ) 
 	Sciprintf("\\\\\n");
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{pmatrix}\n$$}\n");
+  Sciprintf("\\end{pmatrix}\n$$\n}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
+}
+
+static void nsp_print_latex_float(nsp_num_formats fmt,const NspMatrix *M,int i)
+{
+  if ( 0 )
+    {
+      Sciprintf("\\verb|");
+      if ( M->rc_type == 'r' ) 
+	nsp_pr_float(&fmt,M->R[i], FALSE);
+      else
+	nsp_pr_complex(&fmt,M->C[i], FALSE);
+      Sciprintf("|");
+    }
+  else
+    {
+      if ( M->rc_type == 'r' ) 
+	nsp_pr_float(&fmt,M->R[i], TRUE);
+      else
+	nsp_pr_complex(&fmt,M->C[i], TRUE);
+    }
 }
 
 /**

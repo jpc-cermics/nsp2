@@ -507,6 +507,12 @@ void nsp_pr_any_float (const char *fmt, double d, int fw)
     }
 }
 
+/* print a double in LaTeX format using the numprint 
+ * macro 
+ */
+
+static void simplify_exponent(char *buf);
+
 void nsp_pr_any_float_latex (const char *fmt, double d, int fw)
 {
   if (d == -0.0) d = 0.0;
@@ -518,31 +524,58 @@ void nsp_pr_any_float_latex (const char *fmt, double d, int fw)
     }
   else if (isnan (d))
     {
-      Sciprintf("\\verb|NaN|");
+      Sciprintf("\\mathrm{NaN}");
     }
   else
     {
       if ( d == 0 )
-	Sciprintf("%d",0);
+	Sciprintf("\\numprint{%d}",0);
       if (fmt)
 	{
 	  char buf[256];
-	  char *s;
-	  sprintf(buf,fmt,d);
-	  if ( (s= strstr(buf,"e")) != NULL)
-	    {
-	      *s='\0';
-	      Sciprintf("%sx10^{%s}",buf,s+1);
-	    }
-	  else
-	    Sciprintf("%s",buf);	  
+  	  sprintf(buf,fmt,d);
+	  simplify_exponent(buf);
+	  Sciprintf("\\numprint{%s}",buf);	  
 	}
       else
 	{
-	  Sciprintf("%f",d);
+	  Sciprintf("\\numprint{%f}",d);
 	}
     }
 }
+
+static void simplify_exponent(char *buf)
+{
+  /* Sciprintf always put a "e" */
+  char *s = strstr(buf,"e"), *s_end;
+  s_end=s;
+  if ( s != NULL)
+    {
+      s_end +=1;
+      s +=1;
+      if ( *(s)=='+')
+	{
+	  /* remove + and leading 0 */
+	  s_end +=1;
+	  while (*(s_end) == '0') s_end+=1;
+	  strcpy(s,s_end);
+	  /* remove empty exponent */
+	  if (strcmp(s_end,"") == 0) *(s-1)='\0';
+	  return;
+	}
+      if ( *(s)=='-')
+	{
+	  s_end += 1;
+	  s += 1;
+	  /* remove leading 0 */
+	  while (*(s_end)== '0') s_end +=1;
+	  strcpy(s,s_end);
+	  /* remove empty exponent */
+	  if (strcmp(s_end,"")== 0) *(s-2)='\0';
+	}
+    }
+}
+
 
 /* print a double using less than width fw when possible 
  * and return the number of spaces used.
