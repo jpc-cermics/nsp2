@@ -3778,19 +3778,37 @@ int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int le
 	{
 	  if ( ( m->C[i].r != 0.00 || m->C[i].i != 0.00)  || m->mn == 1  )
 	    {
-	      if ( leading == FALSE ) 
+	      int negative_real = (  m->C[i].r < 0 &&  m->C[i].i == 0.00);
+	      if ( leading == FALSE && negative_real == FALSE) 
 		{
 		  if (do_print) Sciprintf("+");
 		  count++;
 		}
-	      if (do_print)Sciprintf("(");
-	      count++;
-	      count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->C[i].r, fw,do_print,TRUE);
-	      if (do_print)Sciprintf("+");
-	      count++;
-	      count +=nsp_pr_any_float_vs_p(fmt->curr_imag_fmt, m->C[i].i, fw,do_print,TRUE);
-	      if (do_print)Sciprintf("i)");
-	      count +=2;
+	      if ( m->C[i].i == 0.00 )
+		{
+		  count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->C[i].r, fw,do_print,TRUE);
+		}
+	      else
+		{
+		  if (do_print) Sciprintf("(");
+		  count++;
+		  count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->C[i].r, fw,do_print,TRUE);
+		  if (  m->C[i].i < 0 )
+		    {
+		      if (do_print)Sciprintf("-");
+		      count++;
+		      count +=nsp_pr_any_float_vs_p(fmt->curr_imag_fmt,- m->C[i].i, fw,do_print,TRUE);
+		    }
+		  else
+		    {
+		      if (do_print)Sciprintf("+");
+		      count++;
+		      count +=nsp_pr_any_float_vs_p(fmt->curr_imag_fmt, m->C[i].i, fw,do_print,TRUE);
+		    }
+		  if (do_print) Sciprintf("i)");
+		  count +=2;
+		}
+	      
 	      leading = FALSE;
 	       if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 
@@ -3868,10 +3886,15 @@ int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, 
 		{
 		  Sciprintf("+");
 		}
-	      //Sciprintf("\\verb|");
-	      nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->R[i], fw,do_print,(i==0) ?TRUE:FALSE);
-	      //Sciprintf("|");
-	      // nsp_pr_any_float_latex(fmt->curr_real_fmt, m->R[i], fw);
+	      if ( m->R[i] > 0 )
+		{
+		  nsp_pr_any_float_latex(fmt->curr_real_fmt, m->R[i], (i==0) ? FALSE: TRUE);
+		}
+	      else
+		{
+		  Sciprintf("-");
+		  nsp_pr_any_float_latex(fmt->curr_real_fmt, - m->R[i], (i==0) ? FALSE: TRUE);
+		}
 	      leading = FALSE;
 	      if ( i > 0 ) 
 		{
@@ -3889,9 +3912,16 @@ int pr_poly_latex (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, 
 		{
 		  Sciprintf("+");
 		}
-	      Sciprintf("(");
-	      nsp_pr_complex(fmt,m->C[i], TRUE);
-	      Sciprintf(")");
+	      if ( m->C[i].i == 0 )
+		{
+		  nsp_pr_complex(fmt,m->C[i],TRUE);
+		}
+	      else
+		{
+		  Sciprintf("(");
+		  nsp_pr_complex(fmt,m->C[i],TRUE);
+		  Sciprintf(")");
+		}
 	      leading = FALSE;
 	      if ( i > 0 ) 
 		{

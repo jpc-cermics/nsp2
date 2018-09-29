@@ -513,7 +513,7 @@ void nsp_pr_any_float (const char *fmt, double d, int fw)
 
 static void simplify_exponent(char *buf);
 
-void nsp_pr_any_float_latex (const char *fmt, double d, int fw)
+void nsp_pr_any_float_latex (const char *fmt, double d, int exclude_one)
 {
   if (d == -0.0) d = 0.0;
 
@@ -529,17 +529,26 @@ void nsp_pr_any_float_latex (const char *fmt, double d, int fw)
   else
     {
       if ( d == 0 )
-	Sciprintf("\\numprint{%d}",0);
-      if (fmt)
 	{
-	  char buf[256];
-  	  sprintf(buf,fmt,d);
-	  simplify_exponent(buf);
-	  Sciprintf("\\numprint{%s}",buf);	  
+	  Sciprintf("\\numprint{%d}",0);
+	}
+      else if ( d == 1 )
+	{
+	  if ( exclude_one == FALSE ) Sciprintf("\\numprint{1}");
 	}
       else
 	{
-	  Sciprintf("\\numprint{%f}",d);
+	  if ( fmt != NULL )
+	    { 
+	      char buf[256];
+	      sprintf(buf,fmt,d);
+	      simplify_exponent(buf);
+	      Sciprintf("\\numprint{%s}",buf);	  
+	    }
+	  else
+	    {
+	      Sciprintf("\\numprint{%f}",d);
+	    }
 	}
     }
 }
@@ -653,7 +662,7 @@ void nsp_pr_white(int fw)
 void nsp_pr_float (const nsp_num_formats *fmt,double d, int latex )
 {
   if ( latex )
-    nsp_pr_any_float_latex (fmt->curr_real_fmt,  d, fmt->curr_real_fw);
+    nsp_pr_any_float_latex (fmt->curr_real_fmt,  d, FALSE);
   else
     nsp_pr_any_float (fmt->curr_real_fmt,  d, fmt->curr_real_fw);
 }
@@ -661,18 +670,17 @@ void nsp_pr_float (const nsp_num_formats *fmt,double d, int latex )
 void nsp_pr_imag_float (const nsp_num_formats *fmt,double d, int latex) 
 {
   if ( latex )
-    nsp_pr_any_float_latex  (fmt->curr_imag_fmt,  d,fmt->curr_imag_fw);
+    nsp_pr_any_float_latex  (fmt->curr_imag_fmt,  d, FALSE);
   else
     nsp_pr_any_float (fmt->curr_imag_fmt,  d,fmt->curr_imag_fw);
 }
 
 void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex)
 {
-  double r = c.r;
+  double r = c.r, i = c.i;
   nsp_pr_float (fmt,r,latex);
   if (! fmt->bank_format)
     {
-      double i = c.i;
       if ( c.i == 0.0) 
 	{
 	  nsp_pr_white(fmt->curr_imag_fw+2);
@@ -688,7 +696,7 @@ void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex)
 	  Sciprintf("+");
 	  nsp_pr_imag_float (fmt, i,latex);
 	}
-      if (  user_pref.pr_as_read_syntax )
+      if (  user_pref.pr_as_read_syntax && latex == FALSE )
 	Sciprintf("*%%i");
       else 
 	Sciprintf("i");
