@@ -2090,18 +2090,19 @@ QHULL_LIB=
 QHULL_LIBS=
 
 if test "$with_qhull" != "no"; then
-   AC_CHECK_HEADERS(
-        [libqhull/libqhull.h],
-        AC_CHECK_LIB(
-           [qhull],
-           [qh_new_qhull],
-           [HAVE_QHULL="yes"],
-           [HAVE_QHULL="no"]),
-        [HAVE_QHULL="no"])
+   AC_CHECK_HEADERS([qhull/libqhull.h],[HAVE_QHULL_LIBHULL="yes"],[HAVE_QHULL_LIBHULL="no"])
+   if test "$HAVE_QHULL_LIBHULL" = "yes"; then
+      AC_CHECK_LIB([qhull],[qh_new_qhull], [HAVE_QHULL="yes"], [HAVE_QHULL="no"])
+   else
+      AC_CHECK_HEADERS([libqhull/libqhull.h],[HAVE_LIBQHULL_LIBHULL="yes"],[HAVE_LIBQHULL_LIBHULL="no"])
+      if test "$HAVE_LIBQHULL_LIBHULL" = "yes"; then
+         AC_CHECK_LIB([qhull],[qh_new_qhull], [HAVE_QHULL="yes"], [HAVE_QHULL="no"])
+      fi
+   fi
 fi
 
 if test "$HAVE_QHULL" = "yes"; then
-  AC_DEFINE(WITH_QHULL,[],[portaudio library])
+  AC_DEFINE(WITH_QHULL,[],[qhull library])
   QHULL_CFLAGS=
   QHULL_LIB=libqhull
   QHULL_LIBS=-lqhull
