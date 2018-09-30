@@ -134,7 +134,7 @@ extern NspRMatrix *nsp_rmatrix_prod(NspRMatrix *A, int dim);
 extern int nsp_rmatrix_triu(NspRMatrix *A, int k);
 extern int nsp_rmatrix_tril(NspRMatrix *A, int k);
 
-extern int nsp_rmatrix_latex_print (NspRMatrix *Mat);
+extern int nsp_rmatrix_latex_print (NspRMatrix *Mat, int indent,const char *name, int rec_level);
 
 extern NspRMatrix *nsp_matrix_to_rational(NspMatrix *M);
 extern NspRMatrix *nsp_matrices_to_rational(NspMatrix *A,NspMatrix *B);

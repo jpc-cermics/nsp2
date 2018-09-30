@@ -97,7 +97,7 @@ extern NspCells *nsp_cells_transpose(const NspCells *A);
 extern NspCells  *nsp_cells_extract_diag(NspCells *A, int k);
 extern int nsp_cells_set_diag(NspCells *A, NspCells *Diag, int k);
 extern NspCells  *nsp_cells_create_diag(NspCells *Diag, int k);
-extern int nsp_cells_latex_print(const NspCells *Mat);
+extern int nsp_cells_latex_print(const NspCells *Mat, int use_math,const char *name, int rec_level);
 
 #endif 
 

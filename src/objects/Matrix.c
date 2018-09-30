@@ -796,18 +796,20 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
 
 static void nsp_print_latex_float(nsp_num_formats fmt,const NspMatrix *M,int i);
 
-int nsp_matrix_latex_print(NspMatrix *Mat)
+int nsp_matrix_latex_print(NspMatrix *Mat, int use_math,const char *name, int rec_level)
 {
   int i,j;
   nsp_num_formats fmt;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   nsp_init_pr_format (&fmt);
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   nsp_matrix_set_format(&fmt,Mat);
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = \\left(\\begin{array}{*{%d}r}\n", pname, Mat->n);
   else 
-    Sciprintf("{$$\\begin{pmatrix}");
+    Sciprintf("\\left(\\begin{array}{*{%d}r}\n", Mat->n);
 
   for (i=0; i < Mat->m; i++)
     {
@@ -822,7 +824,9 @@ int nsp_matrix_latex_print(NspMatrix *Mat)
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{pmatrix}\n$$\n}\n");
+  Sciprintf("\\end{array}\\right)\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+		    
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -855,10 +859,11 @@ static void nsp_print_latex_float(nsp_num_formats fmt,const NspMatrix *M,int i)
  * syntax. 
  */
 
-int nsp_matrix_latex_tab_print(NspMatrix *Mat)
+int nsp_matrix_latex_tab_print(NspMatrix *Mat, int indent,const char *name, int rec_level)
 {
   int i,j;
   nsp_num_formats fmt;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   nsp_init_pr_format (&fmt);
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   nsp_matrix_set_format(&fmt,Mat);
@@ -866,7 +871,10 @@ int nsp_matrix_latex_tab_print(NspMatrix *Mat)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:");
   Sciprintf("\\begin{tabular}{|l|");
   for (i=0; i < Mat->n ;i++) Sciprintf("c|");
-  Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(Mat)->name);
+  if ( name != NULL || strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+    Sciprintf("}\\hline\n %s &\t", pname);
+  else
+    Sciprintf("}\\hline\n &\t");
   for (i=0; i < Mat->n -1 ;i++) Sciprintf("$C_{%d}$\t&",i+1);
   Sciprintf("$C_{%d}$\\\\ \\hline\n",Mat->n);
   

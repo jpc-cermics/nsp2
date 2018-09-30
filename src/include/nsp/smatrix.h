@@ -145,8 +145,9 @@ extern int nsp_smatrix_to_latin1(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
 
-extern int nsp_smatrix_latex_print(NspSMatrix *SMat);
-extern int nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
+extern int nsp_smatrix_latex_print(NspSMatrix *SMat, int indent,const char *name, int rec_level);
+extern int nsp_smatrix_latex_tab_print(NspSMatrix *SMat,int indent,const char *name, int rec_level);
+				       
 extern int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix **S);
 extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);
 extern int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S);

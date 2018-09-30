@@ -605,14 +605,16 @@ int nsp_smatrix_print_multicols(const NspSMatrix *Mat, int indent,const char *na
  * Return value: %TRUE or %FALSE
  */
 
-int nsp_smatrix_latex_print(NspSMatrix *SMat)
+int nsp_smatrix_latex_print(NspSMatrix *SMat,  int use_math, const char *name, int rec_level)
 {
   int i,j;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(SMat)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if ( strcmp(NSP_OBJECT(SMat)->name,NVOID) != 0) 
-    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(SMat)->name );
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(SMat)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = \\begin{pmatrix}", pname);
   else
-    Sciprintf("{$$ \\begin{pmatrix}");
+    Sciprintf("\\begin{pmatrix}");
     
   for (i=0; i < SMat->m; i++)
     {
@@ -627,7 +629,8 @@ int nsp_smatrix_latex_print(NspSMatrix *SMat)
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{pmatrix}\n$$\n}\n");
+  Sciprintf("\\end{pmatrix}\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -640,13 +643,18 @@ int nsp_smatrix_latex_print(NspSMatrix *SMat)
  * syntax. 
  */
 
-int nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
+int nsp_smatrix_latex_tab_print(NspSMatrix *SMat, int indent,const char *name, int rec_level)
 {
   int i,j;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(SMat)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf("\\begin{tabular}{|l|");
   for (i=0; i < SMat->n ;i++) Sciprintf("c|");
-  Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(SMat)->name);
+
+  if ( name != NULL || strcmp(NSP_OBJECT(SMat)->name,NVOID) != 0) 
+    Sciprintf("}\\hline\n %s &\t",pname);
+  else
+    Sciprintf("}\\hline\n &\t");
   for (i=1; i < SMat->n ;i++) Sciprintf("$C_{%d}$\t&",i);
   Sciprintf("$C_{%d}$\\\\ \\hline\n",SMat->n);
   for (i=0; i < SMat->m; i++)

@@ -1340,7 +1340,7 @@ int int_object_ret(Stack stack, int rhs, int opt, int lhs)
   for ( i= 0 ; i < rhs ; i++)
     {
       if ( user_pref.latex == TRUE && (*Ob)->type->latex != NULL )
-	(*Ob)->type->latex(*Ob,0,NULL,0);
+	(*Ob)->type->latex(*Ob,TRUE,NULL,0);
       else
 	(*Ob)->type->pr(*Ob,0,NULL,0);
       Ob++;

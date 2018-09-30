@@ -3041,7 +3041,7 @@ int int_mx2latexmat (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((HMat = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  nsp_matrix_latex_print (HMat);
+  nsp_matrix_latex_print (HMat, 0, NULL,0);
   return 0;
 }
 
@@ -3056,7 +3056,7 @@ int int_mx2latextab (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((HMat = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  nsp_matrix_latex_tab_print (HMat);
+  nsp_matrix_latex_tab_print (HMat, 0, NULL,0);
   return 0;
 }
 

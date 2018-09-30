@@ -310,7 +310,7 @@ int nsp_object_print(NspObject *O, int indent,char *name, int rec_level)
 /**
  *nsp_object_latex:
  * @O: #NspObject to be printed
- * @indent: an int
+ * @use_math: an int
  * @name: %NULL or name to be used. 
  * @rec_level: deph level of the print.
  * 
@@ -319,9 +319,9 @@ int nsp_object_print(NspObject *O, int indent,char *name, int rec_level)
  * 
  **/
 
-int nsp_object_latex(NspObject *O, int indent,char *name, int rec_level)
+int nsp_object_latex(NspObject *O, int use_math,char *name, int rec_level)
 {
-  return O->type->latex(O,indent,name,rec_level);
+  return O->type->latex(O, use_math, name,rec_level);
 }
 
 /**

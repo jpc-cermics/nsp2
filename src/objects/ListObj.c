@@ -1643,7 +1643,7 @@ static int int_lxneq(Stack stack, int rhs, int opt, int lhs)
 
 /*
  */
-extern void nsp_list_latex_print(NspList *L);
+/* extern void nsp_list_latex_print(NspList *L); */
 
 static int int_list_2latexmat(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1651,7 +1651,7 @@ static int int_list_2latexmat(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  nsp_list_latex_print(HMat);
+  nsp_list_latex_print(HMat, TRUE, NULL, 0);
   return 0;
 }
 

@@ -1109,32 +1109,38 @@ int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
  * syntax. 
  */
 
-void nsp_list_latex_print(NspList *L)
+void nsp_list_latex_print(NspList *L, int use_math,const char *name, int rec_level)
 {
   Cell *C;
   int i=1;
-  const char *pname = NSP_OBJECT(L)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if (strcmp(pname,NVOID) != 0) Sciprintf("%s\n", pname);
-  Sciprintf1(1,"\\begin{itemize}\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  Sciprintf("\\begin{array}{ll}\n");
   C= L->first;
   while ( C != NULLCELL) 
     {
-      Sciprintf("\\item[(%d)]",i);
       if ( C->O != NULLOBJ )
 	{
 	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-	  nsp_object_latex(C->O,2,NULL,1);    
+	  if ( name != NULL || strcmp(NSP_OBJECT(L)->name,NVOID) != 0)
+	    Sciprintf("{\\verb|%s|}_{%d} & ",pname, i);
+	  else
+	    Sciprintf("{\\verb|e|}_{%d} & ", i);
+	  nsp_object_latex(C->O,FALSE,"",1);    
 	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+	  C = C->next ;i++;
+	  if ( C != NULLCELL )
+	    Sciprintf("\\\\[0.3cm]\n");
 	}
       else
 	{
-	  Sciprintf("Undefined\n");
+	  /* Sciprintf("Undefined\n"); */
+	  C = C->next ;i++;
 	}
-      C = C->next ;i++;
-      if ( C != NULLCELL ) Sciprintf("\n");
     }
-  Sciprintf1(1, "\\end{itemize}\n");
+  Sciprintf1(1,"\\end{array}\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
 

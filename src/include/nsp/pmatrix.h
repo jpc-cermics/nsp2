@@ -118,8 +118,8 @@ extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
 extern NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V);
 extern NspBMatrix  *nsp_pmatrix_comp(NspPMatrix *A, NspPMatrix *B,const char *op);
 extern int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R);
-extern int nsp_pmatrix_latex_print (NspPMatrix *Mat); 
-
+extern int nsp_pmatrix_latex_print (NspPMatrix *Mat, int indent,const char *name, int rec_level);
+  
 /* polynomials */
 
 

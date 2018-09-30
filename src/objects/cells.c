@@ -371,32 +371,36 @@ int nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
   return TRUE;
 }
 
-int nsp_cells_latex_print(const NspCells *Mat)
+int nsp_cells_latex_print(const NspCells *Mat, int use_math,const char *name, int rec_level)
 {
-  const char *pname = NSP_OBJECT(Mat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if (strcmp(pname,NVOID) != 0) Sciprintf("%s\n", pname);
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  Sciprintf("\\begin{array}{ll}\n");
   if ( Mat->mn != 0) 
     {
-      char epname[128];
       int i,j;
-      Sciprintf1(1,"\\begin{itemize}\n");
       for ( j = 0 ; j < Mat->n; j++ ) 
 	for ( i = 0 ; i < Mat->m; i++ ) 
 	  {
 	    NspObject *object = Mat->objs[i+Mat->m*j];
-	    Sciprintf("\\item[(%d,%d)]",i+1,j+1);
 	    if ( object != NULL ) 
 	      {
 		if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-		sprintf(epname,"(%d,%d)",i+1,j+1);
-		nsp_object_latex(object,2,NULL,1);
+		if ( name != NULL || strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0)
+		  Sciprintf("{\\verb|%s|}_{%d,%d} & ",pname, i+1,j+1);
+		else
+		  Sciprintf("{\\verb|e|}_{%d,%d} & ", i+1,j+1);
+		nsp_object_latex(object,FALSE ,"",1);
 		if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+		if ( ! (i== Mat->m-1 && j == Mat->n -1))
+		  Sciprintf("\\\\[0.3cm]\n");
 	      }
 	  }
-      Sciprintf1(1,"\\end{itemize}\n");
       if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
     }
+  Sciprintf1(1,"\\end{array}\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
   return TRUE;
 }
 

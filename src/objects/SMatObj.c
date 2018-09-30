@@ -2112,7 +2112,7 @@ static int int_smatrix_2latexmat(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  nsp_smatrix_latex_print(HMat);
+  nsp_smatrix_latex_print(HMat,0,NULL,0);
   return 0;
 }
 
@@ -2126,7 +2126,7 @@ static int int_smatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  nsp_smatrix_latex_tab_print(HMat);
+  nsp_smatrix_latex_tab_print(HMat,0,NULL,0);
   return 0;
 }
 

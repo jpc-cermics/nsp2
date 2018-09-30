@@ -392,19 +392,21 @@ int nsp_rmatrix_print(NspRMatrix *Mat, int indent,const char *name, int rec_leve
  * Return value: %TRUE or %FALSE
  */
 
-int nsp_rmatrix_latex_print(NspRMatrix *Mat)
+int nsp_rmatrix_latex_print(NspRMatrix *Mat, int use_math,const char *name, int rec_level)
 {
   int i,j, fw;
   nsp_num_formats fmt;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   nsp_init_pr_format (&fmt);
   Mp_set_format (&fmt,Mat);
   fw = fmt.curr_real_fw;
 
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
-    Sciprintf("{$$\\verb|%s| = \\begin{pmatrix}",NSP_OBJECT(Mat)->name );
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = \\begin{pmatrix}", pname);
   else 
-    Sciprintf("{$$\\left(\\begin{array}{");
+    Sciprintf("\\begin{pmatrix}");
   for (i=0; i < Mat->m; i++)
     {
       for (j=0; j < Mat->n - 1; j++)
@@ -425,7 +427,8 @@ int nsp_rmatrix_latex_print(NspRMatrix *Mat)
       else 
 	Sciprintf("\n");
     }
-  Sciprintf("\\end{pmatrix}\n$$\n}\n");
+  Sciprintf("\\end{pmatrix}\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
