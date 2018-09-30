@@ -34,17 +34,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libqhull/libqhull.h>
-#include <libqhull/qset.h>
-#include <libqhull/geom.h>
-#include <libqhull/poly.h>
-#include <libqhull/io.h>
-
 #include <nsp/nsp.h>
 #include <nsp/objects.h> 
 #include <nsp/interf.h>
 #include <nsp/file.h> 
 #include <nsp/type.h> 
+#include <nsp/qhull.h>
 
 /* convhulln interface */
 

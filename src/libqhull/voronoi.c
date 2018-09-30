@@ -24,17 +24,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libqhull/libqhull.h>
-#include <libqhull/qset.h>
-#include <libqhull/geom.h>
-#include <libqhull/poly.h>
-#include <libqhull/io.h>
-
 #include <nsp/nsp.h>
 #include <nsp/objects.h> 
 #include <nsp/interf.h>
 #include <nsp/cells.h> 
-
+#include <nsp/qhull.h>
 /*
  * 
  */

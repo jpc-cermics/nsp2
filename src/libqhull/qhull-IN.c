@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "nsp/machine.h"
-#include "nsp/interf.h"
+#include <nsp/machine.h>
+#include <nsp/interf.h>
 
 extern function int_voronoi;
 extern function int_delaunay;
