@@ -564,21 +564,20 @@ add_dingus (VteTerminal *terminal,
             char **dingus)
 {
   const GdkCursorType cursors[] = { GDK_GUMBY, GDK_HAND1 };
-  GRegex *regex;
+  VteRegex *regex;
   GError *error;
   int id, i;
 
   for (i = 0; dingus[i]; ++i) {
     error = NULL;
-    if (!(regex = g_regex_new(dingus[i], G_REGEX_OPTIMIZE, 0, &error))) {
-      g_warning("Failed to compile regex '%s': %s\n",
-		dingus[i], error->message);
+    if (!(regex = vte_regex_new_for_match(dingus[i],-1, 0, &error))) {
+      /* g_warning("Failed to compile regex '%s': %s\n",dingus[i], error->message); */
       g_error_free(error);
       continue;
     }
 
-    id = vte_terminal_match_add_gregex(terminal, regex, 0);
-    g_regex_unref (regex);
+    id = vte_terminal_match_add_regex(terminal, regex, 0);
+    vte_regex_unref (regex);
     vte_terminal_match_set_cursor_type(terminal, id,
 				       cursors[i % G_N_ELEMENTS(cursors)]);
   }
