@@ -282,7 +282,7 @@ NspSMio *nsp_smio_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs,&ilen) == FAIL) return NULL;
   if ((F= nsp_smio_wcreate(name,openf,0,ilen))== NULL) return NULL;
   if (nsp_xdr_load_array_c(xdrs,openf,4) == FAIL) return NULL;
-  strncpy(F->obj->openf,openf,4);
+  strncpy(F->obj->openf,openf,3);F->obj->openf[3]='\0';
   if (nsp_xdr_load_i(xdrs,&F->obj->flag) == FAIL) return NULL;
   if (nsp_xdr_load_array_c(xdrs,F->obj->D,F->obj->len) == FAIL) return NULL;
   F->obj->pos = 0;
