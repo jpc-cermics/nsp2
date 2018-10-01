@@ -563,6 +563,7 @@ static void
 add_dingus (VteTerminal *terminal,
             char **dingus)
 {
+#ifdef USE_VTEREGEX
   const GdkCursorType cursors[] = { GDK_GUMBY, GDK_HAND1 };
   VteRegex *regex;
   GError *error;
@@ -581,6 +582,7 @@ add_dingus (VteTerminal *terminal,
     vte_terminal_match_set_cursor_type(terminal, id,
 				       cursors[i % G_N_ELEMENTS(cursors)]);
   }
+#endif
 }
 
 
