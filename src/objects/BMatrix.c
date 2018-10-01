@@ -299,13 +299,16 @@ int nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_lev
  * Return value: %TRUE or %FALSE
  */
 
-int nsp_bmatrix_latex_print(NspBMatrix *BMat)
+int nsp_bmatrix_latex_print(NspBMatrix *BMat, int use_math,const char *name, int rec_level)
 {
   int i,j;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(BMat)->name );
-  for (i=0; i <  BMat->n;i++) Sciprintf("c");
-  Sciprintf("}\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(BMat)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = \\left(\\begin{array}{*{%d}r}\n", pname, BMat->n);
+  else 
+    Sciprintf("\\left(\\begin{array}{*{%d}c}\n", BMat->n);
   for (i=0; i < BMat->m; i++)
     {
       for (j=0; j < BMat->n - 1; j++)
@@ -318,8 +321,9 @@ int nsp_bmatrix_latex_print(NspBMatrix *BMat)
       else 
 	Sciprintf("\n");
     }
+  Sciprintf("\\end{array}\\right)\n");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
 
-  Sciprintf("\\end{array}\\right)}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -335,7 +339,7 @@ int nsp_bmatrix_latex_print(NspBMatrix *BMat)
  */
 
 
-int nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
+int nsp_bmatrix_latex_tab_print(NspBMatrix *BMat, int use_math,const char *name, int rec_level)
 {
   int i,j;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");

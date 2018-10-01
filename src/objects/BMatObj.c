@@ -970,7 +970,7 @@ static int int_bmatrix_2latexmat(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  nsp_bmatrix_latex_print(HMat);
+  nsp_bmatrix_latex_print(HMat, TRUE, NULL,0);
   return 0;
 }
 
@@ -984,7 +984,7 @@ static int int_bmatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;    
-  nsp_bmatrix_latex_tab_print(HMat);
+  nsp_bmatrix_latex_tab_print(HMat,TRUE, NULL,0);
   return 0;
 }
 
