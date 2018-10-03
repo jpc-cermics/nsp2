@@ -402,7 +402,7 @@ int nsp_grimage_latex(NspGrImage *M, int use_math,const char *name, int rec_leve
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|h| = \\numprint{%f}\n", M->obj->h);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"border	= %s\n", ( M->obj->border == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|border|= %s\n",( M->obj->border == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
   Sciprintf1(2,"\\\\\n");

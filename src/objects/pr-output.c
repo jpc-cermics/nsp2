@@ -707,6 +707,70 @@ void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex)
     }
 }
 
+/* print a double : with format computed by nsp */
+
+static char nsp_double_iter_init(const void *M,int *work)
+{
+  *work = 0;
+  return 'r';
+}
+
+static int nsp_double_any_element_is_negative (const void *M)
+{
+  return ( *((double *) M) < 0.0 ) ? 1 : 0 ;
+}
+
+static int nsp_double_any_element_is_inf_or_nan (const void *M)
+{
+  double r = *((double *) M);
+  return (isinf (r) || isnan (r)) ? 1 : 0;
+}
+
+static int nsp_double_all_elements_are_int_or_inf_or_nan (const void *M)
+{
+  double r = *((double *) M);
+  return (isinf (r)|| isnan (r) || anint(r) == r ) ? 1: 0;
+}
+
+static void nsp_double_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
+{
+  int zero = FALSE;
+  double r = *((double *)M);
+  *dmax =  DBL_MIN;
+  *dmin =  DBL_MAX;
+  if ( r == 0.0 ) {zero = TRUE ;}
+  if ( Abs(r) < *dmin ) *dmin = Abs(r);
+  if ( Abs(r) > *dmax ) *dmax = Abs(r);
+  if ( zero == TRUE ) 
+    {
+      /* if a zero was found and ignored check */
+      if ( *dmax ==   DBL_MIN ) *dmax=0.0;
+      if ( *dmin ==   DBL_MAX ) *dmin=0.0;
+    }
+}
+
+static void nsp_double_set_format(nsp_num_formats *fmt,double *M)
+{
+  gen_set_format(fmt,M,nsp_double_any_element_is_negative,
+		 nsp_double_any_element_is_inf_or_nan,
+		 nsp_double_pr_min_max_internal,
+		 nsp_double_all_elements_are_int_or_inf_or_nan,
+		 nsp_double_iter_init);
+}
+
+void nsp_print_double(double d, int latex)
+{
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  nsp_double_set_format(&fmt,&d);
+  if ( latex )
+    nsp_pr_any_float_latex (fmt.curr_real_fmt,  d, FALSE);
+  else
+    nsp_pr_any_float (fmt.curr_real_fmt,  d, fmt.curr_real_fw);
+}
+
+/* initialization */
+
 static int nsp_print_e_def = 0;
 
 void nsp_init_pr_format (nsp_num_formats *fmt)
@@ -720,14 +784,12 @@ void nsp_init_pr_format (nsp_num_formats *fmt)
   fmt->print_big_e = 0;
 }
 
-
 void nsp_set_format(int output_max_field_width, int output_precision,int e)
 {
   nsp_print_e_def = e ;
   user_pref.output_max_field_width = Max(output_max_field_width,0);
   user_pref.output_precision = Max(output_precision,0);
 }
-
 
 void nsp_get_format(int *output_max_field_width, int *output_precision,int *e)
 {

@@ -482,13 +482,13 @@ int nsp_spolyhedron_latex(NspSPolyhedron *M, int use_math,const char *name, int 
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"coloutmax=%d\n", M->obj->coloutmax);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|mesh|= %s\n",( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|mesh_only|= %s\n",( M->obj->mesh_only == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"back_color=%d\n", M->obj->back_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|shade|= %s\n",( M->obj->shade == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   Sciprintf1(2,"\\\\\n");

@@ -418,9 +418,9 @@ int nsp_surf_latex(NspSurf *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colors),FALSE,"colors", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|mesh|= %s\n",( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"zcolor	= %s\n", ( M->obj->zcolor == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|zcolor|= %s\n",( M->obj->zcolor == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mesh_color=%d\n", M->obj->mesh_color);
   Sciprintf1(2,"\\\\\n");

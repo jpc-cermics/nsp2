@@ -436,7 +436,7 @@ int nsp_polyhedron_latex(NspPolyhedron *M, int use_math,const char *name, int re
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mback_color),FALSE,"Mback_color", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|mesh|= %s\n",( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);

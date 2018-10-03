@@ -509,7 +509,7 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|rho| = \\numprint{%f}\n", M->obj->rho);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|top|= %s\n",( M->obj->top == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),FALSE,"bounds", rec_level+1)== FALSE ) return FALSE ;
@@ -533,19 +533,19 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|fixed|= %s\n",( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"iso	= %s\n", ( M->obj->iso == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|iso|= %s\n",( M->obj->iso == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"auto_axis	= %s\n", ( M->obj->auto_axis == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|auto_axis|= %s\n",( M->obj->auto_axis == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"grid=%d\n", M->obj->grid);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"axes=%d\n", M->obj->axes);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"xlog	= %s\n", ( M->obj->xlog == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|xlog|= %s\n",( M->obj->xlog == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"ylog	= %s\n", ( M->obj->ylog == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|ylog|= %s\n",( M->obj->ylog == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"lpos=%d\n", M->obj->lpos);
   Sciprintf1(2,"\\\\\n");
@@ -553,13 +553,13 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),FALSE,"rect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"zoom	= %s\n", ( M->obj->zoom == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|zoom|= %s\n",( M->obj->zoom == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->zrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zrect),FALSE,"zrect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|clip|= %s\n",( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
   Sciprintf1(2,"\\\\\n");

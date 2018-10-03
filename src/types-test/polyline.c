@@ -411,7 +411,7 @@ int nsp_polyline_latex(NspPolyline *M, int use_math,const char *name, int rec_le
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"close	= %s\n", ( M->obj->close == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|close|= %s\n",( M->obj->close == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
   Sciprintf1(2,"\\\\\n");

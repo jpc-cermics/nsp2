@@ -443,7 +443,7 @@ int nsp_figure_latex(NspFigure *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),FALSE,"viewport_dims", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|wresize|= %s\n",( M->obj->wresize == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->position != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),FALSE,"position", rec_level+1)== FALSE ) return FALSE ;
@@ -453,7 +453,7 @@ int nsp_figure_latex(NspFigure *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|draw_now|= %s\n",( M->obj->draw_now == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->gc != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),FALSE,"gc", rec_level+1)== FALSE ) return FALSE ;
@@ -1543,7 +1543,7 @@ int nsp_figuredata_latex(NspFigureData *M, int use_math,const char *name, int re
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|auto_clear|= %s\n",( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
   Sciprintf1(2,"\\\\\n");

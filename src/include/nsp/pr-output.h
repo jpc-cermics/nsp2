@@ -49,6 +49,7 @@ extern void nsp_pr_imag_float (const nsp_num_formats *fmt,double d, int latex);
 extern void nsp_pr_complex (const nsp_num_formats *fmt,doubleC c, int latex);
 extern void nsp_pr_white(int fw);
 extern void nsp_print_empty_matrix (int nr, int nc);
+extern void nsp_print_double(double d, int latex);
 extern void nsp_pr_any_float (const char *fmt, double d, int fw);
 extern void nsp_pr_any_float_latex (const char *fmt, double d, int fw);
 extern int  nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print);

@@ -369,9 +369,9 @@ int nsp_graphic_latex(NspGraphic *M, int use_math,const char *name, int rec_leve
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|hilited|= %s\n",( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|show|= %s\n",( M->obj->show == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Fig=0x%x\n", M->obj->Fig);
   Sciprintf1(2,"\\\\\n");

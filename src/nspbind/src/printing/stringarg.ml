@@ -1476,9 +1476,13 @@ let boolean_arg_attr_write_copy _objinfo params left_varname right_varname _f_co
     ("  " ^ left_varname ^ "->" ^ params.pname  ^"=" ^ params.pname  ^ ";\n")
 ;;
 
-let boolean_arg_attr_write_print _objinfo _print_mode varname params =
-  (Printf.sprintf "  Sciprintf1(indent+2,\"%s\t= %%s\\n\", ( %s->%s == TRUE) ? \"T\" : \"F\" );\n"
-     params.pname varname params.pname)
+let boolean_arg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= %%s\\n\",( %s->%s == TRUE) ? \"T\" : \"F\" );\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s\t= %%s\\n\", ( %s->%s == TRUE) ? \"T\" : \"F\" );\n"
+      params.pname varname params.pname
 ;;
 
 let boolean_arg_attr_write_init _objinfo varname params =

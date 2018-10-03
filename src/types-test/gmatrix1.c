@@ -424,9 +424,9 @@ int nsp_gmatrix1_latex(NspGMatrix1 *M, int use_math,const char *name, int rec_le
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->data),FALSE,"data", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"remap	= %s\n", ( M->obj->remap == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|remap|= %s\n",( M->obj->remap == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|shade|= %s\n",( M->obj->shade == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->colminmax != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),FALSE,"colminmax", rec_level+1)== FALSE ) return FALSE ;

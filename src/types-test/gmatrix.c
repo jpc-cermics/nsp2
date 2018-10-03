@@ -408,7 +408,7 @@ int nsp_gmatrix_latex(NspGMatrix *M, int use_math,const char *name, int rec_leve
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),FALSE,"rect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"remap	= %s\n", ( M->obj->remap == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|remap|= %s\n",( M->obj->remap == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->colminmax != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),FALSE,"colminmax", rec_level+1)== FALSE ) return FALSE ;

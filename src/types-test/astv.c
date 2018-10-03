@@ -367,7 +367,7 @@ int nsp_astv_latex(NspAstv *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_astv_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"hv	= %s\n", ( M->hv == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|hv|= %s\n",( M->hv == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"rows=%d\n", M->rows);
   Sciprintf1(2,"\\\\\n");

@@ -363,7 +363,7 @@ int nsp_bvar_latex(NspBvar *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bvar_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"sym	= %s\n", ( M->sym == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|sym|= %s\n",( M->sym == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");

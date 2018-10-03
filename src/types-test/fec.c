@@ -457,15 +457,15 @@ int nsp_fec_latex(NspFec *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),FALSE,"zminmax", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|mesh|= %s\n",( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"paint	= %s\n", ( M->obj->paint == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|paint|= %s\n",( M->obj->paint == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->colout != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),FALSE,"colout", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"colorbar	= %s\n", ( M->obj->colorbar == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|colorbar|= %s\n",( M->obj->colorbar == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

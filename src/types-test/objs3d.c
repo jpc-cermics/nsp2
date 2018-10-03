@@ -466,7 +466,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|rho| = \\numprint{%f}\n", M->obj->rho);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|top|= %s\n",( M->obj->top == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->bounds != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),FALSE,"bounds", rec_level+1)== FALSE ) return FALSE ;
@@ -494,13 +494,13 @@ int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|theta| = \\numprint{%f}\n", M->obj->theta);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|with_box|= %s\n",( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"box_color=%d\n", M->obj->box_color);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"box_style=%d\n", M->obj->box_style);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"\\verb|fixed|= %s\n",( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->ebox != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),FALSE,"ebox", rec_level+1)== FALSE ) return FALSE ;
