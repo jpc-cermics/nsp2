@@ -593,6 +593,41 @@ int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_lev
     }
   return rep;
 }
+/**
+ * nsp_spcolmatrix_print:
+ * @Sp: 
+ * @use_math: 
+ * @name: 
+ * @rec_level: 
+ * 
+ * displays a sparse Matrix.
+ **/
+
+static int nsp_spcolmatrix_latex_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
+
+int nsp_spcolmatrix_latex_print(NspSpColMatrix *Sp, int use_math,char *name, int rec_level)
+{ 
+  int rep = TRUE;
+  nsp_num_formats fmt;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name; 
+  nsp_init_pr_format (&fmt);
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(Sp)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = ", pname);
+  if (Sp->m==0 || Sp->n==0 ) 
+    {
+      Sciprintf("[]\n");
+    }
+  else
+    {
+      Sciprintf("\\left\\{\n");
+      rep = nsp_spcolmatrix_latex_print_internal(&fmt,Sp,0);
+      Sciprintf("\\right.\n", pname);
+    }
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+  return rep;
+}
+
 
 /**
  * nsp_spcolmatrix_redim:
@@ -5329,6 +5364,7 @@ static int SpM_general(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
   return TRUE;
 }
 
+
 static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
 {
   int rep = TRUE;
@@ -5360,6 +5396,78 @@ static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m
       else
 	{
 	  rep =SpM_general(fmt,m,indent);
+	}
+    }
+  return rep;
+}
+
+
+static int SpM_general_latex(nsp_num_formats *fmt,NspSpColMatrix *Sp, int indent)
+{
+  int i,j,p_rows=0;
+  Sciprintf("\\begin{array}{cl}\n");
+  switch ( Sp->rc_type ) 
+    {
+    case 'r' : 
+      for ( i = 0; i < Sp->n; i++)
+	{
+	  SpCol *Ri = Sp->D[i];
+	  for ( j = 0; j < Ri->size ; j++)
+	    {
+	      nsp_pr_white(indent) ;Sciprintf("(%d,%d) & ",Ri->J[j]+1,i+1);
+	      nsp_pr_float(fmt, Ri->R[j], TRUE );
+	      Sciprintf("\\\\\n");
+	      p_rows++;
+	    }
+	}
+      break;
+    case 'c' :
+      for ( i = 0; i < Sp->n; i++)
+	{
+	  SpCol *Ri = Sp->D[i];
+	  for ( j = 0; j < Ri->size ; j++)
+	    {
+	      nsp_pr_white(indent) ; Sciprintf("(%d,%d) &",Ri->J[j]+1,i+1);
+	      nsp_pr_complex(fmt, Ri->C[j], TRUE );
+	      Sciprintf("\\\\\n");
+	      p_rows++;
+	    }
+	}
+      break;
+    }
+  Sciprintf("\\end{array}\n");
+  return TRUE;
+}
+
+static int nsp_spcolmatrix_latex_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent)
+{
+  int rep = TRUE;
+  if ( m->m ==0 || m->n == 0) 
+    {
+      Sciprintf("[]\n");
+    }
+  else if (fmt->plus_format ) 
+    {
+      SpM_plus_format(m,indent);
+    }
+  else
+    {
+      Sp_set_format(fmt,m);
+      if (fmt->free_format)
+	{
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("free format to be done for sparse [\n");
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("]");
+	  return rep;
+	}
+      if (user_pref.pr_as_read_syntax)
+	{
+	  Sciprintf("No as read for sparse \n");
+	}
+      else
+	{
+	  rep =SpM_general_latex(fmt,m,indent);
 	}
     }
   return rep;
