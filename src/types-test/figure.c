@@ -403,7 +403,7 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->gc),indent+2,"gc", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"Xgc=0x%x\n", M->obj->Xgc);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -413,35 +413,62 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
+int nsp_figure_latex(NspFigure *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
-  Sciprintf1(indent+2,"driver=%s\n",M->obj->driver);
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
+  Sciprintf1(indent+2,"\\verb|fname|=\\verb@\"%s\"@\n",M->obj->fname);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|driver|=\\verb@\"%s\"@\n",M->obj->driver);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"id=%d\n", M->obj->id);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->dims != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->dims),indent+2,"dims", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->dims),FALSE,"dims", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->viewport_dims != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),FALSE,"viewport_dims", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->position != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),indent+2,"position", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),FALSE,"position", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->gc != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),indent+2,"gc", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),FALSE,"gc", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Xgc=0x%x\n", M->obj->Xgc);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -590,7 +617,7 @@ NspFigure *nsp_figure_create(const char *name,char* fname,char* driver,int id,Ns
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
 
-#line 594 "figure.c"
+#line 621 "figure.c"
   return H;
 }
 
@@ -681,7 +708,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
 
-#line 685 "figure.c"
+#line 712 "figure.c"
   return H;
 }
 
@@ -706,7 +733,7 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
 
-#line 710 "figure.c"
+#line 737 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -775,7 +802,7 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 779 "figure.c"
+#line 806 "figure.c"
 
 
 #line 200 "codegen/figure.override"
@@ -787,7 +814,7 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 791 "figure.c"
+#line 818 "figure.c"
 
 
 #line 210 "codegen/figure.override"
@@ -799,7 +826,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   MoveObj(stack,1,NSP_OBJECT(C));
   return 1;
 }
-#line 803 "figure.c"
+#line 830 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -831,7 +858,7 @@ static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,
   return Max(lhs,1);
 }
 
-#line 835 "figure.c"
+#line 862 "figure.c"
 
 
 static NspMethods figure_methods[] = {
@@ -1046,7 +1073,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 1050 "figure.c"
+#line 1077 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1466,36 +1493,73 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
  * latex print 
  */
 
-int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_level)
+int nsp_figuredata_latex(NspFigureData *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"color=%d\n", M->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"background=%d\n", M->background);
+  Sciprintf1(2,"\\\\\n");
   if ( M->colormap != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->colormap),FALSE,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"dashes=%d\n", M->dashes);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"font=%d\n", M->font);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"font_size=%d\n", M->font_size);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"foreground=%d\n", M->foreground);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"hidden3d=%d\n", M->hidden3d);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"line_mode=%d\n", M->line_mode);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"line_style=%d\n", M->line_style);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark=%d\n", M->mark);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_size=%d\n", M->mark_size);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"pattern=%d\n", M->pattern);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"pixmap=%d\n", M->pixmap);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->thickness);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mtlb_mode=%d\n", M->mtlb_mode);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1808,7 +1872,7 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1812 "figure.c"
+#line 1876 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
@@ -2107,7 +2171,7 @@ static int _wrap_nsp_check_for_current_axes(Stack stack, int rhs, int opt, int l
   return 1;
 }
 
-#line 2111 "figure.c"
+#line 2175 "figure.c"
 
 
 #line 265 "codegen/figure.override"
@@ -2133,7 +2197,7 @@ static int _wrap_nsp_check_for_current_objs3d(Stack stack, int rhs, int opt, int
   return 1;
 }
 
-#line 2137 "figure.c"
+#line 2201 "figure.c"
 
 
 #line 289 "codegen/figure.override"
@@ -2159,7 +2223,7 @@ int _wrap_nsp_check_for_current_axes_or_objs3d(Stack stack, int rhs, int opt, in
   return 1;
 }
 
-#line 2163 "figure.c"
+#line 2227 "figure.c"
 
 
 #line 169 "codegen/figure.override"
@@ -2171,7 +2235,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2175 "figure.c"
+#line 2239 "figure.c"
 
 
 #line 179 "codegen/figure.override"
@@ -2183,7 +2247,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2187 "figure.c"
+#line 2251 "figure.c"
 
 
 /*----------------------------------------------------
@@ -3899,4 +3963,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3903 "figure.c"
+#line 3967 "figure.c"

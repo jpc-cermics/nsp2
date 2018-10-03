@@ -374,30 +374,53 @@ int nsp_linearsys_print(NspLinearSys *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_linearsys_latex(NspLinearSys *M, int indent,const char *name, int rec_level)
+int nsp_linearsys_latex(NspLinearSys *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_linearsys_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_linearsys_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->A != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->A),indent+2,"A", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->A),FALSE,"A", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->B != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->B),indent+2,"B", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->B),FALSE,"B", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->C != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->C),indent+2,"C", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->C),FALSE,"C", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->D != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->D),indent+2,"D", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->D),FALSE,"D", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->X0 != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->X0),indent+2,"X0", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->X0),FALSE,"X0", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"dom=%s\n",M->dom);
-  Sciprintf1(indent+2,"dt=%f\n", M->dt);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|dom|=\\verb@\"%s\"@\n",M->dom);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|dt| = \\numprint{%f}\n", M->dt);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -519,7 +542,7 @@ NspLinearSys *nsp_linearsys_create(const char *name,NspMatrix* A,NspMatrix* B,Ns
   if ( nsp_linearsys_check_values(H) == FAIL) return NULLLINEARSYS;
 #line 69 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 523 "linearsys.c"
+#line 546 "linearsys.c"
   return H;
 }
 
@@ -630,7 +653,7 @@ NspLinearSys *nsp_linearsys_full_copy(NspLinearSys *self)
 
 #line 69 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 634 "linearsys.c"
+#line 657 "linearsys.c"
   return H;
 }
 
@@ -725,7 +748,7 @@ int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 729 "linearsys.c"
+#line 752 "linearsys.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -775,7 +798,7 @@ static int _wrap_linearsys_set_A(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 779 "linearsys.c"
+#line 802 "linearsys.c"
 #line 190 "codegen/linearsys.override"
 
 static NspObject *_wrap_linearsys_get_B(void *self,const char *attr)
@@ -812,7 +835,7 @@ static int _wrap_linearsys_set_B(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 816 "linearsys.c"
+#line 839 "linearsys.c"
 #line 227 "codegen/linearsys.override"
 
 static NspObject *_wrap_linearsys_get_C(void *self,const char *attr)
@@ -850,7 +873,7 @@ static int _wrap_linearsys_set_C(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 854 "linearsys.c"
+#line 877 "linearsys.c"
 #line 118 "codegen/linearsys.override"
 
 /* always a polynomial */
@@ -922,7 +945,7 @@ static int _wrap_linearsys_set_D(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 926 "linearsys.c"
+#line 949 "linearsys.c"
 static NspObject *_wrap_linearsys_get_X0(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -1046,7 +1069,7 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
 }
 
 
-#line 1050 "linearsys.c"
+#line 1073 "linearsys.c"
 
 
 #line 399 "codegen/linearsys.override"
@@ -1078,7 +1101,7 @@ int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1082 "linearsys.c"
+#line 1105 "linearsys.c"
 
 
 #line 429 "codegen/linearsys.override"
@@ -1110,7 +1133,7 @@ int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 1114 "linearsys.c"
+#line 1137 "linearsys.c"
 
 
 /*----------------------------------------------------
@@ -1178,4 +1201,4 @@ NspObject *nsp_linearsys_get_D(  NspLinearSys *sys)
   return D;
 }
 
-#line 1182 "linearsys.c"
+#line 1205 "linearsys.c"

@@ -353,17 +353,37 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
+int nsp_graphic_latex(NspGraphic *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Fig=0x%x\n", M->obj->Fig);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Axe=0x%x\n", M->obj->Axe);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -544,7 +564,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 548 "graphic.c"
+#line 568 "graphic.c"
 
 
 #line 117 "codegen/graphic.override"
@@ -559,7 +579,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 563 "graphic.c"
+#line 583 "graphic.c"
 
 
 #line 130 "codegen/graphic.override"
@@ -573,7 +593,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 577 "graphic.c"
+#line 597 "graphic.c"
 
 
 #line 152 "codegen/graphic.override"
@@ -585,7 +605,7 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 589 "graphic.c"
+#line 609 "graphic.c"
 
 
 #line 142 "codegen/graphic.override"
@@ -597,7 +617,7 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 601 "graphic.c"
+#line 621 "graphic.c"
 
 
 static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
@@ -996,4 +1016,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 1000 "graphic.c"
+#line 1020 "graphic.c"

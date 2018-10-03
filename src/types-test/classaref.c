@@ -350,24 +350,45 @@ int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_level)
+int nsp_classaref_latex(NspClassARef *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"cla_color=%d\n", M->obj->cla_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"cla_thickness=%d\n", M->obj->cla_thickness);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->cla_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),FALSE,"cla_val", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->cla_bval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_bval),indent+2,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_bval),FALSE,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->cla_lval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_lval),indent+2,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_lval),FALSE,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -477,7 +498,7 @@ NspClassARef *nsp_classaref_create(const char *name,int cla_color,int cla_thickn
   if ( nsp_classaref_check_values(H) == FAIL) return NULLCLASSAREF;
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 481 "classaref.c"
+#line 502 "classaref.c"
   return H;
 }
 
@@ -547,7 +568,7 @@ NspClassARef *nsp_classaref_full_copy(NspClassARef *self)
   if ( nsp_classaref_full_copy_partial(H,self)== NULL) return NULLCLASSAREF;
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 551 "classaref.c"
+#line 572 "classaref.c"
   return H;
 }
 
@@ -569,7 +590,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_classaref_check_values(H) == FAIL) return RET_BUG;
   #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 573 "classaref.c"
+#line 594 "classaref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -586,7 +607,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
   self->obj->cla_color = color;
   return 0;
 }
-#line 590 "classaref.c"
+#line 611 "classaref.c"
 
 
 #line 36 "codegen/classaref.override"
@@ -595,7 +616,7 @@ static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int op
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
 }
-#line 599 "classaref.c"
+#line 620 "classaref.c"
 
 
 static NspMethods classaref_methods[] = {
@@ -748,7 +769,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 752 "classaref.c"
+#line 773 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -756,7 +777,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 760 "classaref.c"
+#line 781 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -791,4 +812,4 @@ void nsp_initialize_ClassARef_types(void)
   new_type_classaref(T_BASE);
 }
 
-#line 795 "classaref.c"
+#line 816 "classaref.c"

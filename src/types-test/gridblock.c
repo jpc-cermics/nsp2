@@ -361,7 +361,7 @@ int nsp_gridblock_print(NspGridBlock *M, int indent,const char *name, int rec_le
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_gridblock_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"diagram=0x%x\n", M->obj->diagram);
-  nsp_block_print((NspBlock * ) M,indent+2,NULL,rec_level);
+  nsp_block_print((NspBlock * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -371,15 +371,32 @@ int nsp_gridblock_print(NspGridBlock *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_gridblock_latex(NspGridBlock *M, int indent,const char *name, int rec_level)
+int nsp_gridblock_latex(NspGridBlock *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridblock_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridblock_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"diagram=0x%x\n", M->obj->diagram);
-  nsp_block_latex((NspBlock * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_block_latex((NspBlock * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -552,7 +569,7 @@ int _wrap_gridblock_edit(void *self,Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 556 "gridblock.c"
+#line 573 "gridblock.c"
 
 
 static NspMethods gridblock_methods[] = {
@@ -730,4 +747,4 @@ NspDiagram *nsp_gridblock_get_diagram(void *B1)
   return ((NspGridBlock *) B1)->obj->diagram;
 }
 
-#line 734 "gridblock.c"
+#line 751 "gridblock.c"

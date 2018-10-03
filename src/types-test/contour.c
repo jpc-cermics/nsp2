@@ -383,7 +383,7 @@ int nsp_contour_print(NspContour *M, int indent,const char *name, int rec_level)
   if ( M->obj->style != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->style),indent+2,"style", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -393,30 +393,52 @@ int nsp_contour_print(NspContour *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_contour_latex(NspContour *M, int indent,const char *name, int rec_level)
+int nsp_contour_latex(NspContour *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_contour_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_contour_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->z != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),FALSE,"z", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),FALSE,"x", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->levels != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->levels),indent+2,"levels", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->levels),FALSE,"levels", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"nlevels=%d\n", M->obj->nlevels);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->style != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->style),indent+2,"style", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->style),FALSE,"style", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -821,7 +843,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 825 "contour.c"
+#line 847 "contour.c"
 
 
 #line 81 "codegen/contour.override"
@@ -833,7 +855,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 837 "contour.c"
+#line 859 "contour.c"
 
 
 /*----------------------------------------------------
@@ -954,4 +976,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 958 "contour.c"
+#line 980 "contour.c"

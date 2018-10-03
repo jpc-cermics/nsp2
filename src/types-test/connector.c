@@ -396,7 +396,7 @@ int nsp_connector_print(NspConnector *M, int indent,const char *name, int rec_le
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
   nsp_print_gr_lock(indent+2,&M->obj->lock,M);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -406,20 +406,42 @@ int nsp_connector_print(NspConnector *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_connector_latex(NspConnector *M, int indent,const char *name, int rec_level)
+int nsp_connector_latex(NspConnector *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_connector_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_connector_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(2,"\\\\\n");
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(2,"\\\\\n");
   nsp_print_gr_lock(indent+2,&M->obj->lock,M);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -536,7 +558,7 @@ NspConnector *nsp_connector_create_default(const char *name)
  return H;
 }
 
-#line 540 "connector.c"
+#line 562 "connector.c"
 /*
  * copy for gobject derived class  
  */
@@ -641,7 +663,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 
 
-#line 645 "connector.c"
+#line 667 "connector.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -662,7 +684,7 @@ static int _wrap_connector_translate(void  *self,Stack stack, int rhs, int opt, 
 
 }
 
-#line 666 "connector.c"
+#line 688 "connector.c"
 
 
 #line 375 "codegen/connector.override"
@@ -681,7 +703,7 @@ static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, in
 
 }
 
-#line 685 "connector.c"
+#line 707 "connector.c"
 
 
 #line 392 "codegen/connector.override"
@@ -699,7 +721,7 @@ static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, in
   return 1;
 }
 
-#line 703 "connector.c"
+#line 725 "connector.c"
 
 
 static NspMethods connector_methods[] = {
@@ -1524,4 +1546,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1528 "connector.c"
+#line 1550 "connector.c"

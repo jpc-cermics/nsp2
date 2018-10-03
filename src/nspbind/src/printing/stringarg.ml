@@ -507,9 +507,13 @@ let stringarg_attr_write_info _ptype pname _varname _byref =
   (Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%s\\n\",%s->%s);\n"  pname _varname pname)
 ;;
 
-let stringarg_attr_write_print _objinfo _print_mode varname params =
-  Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%s\\n\",%s->%s);\n"
-    params.pname varname params.pname
+let stringarg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|=\\\\verb@\\\"%%s\\\"@\\n\",%s->%s);\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%s\\n\",%s->%s);\n"
+      params.pname varname params.pname
 ;;
 
 let stringarg_attr_write_init _objinfo varname params=
@@ -1872,9 +1876,13 @@ let double_arg_attr_write_info _ptype pname _varname _byref =
   (Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%f\\n\" %s->%s);\n"  pname _varname pname)
 ;;
 
-let double_arg_attr_write_print _objinfo _print_mode varname params =
-  Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%f\\n\", %s->%s);\n"
-    params.pname varname params.pname
+let double_arg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s| = \\\\numprint{%%f}\\n\", %s->%s);\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%f\\n\", %s->%s);\n"
+      params.pname varname params.pname
 ;;
 
 let double_arg_attr_write_init _objinfo varname params =
@@ -2237,9 +2245,10 @@ let nsp_generic_arg_attr_write_info _nsp_generic_data  _ptype pname _varname _by
 ;;
 
 let nsp_generic_arg_attr_write_print _nsp_generic_data _objinfo print_mode varname params =
+  let arg = if print_mode = "latex" then "FALSE" else "indent+2" in
   Printf.sprintf
-    "  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,\"%s\", rec_level+1)== FALSE ) return FALSE ;\n    }\n"
-    varname params.pname print_mode varname params.pname params.pname
+    "  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),%s,\"%s\", rec_level+1)== FALSE ) return FALSE ;\n    }\n"
+    varname params.pname print_mode varname params.pname arg params.pname
 ;;
 
 let nsp_generic_arg_attr_write_init  nsp_generic_data _objinfo varname params =
@@ -3377,9 +3386,10 @@ let object_arg_attr_free_fields  _object_data _ptype pname _varname byref =
 ;;
 
 let object_arg_attr_write_print _object_data _objinfo print_mode varname params =
+  let arg = if print_mode = "latex" then "FALSE" else "indent+2" in
   Printf.sprintf
-    "  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),indent+2,\"%s\", rec_level+1)== FALSE ) return FALSE ;\n    }\n"
-    varname  params.pname print_mode varname  params.pname  params.pname
+    "  if ( %s->%s != NULL)\n    { if ( nsp_object_%s(NSP_OBJECT(%s->%s),%s,\"%s\", rec_level+1)== FALSE ) return FALSE ;\n    }\n"
+    varname  params.pname print_mode varname  params.pname arg params.pname
 ;;
 
 let object_arg_attr_write_init _object_data _objinfo varname params =

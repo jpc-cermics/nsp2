@@ -353,7 +353,7 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"hilite_type=%d\n", M->obj->hilite_type);
   Sciprintf1(indent+2,"hilite_size=%d\n", M->obj->hilite_size);
   Sciprintf1(indent+2,"hilite_color=%d\n", M->obj->hilite_color);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -363,23 +363,44 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
  * latex print 
  */
 
-int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_level)
+int nsp_compound_latex(NspCompound *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),FALSE,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"hilite_type=%d\n", M->obj->hilite_type);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"hilite_size=%d\n", M->obj->hilite_size);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"hilite_color=%d\n", M->obj->hilite_color);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -635,7 +656,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 639 "compound.c"
+#line 660 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -709,7 +730,7 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 713 "compound.c"
+#line 734 "compound.c"
 
 
 #line 156 "codegen/compound.override"
@@ -722,7 +743,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 726 "compound.c"
+#line 747 "compound.c"
 
 
 /*----------------------------------------------------
@@ -1074,4 +1095,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 1078 "compound.c"
+#line 1099 "compound.c"

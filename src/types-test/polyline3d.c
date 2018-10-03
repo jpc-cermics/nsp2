@@ -379,7 +379,7 @@ int nsp_polyline3d_print(NspPolyline3d *M, int indent,const char *name, int rec_
     }
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
   Sciprintf1(indent+2,"max=%d\n", M->obj->max);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -389,23 +389,45 @@ int nsp_polyline3d_print(NspPolyline3d *M, int indent,const char *name, int rec_
  * latex print 
  */
 
-int nsp_polyline3d_latex(NspPolyline3d *M, int indent,const char *name, int rec_level)
+int nsp_polyline3d_latex(NspPolyline3d *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline3d_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline3d_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->Mcolor != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),FALSE,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"max=%d\n", M->obj->max);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -518,7 +540,7 @@ NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mc
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL;
 
-#line 522 "polyline3d.c"
+#line 544 "polyline3d.c"
   return H;
 }
 
@@ -590,7 +612,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL;
 
-#line 594 "polyline3d.c"
+#line 616 "polyline3d.c"
   return H;
 }
 
@@ -614,7 +636,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG;
 
-#line 618 "polyline3d.c"
+#line 640 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -662,7 +684,7 @@ static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O
   return OK;
 }
 
-#line 666 "polyline3d.c"
+#line 688 "polyline3d.c"
 #line 144 "codegen/polyline3d.override"
 
 static NspObject *_wrap_polyline3d_get_Mcolor(void *self,const char *attr)
@@ -698,7 +720,7 @@ static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O
   return OK;
 }
 
-#line 702 "polyline3d.c"
+#line 724 "polyline3d.c"
 static NspObject *_wrap_polyline3d_get_thickness(void *self,const char *attr)
 {
   int ret;
@@ -734,7 +756,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 738 "polyline3d.c"
+#line 760 "polyline3d.c"
 
 
 #line 98 "codegen/polyline3d.override"
@@ -746,7 +768,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 750 "polyline3d.c"
+#line 772 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -1068,4 +1090,4 @@ extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1072 "polyline3d.c"
+#line 1094 "polyline3d.c"

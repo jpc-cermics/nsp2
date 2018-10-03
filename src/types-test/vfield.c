@@ -364,7 +364,7 @@ int nsp_vfield_print(NspVField *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"colored	= %s\n", ( M->obj->colored == TRUE) ? "T" : "F" );
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -374,27 +374,48 @@ int nsp_vfield_print(NspVField *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_vfield_latex(NspVField *M, int indent,const char *name, int rec_level)
+int nsp_vfield_latex(NspVField *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_vfield_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_vfield_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->fx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fx),indent+2,"fx", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fx),FALSE,"fx", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->fy != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fy),indent+2,"fy", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fy),FALSE,"fy", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),FALSE,"x", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"colored	= %s\n", ( M->obj->colored == TRUE) ? "T" : "F" );
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -760,7 +781,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 764 "vfield.c"
+#line 785 "vfield.c"
 
 
 #line 68 "codegen/vfield.override"
@@ -772,7 +793,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 776 "vfield.c"
+#line 797 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -1065,4 +1086,4 @@ static double min_of_doubles(const double *x, int n)
   return(mindx);
 }
 
-#line 1069 "vfield.c"
+#line 1090 "vfield.c"

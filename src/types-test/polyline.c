@@ -377,7 +377,7 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"mark_color=%d\n", M->obj->mark_color);
   Sciprintf1(indent+2,"fill_color=%d\n", M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -387,27 +387,52 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
  * latex print 
  */
 
-int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_level)
+int nsp_polyline_latex(NspPolyline *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),FALSE,"x", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"close	= %s\n", ( M->obj->close == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_color=%d\n", M->obj->mark_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"fill_color=%d\n", M->obj->fill_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -805,7 +830,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 809 "polyline.c"
+#line 834 "polyline.c"
 
 
 #line 67 "codegen/polyline.override"
@@ -817,7 +842,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 821 "polyline.c"
+#line 846 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -1065,4 +1090,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1069 "polyline.c"
+#line 1094 "polyline.c"

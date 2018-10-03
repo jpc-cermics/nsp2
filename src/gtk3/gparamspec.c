@@ -323,14 +323,31 @@ int nsp_gparamspec_print(NspGParamSpec *M, int indent,const char *name, int rec_
  * latex print 
  */
 
-int nsp_gparamspec_latex(NspGParamSpec *M, int indent,const char *name, int rec_level)
+int nsp_gparamspec_latex(NspGParamSpec *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gparamspec_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gparamspec_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   nsp_print_GParamSpec(indent+2,M->obj->value,M);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -430,7 +447,7 @@ NspGParamSpec *nsp_gparamspec_create_default(const char *name)
  return H;
 }
 
-#line 434 "gparamspec.c"
+#line 451 "gparamspec.c"
 /*
  * copy for gobject derived class  
  */
@@ -562,4 +579,4 @@ static int nsp_check_GParamSpec(GParamSpec *v,NspGParamSpec *H)
 }
 
 
-#line 566 "gparamspec.c"
+#line 583 "gparamspec.c"

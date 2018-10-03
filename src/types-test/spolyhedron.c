@@ -432,7 +432,7 @@ int nsp_spolyhedron_print(NspSPolyhedron *M, int indent,const char *name, int re
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   Sciprintf1(indent+2,"coldef=%d\n", M->obj->coldef);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -442,35 +442,69 @@ int nsp_spolyhedron_print(NspSPolyhedron *M, int indent,const char *name, int re
  * latex print 
  */
 
-int nsp_spolyhedron_latex(NspSPolyhedron *M, int indent,const char *name, int rec_level)
+int nsp_spolyhedron_latex(NspSPolyhedron *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_spolyhedron_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_spolyhedron_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->Mface != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),indent+2,"Mface", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),FALSE,"Mface", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->Mval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mval),indent+2,"Mval", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mval),FALSE,"Mval", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"vmin=%f\n", M->obj->vmin);
-  Sciprintf1(indent+2,"vmax=%f\n", M->obj->vmax);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|vmin| = \\numprint{%f}\n", M->obj->vmin);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|vmax| = \\numprint{%f}\n", M->obj->vmax);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"colmin=%d\n", M->obj->colmin);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"colmax=%d\n", M->obj->colmax);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"coloutmin=%d\n", M->obj->coloutmin);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"coloutmax=%d\n", M->obj->coloutmax);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"back_color=%d\n", M->obj->back_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"coldef=%d\n", M->obj->coldef);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -615,7 +649,7 @@ NspSPolyhedron *nsp_spolyhedron_create(const char *name,NspMatrix* Mcoord,NspMat
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL;
 
-#line 619 "spolyhedron.c"
+#line 653 "spolyhedron.c"
   return H;
 }
 
@@ -708,7 +742,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL;
 
-#line 712 "spolyhedron.c"
+#line 746 "spolyhedron.c"
   return H;
 }
 
@@ -732,7 +766,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return RET_BUG;
 
-#line 736 "spolyhedron.c"
+#line 770 "spolyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -1029,7 +1063,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1033 "spolyhedron.c"
+#line 1067 "spolyhedron.c"
 
 
 #line 96 "codegen/spolyhedron.override"
@@ -1041,7 +1075,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1045 "spolyhedron.c"
+#line 1079 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1891,4 +1925,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1895 "spolyhedron.c"
+#line 1929 "spolyhedron.c"

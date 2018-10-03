@@ -245,13 +245,17 @@ let build_print_fields objinfo varname print_mode =
 	 Say.debug (Printf.sprintf "Enter build_print_fields for %s" x.ptype);
 	 let handler = Stringarg.matcher_get x.ptype in 
 	 Buffer.add_string bb
-	   (handler.attr_write_print objinfo print_mode varname x))
+	   (handler.attr_write_print objinfo print_mode varname x);
+	 if print_mode = "latex" then
+	   Buffer.add_string bb "  Sciprintf1(2,\"\\\\\\\\\\n\");\n"
+	)
        objinfo.or_fields;
      if father <> "Object" then 
        (
+	let arg = if print_mode = "latex" then "FALSE" else "indent+2" in
 	Buffer.add_string bb
-	  (Printf.sprintf "  nsp_%s_%s((%s * ) M,indent+2,NULL,rec_level);\n" 
-	     (String.lowercase father) print_mode ("Nsp" ^ father)));
+	  (Printf.sprintf "  nsp_%s_%s((%s * ) M, %s,NULL,rec_level);\n" 
+	     (String.lowercase father) print_mode ("Nsp" ^ father) arg));
      Buffer.contents bb;
     )
 ;;

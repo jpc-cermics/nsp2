@@ -314,14 +314,31 @@ int nsp_stochdec_print(NspStochdec *M, int indent,const char *name, int rec_leve
  * latex print 
  */
 
-int nsp_stochdec_latex(NspStochdec *M, int indent,const char *name, int rec_level)
+int nsp_stochdec_latex(NspStochdec *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -794,20 +811,39 @@ int nsp_valuefn_print(NspValueFn *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_valuefn_latex(NspValueFn *M, int indent,const char *name, int rec_level)
+int nsp_valuefn_latex(NspValueFn *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
+  Sciprintf1(2,"\\\\\n");
   if ( M->xmin != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->xmin),indent+2,"xmin", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->xmin),FALSE,"xmin", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->xmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->xmax),indent+2,"xmax", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->xmax),FALSE,"xmax", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1322,7 +1358,7 @@ int nsp_gridvaluefn_print(NspGridValueFn *M, int indent,const char *name, int re
   if ( M->values != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_print((NspValueFn * ) M,indent+2,NULL,rec_level);
+  nsp_valuefn_print((NspValueFn * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1332,23 +1368,42 @@ int nsp_gridvaluefn_print(NspGridValueFn *M, int indent,const char *name, int re
  * latex print 
  */
 
-int nsp_gridvaluefn_latex(NspGridValueFn *M, int indent,const char *name, int rec_level)
+int nsp_gridvaluefn_latex(NspGridValueFn *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->n != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->n),indent+2,"n", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->n),FALSE,"n", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->step != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->step),indent+2,"step", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->step),FALSE,"step", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->values != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->values),FALSE,"values", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_latex((NspValueFn * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_valuefn_latex((NspValueFn * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1578,7 +1633,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1582 "stochdec.c"
+#line 1637 "stochdec.c"
 
 
 #line 112 "codegen/stochdec.override"
@@ -1608,7 +1663,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1612 "stochdec.c"
+#line 1667 "stochdec.c"
 
 
 #line 169 "codegen/stochdec.override"
@@ -1624,7 +1679,7 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
     nsp_gvf_set_i_value(self, ((int) ind->R[i]) - 1, val->R[i]);
   return 0;
 }
-#line 1628 "stochdec.c"
+#line 1683 "stochdec.c"
 
 
 #line 140 "codegen/stochdec.override"
@@ -1655,7 +1710,7 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 1659 "stochdec.c"
+#line 1714 "stochdec.c"
 
 
 #line 207 "codegen/stochdec.override"
@@ -1674,7 +1729,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   MoveObj(stack,1, NSP_OBJECT(ret));
   return 1;
 }
-#line 1678 "stochdec.c"
+#line 1733 "stochdec.c"
 
 
 #line 183 "codegen/stochdec.override"
@@ -1700,7 +1755,7 @@ static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1704 "stochdec.c"
+#line 1759 "stochdec.c"
 
 
 static int _wrap_nsp_gvf_get_nx(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -2024,7 +2079,7 @@ int nsp_cutsvaluefn_print(NspCutsValueFn *M, int indent,const char *name, int re
   if ( M->slopes != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->slopes),indent+2,"slopes", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_print((NspValueFn * ) M,indent+2,NULL,rec_level);
+  nsp_valuefn_print((NspValueFn * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -2034,20 +2089,38 @@ int nsp_cutsvaluefn_print(NspCutsValueFn *M, int indent,const char *name, int re
  * latex print 
  */
 
-int nsp_cutsvaluefn_latex(NspCutsValueFn *M, int indent,const char *name, int rec_level)
+int nsp_cutsvaluefn_latex(NspCutsValueFn *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_cutsvaluefn_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_cutsvaluefn_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->heights != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->heights),indent+2,"heights", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->heights),FALSE,"heights", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->slopes != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->slopes),indent+2,"slopes", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->slopes),FALSE,"slopes", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_latex((NspValueFn * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_valuefn_latex((NspValueFn * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -2258,7 +2331,7 @@ static int _wrap_nsp_cvf_add_slopes(NspCutsValueFn *self,Stack stack,int rhs,int
   return 0;
 }
 
-#line 2262 "stochdec.c"
+#line 2335 "stochdec.c"
 
 
 #line 275 "codegen/stochdec.override"
@@ -2284,7 +2357,7 @@ static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int 
   return 1;
 }
 
-#line 2288 "stochdec.c"
+#line 2361 "stochdec.c"
 
 
 static int _wrap_nsp_cvf_get_slopes(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -2346,7 +2419,7 @@ int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2350 "stochdec.c"
+#line 2423 "stochdec.c"
 
 
 #line 224 "codegen/stochdec.override"
@@ -2376,7 +2449,7 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2380 "stochdec.c"
+#line 2453 "stochdec.c"
 
 
 /*----------------------------------------------------
@@ -2673,4 +2746,4 @@ NspGridValueFn *nsp_gvf_create(const char *name,NspMatrix *nx,NspMatrix *xmin,Ns
 }
 
 
-#line 2677 "stochdec.c"
+#line 2750 "stochdec.c"

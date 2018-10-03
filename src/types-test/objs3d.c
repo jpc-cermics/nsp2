@@ -432,7 +432,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"scale_flag=%d\n", M->obj->scale_flag);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -442,46 +442,80 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
+int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->wrect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),FALSE,"wrect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"rho=%f\n", M->obj->rho);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|rho| = \\numprint{%f}\n", M->obj->rho);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),FALSE,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->arect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),FALSE,"arect", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->frect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),FALSE,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"title=%s\n",M->obj->title);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|title|=\\verb@\"%s\"@\n",M->obj->title);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->colormap != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),FALSE,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n", M->obj->alpha);
-  Sciprintf1(indent+2,"theta=%f\n", M->obj->theta);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|alpha| = \\numprint{%f}\n", M->obj->alpha);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|theta| = \\numprint{%f}\n", M->obj->theta);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"box_color=%d\n", M->obj->box_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"box_style=%d\n", M->obj->box_style);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->ebox != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),FALSE,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"scale_flag=%d\n", M->obj->scale_flag);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -842,7 +876,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 846 "objs3d.c"
+#line 880 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -997,7 +1031,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1001 "objs3d.c"
+#line 1035 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1203,7 +1237,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1207 "objs3d.c"
+#line 1241 "objs3d.c"
 
 
 #line 193 "codegen/objs3d.override"
@@ -1215,7 +1249,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1219 "objs3d.c"
+#line 1253 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -3232,4 +3266,4 @@ static NspMatrix *nsp_objs3d_get_ebox(NspObjs3d *self)
   return ret;
 }
 
-#line 3236 "objs3d.c"
+#line 3270 "objs3d.c"

@@ -588,13 +588,22 @@ let type_tmpl_latex str =
   "/*\
  \n * latex print \
  \n */\n\
- \nint nsp_$(typename_dc)_latex($(typename_nn) *M, int indent,const char *name, int rec_level)\
+ \nint nsp_$(typename_dc)_latex($(typename_nn) *M, int use_math,const char *name, int rec_level)\
  \n{\
+ \n  int indent=2;\
  \n  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\
  \n  if ( nsp_from_texmacs() == TRUE ) Sciprintf(\"\\002latex:\\\\[\");\
- \n  Sciprintf1(indent,\"%%s\\t=\\t\\t%%s\\n\",pname, nsp_$(typename_dc)_type_short_string(NSP_OBJECT(M)));\
- \n  Sciprintf1(indent+1,\"{\\n\");\
- \n%s  Sciprintf1(indent+1,\"}\\n\");\
+ \n  if ( use_math ) Sciprintf(\"\\\\begin{equation*}\\n\");\n\
+ \n  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)\
+ \n    Sciprintf(\"\\\\verb|%%s| = \\\\left\\\\{\\n\", pname);\n\
+ \n  else \
+ \n    Sciprintf(\"\\\\left\\{\\n\");\n\
+ \n  // Sciprintf1(indent,\"%%s\\t=\\t\\t%%s\\n\",pname, nsp_$(typename_dc)_type_short_string(NSP_OBJECT(M)));\
+ \n  Sciprintf(\"\\\\begin{array}{l}\");\n\
+ \n%s  Sciprintf1(indent+1,\"\\n\");\
+ \n  Sciprintf(\"\\\\end{array}\\n\");\n\
+ \n  Sciprintf(\"\\\\right.\\n\");\n\
+ \n  if ( use_math ) Sciprintf(\"\\\\end{equation*}\\n\");\n\
  \n  if ( nsp_from_texmacs() == TRUE ) Sciprintf(\"\\\\]\\005\");\
  \n  return TRUE;\
  \n}\n" str

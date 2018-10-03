@@ -663,14 +663,31 @@ int nsp_gibaseinfo_print(NspGIBaseInfo *M, int indent,const char *name, int rec_
  * latex print 
  */
 
-int nsp_gibaseinfo_latex(NspGIBaseInfo *M, int indent,const char *name, int rec_level)
+int nsp_gibaseinfo_latex(NspGIBaseInfo *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"info=0x%x\n", M->obj->info);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -979,4 +996,4 @@ void nsp_gi_info_new (GIBaseInfo *info)
 /*     return PYGLIB_NspBytes_FromString (typelib_path); */
 /* } */
 
-#line 983 "girepository.c"
+#line 1000 "girepository.c"

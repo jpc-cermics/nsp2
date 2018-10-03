@@ -374,7 +374,7 @@ int nsp_gmatrix_print(NspGMatrix *M, int indent,const char *name, int rec_level)
   if ( M->obj->zminmax != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -384,27 +384,48 @@ int nsp_gmatrix_print(NspGMatrix *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_gmatrix_latex(NspGMatrix *M, int indent,const char *name, int rec_level)
+int nsp_gmatrix_latex(NspGMatrix *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gmatrix_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gmatrix_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->data != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->data),indent+2,"data", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->data),FALSE,"data", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->rect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),indent+2,"rect", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),FALSE,"rect", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"remap	= %s\n", ( M->obj->remap == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->colminmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),indent+2,"colminmax", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),FALSE,"colminmax", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->zminmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),FALSE,"zminmax", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -771,7 +792,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 775 "gmatrix.c"
+#line 796 "gmatrix.c"
 
 
 #line 78 "codegen/gmatrix.override"
@@ -783,7 +804,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 787 "gmatrix.c"
+#line 808 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -1019,4 +1040,4 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
   Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
-#line 1023 "gmatrix.c"
+#line 1044 "gmatrix.c"

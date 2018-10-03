@@ -411,7 +411,7 @@ int nsp_link_print(NspLink *M, int indent,const char *name, int rec_level)
     }
   nsp_print_grl_lock(indent+2,&M->obj->lock1,M);
   nsp_print_grl_lock(indent+2,&M->obj->lock2,M);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -421,23 +421,46 @@ int nsp_link_print(NspLink *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_link_latex(NspLink *M, int indent,const char *name, int rec_level)
+int nsp_link_latex(NspLink *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->poly != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->poly),indent+2,"poly", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->poly),FALSE,"poly", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   nsp_print_grl_lock(indent+2,&M->obj->lock1,M);
+  Sciprintf1(2,"\\\\\n");
   nsp_print_grl_lock(indent+2,&M->obj->lock2,M);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -562,7 +585,7 @@ NspLink *nsp_link_create_default(const char *name)
  return H;
 }
 
-#line 566 "link.c"
+#line 589 "link.c"
 /*
  * copy for gobject derived class  
  */
@@ -645,7 +668,7 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 649 "link.c"
+#line 672 "link.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -666,7 +689,7 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
 
 }
 
-#line 670 "link.c"
+#line 693 "link.c"
 
 
 #line 404 "codegen/link.override"
@@ -685,7 +708,7 @@ static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
 
 }
 
-#line 689 "link.c"
+#line 712 "link.c"
 
 
 #line 421 "codegen/link.override"
@@ -703,7 +726,7 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
-#line 707 "link.c"
+#line 730 "link.c"
 
 
 #line 437 "codegen/link.override"
@@ -724,7 +747,7 @@ static int _wrap_link_connect(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 728 "link.c"
+#line 751 "link.c"
 
 
 static NspMethods link_methods[] = {
@@ -1908,4 +1931,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1912 "link.c"
+#line 1935 "link.c"

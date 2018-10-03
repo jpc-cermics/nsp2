@@ -368,7 +368,7 @@ int nsp_grimage_print(NspGrImage *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"image=0x%x\n", M->obj->image);
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -378,23 +378,48 @@ int nsp_grimage_print(NspGrImage *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_grimage_latex(NspGrImage *M, int indent,const char *name, int rec_level)
+int nsp_grimage_latex(NspGrImage *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_grimage_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"x=%f\n", M->obj->x);
-  Sciprintf1(indent+2,"y=%f\n", M->obj->y);
-  Sciprintf1(indent+2,"w=%f\n", M->obj->w);
-  Sciprintf1(indent+2,"h=%f\n", M->obj->h);
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_grimage_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
+  Sciprintf1(indent+2,"\\verb|x| = \\numprint{%f}\n", M->obj->x);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|y| = \\numprint{%f}\n", M->obj->y);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|w| = \\numprint{%f}\n", M->obj->w);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|h| = \\numprint{%f}\n", M->obj->h);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"border	= %s\n", ( M->obj->border == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
-  Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|fname|=\\verb@\"%s\"@\n",M->obj->fname);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"image=0x%x\n", M->obj->image);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -749,7 +774,7 @@ int _wrap_nsp_extractelts_grimage(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 753 "grimage.c"
+#line 778 "grimage.c"
 
 
 #line 71 "codegen/grimage.override"
@@ -762,7 +787,7 @@ int _wrap_nsp_setrowscols_grimage(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 766 "grimage.c"
+#line 791 "grimage.c"
 
 
 /*----------------------------------------------------
@@ -909,4 +934,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 913 "grimage.c"
+#line 938 "grimage.c"

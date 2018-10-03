@@ -332,18 +332,39 @@ int nsp_hm_print(NspHm *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_hm_latex(NspHm *M, int indent,const char *name, int rec_level)
+int nsp_hm_latex(NspHm *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_hm_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_hm_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"htable=0x%x\n", M->htable);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"hsize=%d\n", M->hsize);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"filled=%d\n", M->filled);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"base=%d\n", M->base);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"keysize=%d\n", M->keysize);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -430,7 +451,7 @@ NspHm *nsp_hm_create(const char *name,void* htable,int hsize,int filled,int base
 #line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 434 "hm.c"
+#line 455 "hm.c"
   return H;
 }
 
@@ -488,7 +509,7 @@ NspHm *nsp_hm_full_copy(NspHm *self)
 #line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 492 "hm.c"
+#line 513 "hm.c"
   return H;
 }
 
@@ -523,7 +544,7 @@ int int_hm_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 527 "hm.c"
+#line 548 "hm.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -540,7 +561,7 @@ static int _wrap_nsp_hm_remove(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 544 "hm.c"
+#line 565 "hm.c"
 
 
 #line 113 "codegen/hm.override"
@@ -557,7 +578,7 @@ static int _wrap_nsp_hm_enter(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 561 "hm.c"
+#line 582 "hm.c"
 
 
 #line 128 "codegen/hm.override"
@@ -592,7 +613,7 @@ static int _wrap_nsp_hm_find(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   return count;
 }
-#line 596 "hm.c"
+#line 617 "hm.c"
 
 
 #line 161 "codegen/hm.override"
@@ -618,7 +639,7 @@ static int _wrap_nsp_hm_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
-#line 622 "hm.c"
+#line 643 "hm.c"
 
 
 #line 199 "codegen/hm.override"
@@ -636,7 +657,7 @@ static int _wrap_nsp_hm_key2m(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
-#line 640 "hm.c"
+#line 661 "hm.c"
 
 
 #line 185 "codegen/hm.override"
@@ -652,7 +673,7 @@ static int _wrap_nsp_hm_m2key(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 656 "hm.c"
+#line 677 "hm.c"
 
 
 static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int lhs)
@@ -677,7 +698,7 @@ static int _wrap_nsp_hm_get_keys(NspHm *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 }
 
-#line 681 "hm.c"
+#line 702 "hm.c"
 
 
 static NspMethods hm_methods[] = {
@@ -1644,4 +1665,4 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M)
 }
 
 
-#line 1648 "hm.c"
+#line 1669 "hm.c"

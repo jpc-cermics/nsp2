@@ -389,7 +389,7 @@ int nsp_contour3d_print(NspContour3d *M, int indent,const char *name, int rec_le
     }
   Sciprintf1(indent+2,"flag=%d\n", M->obj->flag);
   Sciprintf1(indent+2,"zlev=%f\n", M->obj->zlev);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -399,28 +399,50 @@ int nsp_contour3d_print(NspContour3d *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_contour3d_latex(NspContour3d *M, int indent,const char *name, int rec_level)
+int nsp_contour3d_latex(NspContour3d *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_contour3d_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_contour3d_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),FALSE,"x", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->z != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),FALSE,"z", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->zz != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zz),indent+2,"zz", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zz),FALSE,"zz", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"flag=%d\n", M->obj->flag);
-  Sciprintf1(indent+2,"zlev=%f\n", M->obj->zlev);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|zlev| = \\numprint{%f}\n", M->obj->zlev);
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -544,7 +566,7 @@ NspContour3d *nsp_contour3d_create(const char *name,NspMatrix* x,NspMatrix* y,Ns
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return NULL; 
 
-#line 548 "contour3d.c"
+#line 570 "contour3d.c"
   return H;
 }
 
@@ -624,7 +646,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return NULL; 
 
-#line 628 "contour3d.c"
+#line 650 "contour3d.c"
   return H;
 }
 
@@ -648,7 +670,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return RET_BUG; 
 
-#line 652 "contour3d.c"
+#line 674 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -820,7 +842,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 824 "contour3d.c"
+#line 846 "contour3d.c"
 
 
 #line 93 "codegen/contour3d.override"
@@ -832,7 +854,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 836 "contour3d.c"
+#line 858 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1033,4 +1055,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1037 "contour3d.c"
+#line 1059 "contour3d.c"

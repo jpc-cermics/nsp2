@@ -362,14 +362,31 @@ int nsp_bson_print(NspBson *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_bson_latex(NspBson *M, int indent,const char *name, int rec_level)
+int nsp_bson_latex(NspBson *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"b=0x%x\n", M->obj->b);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -461,7 +478,7 @@ NspBson *nsp_bson_create(const char *name,void* b,NspTypeBase *type)
       H = NULL;
     }
 
-#line 465 "bson.c"
+#line 482 "bson.c"
   return H;
 }
 
@@ -518,7 +535,7 @@ NspBson *nsp_bson_full_copy(NspBson *self)
       H = NULL;
     }
 
-#line 522 "bson.c"
+#line 539 "bson.c"
   return H;
 }
 
@@ -574,7 +591,7 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 578 "bson.c"
+#line 595 "bson.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -614,7 +631,7 @@ static int _wrap_bson_insert(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 } 
 
-#line 618 "bson.c"
+#line 635 "bson.c"
 
 
 #line 184 "codegen/bson.override"
@@ -629,7 +646,7 @@ static int _wrap_bson_to_hash(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 633 "bson.c"
+#line 650 "bson.c"
 
 
 static NspMethods bson_methods[] = {
@@ -873,7 +890,7 @@ void nsp_mclient_destroy_partial(NspMclient *H)
   /* verbatim in destroy */
   mongoc_client_destroy(H->obj->cl);
 
-#line 877 "bson.c"
+#line 894 "bson.c"
     FREE(H->obj);
    }
 }
@@ -938,14 +955,31 @@ int nsp_mclient_print(NspMclient *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_mclient_latex(NspMclient *M, int indent,const char *name, int rec_level)
+int nsp_mclient_latex(NspMclient *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"cl=0x%x\n", M->obj->cl);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1110,7 +1144,7 @@ int int_mclient_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 1114 "bson.c"
+#line 1148 "bson.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -1141,7 +1175,7 @@ static int _wrap_mongoc_client_get_collection(NspMclient *self,Stack stack,int r
   return 1;
 }
 
-#line 1145 "bson.c"
+#line 1179 "bson.c"
 
 
 static NspMethods mclient_methods[] = {
@@ -1383,7 +1417,7 @@ void nsp_mcollection_destroy_partial(NspMcollection *H)
   /* verbatim in destroy */
   mongoc_collection_destroy(H->obj->co);
 
-#line 1387 "bson.c"
+#line 1421 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1448,14 +1482,31 @@ int nsp_mcollection_print(NspMcollection *M, int indent,const char *name, int re
  * latex print 
  */
 
-int nsp_mcollection_latex(NspMcollection *M, int indent,const char *name, int rec_level)
+int nsp_mcollection_latex(NspMcollection *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"co=0x%x\n", M->obj->co);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1666,7 +1717,7 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   return 1;
 }
 
-#line 1670 "bson.c"
+#line 1721 "bson.c"
 
 
 #line 464 "codegen/bson.override"
@@ -1696,7 +1747,7 @@ static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int r
 }
 
 
-#line 1700 "bson.c"
+#line 1751 "bson.c"
 
 
 #line 432 "codegen/bson.override"
@@ -1730,7 +1781,7 @@ static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int r
     return 0;
 }
 
-#line 1734 "bson.c"
+#line 1785 "bson.c"
 
 
 static NspMethods mcollection_methods[] = {
@@ -1976,7 +2027,7 @@ void nsp_mcursor_destroy_partial(NspMcursor *H)
   mongoc_cursor_destroy(H->obj->cu);
   if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
 
-#line 1980 "bson.c"
+#line 2031 "bson.c"
     FREE(H->obj);
    }
 }
@@ -2042,15 +2093,33 @@ int nsp_mcursor_print(NspMcursor *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_mcursor_latex(NspMcursor *M, int indent,const char *name, int rec_level)
+int nsp_mcursor_latex(NspMcursor *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"cu=0x%x\n", M->obj->cu);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"doc=0x%x\n", M->obj->doc);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -2235,7 +2304,7 @@ static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int op
     return 0;
 }
 
-#line 2239 "bson.c"
+#line 2308 "bson.c"
 
 
 #line 532 "codegen/bson.override"
@@ -2270,7 +2339,7 @@ static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt
   return ret;
 }
 
-#line 2274 "bson.c"
+#line 2343 "bson.c"
 
 
 #line 565 "codegen/bson.override"
@@ -2285,7 +2354,7 @@ static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt
 }
 
 
-#line 2289 "bson.c"
+#line 2358 "bson.c"
 
 
 static NspMethods mcursor_methods[] = {
@@ -2312,7 +2381,7 @@ static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
   return int_mclient_create(stack,rhs,opt,lhs);
 }
 
-#line 2316 "bson.c"
+#line 2385 "bson.c"
 
 
 /*----------------------------------------------------
@@ -2716,4 +2785,4 @@ static bson_t *nsp_bson_b_copy(const bson_t *b)
 }
 
 
-#line 2720 "bson.c"
+#line 2789 "bson.c"

@@ -349,24 +349,45 @@ int nsp_classa_print(NspClassA *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
+int nsp_classa_latex(NspClassA *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classa_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"cla_color=%d\n", M->cla_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"cla_thickness=%d\n", M->cla_thickness);
+  Sciprintf1(2,"\\\\\n");
   if ( M->cla_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->cla_val),indent+2,"cla_val", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_val),FALSE,"cla_val", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->cla_bval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->cla_bval),indent+2,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_bval),FALSE,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->cla_lval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->cla_lval),indent+2,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->cla_lval),FALSE,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -468,7 +489,7 @@ NspClassA *nsp_classa_create(const char *name,int cla_color,int cla_thickness,Ns
   if ( nsp_classa_check_values(H) == FAIL) return NULLCLASSA;
 #line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 472 "classa.c"
+#line 493 "classa.c"
   return H;
 }
 
@@ -555,7 +576,7 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
 
 #line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 559 "classa.c"
+#line 580 "classa.c"
   return H;
 }
 
@@ -576,7 +597,7 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_classa_check_values(H) == FAIL) return RET_BUG;
   #line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 580 "classa.c"
+#line 601 "classa.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -593,7 +614,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 597 "classa.c"
+#line 618 "classa.c"
 
 
 #line 61 "codegen/classa.override"
@@ -605,7 +626,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 609 "classa.c"
+#line 630 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -729,7 +750,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 733 "classa.c"
+#line 754 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
@@ -780,7 +801,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 784 "classa.c"
+#line 805 "classa.c"
 
 
 #line 71 "codegen/classa.override"
@@ -788,7 +809,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 792 "classa.c"
+#line 813 "classa.c"
 
 
 /*----------------------------------------------------
@@ -823,4 +844,4 @@ void nsp_initialize_ClassA_types(void)
   new_type_classa(T_BASE);
 }
 
-#line 827 "classa.c"
+#line 848 "classa.c"

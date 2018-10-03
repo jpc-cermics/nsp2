@@ -326,14 +326,31 @@ int nsp_classc_print(NspClassC *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_classc_latex(NspClassC *M, int indent,const char *name, int rec_level)
+int nsp_classc_latex(NspClassC *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classc_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classc_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   nsp_print_ClassC(indent+2,M->obj->value,M);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -421,7 +438,7 @@ NspClassC *nsp_classc_create(const char *name,ClassC* value,NspTypeBase *type)
 #line 39 "codegen/classc.override"
   /* verbatim in create interface  */
 
-#line 425 "classc.c"
+#line 442 "classc.c"
   return H;
 }
 
@@ -473,7 +490,7 @@ NspClassC *nsp_classc_full_copy(NspClassC *self)
 #line 39 "codegen/classc.override"
   /* verbatim in create interface  */
 
-#line 477 "classc.c"
+#line 494 "classc.c"
   return H;
 }
 
@@ -496,7 +513,7 @@ int int_classc_create(Stack stack, int rhs, int opt, int lhs)
   #line 39 "codegen/classc.override"
   /* verbatim in create interface  */
 
-#line 500 "classc.c"
+#line 517 "classc.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -657,4 +674,4 @@ static int nsp_load_ClassC(XDR *xdrs,ClassC *value,NspClassC *self)
   return OK;
 }
 
-#line 661 "classc.c"
+#line 678 "classc.c"

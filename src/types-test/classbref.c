@@ -330,7 +330,7 @@ int nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_le
   if ( M->obj->clb_val != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classaref_print((NspClassARef * ) M,indent+2,NULL,rec_level);
+  nsp_classaref_print((NspClassARef * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -340,19 +340,38 @@ int nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_le
  * latex print 
  */
 
-int nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_level)
+int nsp_classbref_latex(NspClassBRef *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"clb_color=%d\n", M->obj->clb_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"clb_thickness=%d\n", M->obj->clb_thickness);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->clb_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->clb_val),FALSE,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classaref_latex((NspClassARef * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_classaref_latex((NspClassARef * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -540,7 +559,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 544 "classbref.c"
+#line 563 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -551,7 +570,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 555 "classbref.c"
+#line 574 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -662,4 +681,4 @@ void nsp_initialize_ClassBRef_types(void)
   new_type_classbref(T_BASE);
 }
 
-#line 666 "classbref.c"
+#line 685 "classbref.c"

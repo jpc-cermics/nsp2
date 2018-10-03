@@ -315,14 +315,31 @@ int nsp_gvalue_print(NspGValue *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_gvalue_latex(NspGValue *M, int indent,const char *name, int rec_level)
+int nsp_gvalue_latex(NspGValue *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gvalue_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gvalue_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   nsp_print_GValue(indent+2,&M->value,M);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -421,7 +438,7 @@ NspGValue *nsp_gvalue_create_default(const char *name)
  return H;
 }
 
-#line 425 "gvalue.c"
+#line 442 "gvalue.c"
 /*
  * copy for gobject derived class  
  */
@@ -487,7 +504,7 @@ int int_gvalue_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 491 "gvalue.c"
+#line 508 "gvalue.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -538,7 +555,7 @@ static int _wrap_get_value(NspGValue *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 542 "gvalue.c"
+#line 559 "gvalue.c"
 
 
 static NspMethods gvalue_methods[] = {
@@ -678,4 +695,4 @@ static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj)
   return OK;
 }
 
-#line 682 "gvalue.c"
+#line 699 "gvalue.c"

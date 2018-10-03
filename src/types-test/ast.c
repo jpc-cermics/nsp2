@@ -385,22 +385,45 @@ static void nsp_ast_print_node(NspAst *ast)
  * latex print 
  */
 
-int nsp_ast_latex(NspAst *M, int indent,const char *name, int rec_level)
+int nsp_ast_latex(NspAst *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_ast_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_ast_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"op=%d\n", M->op);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"arity=%d\n", M->arity);
-  Sciprintf1(indent+2,"str=%s\n",M->str);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",M->str);
+  Sciprintf1(2,"\\\\\n");
         if ( M->xobj->type->pr(M->xobj,indent+2,"xobj",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
   if ( M->args != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->args),indent+2,"args", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->args),FALSE,"args", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
         if ( M->user_data->type->pr(M->user_data,indent+2,"user_data",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"line=%d\n", M->line);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -508,7 +531,7 @@ NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xo
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
 #line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 512 "ast.c"
+#line 535 "ast.c"
   return H;
 }
 
@@ -599,7 +622,7 @@ NspAst *nsp_ast_full_copy(NspAst *self)
 
 #line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 603 "ast.c"
+#line 626 "ast.c"
   return H;
 }
 
@@ -620,7 +643,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
   #line 54 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 624 "ast.c"
+#line 647 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -661,7 +684,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 665 "ast.c"
+#line 688 "ast.c"
 
 
 #line 121 "codegen/ast.override"
@@ -677,7 +700,7 @@ static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 681 "ast.c"
+#line 704 "ast.c"
 
 
 #line 135 "codegen/ast.override"
@@ -694,7 +717,7 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
   return Max(lhs,1);
 }
 
-#line 698 "ast.c"
+#line 721 "ast.c"
 
 
 #line 150 "codegen/ast.override"
@@ -719,7 +742,7 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 723 "ast.c"
+#line 746 "ast.c"
 
 
 #line 173 "codegen/ast.override"
@@ -748,7 +771,7 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 752 "ast.c"
+#line 775 "ast.c"
 
 
 #line 230 "codegen/ast.override"
@@ -770,7 +793,7 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 774 "ast.c"
+#line 797 "ast.c"
 
 
 #line 250 "codegen/ast.override"
@@ -788,7 +811,7 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
   return Max(lhs,1);
 }
 
-#line 792 "ast.c"
+#line 815 "ast.c"
 
 
 #line 284 "codegen/ast.override"
@@ -806,7 +829,7 @@ static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return Max(lhs,1);
 }
 
-#line 810 "ast.c"
+#line 833 "ast.c"
 
 
 #line 266 "codegen/ast.override"
@@ -826,7 +849,7 @@ static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return 0;
 }
 
-#line 830 "ast.c"
+#line 853 "ast.c"
 
 
 #line 300 "codegen/ast.override"
@@ -839,7 +862,7 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 843 "ast.c"
+#line 866 "ast.c"
 
 
 #line 61 "codegen/ast.override"
@@ -867,7 +890,7 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return RET_BUG;
 }
 
-#line 871 "ast.c"
+#line 894 "ast.c"
 
 
 #line 200 "codegen/ast.override"
@@ -884,7 +907,7 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
   return Max(lhs,1);
 }
 
-#line 888 "ast.c"
+#line 911 "ast.c"
 
 
 #line 215 "codegen/ast.override"
@@ -901,7 +924,7 @@ static int _wrap_ast_get_line(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 905 "ast.c"
+#line 928 "ast.c"
 
 
 #line 320 "codegen/ast.override"
@@ -911,7 +934,7 @@ static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   return meth_ast_sprint(self,stack,rhs,opt,lhs);
 }
-#line 915 "ast.c"
+#line 938 "ast.c"
 
 
 #line 328 "codegen/ast.override"
@@ -922,7 +945,7 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_fprint(self,stack,rhs,opt,lhs);
 }
 
-#line 926 "ast.c"
+#line 949 "ast.c"
 
 
 #line 311 "codegen/ast.override"
@@ -933,7 +956,7 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_print(self,stack,rhs,opt,lhs);
 }
 
-#line 937 "ast.c"
+#line 960 "ast.c"
 
 
 #line 337 "codegen/ast.override"
@@ -946,7 +969,7 @@ static int _wrap_ast_print_length(NspAst *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 950 "ast.c"
+#line 973 "ast.c"
 
 
 static NspMethods ast_methods[] = {
@@ -1295,4 +1318,4 @@ int nsp_ast_check_args(NspList *L)
 }
 
 
-#line 1299 "ast.c"
+#line 1322 "ast.c"

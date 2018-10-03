@@ -360,7 +360,7 @@ int nsp_segments_print(NspSegments *M, int indent,const char *name, int rec_leve
   if ( M->obj->thickness != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->thickness),indent+2,"thickness", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -370,26 +370,46 @@ int nsp_segments_print(NspSegments *M, int indent,const char *name, int rec_leve
  * latex print 
  */
 
-int nsp_segments_latex(NspSegments *M, int indent,const char *name, int rec_level)
+int nsp_segments_latex(NspSegments *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_segments_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_segments_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),FALSE,"x", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),FALSE,"y", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->color != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),FALSE,"color", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->thickness != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->thickness),indent+2,"thickness", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->thickness),FALSE,"thickness", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -734,7 +754,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 738 "segments.c"
+#line 758 "segments.c"
 
 
 #line 66 "codegen/segments.override"
@@ -747,7 +767,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 751 "segments.c"
+#line 771 "segments.c"
 
 
 /*----------------------------------------------------
@@ -908,4 +928,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 912 "segments.c"
+#line 932 "segments.c"

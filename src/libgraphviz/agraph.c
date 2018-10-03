@@ -334,15 +334,33 @@ int nsp_agraph_print(NspAgraph *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_agraph_latex(NspAgraph *M, int indent,const char *name, int rec_level)
+int nsp_agraph_latex(NspAgraph *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"graph=0x%x\n", M->obj->graph);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"gvc=0x%x\n", M->obj->gvc);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -555,7 +573,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 559 "agraph.c"
+#line 577 "agraph.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -630,7 +648,7 @@ static int _wrap_nsp_agaddnodes(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 634 "agraph.c"
+#line 652 "agraph.c"
 
 
 #line 381 "codegen/agraph.override"
@@ -650,7 +668,7 @@ static int _wrap_nsp_agaddedges(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 654 "agraph.c"
+#line 672 "agraph.c"
 
 
 #line 330 "codegen/agraph.override"
@@ -661,7 +679,7 @@ static int _wrap_nsp_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->graph,stack,rhs,opt,lhs);
 } 
 
-#line 665 "agraph.c"
+#line 683 "agraph.c"
 
 
 #line 315 "codegen/agraph.override"
@@ -678,7 +696,7 @@ static int _wrap_nsp_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 
-#line 682 "agraph.c"
+#line 700 "agraph.c"
 
 
 static int _wrap_nsp_gv_layout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -752,7 +770,7 @@ static int _wrap_nsp_agattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 
-#line 756 "agraph.c"
+#line 774 "agraph.c"
 
 
 static int _wrap_nsp_agraphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -772,7 +790,7 @@ static int _wrap_nsp_agattr_n(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return _wrap_nsp_agattr_gen(self,stack,rhs,opt,lhs,AGNODE,"node");
 }
 
-#line 776 "agraph.c"
+#line 794 "agraph.c"
 
 
 static int _wrap_nsp_agnodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -792,7 +810,7 @@ static int _wrap_nsp_agattr_e(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return _wrap_nsp_agattr_gen(self,stack,rhs,opt,lhs,AGEDGE,"edge");
 }
 
-#line 796 "agraph.c"
+#line 814 "agraph.c"
 
 
 static int _wrap_nsp_agedgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -827,7 +845,7 @@ static int _wrap_nsp_agisundirected(NspAgraph *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 831 "agraph.c"
+#line 849 "agraph.c"
 
 
 #line 291 "codegen/agraph.override"
@@ -841,7 +859,7 @@ static int _wrap_nsp_agisdirected(NspAgraph *self,Stack stack,int rhs,int opt,in
   return 1;
 }
 
-#line 845 "agraph.c"
+#line 863 "agraph.c"
 
 
 #line 303 "codegen/agraph.override"
@@ -855,7 +873,7 @@ static int _wrap_nsp_agisstrict(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 859 "agraph.c"
+#line 877 "agraph.c"
 
 
 static int _wrap_nsp_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -1074,7 +1092,7 @@ static int _wrap_nsp_agdegree(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1078 "agraph.c"
+#line 1096 "agraph.c"
 
 
 static NspMethods agraph_methods[] = {
@@ -1357,7 +1375,7 @@ void nsp_agnode_destroy_partial(NspAgnode *H)
    if ( l <= 0) 
      {
      }
-#line 1361 "agraph.c"
+#line 1379 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -1422,14 +1440,31 @@ int nsp_agnode_print(NspAgnode *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_agnode_latex(NspAgnode *M, int indent,const char *name, int rec_level)
+int nsp_agnode_latex(NspAgnode *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"node=0x%x\n", M->obj->node);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -1617,7 +1652,7 @@ static int _wrap_nsp_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->node,stack,rhs,opt,lhs);
 } 
 
-#line 1621 "agraph.c"
+#line 1656 "agraph.c"
 
 
 static NspMethods agnode_methods[] = {
@@ -1868,7 +1903,7 @@ void nsp_agedge_destroy_partial(NspAgedge *H)
      }
 
 
-#line 1872 "agraph.c"
+#line 1907 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -1933,14 +1968,31 @@ int nsp_agedge_print(NspAgedge *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_agedge_latex(NspAgedge *M, int indent,const char *name, int rec_level)
+int nsp_agedge_latex(NspAgedge *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"edge=0x%x\n", M->obj->edge);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -2138,7 +2190,7 @@ static int _wrap_nsp_agset_e(NspAgedge *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->edge,stack,rhs,opt,lhs);
 } 
 
-#line 2142 "agraph.c"
+#line 2194 "agraph.c"
 
 
 static NspMethods agedge_methods[] = {
@@ -2450,16 +2502,33 @@ int nsp_agsym_print(NspAgsym *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_agsym_latex(NspAgsym *M, int indent,const char *name, int rec_level)
+int nsp_agsym_latex(NspAgsym *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agsym_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agsym_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -2958,16 +3027,33 @@ int nsp_agdisc_print(NspAgdisc *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_agdisc_latex(NspAgdisc *M, int indent,const char *name, int rec_level)
+int nsp_agdisc_latex(NspAgdisc *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agdisc_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agdisc_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -3872,4 +3958,4 @@ static int nsp_agattr_refcount_get(Agraph_t *obj,int itype)
 
 
 
-#line 3876 "agraph.c"
+#line 3962 "agraph.c"

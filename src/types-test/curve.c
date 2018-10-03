@@ -371,7 +371,7 @@ int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -381,24 +381,48 @@ int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
+int nsp_curve_latex(NspCurve *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_curve_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_curve_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_color=%d\n", M->obj->mark_color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"width=%d\n", M->obj->width);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mode=%d\n", M->obj->mode);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->Pts != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),FALSE,"Pts", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|legend|=\\verb@\"%s\"@\n",M->obj->legend);
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -691,7 +715,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 695 "curve.c"
+#line 719 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -728,7 +752,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 732 "curve.c"
+#line 756 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -791,7 +815,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 795 "curve.c"
+#line 819 "curve.c"
 
 
 #line 125 "codegen/curve.override"
@@ -804,7 +828,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 808 "curve.c"
+#line 832 "curve.c"
 
 
 /*----------------------------------------------------
@@ -1252,4 +1276,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1256 "curve.c"
+#line 1280 "curve.c"

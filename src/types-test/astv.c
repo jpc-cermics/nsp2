@@ -351,23 +351,49 @@ int nsp_astv_print(NspAstv *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_astv_latex(NspAstv *M, int indent,const char *name, int rec_level)
+int nsp_astv_latex(NspAstv *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_astv_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_astv_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"hv	= %s\n", ( M->hv == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"rows=%d\n", M->rows);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"columns=%d\n", M->columns);
+  Sciprintf1(2,"\\\\\n");
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
         if ( M->ast_rows->type->pr(M->ast_rows,indent+2,"ast_rows",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
         if ( M->ast_columns->type->pr(M->ast_columns,indent+2,"ast_columns",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
         if ( M->ast_value->type->pr(M->ast_value,indent+2,"ast_value",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(2,"\\\\\n");
         if ( M->args->type->pr(M->args,indent+2,"args",rec_level+1)==FALSE) return FALSE;
-  Sciprintf1(indent+2,"stype=%s\n",M->stype);
-  Sciprintf1(indent+2,"ssubtype=%s\n",M->ssubtype);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|stype|=\\verb@\"%s\"@\n",M->stype);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|ssubtype|=\\verb@\"%s\"@\n",M->ssubtype);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -493,7 +519,7 @@ NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspOb
   if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 497 "astv.c"
+#line 523 "astv.c"
   return H;
 }
 
@@ -610,7 +636,7 @@ NspAstv *nsp_astv_full_copy(NspAstv *self)
 
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 614 "astv.c"
+#line 640 "astv.c"
   return H;
 }
 
@@ -631,7 +657,7 @@ int int_astv_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_astv_check_values(H) == FAIL) return RET_BUG;
   #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 635 "astv.c"
+#line 661 "astv.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -649,7 +675,7 @@ static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, in
   return Max(lhs,1);
 }
 
-#line 653 "astv.c"
+#line 679 "astv.c"
 
 
 #line 72 "codegen/astv.override"
@@ -663,7 +689,7 @@ static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 667 "astv.c"
+#line 693 "astv.c"
 
 
 #line 84 "codegen/astv.override"
@@ -686,7 +712,7 @@ static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 690 "astv.c"
+#line 716 "astv.c"
 
 
 #line 47 "codegen/astv.override"
@@ -702,7 +728,7 @@ static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 706 "astv.c"
+#line 732 "astv.c"
 
 
 #line 105 "codegen/astv.override"
@@ -717,7 +743,7 @@ static int _wrap_astv_get_args(NspAstv *self,Stack stack,int rhs,int opt,int lhs
 }
 
 
-#line 721 "astv.c"
+#line 747 "astv.c"
 
 
 #line 118 "codegen/astv.override"
@@ -739,7 +765,7 @@ static int _wrap_astv_set_args(NspAstv *self,Stack stack,int rhs,int opt,int lhs
 }
 
 
-#line 743 "astv.c"
+#line 769 "astv.c"
 
 
 static NspMethods astv_methods[] = {
@@ -819,4 +845,4 @@ NspAstv *nsp_astv(NspObject *Obj,int flag)
 
 
 
-#line 823 "astv.c"
+#line 849 "astv.c"

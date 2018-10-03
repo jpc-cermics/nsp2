@@ -347,16 +347,35 @@ int nsp_bvar_print(NspBvar *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_bvar_latex(NspBvar *M, int indent,const char *name, int rec_level)
+int nsp_bvar_latex(NspBvar *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bvar_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bvar_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"sym	= %s\n", ( M->sym == TRUE) ? "T" : "F" );
+  Sciprintf1(2,"\\\\\n");
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
-  Sciprintf1(indent+2,"varname=%s\n",M->varname);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|varname|=\\verb@\"%s\"@\n",M->varname);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -450,7 +469,7 @@ NspBvar *nsp_bvar_create(const char *name,gboolean sym,NspObject* value,char* va
   if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
 #line 52 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 454 "bvar.c"
+#line 473 "bvar.c"
   return H;
 }
 
@@ -513,7 +532,7 @@ NspBvar *nsp_bvar_full_copy(NspBvar *self)
 
 #line 52 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 517 "bvar.c"
+#line 536 "bvar.c"
   return H;
 }
 
@@ -534,7 +553,7 @@ int int_bvar_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_bvar_check_values(H) == FAIL) return RET_BUG;
   #line 52 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 538 "bvar.c"
+#line 557 "bvar.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -554,7 +573,7 @@ static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, in
   return Max(lhs,1);
 }
 
-#line 558 "bvar.c"
+#line 577 "bvar.c"
 
 
 #line 72 "codegen/bvar.override"
@@ -586,7 +605,7 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 590 "bvar.c"
+#line 609 "bvar.c"
 
 
 #line 102 "codegen/bvar.override"
@@ -597,7 +616,7 @@ static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 601 "bvar.c"
+#line 620 "bvar.c"
 
 
 #line 111 "codegen/bvar.override"
@@ -614,7 +633,7 @@ static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 618 "bvar.c"
+#line 637 "bvar.c"
 
 
 #line 126 "codegen/bvar.override"
@@ -625,7 +644,7 @@ static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 629 "bvar.c"
+#line 648 "bvar.c"
 
 
 #line 135 "codegen/bvar.override"
@@ -640,7 +659,7 @@ static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 644 "bvar.c"
+#line 663 "bvar.c"
 
 
 static NspMethods bvar_methods[] = {
@@ -682,7 +701,7 @@ int _wrap_bvar_code_getvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_g
   return 1;
 }
 
-#line 686 "bvar.c"
+#line 705 "bvar.c"
 
 
 #line 272 "codegen/bvar.override"
@@ -703,7 +722,7 @@ int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar
   return 1;
 }
 
-#line 707 "bvar.c"
+#line 726 "bvar.c"
 
 
 #line 291 "codegen/bvar.override"
@@ -724,7 +743,7 @@ int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 728 "bvar.c"
+#line 747 "bvar.c"
 
 
 #line 310 "codegen/bvar.override"
@@ -744,7 +763,7 @@ int _wrap_bvar_code_replacevarname(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 748 "bvar.c"
+#line 767 "bvar.c"
 
 
 #line 328 "codegen/bvar.override"
@@ -766,7 +785,7 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 770 "bvar.c"
+#line 789 "bvar.c"
 
 
 #line 348 "codegen/bvar.override"
@@ -788,7 +807,7 @@ int _wrap_bvar_code_vars_used(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 792 "bvar.c"
+#line 811 "bvar.c"
 
 
 #line 368 "codegen/bvar.override"
@@ -818,7 +837,7 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 822 "bvar.c"
+#line 841 "bvar.c"
 
 
 #line 396 "codegen/bvar.override"
@@ -841,7 +860,7 @@ int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
   return Max(1,lhs);
 }
 
-#line 845 "bvar.c"
+#line 864 "bvar.c"
 
 
 /*----------------------------------------------------
@@ -1622,4 +1641,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1626 "bvar.c"
+#line 1645 "bvar.c"

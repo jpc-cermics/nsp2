@@ -383,7 +383,7 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"mark_type=%d\n", M->obj->mark_type);
   Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
   Sciprintf1(indent+2,"max=%d\n", M->obj->max);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -393,22 +393,45 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
  * latex print 
  */
 
-int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_level)
+int nsp_points3d_latex(NspPoints3d *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_type=%d\n", M->obj->mark_type);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"max=%d\n", M->obj->max);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -517,7 +540,7 @@ NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL;
 
-#line 521 "points3d.c"
+#line 544 "points3d.c"
   return H;
 }
 
@@ -585,7 +608,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL;
 
-#line 589 "points3d.c"
+#line 612 "points3d.c"
   return H;
 }
 
@@ -609,7 +632,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG;
 
-#line 613 "points3d.c"
+#line 636 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -714,7 +737,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 718 "points3d.c"
+#line 741 "points3d.c"
 
 
 #line 104 "codegen/points3d.override"
@@ -727,7 +750,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 731 "points3d.c"
+#line 754 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -1032,4 +1055,4 @@ extern int nsp_points3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1036 "points3d.c"
+#line 1059 "points3d.c"

@@ -428,7 +428,7 @@ int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->icon),indent+2,"icon", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"draw_mode=%d\n", M->obj->draw_mode);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -438,25 +438,50 @@ int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
+int nsp_block_latex(NspBlock *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(2,"\\\\\n");
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"n_locks=%d\n", M->obj->n_locks);
+  Sciprintf1(2,"\\\\\n");
   nsp_print_grb_lock(indent+2,M->obj->locks,M);
+  Sciprintf1(2,"\\\\\n");
   if ( M->obj->icon != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->icon),indent+2,"icon", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->icon),FALSE,"icon", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"draw_mode=%d\n", M->obj->draw_mode);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -600,7 +625,7 @@ NspBlock *nsp_block_create_default(const char *name)
  return H;
 }
 
-#line 604 "block.c"
+#line 629 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -712,7 +737,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 716 "block.c"
+#line 741 "block.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -732,7 +757,7 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 736 "block.c"
+#line 761 "block.c"
 
 
 #line 455 "codegen/block.override"
@@ -750,7 +775,7 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 754 "block.c"
+#line 779 "block.c"
 
 
 #line 471 "codegen/block.override"
@@ -768,7 +793,7 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 772 "block.c"
+#line 797 "block.c"
 
 
 #line 487 "codegen/block.override"
@@ -791,7 +816,7 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-#line 795 "block.c"
+#line 820 "block.c"
 
 
 #line 508 "codegen/block.override"
@@ -817,7 +842,7 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-#line 821 "block.c"
+#line 846 "block.c"
 
 
 static NspMethods block_methods[] = {
@@ -918,7 +943,7 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 922 "block.c"
+#line 947 "block.c"
 
 
 #line 427 "codegen/block.override"
@@ -931,7 +956,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 935 "block.c"
+#line 960 "block.c"
 
 
 /*----------------------------------------------------
@@ -2021,4 +2046,4 @@ static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, 
 
 
 
-#line 2025 "block.c"
+#line 2050 "block.c"

@@ -323,16 +323,33 @@ int nsp_groot_print(NspGRoot *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_groot_latex(NspGRoot *M, int indent,const char *name, int rec_level)
+int nsp_groot_latex(NspGRoot *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_groot_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_groot_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
   if ( M->obj->figures != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->figures),indent+2,"figures", rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->figures),FALSE,"figures", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+1,"}\n");
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -573,4 +590,4 @@ void nsp_initialize_GRoot_types(void)
 #line 19 "codegen/groot.override"
 
 
-#line 577 "groot.c"
+#line 594 "groot.c"
