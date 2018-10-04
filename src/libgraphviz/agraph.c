@@ -350,9 +350,9 @@ int nsp_agraph_latex(NspAgraph *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"graph=0x%x\n", M->obj->graph);
+  Sciprintf1(indent+2,"\\verb|graph|= \\verb@0x%x@\n",M->obj->graph);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"gvc=0x%x\n", M->obj->gvc);
+  Sciprintf1(indent+2,"\\verb|gvc|= \\verb@0x%x@\n",M->obj->gvc);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -1456,7 +1456,7 @@ int nsp_agnode_latex(NspAgnode *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"node=0x%x\n", M->obj->node);
+  Sciprintf1(indent+2,"\\verb|node|= \\verb@0x%x@\n",M->obj->node);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -1984,7 +1984,7 @@ int nsp_agedge_latex(NspAgedge *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"edge=0x%x\n", M->obj->edge);
+  Sciprintf1(indent+2,"\\verb|edge|= \\verb@0x%x@\n",M->obj->edge);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

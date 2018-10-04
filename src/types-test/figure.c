@@ -433,7 +433,7 @@ int nsp_figure_latex(NspFigure *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|driver|=\\verb@\"%s\"@\n",M->obj->driver);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
+  Sciprintf1(indent+2,"\\verb|id|= \\numprint(%d)\n",M->obj->id);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->dims != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->dims),FALSE,"dims", rec_level+1)== FALSE ) return FALSE ;
@@ -459,7 +459,7 @@ int nsp_figure_latex(NspFigure *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),FALSE,"gc", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"Xgc=0x%x\n", M->obj->Xgc);
+  Sciprintf1(indent+2,"\\verb|Xgc|= \\verb@0x%x@\n",M->obj->Xgc);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");
@@ -1509,49 +1509,49 @@ int nsp_figuredata_latex(NspFigureData *M, int use_math,const char *name, int re
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"color=%d\n", M->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"background=%d\n", M->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->background);
   Sciprintf1(2,"\\\\\n");
   if ( M->colormap != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->colormap),FALSE,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"dashes=%d\n", M->dashes);
+  Sciprintf1(indent+2,"\\verb|dashes|= \\numprint(%d)\n",M->dashes);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"font=%d\n", M->font);
+  Sciprintf1(indent+2,"\\verb|font|= \\numprint(%d)\n",M->font);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"font_size=%d\n", M->font_size);
+  Sciprintf1(indent+2,"\\verb|font_size|= \\numprint(%d)\n",M->font_size);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"foreground=%d\n", M->foreground);
+  Sciprintf1(indent+2,"\\verb|foreground|= \\numprint(%d)\n",M->foreground);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"hidden3d=%d\n", M->hidden3d);
+  Sciprintf1(indent+2,"\\verb|hidden3d|= \\numprint(%d)\n",M->hidden3d);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"line_mode=%d\n", M->line_mode);
+  Sciprintf1(indent+2,"\\verb|line_mode|= \\numprint(%d)\n",M->line_mode);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"line_style=%d\n", M->line_style);
+  Sciprintf1(indent+2,"\\verb|line_style|= \\numprint(%d)\n",M->line_style);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mark=%d\n", M->mark);
+  Sciprintf1(indent+2,"\\verb|mark|= \\numprint(%d)\n",M->mark);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mark_size=%d\n", M->mark_size);
+  Sciprintf1(indent+2,"\\verb|mark_size|= \\numprint(%d)\n",M->mark_size);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"pattern=%d\n", M->pattern);
+  Sciprintf1(indent+2,"\\verb|pattern|= \\numprint(%d)\n",M->pattern);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"pixmap=%d\n", M->pixmap);
+  Sciprintf1(indent+2,"\\verb|pixmap|= \\numprint(%d)\n",M->pixmap);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"thickness=%d\n", M->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
+  Sciprintf1(indent+2,"\\verb|use_color|= \\numprint(%d)\n",M->use_color);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|auto_clear|= %s\n",( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"current_axe=%d\n", M->current_axe);
+  Sciprintf1(indent+2,"\\verb|current_axe|= \\numprint(%d)\n",M->current_axe);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"current_objs3d=%d\n", M->current_objs3d);
+  Sciprintf1(indent+2,"\\verb|current_objs3d|= \\numprint(%d)\n",M->current_objs3d);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"current_axe_or_objs3d=%d\n", M->current_axe_or_objs3d);
+  Sciprintf1(indent+2,"\\verb|current_axe_or_objs3d|= \\numprint(%d)\n",M->current_axe_or_objs3d);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"mtlb_mode=%d\n", M->mtlb_mode);
+  Sciprintf1(indent+2,"\\verb|mtlb_mode|= \\numprint(%d)\n",M->mtlb_mode);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

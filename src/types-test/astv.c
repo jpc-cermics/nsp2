@@ -369,19 +369,19 @@ int nsp_astv_latex(NspAstv *M, int use_math,const char *name, int rec_level)
 
   Sciprintf1(indent+2,"\\verb|hv|= %s\n",( M->hv == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"rows=%d\n", M->rows);
+  Sciprintf1(indent+2,"\\verb|rows|= \\numprint(%d)\n",M->rows);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"columns=%d\n", M->columns);
+  Sciprintf1(indent+2,"\\verb|columns|= \\numprint(%d)\n",M->columns);
   Sciprintf1(2,"\\\\\n");
-        if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
+        if ( M->value->type->latex(M->value,FALSE,"value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-        if ( M->ast_rows->type->pr(M->ast_rows,indent+2,"ast_rows",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_rows->type->latex(M->ast_rows,FALSE,"ast_rows",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-        if ( M->ast_columns->type->pr(M->ast_columns,indent+2,"ast_columns",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_columns->type->latex(M->ast_columns,FALSE,"ast_columns",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-        if ( M->ast_value->type->pr(M->ast_value,indent+2,"ast_value",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_value->type->latex(M->ast_value,FALSE,"ast_value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-        if ( M->args->type->pr(M->args,indent+2,"args",rec_level+1)==FALSE) return FALSE;
+        if ( M->args->type->latex(M->args,FALSE,"args",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|stype|=\\verb@\"%s\"@\n",M->stype);
   Sciprintf1(2,"\\\\\n");

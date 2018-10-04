@@ -437,13 +437,13 @@ int nsp_link_latex(NspLink *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(indent+2,"\\verb|object_sid|= \\verb@0x%x@\n",M->obj->object_sid);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->obj->background);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->poly != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->poly),FALSE,"poly", rec_level+1)== FALSE ) return FALSE ;

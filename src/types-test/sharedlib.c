@@ -340,9 +340,9 @@ int nsp_sharedlib_latex(NspSharedlib *M, int use_math,const char *name, int rec_
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"shd=0x%x\n", M->obj->shd);
+  Sciprintf1(indent+2,"\\verb|shd|= \\verb@0x%x@\n",M->obj->shd);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
+  Sciprintf1(indent+2,"\\verb|id|= \\numprint(%d)\n",M->obj->id);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|path|=\\verb@\"%s\"@\n",M->obj->path);
   Sciprintf1(2,"\\\\\n");

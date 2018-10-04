@@ -407,13 +407,13 @@ int nsp_string3d_latex(NspString3d *M, int use_math,const char *name, int rec_le
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"\\verb|Mcoord_l|= \\verb@0x%x@\n",M->obj->Mcoord_l);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",M->obj->str);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"font_type=%d\n", M->obj->font_type);
+  Sciprintf1(indent+2,"\\verb|font_type|= \\numprint(%d)\n",M->obj->font_type);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
+  Sciprintf1(indent+2,"\\verb|font_size|= \\numprint(%d)\n",M->obj->font_size);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);

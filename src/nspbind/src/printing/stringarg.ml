@@ -776,8 +776,12 @@ let intarg_attr_write_info _ptype pname _varname _byref =
   (Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\" %s->%s);\n"  pname _varname pname)
 ;;
 
-let intarg_attr_write_print _objinfo _print_mode varname params =
-  Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"
+let intarg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint(%%d)\\n\",%s->%s);\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"
     params.pname varname params.pname
 ;;
 
@@ -1639,9 +1643,13 @@ let ulong_arg_attr_write_info _ptype pname _varname _byref =
   (Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\" %s->%s);\n"  pname _varname pname)
 ;;
 
-let ulong_arg_attr_write_print _objinfo _print_mode varname params =
-  Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"
-    params.pname varname params.pname
+let ulong_arg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint(%%d)\\n\",%s->%s);\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"
+      params.pname varname params.pname
 ;;
 
 let ulong_arg_attr_write_init _objinfo varname params =
@@ -2735,8 +2743,8 @@ let nsp_complex_array_arg_attr_write_defval _objinfo _varname _params =
   (Printf.sprintf "")
 ;;
 
-let nsp_complex_array_arg_attr_write_print _objinfo _print_mode varname params =
-  let tag = if _print_mode = "latex" then "latex_"  else "" in
+let nsp_complex_array_arg_attr_write_print _objinfo print_mode varname params =
+  let tag = if print_mode = "latex" then "latex_"  else "" in
   Printf.sprintf "  if ( ZZnsp_print_%sarray_double(indent+2,\"%s\",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n"
      tag  params.pname varname params.pname params.psize
 ;;
@@ -2870,8 +2878,8 @@ let nsp_bool_array_arg_attr_write_defval _objinfo _varname _params =
   (Printf.sprintf "")
 ;;
 
-let nsp_bool_array_arg_attr_write_print _objinfo _print_mode varname params =
-  let tag = if _print_mode = "latex" then "latex_"  else "" in
+let nsp_bool_array_arg_attr_write_print _objinfo print_mode varname params =
+  let tag = if print_mode = "latex" then "latex_"  else "" in
   Printf.sprintf
     "  if ( nsp_print_%sarray_int(indent+2,\"%s\",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n"
     tag  params.pname varname params.pname params.psize
@@ -3004,8 +3012,8 @@ let nsp_int_array_arg_attr_write_copy _objinfo params left_varname right_varname
 let nsp_int_array_arg_attr_write_defval _objinfo _varname _params =
   (Printf.sprintf "")
 
-let nsp_int_array_arg_attr_write_print _objinfo _print_mode varname params =
-  let tag = if _print_mode = "latex" then "latex_"  else "" in
+let nsp_int_array_arg_attr_write_print _objinfo print_mode varname params =
+  let tag = if print_mode = "latex" then "latex_"  else "" in
   Printf.sprintf
     "  if ( nsp_print_%sarray_double(indent+2,\"%s\",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n"
     tag  params.pname varname params.pname params.psize
@@ -3154,9 +3162,13 @@ let void_pointer_arg_attr_write_info _ptype pname _varname _byref =
   (Printf.sprintf "  Sciprintf1(indent+2,\"%s=0x%%x\\n\" %s->%s);\n"  pname _varname pname)
 ;;
 
-let void_pointer_arg_attr_write_print _objinfo _print_mode varname params =
-  Printf.sprintf "  Sciprintf1(indent+2,\"%s=0x%%x\\n\", %s->%s);\n"
-     params.pname varname params.pname
+let void_pointer_arg_attr_write_print _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\verb@0x%%x@\\n\",%s->%s);\n"
+      params.pname varname params.pname
+  else
+    Printf.sprintf "  Sciprintf1(indent+2,\"%s=0x%%x\\n\", %s->%s);\n"
+      params.pname varname params.pname
 ;;
 
 let void_pointer_arg_attr_write_init _objinfo varname params=
@@ -3655,10 +3667,15 @@ let nsp_object_arg_attr_write_return _nsp_generic_data _objinfo _ownsreturn _par
   { info with varlist = varlist ; attrcodeafter = attrcodeafter :: info.attrcodeafter ;}
 ;;
 
-let nsp_object_arg_attr_write_print _nsp_generic_data _objinfo _print_mode varname params =
-  Printf.sprintf
-    "        if ( %s->%s->type->pr(%s->%s,indent+2,\"%s\",rec_level+1)==FALSE) return FALSE;\n"
-    varname params.pname varname params.pname params.pname
+let nsp_object_arg_attr_write_print _nsp_generic_data _objinfo print_mode varname params =
+  if print_mode = "latex" then
+    Printf.sprintf
+      "        if ( %s->%s->type->latex(%s->%s,FALSE,\"%s\",rec_level+1)==FALSE) return FALSE;\n"
+      varname params.pname varname params.pname params.pname
+  else
+    Printf.sprintf
+      "        if ( %s->%s->type->pr(%s->%s,indent+2,\"%s\",rec_level+1)==FALSE) return FALSE;\n"
+      varname params.pname varname params.pname params.pname
 ;;
 
 let nsp_object_arg_attr_write_init nsp_generic_data _objinfo varname params =

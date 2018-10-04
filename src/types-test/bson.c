@@ -378,7 +378,7 @@ int nsp_bson_latex(NspBson *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"b=0x%x\n", M->obj->b);
+  Sciprintf1(indent+2,"\\verb|b|= \\verb@0x%x@\n",M->obj->b);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -971,7 +971,7 @@ int nsp_mclient_latex(NspMclient *M, int use_math,const char *name, int rec_leve
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"cl=0x%x\n", M->obj->cl);
+  Sciprintf1(indent+2,"\\verb|cl|= \\verb@0x%x@\n",M->obj->cl);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -1498,7 +1498,7 @@ int nsp_mcollection_latex(NspMcollection *M, int use_math,const char *name, int 
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"co=0x%x\n", M->obj->co);
+  Sciprintf1(indent+2,"\\verb|co|= \\verb@0x%x@\n",M->obj->co);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -2109,9 +2109,9 @@ int nsp_mcursor_latex(NspMcursor *M, int use_math,const char *name, int rec_leve
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"cu=0x%x\n", M->obj->cu);
+  Sciprintf1(indent+2,"\\verb|cu|= \\verb@0x%x@\n",M->obj->cu);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"doc=0x%x\n", M->obj->doc);
+  Sciprintf1(indent+2,"\\verb|doc|= \\verb@0x%x@\n",M->obj->doc);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

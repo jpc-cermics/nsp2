@@ -454,17 +454,17 @@ int nsp_block_latex(NspBlock *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(indent+2,"\\verb|object_sid|= \\verb@0x%x@\n",M->obj->object_sid);
   Sciprintf1(2,"\\\\\n");
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->obj->background);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"n_locks=%d\n", M->obj->n_locks);
+  Sciprintf1(indent+2,"\\verb|n_locks|= \\numprint(%d)\n",M->obj->n_locks);
   Sciprintf1(2,"\\\\\n");
   nsp_print_grb_lock(indent+2,M->obj->locks,M);
   Sciprintf1(2,"\\\\\n");
@@ -472,7 +472,7 @@ int nsp_block_latex(NspBlock *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->icon),FALSE,"icon", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"draw_mode=%d\n", M->obj->draw_mode);
+  Sciprintf1(indent+2,"\\verb|draw_mode|= \\numprint(%d)\n",M->obj->draw_mode);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

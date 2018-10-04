@@ -422,7 +422,7 @@ int nsp_polyhedron_latex(NspPolyhedron *M, int use_math,const char *name, int re
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),FALSE,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"\\verb|Mcoord_l|= \\verb@0x%x@\n",M->obj->Mcoord_l);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->Mface != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),FALSE,"Mface", rec_level+1)== FALSE ) return FALSE ;

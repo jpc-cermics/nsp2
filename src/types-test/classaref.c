@@ -366,9 +366,9 @@ int nsp_classaref_latex(NspClassARef *M, int use_math,const char *name, int rec_
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"cla_color=%d\n", M->obj->cla_color);
+  Sciprintf1(indent+2,"\\verb|cla_color|= \\numprint(%d)\n",M->obj->cla_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"cla_thickness=%d\n", M->obj->cla_thickness);
+  Sciprintf1(indent+2,"\\verb|cla_thickness|= \\numprint(%d)\n",M->obj->cla_thickness);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->cla_val != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),FALSE,"cla_val", rec_level+1)== FALSE ) return FALSE ;

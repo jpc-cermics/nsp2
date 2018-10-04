@@ -431,7 +431,7 @@ int nsp_contour3d_latex(NspContour3d *M, int use_math,const char *name, int rec_
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zz),FALSE,"zz", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"flag=%d\n", M->obj->flag);
+  Sciprintf1(indent+2,"\\verb|flag|= \\numprint(%d)\n",M->obj->flag);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|zlev| = \\numprint{%f}\n", M->obj->zlev);
   Sciprintf1(2,"\\\\\n");

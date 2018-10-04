@@ -404,13 +404,13 @@ int nsp_grimage_latex(NspGrImage *M, int use_math,const char *name, int rec_leve
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|border|= %s\n",( M->obj->border == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|fname|=\\verb@\"%s\"@\n",M->obj->fname);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"image=0x%x\n", M->obj->image);
+  Sciprintf1(indent+2,"\\verb|image|= \\verb@0x%x@\n",M->obj->image);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

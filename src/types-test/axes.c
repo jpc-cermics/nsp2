@@ -539,15 +539,15 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|auto_axis|= %s\n",( M->obj->auto_axis == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"grid=%d\n", M->obj->grid);
+  Sciprintf1(indent+2,"\\verb|grid|= \\numprint(%d)\n",M->obj->grid);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"axes=%d\n", M->obj->axes);
+  Sciprintf1(indent+2,"\\verb|axes|= \\numprint(%d)\n",M->obj->axes);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|xlog|= %s\n",( M->obj->xlog == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|ylog|= %s\n",( M->obj->ylog == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"lpos=%d\n", M->obj->lpos);
+  Sciprintf1(indent+2,"\\verb|lpos|= \\numprint(%d)\n",M->obj->lpos);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->rect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),FALSE,"rect", rec_level+1)== FALSE ) return FALSE ;
@@ -561,11 +561,11 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|clip|= %s\n",( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
+  Sciprintf1(indent+2,"\\verb|line_width|= \\numprint(%d)\n",M->obj->line_width);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
+  Sciprintf1(indent+2,"\\verb|font_size|= \\numprint(%d)\n",M->obj->font_size);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->obj->background);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->nax != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->nax),FALSE,"nax", rec_level+1)== FALSE ) return FALSE ;

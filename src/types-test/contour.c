@@ -425,7 +425,7 @@ int nsp_contour_latex(NspContour *M, int use_math,const char *name, int rec_leve
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->levels),FALSE,"levels", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"nlevels=%d\n", M->obj->nlevels);
+  Sciprintf1(indent+2,"\\verb|nlevels|= \\numprint(%d)\n",M->obj->nlevels);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->style != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->style),FALSE,"style", rec_level+1)== FALSE ) return FALSE ;

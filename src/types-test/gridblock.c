@@ -387,7 +387,7 @@ int nsp_gridblock_latex(NspGridBlock *M, int use_math,const char *name, int rec_
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridblock_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"diagram=0x%x\n", M->obj->diagram);
+  Sciprintf1(indent+2,"\\verb|diagram|= \\verb@0x%x@\n",M->obj->diagram);
   Sciprintf1(2,"\\\\\n");
   nsp_block_latex((NspBlock * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

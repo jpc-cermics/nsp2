@@ -373,9 +373,9 @@ int nsp_graphic_latex(NspGraphic *M, int use_math,const char *name, int rec_leve
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|show|= %s\n",( M->obj->show == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"Fig=0x%x\n", M->obj->Fig);
+  Sciprintf1(indent+2,"\\verb|Fig|= \\verb@0x%x@\n",M->obj->Fig);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"Axe=0x%x\n", M->obj->Axe);
+  Sciprintf1(indent+2,"\\verb|Axe|= \\verb@0x%x@\n",M->obj->Axe);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

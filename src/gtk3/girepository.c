@@ -679,7 +679,7 @@ int nsp_gibaseinfo_latex(NspGIBaseInfo *M, int use_math,const char *name, int re
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"info=0x%x\n", M->obj->info);
+  Sciprintf1(indent+2,"\\verb|info|= \\verb@0x%x@\n",M->obj->info);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
