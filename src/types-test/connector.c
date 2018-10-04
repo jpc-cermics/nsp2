@@ -426,11 +426,11 @@ int nsp_connector_latex(NspConnector *M, int use_math,const char *name, int rec_
   Sciprintf1(2,"\\\\\n");
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint{%d}\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->obj->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint{%d}\n",M->obj->background);
   Sciprintf1(2,"\\\\\n");
   nsp_print_gr_lock(indent+2,&M->obj->lock,M);
   Sciprintf1(2,"\\\\\n");

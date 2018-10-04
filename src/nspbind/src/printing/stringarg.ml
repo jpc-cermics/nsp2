@@ -509,8 +509,8 @@ let stringarg_attr_write_info _ptype pname _varname _byref =
 
 let stringarg_attr_write_print _objinfo print_mode varname params =
   if print_mode = "latex" then
-    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|=\\\\verb@\\\"%%s\\\"@\\n\",%s->%s);\n"
-      params.pname varname params.pname
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|=\\\\verb@\\\"%%s\\\"@\\n\",(%s->%s==NULL) ? \"NULL\": %s->%s);\n"
+      params.pname varname params.pname varname params.pname
   else
     Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%s\\n\",%s->%s);\n"
       params.pname varname params.pname
@@ -778,7 +778,7 @@ let intarg_attr_write_info _ptype pname _varname _byref =
 
 let intarg_attr_write_print _objinfo print_mode varname params =
   if print_mode = "latex" then
-    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint(%%d)\\n\",%s->%s);\n"
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint{%%d}\\n\",%s->%s);\n"
       params.pname varname params.pname
   else
     Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"
@@ -1645,7 +1645,7 @@ let ulong_arg_attr_write_info _ptype pname _varname _byref =
 
 let ulong_arg_attr_write_print _objinfo print_mode varname params =
   if print_mode = "latex" then
-    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint(%%d)\\n\",%s->%s);\n"
+    Printf.sprintf "  Sciprintf1(indent+2,\"\\\\verb|%s|= \\\\numprint{%%d}\\n\",%s->%s);\n"
       params.pname varname params.pname
   else
     Printf.sprintf "  Sciprintf1(indent+2,\"%s=%%d\\n\", %s->%s);\n"

@@ -405,9 +405,9 @@ int nsp_box3d_latex(NspBox3d *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|mesh|= %s\n",( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|mesh_color|= \\numprint(%d)\n",M->obj->mesh_color);
+  Sciprintf1(indent+2,"\\verb|mesh_color|= \\numprint{%d}\n",M->obj->mesh_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|face_color|= \\numprint(%d)\n",M->obj->face_color);
+  Sciprintf1(indent+2,"\\verb|face_color|= \\numprint{%d}\n",M->obj->face_color);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

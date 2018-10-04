@@ -330,7 +330,7 @@ int nsp_stochdec_latex(NspStochdec *M, int use_math,const char *name, int rec_le
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"\\verb|xdim|= \\numprint(%d)\n",M->xdim);
+  Sciprintf1(indent+2,"\\verb|xdim|= \\numprint{%d}\n",M->xdim);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");
@@ -827,7 +827,7 @@ int nsp_valuefn_latex(NspValueFn *M, int use_math,const char *name, int rec_leve
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"\\verb|xdim|= \\numprint(%d)\n",M->xdim);
+  Sciprintf1(indent+2,"\\verb|xdim|= \\numprint{%d}\n",M->xdim);
   Sciprintf1(2,"\\\\\n");
   if ( M->xmin != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->xmin),FALSE,"xmin", rec_level+1)== FALSE ) return FALSE ;

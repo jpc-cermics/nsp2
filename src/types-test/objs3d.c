@@ -480,7 +480,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),FALSE,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|title|=\\verb@\"%s\"@\n",M->obj->title);
+  Sciprintf1(indent+2,"\\verb|title|=\\verb@\"%s\"@\n",(M->obj->title==NULL) ? "NULL": M->obj->title);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->children != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
@@ -496,9 +496,9 @@ int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|with_box|= %s\n",( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|box_color|= \\numprint(%d)\n",M->obj->box_color);
+  Sciprintf1(indent+2,"\\verb|box_color|= \\numprint{%d}\n",M->obj->box_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|box_style|= \\numprint(%d)\n",M->obj->box_style);
+  Sciprintf1(indent+2,"\\verb|box_style|= \\numprint{%d}\n",M->obj->box_style);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|fixed|= %s\n",( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
@@ -506,7 +506,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),FALSE,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|scale_flag|= \\numprint(%d)\n",M->obj->scale_flag);
+  Sciprintf1(indent+2,"\\verb|scale_flag|= \\numprint{%d}\n",M->obj->scale_flag);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

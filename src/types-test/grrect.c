@@ -399,11 +399,11 @@ int nsp_grrect_latex(NspGrRect *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|h| = \\numprint{%f}\n", M->obj->h);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|fill_color|= \\numprint(%d)\n",M->obj->fill_color);
+  Sciprintf1(indent+2,"\\verb|fill_color|= \\numprint{%d}\n",M->obj->fill_color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint{%d}\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|angle| = \\numprint{%f}\n", M->obj->angle);
   Sciprintf1(2,"\\\\\n");

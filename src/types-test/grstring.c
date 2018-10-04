@@ -417,7 +417,7 @@ int nsp_grstring_latex(NspGrstring *M, int use_math,const char *name, int rec_le
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|y| = \\numprint{%f}\n", M->obj->y);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|font|=\\verb@\"%s\"@\n",M->obj->font);
+  Sciprintf1(indent+2,"\\verb|font|=\\verb@\"%s\"@\n",(M->obj->font==NULL) ? "NULL": M->obj->font);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->text != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->text),FALSE,"text", rec_level+1)== FALSE ) return FALSE ;
@@ -429,15 +429,15 @@ int nsp_grstring_latex(NspGrstring *M, int use_math,const char *name, int rec_le
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|h| = \\numprint{%f}\n", M->obj->h);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|fill|= \\numprint(%d)\n",M->obj->fill);
+  Sciprintf1(indent+2,"\\verb|fill|= \\numprint{%d}\n",M->obj->fill);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|posx|= \\numprint(%d)\n",M->obj->posx);
+  Sciprintf1(indent+2,"\\verb|posx|= \\numprint{%d}\n",M->obj->posx);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|posy|= \\numprint(%d)\n",M->obj->posy);
+  Sciprintf1(indent+2,"\\verb|posy|= \\numprint{%d}\n",M->obj->posy);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|size|= \\numprint(%d)\n",M->obj->size);
+  Sciprintf1(indent+2,"\\verb|size|= \\numprint{%d}\n",M->obj->size);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

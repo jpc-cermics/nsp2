@@ -367,7 +367,7 @@ int nsp_bvar_latex(NspBvar *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
         if ( M->value->type->latex(M->value,FALSE,"value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|varname|=\\verb@\"%s\"@\n",M->varname);
+  Sciprintf1(indent+2,"\\verb|varname|=\\verb@\"%s\"@\n",(M->varname==NULL) ? "NULL": M->varname);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

@@ -1109,7 +1109,7 @@ int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
  * syntax. 
  */
 
-void nsp_list_latex_print(NspList *L, int use_math,const char *name, int rec_level)
+int nsp_list_latex_print(NspList *L, int use_math,const char *name, int rec_level)
 {
   Cell *C;
   int i=1;
@@ -1142,6 +1142,7 @@ void nsp_list_latex_print(NspList *L, int use_math,const char *name, int rec_lev
   Sciprintf1(1,"\\end{array}\n");
   if ( use_math ) Sciprintf("\\end{equation*}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
 }
 
 /**

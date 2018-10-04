@@ -350,13 +350,13 @@ int nsp_hm_latex(NspHm *M, int use_math,const char *name, int rec_level)
 
   Sciprintf1(indent+2,"\\verb|htable|= \\verb@0x%x@\n",M->htable);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|hsize|= \\numprint(%d)\n",M->hsize);
+  Sciprintf1(indent+2,"\\verb|hsize|= \\numprint{%d}\n",M->hsize);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|filled|= \\numprint(%d)\n",M->filled);
+  Sciprintf1(indent+2,"\\verb|filled|= \\numprint{%d}\n",M->filled);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|base|= \\numprint(%d)\n",M->base);
+  Sciprintf1(indent+2,"\\verb|base|= \\numprint{%d}\n",M->base);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|keysize|= \\numprint(%d)\n",M->keysize);
+  Sciprintf1(indent+2,"\\verb|keysize|= \\numprint{%d}\n",M->keysize);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

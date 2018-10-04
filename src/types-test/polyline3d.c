@@ -415,10 +415,10 @@ int nsp_polyline3d_latex(NspPolyline3d *M, int use_math,const char *name, int re
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),FALSE,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint{%d}\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|max|= \\numprint(%d)\n",M->obj->max);
+  Sciprintf1(indent+2,"\\verb|max|= \\numprint{%d}\n",M->obj->max);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

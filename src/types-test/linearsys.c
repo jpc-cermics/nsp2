@@ -410,7 +410,7 @@ int nsp_linearsys_latex(NspLinearSys *M, int use_math,const char *name, int rec_
     { if ( nsp_object_latex(NSP_OBJECT(M->X0),FALSE,"X0", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|dom|=\\verb@\"%s\"@\n",M->dom);
+  Sciprintf1(indent+2,"\\verb|dom|=\\verb@\"%s\"@\n",(M->dom==NULL) ? "NULL": M->dom);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|dt| = \\numprint{%f}\n", M->dt);
   Sciprintf1(2,"\\\\\n");

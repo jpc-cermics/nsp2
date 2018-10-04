@@ -458,13 +458,13 @@ int nsp_block_latex(NspBlock *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint(%d)\n",M->obj->thickness);
+  Sciprintf1(indent+2,"\\verb|thickness|= \\numprint{%d}\n",M->obj->thickness);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|background|= \\numprint(%d)\n",M->obj->background);
+  Sciprintf1(indent+2,"\\verb|background|= \\numprint{%d}\n",M->obj->background);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|n_locks|= \\numprint(%d)\n",M->obj->n_locks);
+  Sciprintf1(indent+2,"\\verb|n_locks|= \\numprint{%d}\n",M->obj->n_locks);
   Sciprintf1(2,"\\\\\n");
   nsp_print_grb_lock(indent+2,M->obj->locks,M);
   Sciprintf1(2,"\\\\\n");
@@ -472,7 +472,7 @@ int nsp_block_latex(NspBlock *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->icon),FALSE,"icon", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|draw_mode|= \\numprint(%d)\n",M->obj->draw_mode);
+  Sciprintf1(indent+2,"\\verb|draw_mode|= \\numprint{%d}\n",M->obj->draw_mode);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

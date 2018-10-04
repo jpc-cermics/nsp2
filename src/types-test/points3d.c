@@ -415,14 +415,14 @@ int nsp_points3d_latex(NspPoints3d *M, int use_math,const char *name, int rec_le
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|Mcoord_l|= \\verb@0x%x@\n",M->obj->Mcoord_l);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|mark_type|= \\numprint(%d)\n",M->obj->mark_type);
+  Sciprintf1(indent+2,"\\verb|mark_type|= \\numprint{%d}\n",M->obj->mark_type);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|mark_size|= \\numprint(%d)\n",M->obj->mark_size);
+  Sciprintf1(indent+2,"\\verb|mark_size|= \\numprint{%d}\n",M->obj->mark_size);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|max|= \\numprint(%d)\n",M->obj->max);
+  Sciprintf1(indent+2,"\\verb|max|= \\numprint{%d}\n",M->obj->max);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

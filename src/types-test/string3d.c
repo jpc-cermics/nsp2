@@ -409,11 +409,11 @@ int nsp_string3d_latex(NspString3d *M, int use_math,const char *name, int rec_le
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+2,"\\verb|Mcoord_l|= \\verb@0x%x@\n",M->obj->Mcoord_l);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",M->obj->str);
+  Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",(M->obj->str==NULL) ? "NULL": M->obj->str);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|font_type|= \\numprint(%d)\n",M->obj->font_type);
+  Sciprintf1(indent+2,"\\verb|font_type|= \\numprint{%d}\n",M->obj->font_type);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|font_size|= \\numprint(%d)\n",M->obj->font_size);
+  Sciprintf1(indent+2,"\\verb|font_size|= \\numprint{%d}\n",M->obj->font_size);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);

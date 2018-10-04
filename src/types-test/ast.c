@@ -401,11 +401,11 @@ int nsp_ast_latex(NspAst *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_ast_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"\\verb|op|= \\numprint(%d)\n",M->op);
+  Sciprintf1(indent+2,"\\verb|op|= \\numprint{%d}\n",M->op);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|arity|= \\numprint(%d)\n",M->arity);
+  Sciprintf1(indent+2,"\\verb|arity|= \\numprint{%d}\n",M->arity);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",M->str);
+  Sciprintf1(indent+2,"\\verb|str|=\\verb@\"%s\"@\n",(M->str==NULL) ? "NULL": M->str);
   Sciprintf1(2,"\\\\\n");
         if ( M->xobj->type->latex(M->xobj,FALSE,"xobj",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
@@ -415,7 +415,7 @@ int nsp_ast_latex(NspAst *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
         if ( M->user_data->type->latex(M->user_data,FALSE,"user_data",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|line|= \\numprint(%d)\n",M->line);
+  Sciprintf1(indent+2,"\\verb|line|= \\numprint{%d}\n",M->line);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

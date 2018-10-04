@@ -391,25 +391,25 @@ int nsp_qcurve_latex(NspQcurve *M, int use_math,const char *name, int rec_level)
   // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_qcurve_type_short_string(NSP_OBJECT(M)));
   Sciprintf("\\begin{array}{l}");
 
-  Sciprintf1(indent+2,"\\verb|mark|= \\numprint(%d)\n",M->obj->mark);
+  Sciprintf1(indent+2,"\\verb|mark|= \\numprint{%d}\n",M->obj->mark);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|width|= \\numprint(%d)\n",M->obj->width);
+  Sciprintf1(indent+2,"\\verb|width|= \\numprint{%d}\n",M->obj->width);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|style|= \\numprint(%d)\n",M->obj->style);
+  Sciprintf1(indent+2,"\\verb|style|= \\numprint{%d}\n",M->obj->style);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|color|= \\numprint(%d)\n",M->obj->color);
+  Sciprintf1(indent+2,"\\verb|color|= \\numprint{%d}\n",M->obj->color);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|mode|= \\numprint(%d)\n",M->obj->mode);
+  Sciprintf1(indent+2,"\\verb|mode|= \\numprint{%d}\n",M->obj->mode);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->Pts != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),FALSE,"Pts", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|legend|=\\verb@\"%s\"@\n",M->obj->legend);
+  Sciprintf1(indent+2,"\\verb|legend|=\\verb@\"%s\"@\n",(M->obj->legend==NULL) ? "NULL": M->obj->legend);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|start|= \\numprint(%d)\n",M->obj->start);
+  Sciprintf1(indent+2,"\\verb|start|= \\numprint{%d}\n",M->obj->start);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|last|= \\numprint(%d)\n",M->obj->last);
+  Sciprintf1(indent+2,"\\verb|last|= \\numprint{%d}\n",M->obj->last);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

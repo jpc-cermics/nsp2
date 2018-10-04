@@ -387,11 +387,11 @@ int nsp_compound_latex(NspCompound *M, int use_math,const char *name, int rec_le
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|hilite_type|= \\numprint(%d)\n",M->obj->hilite_type);
+  Sciprintf1(indent+2,"\\verb|hilite_type|= \\numprint{%d}\n",M->obj->hilite_type);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|hilite_size|= \\numprint(%d)\n",M->obj->hilite_size);
+  Sciprintf1(indent+2,"\\verb|hilite_size|= \\numprint{%d}\n",M->obj->hilite_size);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|hilite_color|= \\numprint(%d)\n",M->obj->hilite_color);
+  Sciprintf1(indent+2,"\\verb|hilite_color|= \\numprint{%d}\n",M->obj->hilite_color);
   Sciprintf1(2,"\\\\\n");
   nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
   Sciprintf1(indent+1,"\n");

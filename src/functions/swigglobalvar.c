@@ -288,12 +288,18 @@ int nsp_swigglobalvar_print(NspSwigGlobalVar *M, int indent,const char *name, in
  * latex print 
  */
 
-void nsp_swigglobalvar_latex_print(NspSwigGlobalVar *M, int indent,const char *name, int rec_level)
+int nsp_swigglobalvar_latex_print(NspSwigGlobalVar *M, int use_math,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_swigglobalvar_type_short_string(NSP_OBJECT(M)));
+  if ( use_math ) Sciprintf("\\begin{equation*}");
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0) 
+    Sciprintf("\\verb|%s| = \\verb|%s|\n", pname,  nsp_swigglobalvar_type_short_string(NSP_OBJECT(M)));
+  else 
+    Sciprintf(" \\verb|%s|\n", nsp_swigglobalvar_type_short_string(NSP_OBJECT(M)));
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+  return TRUE;
 }
 
 /*-----------------------------------------------------

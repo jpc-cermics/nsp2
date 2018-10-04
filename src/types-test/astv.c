@@ -369,9 +369,9 @@ int nsp_astv_latex(NspAstv *M, int use_math,const char *name, int rec_level)
 
   Sciprintf1(indent+2,"\\verb|hv|= %s\n",( M->hv == TRUE) ? "T" : "F" );
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|rows|= \\numprint(%d)\n",M->rows);
+  Sciprintf1(indent+2,"\\verb|rows|= \\numprint{%d}\n",M->rows);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|columns|= \\numprint(%d)\n",M->columns);
+  Sciprintf1(indent+2,"\\verb|columns|= \\numprint{%d}\n",M->columns);
   Sciprintf1(2,"\\\\\n");
         if ( M->value->type->latex(M->value,FALSE,"value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
@@ -383,9 +383,9 @@ int nsp_astv_latex(NspAstv *M, int use_math,const char *name, int rec_level)
   Sciprintf1(2,"\\\\\n");
         if ( M->args->type->latex(M->args,FALSE,"args",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|stype|=\\verb@\"%s\"@\n",M->stype);
+  Sciprintf1(indent+2,"\\verb|stype|=\\verb@\"%s\"@\n",(M->stype==NULL) ? "NULL": M->stype);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|ssubtype|=\\verb@\"%s\"@\n",M->ssubtype);
+  Sciprintf1(indent+2,"\\verb|ssubtype|=\\verb@\"%s\"@\n",(M->ssubtype==NULL) ? "NULL": M->ssubtype);
   Sciprintf1(2,"\\\\\n");
   Sciprintf1(indent+1,"\n");
   Sciprintf("\\end{array}\n");

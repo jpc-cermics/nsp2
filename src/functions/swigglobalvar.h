@@ -64,7 +64,7 @@ extern NspSwigGlobalVar *nsp_swigglobalvar_copy(NspSwigGlobalVar *H);
 extern void nsp_swigglobalvar_destroy(NspSwigGlobalVar *H);
 extern void nsp_swigglobalvar_info(NspSwigGlobalVar *H, int indent,const char *name, int rec_level);
 extern int nsp_swigglobalvar_print(NspSwigGlobalVar *H, int indent,const char *name, int rec_level);
-extern void nsp_swigglobalvar_latex_print(NspSwigGlobalVar *H, int indent,const char *name, int rec_level);
+extern int nsp_swigglobalvar_latex_print(NspSwigGlobalVar *H, int use_math,const char *name, int rec_level);
 extern NspSwigGlobalVar *nsp_swigglobalvar_object (NspObject *O); 
 extern int IsSwigGlobalVarObj (Stack stack, int i); 
 extern int IsSwigGlobalVar(NspObject *O);
