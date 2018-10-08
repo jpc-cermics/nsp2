@@ -313,7 +313,7 @@ int nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
  * @name: %NULL or a replacement name to be used when displaying info
  * @rec_level: the depth level of this function call
  * 
- * print object @Mat. 
+ * print object @Mat. XXXXX: the as read version is to be done 
  * 
  **/
 
@@ -361,7 +361,9 @@ int nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 		  {
 		    sprintf(epname,"(%d,%d)",i+1,j+1);
 		  }
-		if ( object->type->pr(object,indent+2,epname,rec_level+1)==FALSE) 
+		if ( object->type->pr(object,indent+2,
+				      (user_pref.pr_as_read_syntax) ? "" : epname,
+				      rec_level+1)==FALSE) 
 		  return FALSE;
 	      }
 	  }

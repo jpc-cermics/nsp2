@@ -1293,6 +1293,11 @@ int int_m2ce(Stack stack, int rhs, int opt, int lhs)
     {
       if ((Res = nsp_cells_m2ce_full(M))== NULL)  return RET_BUG;
     }
+  else
+    {
+      Scierror("Error: %d rhs argument is not valid for m2ce\n",rhs);
+      return RET_BUG;
+    }
   MoveObj(stack,1, NSP_OBJECT(Res));
   return 1;
 }
