@@ -107,6 +107,88 @@ NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L)
 }  
 
 /**
+ * nsp_hcreate_from_list_and_keys:
+ * @name: Name of hash table or %NVOID
+ * @L: List from which to store hash table objects 
+ * @S: names to be used 
+ * 
+ * Create a hash table from list of values and keys
+ * 
+ * Return value: a #NspHash 
+ **/
+
+NspHash *nsp_hcreate_from_list_and_keys(char *name, NspList *L, NspSMatrix *S)
+{
+  int count;
+  NspHash *H;
+  Cell *C;
+  if ( L == NULLLIST ) return NULLHASH;
+  if(( H = nsp_hash_create(name,S->mn)) == NULLHASH) return NULLHASH;
+  C= L->first; count = 0;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  NspObject *Obj;
+	  if (( Obj =nsp_object_copy_and_name(S->S[count],C->O)) == NULLOBJ ) return NULLHASH;
+	  /* A copy of object is added in the hash table **/
+	  if (nsp_hash_enter(H,Obj) == FAIL) return NULLHASH;
+	}
+      C = C->next ;
+      count++;
+    }
+  return H;
+}  
+
+/**
+ * nsp_hash_to_list:
+ * @name: Name of hash table or %NVOID
+ * @H: a hash table 
+ * @S: keys to extract from @H
+ * 
+ * Create a list from hash table 
+ * 
+ * Return value: a #NspList
+ **/
+
+NspList *nsp_list_from_hash(char *name,NspHash *H, NspSMatrix *S)
+{
+  int i;
+  NspList *L;
+  Cell *cloc, *new_cell=NULL;
+  if ( (L=nsp_list_create(name)) == NULLLIST ) return NULLLIST;
+  L->nel =0;
+  cloc = L->first ;
+  for ( i = 0 ; i < S->mn; i++)
+    {
+      NspObject *Obj =  NULLOBJ;
+      nsp_hash_find_and_copy(H, S->S[i], &Obj);
+      if ( Obj != NULL)
+	{
+	  if (( nsp_object_set_name(Obj,"lel")== FAIL)) goto end;
+	  if ((new_cell =nsp_cell_create(Obj))== NULLCELL) goto end;
+	  if ( cloc == NULLCELL) 
+	    {
+	      L->first = new_cell;
+	    }
+	  else 
+	    {
+	      new_cell->prev = cloc;
+	      cloc->next = new_cell;
+	    }
+	  cloc = new_cell;
+	  L->last = new_cell;
+	  L->nel ++ ;
+	}
+    }
+  /* eventuellement copier current et icurrent */
+  return L;
+ end:
+  nsp_list_destroy(L);
+  return NULL;
+}  
+
+/**
  *nsp_hash_resize:
  * @H: 
  * @new_size: 

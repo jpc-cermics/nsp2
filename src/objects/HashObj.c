@@ -1015,16 +1015,41 @@ static int int_ht_neq(Stack stack, int rhs, int opt, int lhs)
 
 int int_hcreate_from_list(Stack stack, int rhs, int opt, int lhs)
 {
+  NspSMatrix *S;
   NspList *L;
   NspHash *H;
-  CheckRhs(1,1);
+  CheckRhs(2,2);
   CheckLhs(-1,1);
   if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ((H = nsp_hcreate_from_list(NVOID,-1,L))== NULLHASH) return RET_BUG;
+  if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ( nsp_list_length(L) != S->mn )
+    {
+      Scierror("%s: first and second arguments must be of same length\n",NspFname(stack));
+      return RET_BUG;
+    }
+    
+  if ((H = nsp_hcreate_from_list_and_keys(NVOID,L,S))== NULLHASH) return RET_BUG;
   MoveObj(stack,1,(NspObject *) H);
   return 1;
 } 
 
+/* h2l 
+ *
+ */
+
+int int_list_from_hash(Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L;
+  NspSMatrix *S;
+  NspHash *H;
+  CheckStdRhs(2,2);
+  CheckLhs(-1,1);
+  if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
+  if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ((L = nsp_list_from_hash(NVOID,H,S))== NULLLIST) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) L);
+  return 1;
+} 
 
 /*
  * Extract all the elements of the hash table 
@@ -1110,6 +1135,7 @@ static OpTab Hash_func[]={
   {"ne_h_h",int_ht_neq},
   {"l2h",int_hcreate_from_list},
   {"s2h",int_hcreate_from_smatrix},
+  {"h2l",int_list_from_hash},
   {"resize2vect_h", int_hash_as_options}, /* H(:) */
   {(char *) 0, NULL}
 };

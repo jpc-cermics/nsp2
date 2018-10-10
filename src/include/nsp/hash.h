@@ -135,11 +135,13 @@ typedef enum {
 
 extern int nsp_hsearch (NspHash *H,const char *key, NspObject **data,HashOperation action);
 extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
-NspHash *nsp_hcreate(const char *name, unsigned int nel);
+extern NspHash *nsp_hcreate_from_list_and_keys(char *name, NspList *L, NspSMatrix *S);
+extern NspHash *nsp_hcreate(const char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);
 extern NspHash *nsp_current_frame_to_hash(void);
 extern NspSMatrix * nsp_hash_get_keys(NspHash *H);
-
+extern NspList *nsp_list_from_hash(char *name,NspHash *H, NspSMatrix *S);
+  
 #endif
 
 #ifdef Hash_Private 
