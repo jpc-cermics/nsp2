@@ -79,7 +79,10 @@ objects.
    \item \verb+length(H)+ return the number of objets stored in \verb+H+
    \item \verb+size(H)+ return \verb+[m,n]+ where \verb+m+ stands for the number 
      of objets stored in \verb+H+ and \verb+n+ is the size of internal size of 
-     the hash table. 
+     the hash table.
+   \item \verb+l2h+ creates a hash table given a list an a string matrix.
+   \item \verb+h2l+ creates a list given a hash table an a string matrix givings the keys to extract.
+   \item \verb+s2h+ creates a hash table given a two column string matrix giving the keys in the first column and the string values in the second column.
 \end{itemize}
 
 \begin{examples}
@@ -118,6 +121,19 @@ objects.
   // fills a list with all the hash table values 
   L=list();
   L(1:n)= H.find[K];
+\end{mintednsp}
+\item Using \verb+l2h+ and \verb+h2l+ and \verb+s2h+
+\begin{mintednsp}{nsp}
+  H= hash_create(Cervin=4478, Eiger=3970, LesDrus=3754);
+  L=h2l(H,['Cervin','LesDrus','LeGer']);
+\end{mintednsp}
+\begin{mintednsp}{nsp}
+  L=list(6,7,8);S=['item1','item2','item3'];
+  H=l2h(L,S);
+\end{mintednsp}
+\begin{mintednsp}{nsp}
+  S=['item1','key1';'item2','key2';'item3','key3'];
+  H=s2h(S);
 \end{mintednsp}
 \end{itemize}
 \end{examples}
