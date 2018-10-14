@@ -2466,6 +2466,11 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfu
 	  Scierror("Error: in %s, size vector is too long\n",NspFname(stack));
 	  return RET_BUG; 
 	}
+      if ( m1 < 0 || n1 < 0 )
+	{
+	  Scierror("Error: in %s, sizes should be non-negative\n",NspFname(stack));
+	  return RET_BUG;
+	}
     }
   else 
     {
