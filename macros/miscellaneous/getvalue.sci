@@ -66,7 +66,7 @@ function [ok,%L,%exprs]=getvalue_internal_list(%desc,%labels,%typ,%ini,use_dialo
     // check that dims and check_dims coincide 
     // unused 
     ok=%t;
-    [m,n]=size(val);
+    if type(val,'short')== 'l' then m=size(val);n=1; else [m,n]=size(val);end;
     if type(dims,'short')<>'m' && ~or(length(dims)==[0,1,2]) then 
       ok=%f;
       return;

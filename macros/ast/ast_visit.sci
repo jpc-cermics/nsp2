@@ -33,8 +33,8 @@ function ast=ast_visit(ast,visitor,H)
     //printf("<--arg_visit_internal\n");
   endfunction
     
-  if nargin <= 2 then H=0;end
-  if nargin <= 3 then visitor=default_visitor;end 
+  if nargin < 3 then H=0;end
+  if nargin < 2 then visitor=default_visitor;end 
   ast= ast_visit_internal(ast,visitor,H)
 endfunction
 
