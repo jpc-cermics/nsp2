@@ -327,7 +327,7 @@ NspGResource *gresource_copy(NspGResource *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_resources_register(NspGResource *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -342,7 +342,7 @@ int _wrap_g_resources_register(Stack stack, int rhs, int opt, int lhs) /* s_regi
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_resources_unregister(NspGResource *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -583,7 +583,7 @@ static int _wrap_g_dbus_interface_set_object(NspGDBusInterface *self,Stack stack
   return 0;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_dbus_interface_dup_object(NspGDBusInterface *self,Stack stack,int rhs,int opt,int lhs)
 {
   GDBusObject *ret;
@@ -1793,7 +1793,7 @@ NspGActionMap *gactionmap_copy(NspGActionMap *self)
  * XXX this should be the generic rule for all methods ?
  */
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_action_map_lookup_action(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -1819,7 +1819,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 #line 1820 "gio.c"
 
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_action_map_add_action(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -1836,7 +1836,7 @@ int _wrap_g_action_map_add_action(Stack stack, int rhs, int opt, int lhs) /* add
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_action_map_remove_action(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -2590,7 +2590,7 @@ _wrap_g_app_launch_context_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_app_launch_context_setenv(NspGAppLaunchContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -2607,7 +2607,7 @@ int _wrap_g_app_launch_context_setenv(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_app_launch_context_unsetenv(NspGAppLaunchContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -2624,7 +2624,7 @@ int _wrap_g_app_launch_context_unsetenv(Stack stack, int rhs, int opt, int lhs) 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_app_launch_context_get_environment(NspGAppLaunchContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   gchar **ret;
@@ -2940,7 +2940,7 @@ static int _wrap_g_application_set_application_id(NspGApplication *self,Stack st
   return 0;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_application_get_dbus_object_path(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -2996,7 +2996,7 @@ static int _wrap_g_application_set_flags(NspGApplication *self,Stack stack,int r
   return 0;
 }
 
-#if GTK_CHECK_VERSION(GLIB,DEPRECATED,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 int _wrap_g_application_set_action_group(Stack stack, int rhs, int opt, int lhs) /* set_action_group */
 {
   Scierror("Error: function g_application_set_action_group is deprecated\n");
@@ -3087,7 +3087,7 @@ static int _wrap_g_application_run(NspGApplication *self,Stack stack,int rhs,int
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_application_quit(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -3102,7 +3102,7 @@ int _wrap_g_application_quit(Stack stack, int rhs, int opt, int lhs) /* quit */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_application_set_default(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -3117,7 +3117,7 @@ int _wrap_g_application_set_default(Stack stack, int rhs, int opt, int lhs) /* s
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_application_mark_busy(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -3132,7 +3132,7 @@ int _wrap_g_application_mark_busy(Stack stack, int rhs, int opt, int lhs) /* mar
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_application_unmark_busy(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -3147,7 +3147,7 @@ int _wrap_g_application_unmark_busy(Stack stack, int rhs, int opt, int lhs) /* u
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_application_withdraw_notification(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -3402,7 +3402,7 @@ static int _wrap_g_application_command_line_get_arguments(NspGApplicationCommand
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_application_command_line_get_stdin(NspGApplicationCommandLine *self,Stack stack,int rhs,int opt,int lhs)
 {
   GInputStream *ret;
@@ -3483,7 +3483,7 @@ static int _wrap_g_application_command_line_get_platform_data(NspGApplicationCom
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_application_command_line_create_file_for_arg(NspGApplicationCommandLine *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -3968,7 +3968,7 @@ static int _wrap_g_async_result_get_source_object(NspGAsyncResult *self,Stack st
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_async_result_legacy_propagate_error(NspGAsyncResult *self,Stack stack,int rhs,int opt,int lhs)
 {
   GError *error = NULL;
@@ -6524,7 +6524,7 @@ static int _wrap_g_drive_eject_with_operation_finish(NspGDrive *self,Stack stack
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_drive_get_sort_key(NspGDrive *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -7696,7 +7696,7 @@ static int _wrap_g_file_delete(NspGFile *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_file_delete_finish(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -7736,7 +7736,7 @@ static int _wrap_g_file_trash(NspGFile *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_file_trash_finish(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -7792,7 +7792,7 @@ static int _wrap_g_file_make_directory(NspGFile *self,Stack stack,int rhs,int op
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_file_make_directory_finish(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -9593,7 +9593,7 @@ static int _wrap_g_icon_to_string(NspGIcon *self,Stack stack,int rhs,int opt,int
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_icon_serialize(NspGIcon *self,Stack stack,int rhs,int opt,int lhs)
 {
   GVariant *ret;
@@ -10264,7 +10264,7 @@ _wrap_g_inet_address_mask_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_to_string(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   gchar *ret;
@@ -10282,7 +10282,7 @@ int _wrap_g_inet_address_mask_to_string(Stack stack, int rhs, int opt, int lhs) 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_get_family(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
@@ -10299,7 +10299,7 @@ int _wrap_g_inet_address_mask_get_family(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_get_address(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   GInetAddress *ret;
@@ -10319,7 +10319,7 @@ int _wrap_g_inet_address_mask_get_address(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_get_length(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -10336,7 +10336,7 @@ int _wrap_g_inet_address_mask_get_length(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_matches(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -10355,7 +10355,7 @@ int _wrap_g_inet_address_mask_matches(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_address_mask_equal(NspGInetAddressMask *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -12941,7 +12941,7 @@ NspGMenuAttributeIter *gmenuattributeiter_copy(NspGMenuAttributeIter *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_attribute_iter_next(NspGMenuAttributeIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -12958,7 +12958,7 @@ int _wrap_g_menu_attribute_iter_next(Stack stack, int rhs, int opt, int lhs) /* 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_attribute_iter_get_name(NspGMenuAttributeIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -12975,7 +12975,7 @@ int _wrap_g_menu_attribute_iter_get_name(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_attribute_iter_get_value(NspGMenuAttributeIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   GVariant *ret;
@@ -13203,7 +13203,7 @@ NspGMenuLinkIter *gmenulinkiter_copy(NspGMenuLinkIter *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_link_iter_next(NspGMenuLinkIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -13220,7 +13220,7 @@ int _wrap_g_menu_link_iter_next(Stack stack, int rhs, int opt, int lhs) /* next 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_link_iter_get_name(NspGMenuLinkIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -13237,7 +13237,7 @@ int _wrap_g_menu_link_iter_get_name(Stack stack, int rhs, int opt, int lhs) /* g
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_link_iter_get_value(NspGMenuLinkIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   GMenuModel *ret;
@@ -13463,7 +13463,7 @@ NspGMenuModel *gmenumodel_copy(NspGMenuModel *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_is_mutable(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -13480,7 +13480,7 @@ int _wrap_g_menu_model_is_mutable(Stack stack, int rhs, int opt, int lhs) /* is_
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_n_items(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -13497,7 +13497,7 @@ int _wrap_g_menu_model_get_n_items(Stack stack, int rhs, int opt, int lhs) /* ge
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_iterate_item_attributes(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -13519,7 +13519,7 @@ int _wrap_g_menu_model_iterate_item_attributes(Stack stack, int rhs, int opt, in
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_attribute_value(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string,new_opts, t_end};
@@ -13559,7 +13559,7 @@ int _wrap_g_menu_model_get_item_attribute_value(Stack stack, int rhs, int opt, i
 #endif
 #line 40 "codegen-3.0/gio.override"
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_attribute(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   gchar *rep = NULL;
@@ -13593,7 +13593,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 #line 13594 "gio.c"
 
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_iterate_item_links(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -13622,7 +13622,7 @@ int _wrap_g_menu_model_iterate_item_links(Stack stack, int rhs, int opt, int lhs
  * XXX this should be the generic rule for all methods ?
  */
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_link(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string, t_end};
@@ -13649,7 +13649,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 #line 13650 "gio.c"
 
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_items_changed(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,s_int,s_int, t_end};
@@ -13944,7 +13944,7 @@ _wrap_g_menu_item_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_menu_item_get_attribute_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj, t_end};
@@ -13977,7 +13977,7 @@ int _wrap_g_menu_item_get_attribute_value(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_menu_item_get_attribute(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -13996,7 +13996,7 @@ int _wrap_g_menu_item_get_attribute(Stack stack, int rhs, int opt, int lhs) /* g
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_menu_item_get_link(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -14018,7 +14018,7 @@ int _wrap_g_menu_item_get_link(Stack stack, int rhs, int opt, int lhs) /* get_li
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_attribute_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj, t_end};
@@ -14046,7 +14046,7 @@ int _wrap_g_menu_item_set_attribute_value(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_attribute(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -14063,7 +14063,7 @@ int _wrap_g_menu_item_set_attribute(Stack stack, int rhs, int opt, int lhs) /* s
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_link(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj_check, t_end};
@@ -14081,7 +14081,7 @@ int _wrap_g_menu_item_set_link(Stack stack, int rhs, int opt, int lhs) /* set_li
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_label(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -14098,7 +14098,7 @@ int _wrap_g_menu_item_set_label(Stack stack, int rhs, int opt, int lhs) /* set_l
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_submenu(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -14115,7 +14115,7 @@ int _wrap_g_menu_item_set_submenu(Stack stack, int rhs, int opt, int lhs) /* set
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_section(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -14132,7 +14132,7 @@ int _wrap_g_menu_item_set_section(Stack stack, int rhs, int opt, int lhs) /* set
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_action_and_target_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj, t_end};
@@ -14160,7 +14160,7 @@ int _wrap_g_menu_item_set_action_and_target_value(Stack stack, int rhs, int opt,
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_action_and_target(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -14177,7 +14177,7 @@ int _wrap_g_menu_item_set_action_and_target(Stack stack, int rhs, int opt, int l
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_item_set_detailed_action(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -14194,7 +14194,7 @@ int _wrap_g_menu_item_set_detailed_action(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_menu_item_set_icon(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -14441,7 +14441,7 @@ _wrap_g_menu_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_freeze(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -14456,7 +14456,7 @@ int _wrap_g_menu_freeze(Stack stack, int rhs, int opt, int lhs) /* freeze */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_insert_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,obj_check, t_end};
@@ -14474,7 +14474,7 @@ int _wrap_g_menu_insert_item(Stack stack, int rhs, int opt, int lhs) /* insert_i
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_prepend_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -14491,7 +14491,7 @@ int _wrap_g_menu_prepend_item(Stack stack, int rhs, int opt, int lhs) /* prepend
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_append_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -14508,7 +14508,7 @@ int _wrap_g_menu_append_item(Stack stack, int rhs, int opt, int lhs) /* append_i
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_remove(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -14525,7 +14525,7 @@ int _wrap_g_menu_remove(Stack stack, int rhs, int opt, int lhs) /* remove */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,38,0)
+#if GLIB_CHECK_VERSION(2,38,0)
 static int _wrap_g_menu_remove_all(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -14540,7 +14540,7 @@ int _wrap_g_menu_remove_all(Stack stack, int rhs, int opt, int lhs) /* remove_al
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_insert(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string,string, t_end};
@@ -14558,7 +14558,7 @@ int _wrap_g_menu_insert(Stack stack, int rhs, int opt, int lhs) /* insert */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_prepend(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -14575,7 +14575,7 @@ int _wrap_g_menu_prepend(Stack stack, int rhs, int opt, int lhs) /* prepend */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_append(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -14592,7 +14592,7 @@ int _wrap_g_menu_append(Stack stack, int rhs, int opt, int lhs) /* append */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_insert_section(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string,obj_check, t_end};
@@ -14611,7 +14611,7 @@ int _wrap_g_menu_insert_section(Stack stack, int rhs, int opt, int lhs) /* inser
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_prepend_section(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj_check, t_end};
@@ -14629,7 +14629,7 @@ int _wrap_g_menu_prepend_section(Stack stack, int rhs, int opt, int lhs) /* prep
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_append_section(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj_check, t_end};
@@ -14647,7 +14647,7 @@ int _wrap_g_menu_append_section(Stack stack, int rhs, int opt, int lhs) /* appen
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_insert_submenu(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string,obj_check, t_end};
@@ -14666,7 +14666,7 @@ int _wrap_g_menu_insert_submenu(Stack stack, int rhs, int opt, int lhs) /* inser
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_prepend_submenu(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj_check, t_end};
@@ -14684,7 +14684,7 @@ int _wrap_g_menu_prepend_submenu(Stack stack, int rhs, int opt, int lhs) /* prep
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_append_submenu(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj_check, t_end};
@@ -16313,7 +16313,7 @@ static int _wrap_g_output_stream_write_finish(NspGOutputStream *self,Stack stack
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_output_stream_write_bytes_finish(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -18612,7 +18612,7 @@ static int _wrap_g_resolver_lookup_service_finish(NspGResolver *self,Stack stack
 
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_resolver_lookup_records(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,obj,obj_check, t_end};
@@ -18642,7 +18642,7 @@ int _wrap_g_resolver_lookup_records(Stack stack, int rhs, int opt, int lhs) /* l
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_resolver_lookup_records_finish(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -19198,7 +19198,7 @@ static int _wrap_g_settings_get_value(NspGSettings *self,Stack stack,int rhs,int
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_settings_get_user_value(NspGSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -19222,7 +19222,7 @@ int _wrap_g_settings_get_user_value(Stack stack, int rhs, int opt, int lhs) /* g
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_settings_get_default_value(NspGSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -19297,7 +19297,7 @@ static int _wrap_g_settings_set_int(NspGSettings *self,Stack stack,int rhs,int o
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_settings_get_uint(NspGSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -19316,7 +19316,7 @@ int _wrap_g_settings_get_uint(Stack stack, int rhs, int opt, int lhs) /* get_uin
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_settings_set_uint(NspGSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,s_int, t_end};
@@ -19517,7 +19517,7 @@ static int _wrap_g_settings_get_has_unapplied(NspGSettings *self,Stack stack,int
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_settings_create_action(NspGSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -19858,7 +19858,7 @@ static int _wrap_g_simple_action_set_enabled(NspGSimpleAction *self,Stack stack,
   return 0;
 }
 
-#if GTK_CHECK_VERSION(2,30,0)
+#if GLIB_CHECK_VERSION(2,30,0)
 static int _wrap_g_simple_action_set_state(NspGSimpleAction *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, t_end};
@@ -20335,7 +20335,7 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_simple_proxy_resolver_set_default_proxy(NspGSimpleProxyResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -20352,7 +20352,7 @@ int _wrap_g_simple_proxy_resolver_set_default_proxy(Stack stack, int rhs, int op
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_simple_proxy_resolver_set_ignore_hosts(NspGSimpleProxyResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, t_end};
@@ -20377,7 +20377,7 @@ int _wrap_g_simple_proxy_resolver_set_ignore_hosts(Stack stack, int rhs, int opt
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_simple_proxy_resolver_set_uri_proxy(NspGSimpleProxyResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,string, t_end};
@@ -20793,7 +20793,7 @@ static int _wrap_g_socket_set_timeout(NspGSocket *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_get_ttl(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -20810,7 +20810,7 @@ int _wrap_g_socket_get_ttl(Stack stack, int rhs, int opt, int lhs) /* get_ttl */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_set_ttl(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -20827,7 +20827,7 @@ int _wrap_g_socket_set_ttl(Stack stack, int rhs, int opt, int lhs) /* set_ttl */
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_get_broadcast(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -20844,7 +20844,7 @@ int _wrap_g_socket_get_broadcast(Stack stack, int rhs, int opt, int lhs) /* get_
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_set_broadcast(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_bool, t_end};
@@ -20861,7 +20861,7 @@ int _wrap_g_socket_set_broadcast(Stack stack, int rhs, int opt, int lhs) /* set_
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_get_multicast_loopback(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -20878,7 +20878,7 @@ int _wrap_g_socket_get_multicast_loopback(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_set_multicast_loopback(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_bool, t_end};
@@ -20895,7 +20895,7 @@ int _wrap_g_socket_set_multicast_loopback(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_get_multicast_ttl(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -20912,7 +20912,7 @@ int _wrap_g_socket_get_multicast_ttl(Stack stack, int rhs, int opt, int lhs) /* 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_set_multicast_ttl(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -20954,7 +20954,7 @@ static int _wrap_g_socket_bind(NspGSocket *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_join_multicast_group(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,s_bool,string, t_end};
@@ -20979,7 +20979,7 @@ int _wrap_g_socket_join_multicast_group(Stack stack, int rhs, int opt, int lhs) 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_leave_multicast_group(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,s_bool,string, t_end};
@@ -21208,7 +21208,7 @@ static int _wrap_g_socket_send_with_blocking(NspGSocket *self,Stack stack,int rh
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_socket_get_option(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,s_int,s_int, t_end};
@@ -21231,7 +21231,7 @@ int _wrap_g_socket_get_option(Stack stack, int rhs, int opt, int lhs) /* get_opt
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,36,0)
+#if GLIB_CHECK_VERSION(2,36,0)
 static int _wrap_g_socket_set_option(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,s_int,s_int, t_end};
@@ -21790,7 +21790,7 @@ static int _wrap_g_inet_socket_address_get_port(NspGInetSocketAddress *self,Stac
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_socket_address_get_flowinfo(NspGInetSocketAddress *self,Stack stack,int rhs,int opt,int lhs)
 {
   gulong ret;
@@ -21807,7 +21807,7 @@ int _wrap_g_inet_socket_address_get_flowinfo(Stack stack, int rhs, int opt, int 
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_inet_socket_address_get_scope_id(NspGInetSocketAddress *self,Stack stack,int rhs,int opt,int lhs)
 {
   gulong ret;
@@ -22058,7 +22058,7 @@ static int _wrap_g_proxy_address_get_protocol(NspGProxyAddress *self,Stack stack
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_proxy_address_get_destination_protocol(NspGProxyAddress *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -22111,7 +22111,7 @@ static int _wrap_g_proxy_address_get_password(NspGProxyAddress *self,Stack stack
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_proxy_address_get_uri(NspGProxyAddress *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -22914,7 +22914,7 @@ static int _wrap_g_socket_client_set_enable_proxy(NspGSocketClient *self,Stack s
   return 0;
 }
 
-#if GTK_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0)
 static int _wrap_g_socket_client_get_tls(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -22931,7 +22931,7 @@ int _wrap_g_socket_client_get_tls(Stack stack, int rhs, int opt, int lhs) /* get
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0)
 static int _wrap_g_socket_client_set_tls(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_bool, t_end};
@@ -22948,7 +22948,7 @@ int _wrap_g_socket_client_set_tls(Stack stack, int rhs, int opt, int lhs) /* set
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0)
 static int _wrap_g_socket_client_get_tls_validation_flags(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
   guint ret;
@@ -22965,7 +22965,7 @@ int _wrap_g_socket_client_get_tls_validation_flags(Stack stack, int rhs, int opt
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,28,0)
+#if GLIB_CHECK_VERSION(2,28,0)
 static int _wrap_g_socket_client_set_tls_validation_flags(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, t_end};
@@ -23045,7 +23045,7 @@ static int _wrap_g_socket_client_connect_to_service(NspGSocketClient *self,Stack
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,26,0)
+#if GLIB_CHECK_VERSION(2,26,0)
 static int _wrap_g_socket_client_connect_to_uri(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,s_int,obj_check, t_end};
@@ -23616,7 +23616,7 @@ NspGSocketConnection *gsocketconnection_copy(NspGSocketConnection *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_connection_is_connected(NspGSocketConnection *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -23633,7 +23633,7 @@ int _wrap_g_socket_connection_is_connected(Stack stack, int rhs, int opt, int lh
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_connection_connect(NspGSocketConnection *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj_check, t_end};
@@ -23657,7 +23657,7 @@ int _wrap_g_socket_connection_connect(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_connection_connect_finish(NspGSocketConnection *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -25455,7 +25455,7 @@ static int _wrap_g_tls_certificate_verify(NspGTlsCertificate *self,Stack stack,i
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,34,0)
+#if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_tls_certificate_is_same(NspGTlsCertificate *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -25680,7 +25680,7 @@ NspGTlsConnection *gtlsconnection_copy(NspGTlsConnection *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(GLIB,DEPRECATED,0)
+#if GLIB_CHECK_VERSION(2,30,0)
 int _wrap_g_tls_connection_set_use_system_certdb(Stack stack, int rhs, int opt, int lhs) /* set_use_system_certdb */
 {
   Scierror("Error: function g_tls_connection_set_use_system_certdb is deprecated\n");
@@ -25697,7 +25697,7 @@ static int _wrap_g_tls_connection_set_use_system_certdb(NspGTlsConnection *self,
 }
 
 #endif
-#if GTK_CHECK_VERSION(GLIB,DEPRECATED,0)
+#if GLIB_CHECK_VERSION(2,30,0)
 int _wrap_g_tls_connection_get_use_system_certdb(Stack stack, int rhs, int opt, int lhs) /* get_use_system_certdb */
 {
   Scierror("Error: function g_tls_connection_get_use_system_certdb is deprecated\n");
@@ -26490,7 +26490,7 @@ static int _wrap_g_tls_interaction_ask_password_finish(NspGTlsInteraction *self,
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_tls_interaction_invoke_request_certificate(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj,obj_check, t_end};
@@ -26518,7 +26518,7 @@ int _wrap_g_tls_interaction_invoke_request_certificate(Stack stack, int rhs, int
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_tls_interaction_request_certificate(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj,obj_check, t_end};
@@ -26546,7 +26546,7 @@ int _wrap_g_tls_interaction_request_certificate(Stack stack, int rhs, int opt, i
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(2,40,0)
+#if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_tls_interaction_request_certificate_finish(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -27455,7 +27455,7 @@ static int _wrap_g_volume_eject_with_operation_finish(NspGVolume *self,Stack sta
   return 1;
 }
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_volume_get_sort_key(NspGVolume *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;

@@ -4069,7 +4069,7 @@ static NspMethods *gdkframeclock_get_methods(void) { return gdkframeclock_method
 
 static AttrTab gdkframeclock_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 
 /* -----------NspGdkGLContext ----------- */
 
@@ -4263,7 +4263,7 @@ NspGdkGLContext *gdkglcontext_copy(NspGdkGLContext *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 #if GTK_CHECK_VERSION(3,16,0)
 static int _wrap_gdk_gl_context_get_display(NspGdkGLContext *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -4498,7 +4498,7 @@ static NspMethods gdkglcontext_methods[] = {
 
 static NspMethods *gdkglcontext_get_methods(void) { return gdkglcontext_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -11096,7 +11096,7 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkdisplaymanager(T_BASE);
   new_type_gdkdragcontext(T_BASE);
   new_type_gdkframeclock(T_BASE);
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
   new_type_gdkglcontext(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gdkwindow(T_BASE);

@@ -1001,14 +1001,18 @@ let rec major_minor l major =
 let available_start objinfo =
   if objinfo.or_availability <> "" then
     let l = get_list_names objinfo.or_availability in
+    let lib_name = (List.hd l) in
+    let prefix = if lib_name = "GLIB" then
+      "GLIB" else
+      "GTK" in
     let tag = (List.hd (List.tl l)) in
     let (major,minor) = major_minor l "" in
     (
      if tag = "AVAILABLE" then
-       File.write_string ("#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n")
+       File.write_string ("#if " ^ prefix ^ "_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0) \n")
      else
        ( if tag = "DEPRECATED" then
-	 File.write_string ("#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n#else\n")
+	 File.write_string ("#if " ^ prefix ^ "_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n#else\n")
        else
 	 ()
 	)

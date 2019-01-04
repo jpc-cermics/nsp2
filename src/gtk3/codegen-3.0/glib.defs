@@ -9707,7 +9707,7 @@
 (define-method up
   (of-object "GString")
   (c-name "g_string_up")
-  (available "GLIB_DEPRECATED")
+  (available "GLIB_DEPRECATED_IN_2_2")
   (return-type "GString*")
 )
 
@@ -10962,7 +10962,7 @@
 (define-method traverse
   (of-object "GTree")
   (c-name "g_tree_traverse")
-  (available "GLIB_DEPRECATED")
+  (available "GLIB_DEPRECATED_IN_2_2")
   (return-type "none")
   (parameters
     '("GTraverseFunc" "traverse_func")

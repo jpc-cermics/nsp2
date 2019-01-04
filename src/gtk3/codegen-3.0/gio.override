@@ -38,7 +38,7 @@ _*
 %%
 override g_menu_model_get_item_attribute
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_attribute(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   gchar *rep = NULL;
@@ -103,7 +103,7 @@ override g_menu_model_get_item_link
  * XXX this should be the generic rule for all methods ?
  */
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_link(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,string, t_end};
@@ -135,7 +135,7 @@ override g_action_map_lookup_action
  * XXX this should be the generic rule for all methods ?
  */
 
-#if GTK_CHECK_VERSION(2,32,0)
+#if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_action_map_lookup_action(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};

@@ -738,7 +738,7 @@
 (define-method set_action_group
   (of-object "GApplication")
   (c-name "g_application_set_action_group")
-  (available "GLIB_DEPRECATED")
+  (available "GLIB_DEPRECATED_IN_2_32")
   (return-type "none")
   (parameters
     '("GActionGroup*" "action_group")
@@ -14618,7 +14618,7 @@
 (define-method set_use_system_certdb
   (of-object "GTlsConnection")
   (c-name "g_tls_connection_set_use_system_certdb")
-  (available "GLIB_DEPRECATED")
+  (available "GLIB_DEPRECATED_IN_2_30")
   (return-type "none")
   (parameters
     '("gboolean" "use_system_certdb")
@@ -14628,7 +14628,7 @@
 (define-method get_use_system_certdb
   (of-object "GTlsConnection")
   (c-name "g_tls_connection_get_use_system_certdb")
-  (available "GLIB_DEPRECATED")
+  (available "GLIB_DEPRECATED_IN_2_30")
   (return-type "gboolean")
 )
 

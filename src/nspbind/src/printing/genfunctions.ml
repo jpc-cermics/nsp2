@@ -125,13 +125,17 @@ let code_availability f_obj code substdict =
   if f_obj.availability <> "" then
     let l = get_list_names f_obj.availability in
     let tag = (List.hd (List.tl l)) in
+    let lib_name = (List.hd l) in
+    let prefix = if lib_name = "GLIB" then
+      "GLIB" else
+      "GTK" in
     let (major,minor) = major_minor l "" in
     if tag = "AVAILABLE" then
-      "#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n" ^
+      "#if " ^ prefix ^ "_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n" ^
       code ^
       File.pattern_to_code_with_buffer availability_tmpl substdict
     else if tag = "DEPRECATED" then
-      "#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n" ^
+      "#if " ^ prefix ^ "_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n" ^
       File.pattern_to_code_with_buffer deprecated_tmpl substdict ^
       "#else\n" ^
       code ^

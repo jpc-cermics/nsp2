@@ -4628,40 +4628,6 @@ static int _wrap_gtk_source_gutter_renderer_pixbuf_get_pixbuf(NspGtkSourceGutter
   return 1;
 }
 
-#if GTK_CHECK_VERSION(G,DEPRECATED,0)
-int _wrap_gtk_source_gutter_renderer_pixbuf_set_stock_id(Stack stack, int rhs, int opt, int lhs) /* set_stock_id */
-{
-  Scierror("Error: function gtk_source_gutter_renderer_pixbuf_set_stock_id is deprecated\n");
-  return RET_BUG;
-}
-#else
-static int _wrap_gtk_source_gutter_renderer_pixbuf_set_stock_id(NspGtkSourceGutterRendererPixbuf *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string, t_end};
-  char *stock_id;
-  if ( GetArgs(stack,rhs,opt,T,&stock_id) == FAIL) return RET_BUG;
-    gtk_source_gutter_renderer_pixbuf_set_stock_id(GTK_SOURCE_GUTTER_RENDERER_PIXBUF(self->obj),stock_id);
-  return 0;
-}
-
-#endif
-#if GTK_CHECK_VERSION(G,DEPRECATED,0)
-int _wrap_gtk_source_gutter_renderer_pixbuf_get_stock_id(Stack stack, int rhs, int opt, int lhs) /* get_stock_id */
-{
-  Scierror("Error: function gtk_source_gutter_renderer_pixbuf_get_stock_id is deprecated\n");
-  return RET_BUG;
-}
-#else
-static int _wrap_gtk_source_gutter_renderer_pixbuf_get_stock_id(NspGtkSourceGutterRendererPixbuf *self,Stack stack,int rhs,int opt,int lhs)
-{
-  const gchar *ret;
-  CheckRhs(0,0);
-    ret =gtk_source_gutter_renderer_pixbuf_get_stock_id(GTK_SOURCE_GUTTER_RENDERER_PIXBUF(self->obj));
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  return 1;
-}
-
-#endif
 static int _wrap_gtk_source_gutter_renderer_pixbuf_set_gicon(NspGtkSourceGutterRendererPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -4704,8 +4670,6 @@ static int _wrap_gtk_source_gutter_renderer_pixbuf_get_icon_name(NspGtkSourceGut
 static NspMethods gtksourcegutterrendererpixbuf_methods[] = {
   {"set_pixbuf",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_set_pixbuf},
   {"get_pixbuf",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_get_pixbuf},
-  {"set_stock_id",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_set_stock_id},
-  {"get_stock_id",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_get_stock_id},
   {"set_gicon",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_set_gicon},
   {"get_gicon",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_get_gicon},
   {"set_icon_name",(nsp_method *) _wrap_gtk_source_gutter_renderer_pixbuf_set_icon_name},
@@ -6066,40 +6030,6 @@ static int _wrap_gtk_source_mark_attributes_get_background(NspGtkSourceMarkAttri
   return 1;
 }
 
-#if GTK_CHECK_VERSION(G,DEPRECATED,0)
-int _wrap_gtk_source_mark_attributes_set_stock_id(Stack stack, int rhs, int opt, int lhs) /* set_stock_id */
-{
-  Scierror("Error: function gtk_source_mark_attributes_set_stock_id is deprecated\n");
-  return RET_BUG;
-}
-#else
-static int _wrap_gtk_source_mark_attributes_set_stock_id(NspGtkSourceMarkAttributes *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string, t_end};
-  char *stock_id;
-  if ( GetArgs(stack,rhs,opt,T,&stock_id) == FAIL) return RET_BUG;
-    gtk_source_mark_attributes_set_stock_id(GTK_SOURCE_MARK_ATTRIBUTES(self->obj),stock_id);
-  return 0;
-}
-
-#endif
-#if GTK_CHECK_VERSION(G,DEPRECATED,0)
-int _wrap_gtk_source_mark_attributes_get_stock_id(Stack stack, int rhs, int opt, int lhs) /* get_stock_id */
-{
-  Scierror("Error: function gtk_source_mark_attributes_get_stock_id is deprecated\n");
-  return RET_BUG;
-}
-#else
-static int _wrap_gtk_source_mark_attributes_get_stock_id(NspGtkSourceMarkAttributes *self,Stack stack,int rhs,int opt,int lhs)
-{
-  const gchar *ret;
-  CheckRhs(0,0);
-    ret =gtk_source_mark_attributes_get_stock_id(GTK_SOURCE_MARK_ATTRIBUTES(self->obj));
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  return 1;
-}
-
-#endif
 static int _wrap_gtk_source_mark_attributes_set_icon_name(NspGtkSourceMarkAttributes *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, t_end};
@@ -6166,8 +6096,6 @@ static int _wrap_gtk_source_mark_attributes_get_tooltip_markup(NspGtkSourceMarkA
 static NspMethods gtksourcemarkattributes_methods[] = {
   {"set_background",(nsp_method *) _wrap_gtk_source_mark_attributes_set_background},
   {"get_background",(nsp_method *) _wrap_gtk_source_mark_attributes_get_background},
-  {"set_stock_id",(nsp_method *) _wrap_gtk_source_mark_attributes_set_stock_id},
-  {"get_stock_id",(nsp_method *) _wrap_gtk_source_mark_attributes_get_stock_id},
   {"set_icon_name",(nsp_method *) _wrap_gtk_source_mark_attributes_set_icon_name},
   {"get_icon_name",(nsp_method *) _wrap_gtk_source_mark_attributes_get_icon_name},
   {"set_gicon",(nsp_method *) _wrap_gtk_source_mark_attributes_set_gicon},
@@ -9763,4 +9691,4 @@ void nsp_initialize_gtksourceview_types(void)
   new_type_gtksourcemap(T_BASE);
 }
 
-#line 9767 "gtksourceview.c"
+#line 9695 "gtksourceview.c"

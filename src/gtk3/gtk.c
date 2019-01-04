@@ -18728,7 +18728,7 @@ static NspMethods *gtklistbox_get_methods(void) { return gtklistbox_methods;};
 
 static AttrTab gtklistbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 
 /* -----------NspGtkFlowBox ----------- */
 
@@ -18948,7 +18948,7 @@ int _wrap_gtk_flow_box_new(Stack stack, int rhs, int opt, int lhs) /* gtk_flow_b
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 #if GTK_CHECK_VERSION(3,12,0)
 static int _wrap_gtk_flow_box_set_homogeneous(NspGtkFlowBox *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -19348,7 +19348,7 @@ static NspMethods gtkflowbox_methods[] = {
 
 static NspMethods *gtkflowbox_get_methods(void) { return gtkflowbox_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -20196,7 +20196,7 @@ static NspMethods *gtkstackswitcher_get_methods(void) { return gtkstackswitcher_
 
 static AttrTab gtkstackswitcher_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 
 /* -----------NspGtkStackSidebar ----------- */
 
@@ -20416,7 +20416,7 @@ int _wrap_gtk_stack_sidebar_new(Stack stack, int rhs, int opt, int lhs) /* gtk_s
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 #if GTK_CHECK_VERSION(3,16,0)
 static int _wrap_gtk_stack_sidebar_set_stack(NspGtkStackSidebar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -20462,7 +20462,7 @@ static NspMethods gtkstacksidebar_methods[] = {
 
 static NspMethods *gtkstacksidebar_get_methods(void) { return gtkstacksidebar_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -20470,7 +20470,7 @@ static NspMethods *gtkstacksidebar_get_methods(void) { return gtkstacksidebar_me
 static AttrTab gtkstacksidebar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #endif /* GTK_CHECK_VERSION */
 
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 
 /* -----------NspGtkActionBar ----------- */
 
@@ -20686,7 +20686,7 @@ int _wrap_gtk_action_bar_new(Stack stack, int rhs, int opt, int lhs) /* gtk_acti
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 #if GTK_CHECK_VERSION(3,12,0)
 static int _wrap_gtk_action_bar_get_center_widget(NspGtkActionBar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -20768,7 +20768,7 @@ static NspMethods gtkactionbar_methods[] = {
 
 static NspMethods *gtkactionbar_get_methods(void) { return gtkactionbar_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -27980,7 +27980,7 @@ static int _wrap_gtk_button_clicked(NspGtkButton *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#if GTK_CHECK_VERSION(GDK,DEPRECATED,0)
+#if GTK_CHECK_VERSION(2,20,0)
 int _wrap_gtk_button_pressed(Stack stack, int rhs, int opt, int lhs) /* pressed */
 {
   Scierror("Error: function gtk_button_pressed is deprecated\n");
@@ -27995,7 +27995,7 @@ static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int o
 }
 
 #endif
-#if GTK_CHECK_VERSION(GDK,DEPRECATED,0)
+#if GTK_CHECK_VERSION(2,20,0)
 int _wrap_gtk_button_released(Stack stack, int rhs, int opt, int lhs) /* released */
 {
   Scierror("Error: function gtk_button_released is deprecated\n");
@@ -28010,7 +28010,7 @@ static int _wrap_gtk_button_released(NspGtkButton *self,Stack stack,int rhs,int 
 }
 
 #endif
-#if GTK_CHECK_VERSION(GDK,DEPRECATED,0)
+#if GTK_CHECK_VERSION(2,20,0)
 int _wrap_gtk_button_enter(Stack stack, int rhs, int opt, int lhs) /* enter */
 {
   Scierror("Error: function gtk_button_enter is deprecated\n");
@@ -28025,7 +28025,7 @@ static int _wrap_gtk_button_enter(NspGtkButton *self,Stack stack,int rhs,int opt
 }
 
 #endif
-#if GTK_CHECK_VERSION(GDK,DEPRECATED,0)
+#if GTK_CHECK_VERSION(2,20,0)
 int _wrap_gtk_button_leave(Stack stack, int rhs, int opt, int lhs) /* leave */
 {
   Scierror("Error: function gtk_button_leave is deprecated\n");
@@ -30934,7 +30934,7 @@ static NspMethods *gtklockbutton_get_methods(void) { return gtklockbutton_method
 
 static AttrTab gtklockbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 
 /* -----------NspGtkModelButton ----------- */
 
@@ -31154,10 +31154,10 @@ int _wrap_gtk_model_button_new(Stack stack, int rhs, int opt, int lhs) /* gtk_mo
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 static NspMethods *gtkmodelbutton_get_methods(void) { return NULL;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -54856,7 +54856,7 @@ static NspMethods *gtkradiotoolbutton_get_methods(void) { return gtkradiotoolbut
 
 static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 
 /* -----------NspGtkPopover ----------- */
 
@@ -55102,7 +55102,7 @@ int _wrap_gtk_popover_new(Stack stack, int rhs, int opt, int lhs) /* gtk_popover
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 #if GTK_CHECK_VERSION(3,12,0)
 static int _wrap_gtk_popover_set_relative_to(NspGtkPopover *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -55333,7 +55333,7 @@ static NspMethods gtkpopover_methods[] = {
 
 static NspMethods *gtkpopover_get_methods(void) { return gtkpopover_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -55341,7 +55341,7 @@ static NspMethods *gtkpopover_get_methods(void) { return gtkpopover_methods;};
 static AttrTab gtkpopover_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #endif /* GTK_CHECK_VERSION */
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 
 /* -----------NspGtkPopoverMenu ----------- */
 
@@ -55561,7 +55561,7 @@ int _wrap_gtk_popover_menu_new(Stack stack, int rhs, int opt, int lhs) /* gtk_po
   return RET_BUG;
 }
 #endif
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 #if GTK_CHECK_VERSION(3,16,0)
 static int _wrap_gtk_popover_menu_open_submenu(NspGtkPopoverMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -55586,7 +55586,7 @@ static NspMethods gtkpopovermenu_methods[] = {
 
 static NspMethods *gtkpopovermenu_get_methods(void) { return gtkpopovermenu_methods;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -78838,15 +78838,15 @@ void nsp_initialize_gtk_types(void)
   new_type_gtkgrid(T_BASE);
   new_type_gtkrevealer(T_BASE);
   new_type_gtklistbox(T_BASE);
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
   new_type_gtkflowbox(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gtkstack(T_BASE);
   new_type_gtkstackswitcher(T_BASE);
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
   new_type_gtkstacksidebar(T_BASE);
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
   new_type_gtkactionbar(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gtkheaderbar(T_BASE);
@@ -78876,7 +78876,7 @@ void nsp_initialize_gtk_types(void)
   new_type_gtkscalebutton(T_BASE);
   new_type_gtkvolumebutton(T_BASE);
   new_type_gtklockbutton(T_BASE);
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
   new_type_gtkmodelbutton(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gtkentry(T_BASE);
@@ -78930,10 +78930,10 @@ void nsp_initialize_gtk_types(void)
   new_type_gtkmenutoolbutton(T_BASE);
   new_type_gtktoggletoolbutton(T_BASE);
   new_type_gtkradiotoolbutton(T_BASE);
-#if GTK_CHECK_VERSION(3,12,0)
+#if GTK_CHECK_VERSION(3,12,0) 
   new_type_gtkpopover(T_BASE);
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,16,0) 
   new_type_gtkpopovermenu(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gtkcolorbutton(T_BASE);

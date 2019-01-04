@@ -3035,7 +3035,7 @@
 (define-method find_script
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_find_script")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "gboolean")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3047,7 +3047,7 @@
 (define-method find_language
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_find_language")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "gboolean")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3061,7 +3061,7 @@
 (define-method find_feature
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_find_feature")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "gboolean")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3075,7 +3075,7 @@
 (define-method list_scripts
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_list_scripts")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoOTTag*")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3085,7 +3085,7 @@
 (define-method list_languages
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_list_languages")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoOTTag*")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3097,7 +3097,7 @@
 (define-method list_features
   (of-object "PangoOTInfo")
   (c-name "pango_ot_info_list_features")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoOTTag*")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3119,21 +3119,21 @@
 (define-method destroy
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_destroy")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
 )
 
 (define-method clear
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_clear")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
 )
 
 (define-method set_rtl
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_set_rtl")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("gboolean" "rtl")
@@ -3143,7 +3143,7 @@
 (define-method add_glyph
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_add_glyph")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("guint" "glyph")
@@ -3155,7 +3155,7 @@
 (define-method get_glyphs
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_get_glyphs")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoOTGlyph**" "glyphs")
@@ -3166,7 +3166,7 @@
 (define-method output
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_output")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoGlyphString*" "glyphs")
@@ -3176,7 +3176,7 @@
 (define-method set_zero_width_marks
   (of-object "PangoOTBuffer")
   (c-name "pango_ot_buffer_set_zero_width_marks")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("gboolean" "zero_width_marks")
@@ -3223,7 +3223,7 @@
 (define-method add_feature
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_add_feature")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3235,7 +3235,7 @@
 (define-method maybe_add_feature
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_maybe_add_feature")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "gboolean")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3247,7 +3247,7 @@
 (define-method maybe_add_features
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_maybe_add_features")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "guint")
   (parameters
     '("PangoOTTableType" "table_type")
@@ -3259,7 +3259,7 @@
 (define-method get_feature_count
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_get_feature_count")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "guint")
   (parameters
     '("guint*" "n_gsub_features")
@@ -3270,7 +3270,7 @@
 (define-method substitute
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_substitute")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoOTBuffer*" "buffer")
@@ -3280,7 +3280,7 @@
 (define-method position
   (of-object "PangoOTRuleset")
   (c-name "pango_ot_ruleset_position")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoOTBuffer*" "buffer")
@@ -3290,7 +3290,7 @@
 (define-method to_script
   (of-object "PangoOTTag")
   (c-name "pango_ot_tag_to_script")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoScript")
 )
 
@@ -3305,7 +3305,7 @@
 (define-method to_language
   (of-object "PangoOTTag")
   (c-name "pango_ot_tag_to_language")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoLanguage*")
 )
 
@@ -3320,14 +3320,14 @@
 (define-method hash
   (of-object "PangoOTRulesetDescription")
   (c-name "pango_ot_ruleset_description_hash")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "guint")
 )
 
 (define-method equal
   (of-object "PangoOTRulesetDescription")
   (c-name "pango_ot_ruleset_description_equal")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "gboolean")
   (parameters
     '("const-PangoOTRulesetDescription*" "desc2")
@@ -3337,14 +3337,14 @@
 (define-method copy
   (of-object "PangoOTRulesetDescription")
   (c-name "pango_ot_ruleset_description_copy")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "PangoOTRulesetDescription*")
 )
 
 (define-method free
   (of-object "PangoOTRulesetDescription")
   (c-name "pango_ot_ruleset_description_free")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
 )
 
@@ -4238,7 +4238,7 @@
 (define-method kern_glyphs
   (of-object "PangoFcFont")
   (c-name "pango_fc_font_kern_glyphs")
-  (available "G_DEPRECATED")
+  (available "G_DEPRECATED_IN_0_0")
   (return-type "none")
   (parameters
     '("PangoGlyphString*" "glyphs")

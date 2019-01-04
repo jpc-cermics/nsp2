@@ -1525,22 +1525,22 @@
   (return-type "GdkPixbuf*")
 )
 
-(define-method set_stock_id
-  (of-object "GtkSourceGutterRendererPixbuf")
-  (c-name "gtk_source_gutter_renderer_pixbuf_set_stock_id")
-  (available "G_DEPRECATED")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "stock_id")
-  )
-)
+;; (define-method set_stock_id
+;;   (of-object "GtkSourceGutterRendererPixbuf")
+;;   (c-name "gtk_source_gutter_renderer_pixbuf_set_stock_id")
+;;   (available "G_DEPRECATED")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "stock_id")
+;;   )
+;; )
 
-(define-method get_stock_id
-  (of-object "GtkSourceGutterRendererPixbuf")
-  (c-name "gtk_source_gutter_renderer_pixbuf_get_stock_id")
-  (available "G_DEPRECATED")
-  (return-type "const-gchar*")
-)
+;; (define-method get_stock_id
+;;   (of-object "GtkSourceGutterRendererPixbuf")
+;;   (c-name "gtk_source_gutter_renderer_pixbuf_get_stock_id")
+;;   (available "G_DEPRECATED")
+;;   (return-type "const-gchar*")
+;; )
 
 (define-method set_gicon
   (of-object "GtkSourceGutterRendererPixbuf")
@@ -1889,22 +1889,22 @@
   )
 )
 
-(define-method set_stock_id
-  (of-object "GtkSourceMarkAttributes")
-  (c-name "gtk_source_mark_attributes_set_stock_id")
-  (available "G_DEPRECATED")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "stock_id")
-  )
-)
+;; (define-method set_stock_id
+;;   (of-object "GtkSourceMarkAttributes")
+;;   (c-name "gtk_source_mark_attributes_set_stock_id")
+;;   (available "G_DEPRECATED")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "stock_id")
+;;   )
+;; )
 
-(define-method get_stock_id
-  (of-object "GtkSourceMarkAttributes")
-  (c-name "gtk_source_mark_attributes_get_stock_id")
-  (available "G_DEPRECATED")
-  (return-type "const-gchar*")
-)
+;; (define-method get_stock_id
+;;   (of-object "GtkSourceMarkAttributes")
+;;   (c-name "gtk_source_mark_attributes_get_stock_id")
+;;   (available "G_DEPRECATED")
+;;   (return-type "const-gchar*")
+;; )
 
 (define-method set_icon_name
   (of-object "GtkSourceMarkAttributes")

@@ -3214,28 +3214,28 @@
 (define-method pressed
   (of-object "GtkButton")
   (c-name "gtk_button_pressed")
-  (available "GDK_DEPRECATED")
+  (available "GDK_DEPRECATED_IN_2_20")
   (return-type "none")
 )
 
 (define-method released
   (of-object "GtkButton")
   (c-name "gtk_button_released")
-  (available "GDK_DEPRECATED")
+  (available "GDK_DEPRECATED_IN_2_20")
   (return-type "none")
 )
 
 (define-method enter
   (of-object "GtkButton")
   (c-name "gtk_button_enter")
-  (available "GDK_DEPRECATED")
+  (available "GDK_DEPRECATED_IN_2_20")
   (return-type "none")
 )
 
 (define-method leave
   (of-object "GtkButton")
   (c-name "gtk_button_leave")
-  (available "GDK_DEPRECATED")
+  (available "GDK_DEPRECATED_IN_2_20")
   (return-type "none")
 )
 
