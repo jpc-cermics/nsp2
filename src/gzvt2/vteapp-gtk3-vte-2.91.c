@@ -656,6 +656,14 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 		   success && gdk_drag_context_get_actions (context) == GDK_ACTION_MOVE,
 		   time);
 }
+static void _dummy(const gchar *log_domain,
+		   GLogLevelFlags log_level,
+		   const gchar *message,
+		   gpointer user_data )
+{
+  /* Dummy does nothing */ 
+  return ;      
+}
 
 
 int
@@ -1453,6 +1461,9 @@ main(int argc, char **argv)
   gtk_widget_show_all(window);
 #endif
 
+  g_log_set_default_handler(  _dummy, NULL);
+
+  
   gtk_main();
   
   /* 

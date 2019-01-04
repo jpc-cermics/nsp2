@@ -403,11 +403,23 @@ static void _dummy(const gchar *log_domain,
   return ;      
 }
 
+static GLogWriterOutput
+null_log_writer (GLogLevelFlags   log_level,
+                 const GLogField *fields,
+                 gsize            n_fields,
+                 gpointer         user_data)
+{
+  return G_LOG_WRITER_HANDLED;
+}
+
 static void nsp_unset_gtk_error(int no_log)
 {
   if (no_log)
-    /* Set dummy for all levels */
-    g_log_set_default_handler(  _dummy, NULL);
+    {
+      /* Set dummy for all levels */
+      g_log_set_default_handler(  _dummy, NULL);
+      g_log_set_writer_func (null_log_writer, NULL, NULL);
+    }
   else
     /* Set default handler based on argument for appropriate log level */
     g_log_set_default_handler( g_log_default_handler, NULL);
