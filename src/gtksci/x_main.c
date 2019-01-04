@@ -403,6 +403,7 @@ static void _dummy(const gchar *log_domain,
   return ;      
 }
 
+#if GLIB_CHECK_VERSION (2, 50, 0)
 static GLogWriterOutput
 null_log_writer (GLogLevelFlags   log_level,
                  const GLogField *fields,
@@ -411,6 +412,7 @@ null_log_writer (GLogLevelFlags   log_level,
 {
   return G_LOG_WRITER_HANDLED;
 }
+#endif
 
 static void nsp_unset_gtk_error(int no_log)
 {
@@ -418,12 +420,18 @@ static void nsp_unset_gtk_error(int no_log)
     {
       /* Set dummy for all levels */
       g_log_set_default_handler(  _dummy, NULL);
+#if GLIB_CHECK_VERSION (2, 50, 0)
       g_log_set_writer_func (null_log_writer, NULL, NULL);
+#endif
     }
   else
-    /* Set default handler based on argument for appropriate log level */
-    g_log_set_default_handler( g_log_default_handler, NULL);
-
+    {
+      /* Set default handler based on argument for appropriate log level */
+      g_log_set_default_handler( g_log_default_handler, NULL);
+#if GLIB_CHECK_VERSION (2, 50, 0)
+      g_log_set_writer_func (g_log_writer_default, NULL, NULL);
+#endif
+    }
   /* test: if the following if is active 
    * warnings will be emited if no_log is FALSE 
    * and not if no_log is TRUE 
