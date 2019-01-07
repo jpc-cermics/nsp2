@@ -3255,6 +3255,8 @@ let dflt sname scast =
   Printf.sprintf"      %s = %s(nsp_%s->obj);\n" sname scast sname
 ;;
 
+(* XXXX : the default case should be improved, to remmove many special cases *)
+
 let cast_name object_data =
   match object_data.od_cast with
   | "GObject" -> "G_OBJECT"
@@ -3278,6 +3280,7 @@ let cast_name object_data =
   | "GtkWidget" -> "GTK_WIDGET"
   | "GtkWindow" -> "GTK_WINDOW"
   | "GdkCursor" -> "GDK_CURSOR" (* XXXX just for gtk3 not to be done for gtk2 *)
+  | "GCancellable" -> "G_CANCELLABLE"
   | _ -> object_data.od_cast;
 ;;
 

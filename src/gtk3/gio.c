@@ -21217,12 +21217,24 @@ int _wrap_g_socket_leave_multicast_group(Stack stack, int rhs, int opt, int lhs)
 #endif
 static int _wrap_g_socket_connect(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *address, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *address, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_connect(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "cancellable should be a GCancellable or None");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_connect(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -28490,7 +28502,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 28494 "gio.c"
+#line 28506 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -29129,7 +29141,7 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29133 "gio.c"
+#line 29145 "gio.c"
 
 
 #line 226 "codegen-3.0/gio.override"
@@ -29157,7 +29169,7 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 29161 "gio.c"
+#line 29173 "gio.c"
 
 
 #line 203 "codegen-3.0/gio.override"
@@ -29182,7 +29194,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 29186 "gio.c"
+#line 29198 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -29298,7 +29310,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29302 "gio.c"
+#line 29314 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -29689,4 +29701,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 29693 "gio.c"
+#line 29705 "gio.c"
