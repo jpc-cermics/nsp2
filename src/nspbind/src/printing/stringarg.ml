@@ -664,7 +664,7 @@ let gunichararg_write_param _oname params info _byref=
   let dflt_tmpl pname =
     Printf.sprintf "  if (nsp_%s != NULL) {\n" pname
     ^ Printf.sprintf "      if (nsp_%s[1] != 0) {\n" pname
-    ^ Printf.sprintf "          Scierror( \"%s should be a 1 character unicode string\");\n" pname
+    ^ Printf.sprintf "          Scierror( \"%s should be a 1 character unicode string\\n\");\n" pname
     ^ Printf.sprintf "          return RET_BUG;\n"
     ^ Printf.sprintf "      }\n"
     ^ Printf.sprintf "      %s = (gunichar)nsp_%s[0];\n" pname pname
@@ -1938,7 +1938,7 @@ let nulldflt pname =
   Printf.sprintf "  else if (nsp_%s && IsFile(nsp_%s)\n"  pname pname ^
   Printf.sprintf "      %s = PyFile_AsFile(nsp_%s);\n"  pname  pname ^
   Printf.sprintf "  else if (nsp_%s) {\n"  pname  ^
-  Printf.sprintf "      Scierror( \"%s should be a file object or None\");\n"  pname  ^
+  Printf.sprintf "      Scierror( \"%s should be a file object or None\\n\");\n"  pname  ^
   Printf.sprintf "      return RET_BUG;\n"  ^
   Printf.sprintf "  }"
 ;;
@@ -1947,7 +1947,7 @@ let null pname =
   Printf.sprintf "  if (nsp_%s && PyFile_Check(nsp_%s)\n"  pname  pname ^
   Printf.sprintf "      %s = PyFile_AsFile(nsp_%s);\n" pname  pname  ^
   Printf.sprintf "  else if (nsp_%s != Py_None) {\n" pname  ^
-  Printf.sprintf "      Scierror( \"%s should be a file object or None\");\n"  pname ^
+  Printf.sprintf "      Scierror( \"%s should be a file object or None\\n\");\n"  pname ^
   Printf.sprintf "      return RET_BUG;\n" ^
   Printf.sprintf "  }\n"
 ;;
@@ -3235,7 +3235,7 @@ let nulldflt sname stype scast =
   Printf.sprintf"    if ( Is%s((NspObject *)nsp_%s))\n" stype sname  ^
   Printf.sprintf"      %s = %s(nsp_%s->obj);\n" sname scast sname ^
   Printf.sprintf"    else if (! IsNone((NspObject *)nsp_%s)) {\n" sname ^
-  Printf.sprintf"         Scierror( \"%s should be a %s or None\");\n" sname stype ^
+  Printf.sprintf"         Scierror( \"%s should be a %s or None\\n\");\n" sname stype ^
   Printf.sprintf"         return RET_BUG;\n" ^
   Printf.sprintf"    }\n" ^
   Printf.sprintf"  }\n"
@@ -3245,7 +3245,7 @@ let null sname stype scast =
   Printf.sprintf"  if ( Is%s((NspObject *)nsp_%s))\n" stype sname ^
   Printf.sprintf"      %s = %s(nsp_%s->obj);\n" sname scast sname ^
   Printf.sprintf"  else if ( ! IsNone((NspObject *) nsp_%s))  {\n" sname ^
-  Printf.sprintf"      Scierror( \"%s should be a %s or None\");\n" sname stype ^
+  Printf.sprintf"      Scierror( \"%s should be a %s or None\\n\");\n" sname stype ^
   Printf.sprintf"      return RET_BUG;\n" ^
   Printf.sprintf"  }\n"
 ;;
@@ -4069,7 +4069,7 @@ let boxed_check name typename typecode =
   Printf.sprintf "  if (nspg_boxed_check(nsp_%s, %s))\
    \n      %s = nspg_boxed_get(nsp_%s, %s);\
    \n  else {\
-   \n      Scierror( \"%s should be a %s\");\
+   \n      Scierror( \"%s should be a %s\\n\");\
    \n      return RET_BUG;\
    \n  }\n" name typecode name name typename name typename
 ;;
@@ -4079,7 +4079,7 @@ let boxed_null name typename typecode =
     \n    if (nspg_boxed_check(nsp_%s, %s))\
     \n      %s = nspg_boxed_get(nsp_%s, %s);\
     \n    else if (! IsNone(nsp_%s)) {\
-    \n      Scierror(\"%s should be a %s or None\");\
+    \n      Scierror(\"%s should be a %s or None\\n\");\
     \n      return RET_BUG;\
     \n    }\
     \n  }\n" name name typecode name name typename name name typename
@@ -4182,7 +4182,7 @@ let string_array_check cast name =
   \n    { %s = %s ((NspSMatrix *) nsp_%s)->S;}\
   \n  else\
   \n    {\
-  \n      Scierror(\"Error: %s should be of type SMat\");\
+  \n      Scierror(\"Error: %s should be of type SMat\\n\");\
   \n      return RET_BUG;\
   \n    }\n" name name cast name name
 ;;
@@ -4191,7 +4191,7 @@ let string_array_null cast name =
   Printf.sprintf "  if ( IsSMat(nsp_%s))\
   \n    %s = %s ((NspSMatrix *) nsp_%s)->S;\
   \n  else if ( ! IsNone(nsp_%s) ) {\
-  \n      Scierror(\"Error: %s should be of type SMat\");\
+  \n      Scierror(\"Error: %s should be of type SMat\\n\");\
   \n      return RET_BUG;\
   \n  }\n" name name cast name name name
   ;;
@@ -4399,7 +4399,7 @@ let cba_null name get check ptype  =
     "  if (%s(nsp_%s))\
    \n      %s = %s(nsp_%s);\
    \n  else if ( ! IsNone(nsp_%s)) {\
-   \n      Scierror( \"%s should be a %s or None\");\
+   \n      Scierror( \"%s should be a %s or None\\n\");\
    \n      return RET_BUG;\
    \n  }\n" check name name get name name name ptype
 ;;
@@ -4472,7 +4472,7 @@ let pa_check name typename typecode =
   Printf.sprintf "  if (nspg_pointer_check(nsp_%s, %s))\
    \n      %s = nspg_pointer_get(nsp_%s, %s);\
    \n  else {\
-   \n      Scierror( \"%s should be a %s\");\
+   \n      Scierror( \"%s should be a %s\\n\");\
    \n      return RET_BUG;\
    \n  }\n"  name typecode name name typename name typename
 ;;
@@ -4481,7 +4481,7 @@ let pa_null name typename typecode =
   Printf.sprintf "  if (nspg_pointer_check(nsp_%s, %s))\
    \n      %s = nspg_pointer_get(nsp_%s, %s);\
    \n  else if ( ! IsNone(nsp_%s) ) {\
-   \n      Scierror( \"%s should be a %s or None\");\
+   \n      Scierror( \"%s should be a %s or None\\n\");\
    \n      return RET_BUG;\
    \n  }\n" name typecode name name typename name name typename
 ;;
@@ -4683,7 +4683,7 @@ let gerror_arg=
 let normal name =
   Printf.sprintf "  %s = nsp_gtk_tree_path_from_nspobject(nsp_%s);\
    \n  if (!%s) {\
-   \n      Scierror( \"could not convert %s to a GtkTreePath\");\
+   \n      Scierror( \"could not convert %s to a GtkTreePath\\n\");\
    \n      return RET_BUG;\
    \n  }\n" name name name name
 ;;
@@ -4692,7 +4692,7 @@ let null name =
   Printf.sprintf "  if ( ! IsNone(nsp_%s)) {\
    \n      %s = nsp_gtk_tree_path_from_nspobject(nsp_%s);\
    \n      if (!%s) {\
-   \n          Scierror( \"could not convert %s to a GtkTreePath\");\
+   \n          Scierror( \"could not convert %s to a GtkTreePath\\n\");\
    \n          return RET_BUG;\
    \n      }\
    \n  }\n" name name name name name
@@ -4703,7 +4703,7 @@ let null1 name =
   Printf.sprintf "  if (PyTuple_Check(nsp_%s))\
    \n      %s = nsp_gtk_tree_path_from_nspobject(nsp_%s);\
    \n  else if ( !IsNone(nsp_%s)) {\
-   \n      Scierror( \"%s should be a zzzGtkTreePath or None\");\
+   \n      Scierror( \"%s should be a GtkTreePath or None\\n\");\
    \n      return RET_BUG;\
    \n  }\n" name name name name name
 ;;

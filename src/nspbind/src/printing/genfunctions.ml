@@ -206,7 +206,7 @@ let write_function_wrapper or_c_name or_byref f_obj template template_call handl
 
   let deprecated =
     if f_obj.deprecated  then
-      Printf.sprintf "  Scierror(\"%%s: deprecated %s\",NspFname(stack)); return RET_BUG;\n"
+      Printf.sprintf "  Scierror(\"%%s: deprecated %s\\n\",NspFname(stack)); return RET_BUG;\n"
         f_obj.deprecated_msg
     else
       "" in
