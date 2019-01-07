@@ -65,7 +65,9 @@ let method_call_tmpl objinfo =
 ;;
 
 (*
- * nspgobject_new could be used instead of gobject_create
+ * nspgobject_new could be used instead of gobject_create in constructor_tmpl_std_gtkclass
+ * the main advantage being that it creates the most specialized object and this is better
+ * This is mostly done in override and thus it should be better to make it automatically 
  *)
 
 let constructor_tmpl_std =
@@ -101,7 +103,10 @@ let constructor_tmpl_std_gtkclass =
   "$(codecallf)" ^
   "$(codeafter)\n" ^
   "  nsp_type_$(typename_dc) = new_type_$(typename_dc)(T_BASE);\n" ^
-  "  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_$(typename_dc) );\n " ^
+  "  /* prefer most specialized class than the one specified indef file\n" ^
+  "   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_$(typename_dc) );\n " ^
+  "   */\n" ^
+  "  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);\n" ^
   "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
   "  MoveObj(stack,1,nsp_ret);\n" ^
   "  return 1;\n" ^

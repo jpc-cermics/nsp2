@@ -12420,7 +12420,7 @@
   (return-type "gboolean")
   (parameters
     '("GSocketAddress*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )

@@ -1688,7 +1688,7 @@ let int64_arg_write_param _oname params info _byref=
     match params.pdflt with
     | None -> varlist_add info.varlist "gint64"  params.pname
     | Some x -> varlist_add info.varlist "gint64" (params.pname ^ " = " ^ x) in
-  let info = add_parselist info params.pvarargs "L"  ["&" ^ params.pname]  [params.pname] in
+  let info = add_parselist info params.pvarargs "s_int"  ["&" ^ params.pname]  [params.pname] in
   { info with arglist = params.pname :: info.arglist; varlist = varlist;}
 ;;
 
@@ -3517,7 +3517,8 @@ let gtk_object_arg_write_return object_data ptype ownsreturn info =
  let varlist = varlist_add  varlist "NspObject" "*nsp_ret" in
  let name = String.lowercase object_data.od_objname in
  let codeafter =
-   if name = "gtkwidget" then
+   (* always prefer nspgobject_new to gobject_create because it creates the most specialized type searching in ret *)
+   if name != "xxxxx" (* = "gtkwidget" *) then
    (
    if ownsreturn then
      (
@@ -3567,8 +3568,10 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
       varlist_add  varlist "NspObject" "*nsp_ret"
     else
       varlist in
-  let attrcodeafter =
-    if ownsreturn then
+  let attrcodeafter = 									
+    if true then
+     (
+     if ownsreturn then
       (
        let name = String.lowercase object_data.od_objname in
        Printf.sprintf
@@ -3584,7 +3587,27 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
 	 \n  return (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_%s);"   name name name;
       )
-    in
+    )
+  else
+     (
+     if ownsreturn then
+      (
+       let name = String.lowercase object_data.od_objname in
+       Printf.sprintf
+	 "  nsp_type_%s = new_type_%s(T_BASE);\
+	 \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return NULL;\
+         \n  g_object_unref(ret);\
+         \n  return nsp_ret;" name name ;
+      )
+    else
+      (
+       let name = String.lowercase object_data.od_objname in
+       Printf.sprintf
+	 "  nsp_type_%s = new_type_%s(T_BASE);\
+	 \n  return (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return NULL;" name name;
+      )
+    )
+  in
   { info with varlist = varlist ; attrcodeafter = attrcodeafter :: info.attrcodeafter ;}
 ;;
 
