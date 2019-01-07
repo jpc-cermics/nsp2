@@ -14,7 +14,7 @@ pango.defs: Makefile
 	$(H2DEF) -s pango /usr/include/pango-1.0/pango/pango*.h
 
 gio.defs: Makefile
-	$(H2DEF) -s gio /usr/local/src/mingw32-build/mingw-cross-apps-jpc/gtk+3.22/glib-2.50.2/gio/*.h
+	$(H2DEF) -s gio /usr/include/glib-2.0/gio/*.h
 
 glib.defs: Makefile
 	$(H2DEF) -s glib /usr/include/glib-2.0/glib/*.h

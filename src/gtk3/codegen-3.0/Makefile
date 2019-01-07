@@ -38,6 +38,7 @@ glib.c: glib.defs
 	@echo "generating $*.c"
 	@$(PROG) -cp "codegen-3.0/" -p $* -o $*.c $*
 	@mv gerror.h ../../include/nsp/gtk/
+	@mv gsource.h ../../include/nsp/gtk/
 	@mv *.h ../../include/nsp/
 	@mv $*.c ../
 

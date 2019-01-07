@@ -290,6 +290,377 @@ static NspMethods *gerror_get_methods(void) { return gerror_methods;};
 static AttrTab gerror_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
+/* -----------NspGSource ----------- */
+
+
+#define  NspGSource_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gsource.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGSource inherits from GBoxed 
+ */
+
+int nsp_type_gsource_id=0;
+NspTypeGSource *nsp_type_gsource=NULL;
+
+/*
+ * Type object for NspGSource 
+ * all the instance of NspTypeGSource share the same id. 
+ * nsp_type_gsource: is an instance of NspTypeGSource 
+ *    used for objects of NspGSource type (i.e built with new_gsource) 
+ * other instances are used for derived classes 
+ */
+NspTypeGSource *new_type_gsource(type_mode mode)
+{
+  NspTypeGSource *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gsource != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gsource;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gsource_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gsource_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gsource;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gsource */ 
+
+  top->s_type =  (s_type_func *) nsp_gsource_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gsource_type_short_string;
+  /* top->create = (create_func*) int_gsource_create;*/
+
+  /* specific methods for gsource */
+
+  type->init = (init_func *) init_gsource;
+
+  /* 
+   * NspGSource interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gsource_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGSource called nsp_type_gsource
+       */
+      type->id =  nsp_type_gsource_id = nsp_new_type_id();
+      nsp_type_gsource = type;
+      if ( nsp_register_type(nsp_type_gsource) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gsource, G_TYPE_SOURCE);
+      return ( mode == T_BASE ) ? type : new_type_gsource(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gsource_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGSource instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gsource(NspGSource *Obj,NspTypeGSource *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGSource 
+ */
+
+NspGSource *new_gsource() 
+{
+  NspGSource *loc;
+  /* type must exists */
+  nsp_type_gsource = new_type_gsource(T_BASE);
+  if ( (loc = malloc(sizeof(NspGSource)))== NULLGSOURCE) return loc;
+  /* initialize object */
+  if ( init_gsource(loc,nsp_type_gsource) == FAIL) return NULLGSOURCE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGSource 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gsource_type_name[]="GSource";
+static char gsource_short_type_name[]="GSource";
+
+static char *nsp_gsource_type_as_string(void)
+{
+  return(gsource_type_name);
+}
+
+static char *nsp_gsource_type_short_string(NspObject *v)
+{
+  return(gsource_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGSource objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGSource   *nsp_gsource_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gsource_id)  == TRUE  ) return ((NspGSource *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gsource));
+  return NULL;
+}
+
+int IsGSourceObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gsource_id);
+}
+
+int IsGSource(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gsource_id);
+}
+
+NspGSource  *GetGSourceCopy(Stack stack, int i)
+{
+  if (  GetGSource(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGSource  *GetGSource(Stack stack, int i)
+{
+  NspGSource *M;
+  if (( M = nsp_gsource_object(NthObj(i))) == NULLGSOURCE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGSource *gsource_copy(NspGSource *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gsource);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GSource
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_g_source_destroy(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_source_destroy(NSP_GBOXED_GET(self, GSource));
+  return 0;
+}
+
+static int _wrap_g_source_set_priority(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, t_end};
+  int priority;
+  if ( GetArgs(stack,rhs,opt,T,&priority) == FAIL) return RET_BUG;
+  g_source_set_priority(NSP_GBOXED_GET(self, GSource),priority);
+  return 0;
+}
+
+static int _wrap_g_source_get_priority(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_source_get_priority(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_source_set_can_recurse(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool, t_end};
+  int can_recurse;
+  if ( GetArgs(stack,rhs,opt,T,&can_recurse) == FAIL) return RET_BUG;
+  g_source_set_can_recurse(NSP_GBOXED_GET(self, GSource),can_recurse);
+  return 0;
+}
+
+static int _wrap_g_source_get_can_recurse(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_source_get_can_recurse(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_source_get_id(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_source_get_id(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_source_is_destroyed(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_source_is_destroyed(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_source_set_name(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *name;
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  g_source_set_name(NSP_GBOXED_GET(self, GSource),name);
+  return 0;
+}
+
+static int _wrap_g_source_get_name(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+  CheckRhs(0,0);
+  ret =g_source_get_name(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+#if GLIB_CHECK_VERSION(2,36,0)
+static int _wrap_g_source_set_ready_time(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, t_end};
+  gint64 ready_time;
+  if ( GetArgs(stack,rhs,opt,T,&ready_time) == FAIL) return RET_BUG;
+  g_source_set_ready_time(NSP_GBOXED_GET(self, GSource),ready_time);
+  return 0;
+}
+
+#else
+int _wrap_g_source_set_ready_time(Stack stack, int rhs, int opt, int lhs) /* set_ready_time */
+{
+  Scierror("Error: function g_source_set_ready_time not available\n");
+  return RET_BUG;
+}
+#endif
+#if GLIB_CHECK_VERSION(2,36,0)
+static int _wrap_g_source_get_ready_time(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint64 ret;
+  CheckRhs(0,0);
+  ret =g_source_get_ready_time(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#else
+int _wrap_g_source_get_ready_time(Stack stack, int rhs, int opt, int lhs) /* get_ready_time */
+{
+  Scierror("Error: function g_source_get_ready_time not available\n");
+  return RET_BUG;
+}
+#endif
+static int _wrap_g_source_add_child_source(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GSource *child_source = NULL;
+  NspObject *nsp_child_source = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_child_source) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_child_source, G_TYPE_SOURCE))
+      child_source = nspg_boxed_get(nsp_child_source, GSource);
+  else {
+      Scierror( "child_source should be a GSource");
+      return RET_BUG;
+  }
+  g_source_add_child_source(NSP_GBOXED_GET(self, GSource),child_source);
+  return 0;
+}
+
+static int _wrap_g_source_remove_child_source(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GSource *child_source = NULL;
+  NspObject *nsp_child_source = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_child_source) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_child_source, G_TYPE_SOURCE))
+      child_source = nspg_boxed_get(nsp_child_source, GSource);
+  else {
+      Scierror( "child_source should be a GSource");
+      return RET_BUG;
+  }
+  g_source_remove_child_source(NSP_GBOXED_GET(self, GSource),child_source);
+  return 0;
+}
+
+static int _wrap_g_source_get_time(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint64 ret;
+  CheckRhs(0,0);
+  ret =g_source_get_time(NSP_GBOXED_GET(self, GSource));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods gsource_methods[] = {
+  {"destroy",(nsp_method *) _wrap_g_source_destroy},
+  {"set_priority",(nsp_method *) _wrap_g_source_set_priority},
+  {"get_priority",(nsp_method *) _wrap_g_source_get_priority},
+  {"set_can_recurse",(nsp_method *) _wrap_g_source_set_can_recurse},
+  {"get_can_recurse",(nsp_method *) _wrap_g_source_get_can_recurse},
+  {"get_id",(nsp_method *) _wrap_g_source_get_id},
+  {"is_destroyed",(nsp_method *) _wrap_g_source_is_destroyed},
+  {"set_name",(nsp_method *) _wrap_g_source_set_name},
+  {"get_name",(nsp_method *) _wrap_g_source_get_name},
+  {"set_ready_time",(nsp_method *) _wrap_g_source_set_ready_time},
+  {"get_ready_time",(nsp_method *) _wrap_g_source_get_ready_time},
+  {"add_child_source",(nsp_method *) _wrap_g_source_add_child_source},
+  {"remove_child_source",(nsp_method *) _wrap_g_source_remove_child_source},
+  {"get_time",(nsp_method *) _wrap_g_source_get_time},
+  { NULL, NULL}
+};
+
+static NspMethods *gsource_get_methods(void) { return gsource_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
 /* -----------NspGVariantType ----------- */
 
 
@@ -1642,7 +2013,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1646 "glib.c"
+#line 2017 "glib.c"
 
 
 static int
@@ -2129,7 +2500,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 2133 "glib.c"
+#line 2504 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -2712,6 +3083,19 @@ int _wrap_g_main_depth(Stack stack, int rhs, int opt, int lhs) /* g_main_depth *
   CheckRhs(0,0);
     ret =g_main_depth();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_main_current_source(Stack stack, int rhs, int opt, int lhs) /* g_main_current_source */
+{
+  GSource *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =g_main_current_source();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gsource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
@@ -4410,6 +4794,7 @@ int _wrap_glib_check_version(Stack stack, int rhs, int opt, int lhs) /* glib_che
 static OpTab glib_func[]={
  /* gerror_new g_error_new_literal */
  /* gerror_new g_error_new_valist */
+ /* gsource_new g_source_new */
   { "g_variant_type_new", _wrap_g_variant_type_new},
   { "gvarianttype_new", _wrap_g_variant_type_new},
   { "g_variant_type_new_array", _wrap_g_variant_type_new_array},
@@ -4493,6 +4878,7 @@ static OpTab glib_func[]={
   { "g_hostname_to_unicode", _wrap_g_hostname_to_unicode},
   { "g_list_alloc", _wrap_g_list_alloc},
   { "g_main_depth", _wrap_g_main_depth},
+  { "g_main_current_source", _wrap_g_main_current_source},
   { "g_source_set_name_by_id", _wrap_g_source_set_name_by_id},
   { "g_source_remove", _wrap_g_source_remove},
   { "g_markup_escape_text", _wrap_g_markup_escape_text},
@@ -4658,9 +5044,19 @@ void glib_Interf_Info(int i, char **fname, function ( **f))
   *fname = glib_func[i].name;
   *f = glib_func[i].fonc;
 }
+
+/* ----------- enums and flags ----------- */
+
+void
+glib_add_constants(NspObject *module, const gchar *strip_prefix)
+{
+  nsp_flags_add_constants((NspHash * ) module, G_TYPE_IO_CONDITION, strip_prefix);
+}
+
 void nsp_initialize_glib_types(void)
 {
   new_type_gerror(T_BASE);
+  new_type_gsource(T_BASE);
   new_type_gvarianttype(T_BASE);
   new_type_gvariant(T_BASE);
 }
@@ -4743,4 +5139,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 4747 "glib.c"
+#line 5143 "glib.c"

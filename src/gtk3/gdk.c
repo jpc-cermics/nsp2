@@ -318,7 +318,7 @@ static int _wrap_gdk_event_get_window(NspGdkEvent *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
   ret =gdk_event_get_window(NSP_GBOXED_GET(self, GdkEvent));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -420,7 +420,7 @@ static int _wrap_gdk_event_get_device(NspGdkEvent *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
   ret =gdk_event_get_device(NSP_GBOXED_GET(self, GdkEvent));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -441,7 +441,7 @@ static int _wrap_gdk_event_get_source_device(NspGdkEvent *self,Stack stack,int r
   CheckRhs(0,0);
   ret =gdk_event_get_source_device(NSP_GBOXED_GET(self, GdkEvent));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -536,7 +536,7 @@ static int _wrap_gdk_event_get_screen(NspGdkEvent *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
   ret =gdk_event_get_screen(NSP_GBOXED_GET(self, GdkEvent));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2128,7 +2128,7 @@ static int _wrap_gdk_device_get_window_at_position(NspGdkDevice *self,Stack stac
   if ( GetArgs(stack,rhs,opt,T,&win_x, &win_y) == FAIL) return RET_BUG;
     ret =gdk_device_get_window_at_position(GDK_DEVICE(self->obj),&win_x,&win_y);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2143,7 +2143,7 @@ static int _wrap_gdk_device_get_window_at_position_double(NspGdkDevice *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&win_x, &win_y) == FAIL) return RET_BUG;
     ret =gdk_device_get_window_at_position_double(GDK_DEVICE(self->obj),&win_x,&win_y);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2269,7 +2269,7 @@ static int _wrap_gdk_device_get_display(NspGdkDevice *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gdk_device_get_display(GDK_DEVICE(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2281,7 +2281,7 @@ static int _wrap_gdk_device_get_associated_device(NspGdkDevice *self,Stack stack
   CheckRhs(0,0);
     ret =gdk_device_get_associated_device(GDK_DEVICE(self->obj));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2352,7 +2352,7 @@ static int _wrap_gdk_device_get_last_event_window(NspGdkDevice *self,Stack stack
   CheckRhs(0,0);
     ret =gdk_device_get_last_event_window(GDK_DEVICE(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2635,7 +2635,7 @@ static int _wrap_gdk_device_manager_get_display(NspGdkDeviceManager *self,Stack 
   CheckRhs(0,0);
     ret =gdk_device_manager_get_display(GDK_DEVICE_MANAGER(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2662,7 +2662,7 @@ static int _wrap_gdk_device_manager_get_client_pointer(NspGdkDeviceManager *self
   CheckRhs(0,0);
     ret =gdk_device_manager_get_client_pointer(GDK_DEVICE_MANAGER(self->obj));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2908,7 +2908,7 @@ static int _wrap_gdk_display_get_screen(NspGdkDisplay *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&screen_num) == FAIL) return RET_BUG;
     ret =gdk_display_get_screen(GDK_DISPLAY(self->obj),screen_num);
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2920,7 +2920,7 @@ static int _wrap_gdk_display_get_default_screen(NspGdkDisplay *self,Stack stack,
   CheckRhs(0,0);
     ret =gdk_display_get_default_screen(GDK_DISPLAY(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3076,7 +3076,7 @@ static int _wrap_gdk_display_get_default_group(NspGdkDisplay *self,Stack stack,i
   CheckRhs(0,0);
     ret =gdk_display_get_default_group(GDK_DISPLAY(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3163,7 +3163,7 @@ static int _wrap_gdk_display_get_device_manager(NspGdkDisplay *self,Stack stack,
   CheckRhs(0,0);
     ret =gdk_display_get_device_manager(GDK_DISPLAY(self->obj));
   nsp_type_gdkdevicemanager = new_type_gdkdevicemanager(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevicemanager))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3406,7 +3406,7 @@ static int _wrap_gdk_display_manager_get_default_display(NspGdkDisplayManager *s
   CheckRhs(0,0);
     ret =gdk_display_manager_get_default_display(GDK_DISPLAY_MANAGER(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3439,7 +3439,7 @@ static int _wrap_gdk_display_manager_open_display(NspGdkDisplayManager *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =gdk_display_manager_open_display(GDK_DISPLAY_MANAGER(self->obj),name);
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3667,7 +3667,7 @@ static int _wrap_gdk_drag_context_get_device(NspGdkDragContext *self,Stack stack
   CheckRhs(0,0);
     ret =gdk_drag_context_get_device(GDK_DRAG_CONTEXT(self->obj));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3716,7 +3716,7 @@ static int _wrap_gdk_drag_context_get_source_window(NspGdkDragContext *self,Stac
   CheckRhs(0,0);
     ret =gdk_drag_context_get_source_window(GDK_DRAG_CONTEXT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3728,7 +3728,7 @@ static int _wrap_gdk_drag_context_get_dest_window(NspGdkDragContext *self,Stack 
   CheckRhs(0,0);
     ret =gdk_drag_context_get_dest_window(GDK_DRAG_CONTEXT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4272,7 +4272,7 @@ static int _wrap_gdk_gl_context_get_display(NspGdkGLContext *self,Stack stack,in
   CheckRhs(0,0);
     ret =gdk_gl_context_get_display(GDK_GL_CONTEXT(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4292,7 +4292,7 @@ static int _wrap_gdk_gl_context_get_window(NspGdkGLContext *self,Stack stack,int
   CheckRhs(0,0);
     ret =gdk_gl_context_get_window(GDK_GL_CONTEXT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4312,7 +4312,7 @@ static int _wrap_gdk_gl_context_get_shared_context(NspGdkGLContext *self,Stack s
   CheckRhs(0,0);
     ret =gdk_gl_context_get_shared_context(GDK_GL_CONTEXT(self->obj));
   nsp_type_gdkglcontext = new_type_gdkglcontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkglcontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4911,7 +4911,7 @@ static int _wrap_gdk_window_get_visual(NspGdkWindow *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gdk_window_get_visual(GDK_WINDOW(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4923,7 +4923,7 @@ static int _wrap_gdk_window_get_screen(NspGdkWindow *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gdk_window_get_screen(GDK_WINDOW(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4935,7 +4935,7 @@ static int _wrap_gdk_window_get_display(NspGdkWindow *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gdk_window_get_display(GDK_WINDOW(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5552,7 +5552,7 @@ static int _wrap_gdk_window_get_cursor(NspGdkWindow *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gdk_window_get_cursor(GDK_WINDOW(self->obj));
   nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcursor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5575,7 +5575,7 @@ static int _wrap_gdk_window_get_device_cursor(NspGdkWindow *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdevice, &device) == FAIL) return RET_BUG;
     ret =gdk_window_get_device_cursor(GDK_WINDOW(self->obj),GDK_DEVICE(device->obj));
   nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcursor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5765,7 +5765,7 @@ static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gdk_window_get_parent(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5777,7 +5777,7 @@ static int _wrap_gdk_window_get_toplevel(NspGdkWindow *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =gdk_window_get_toplevel(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5789,7 +5789,7 @@ static int _wrap_gdk_window_get_effective_parent(NspGdkWindow *self,Stack stack,
   CheckRhs(0,0);
     ret =gdk_window_get_effective_parent(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5801,7 +5801,7 @@ static int _wrap_gdk_window_get_effective_toplevel(NspGdkWindow *self,Stack stac
   CheckRhs(0,0);
     ret =gdk_window_get_effective_toplevel(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5955,7 +5955,7 @@ static int _wrap_gdk_window_get_group(NspGdkWindow *self,Stack stack,int rhs,int
   CheckRhs(0,0);
     ret =gdk_window_get_group(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6395,7 +6395,7 @@ static int _wrap_gdk_window_get_frame_clock(NspGdkWindow *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gdk_window_get_frame_clock(GDK_WINDOW(self->obj));
   nsp_type_gdkframeclock = new_type_gdkframeclock(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkframeclock))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6521,7 +6521,7 @@ static int _wrap_gdk_window_create_gl_context(NspGdkWindow *self,Stack stack,int
     return RET_BUG;
   }
   nsp_type_gdkglcontext = new_type_gdkglcontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkglcontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7096,7 +7096,7 @@ static int _wrap_gdk_screen_get_system_visual(NspGdkScreen *self,Stack stack,int
   CheckRhs(0,0);
     ret =gdk_screen_get_system_visual(GDK_SCREEN(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7108,7 +7108,7 @@ static int _wrap_gdk_screen_get_rgba_visual(NspGdkScreen *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gdk_screen_get_rgba_visual(GDK_SCREEN(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7129,7 +7129,7 @@ static int _wrap_gdk_screen_get_root_window(NspGdkScreen *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gdk_screen_get_root_window(GDK_SCREEN(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7141,7 +7141,7 @@ static int _wrap_gdk_screen_get_display(NspGdkScreen *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gdk_screen_get_display(GDK_SCREEN(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7369,7 +7369,7 @@ static int _wrap_gdk_screen_get_active_window(NspGdkScreen *self,Stack stack,int
   CheckRhs(0,0);
     ret =gdk_screen_get_active_window(GDK_SCREEN(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7703,7 +7703,7 @@ static int _wrap_gdk_visual_get_screen(NspGdkVisual *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gdk_visual_get_screen(GDK_VISUAL(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8004,8 +8004,11 @@ _wrap_gdk_cursor_new_from_surface (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gdk_cursor_new_from_surface(GDK_DISPLAY(display->obj),surface,x,y))== NULL) return RET_BUG;
 
   nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcursor );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcursor );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8021,8 +8024,11 @@ _wrap_gdk_cursor_new_from_pixbuf (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gdk_cursor_new_from_pixbuf(GDK_DISPLAY(display->obj),GDK_PIXBUF(pixbuf->obj),x,y))== NULL) return RET_BUG;
 
   nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcursor );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcursor );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8048,7 +8054,7 @@ _wrap_gdk_cursor_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 8052 "gdk.c"
+#line 8058 "gdk.c"
 
 
 #line 718 "codegen-3.0/gdk.override"
@@ -8073,7 +8079,7 @@ _wrap_gdk_cursor_new_for_display (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 8077 "gdk.c"
+#line 8083 "gdk.c"
 
 
 static int _wrap_gdk_cursor_get_display(NspGdkCursor *self,Stack stack,int rhs,int opt,int lhs)
@@ -8083,7 +8089,7 @@ static int _wrap_gdk_cursor_get_display(NspGdkCursor *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gdk_cursor_get_display(GDK_CURSOR(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8095,7 +8101,7 @@ static int _wrap_gdk_cursor_get_image(NspGdkCursor *self,Stack stack,int rhs,int
   CheckRhs(0,0);
     ret =gdk_cursor_get_image(GDK_CURSOR(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8361,7 +8367,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 8365 "gdk.c"
+#line 8371 "gdk.c"
 
 
 static int
@@ -8380,8 +8386,11 @@ _wrap_gdk_pixbuf_new_from_resource_at_scale (Stack stack, int rhs, int opt, int 
   }
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8401,8 +8410,11 @@ _wrap_gdk_pixbuf_new_from_resource (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8423,8 +8435,11 @@ _wrap_gdk_pixbuf_new_from_file_at_scale (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8445,8 +8460,11 @@ _wrap_gdk_pixbuf_new_from_file_at_size (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8466,8 +8484,11 @@ _wrap_gdk_pixbuf_new_from_file (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8483,8 +8504,11 @@ _wrap_gdk_pixbuf_new_subpixbuf (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gdk_pixbuf_new_subpixbuf(GDK_PIXBUF(src_pixbuf->obj),src_x,src_y,width,height))== NULL) return RET_BUG;
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8503,8 +8527,11 @@ _wrap_gdk_pixbuf_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gdk_pixbuf_new(colorspace,has_alpha,bits_per_sample,width,height))== NULL) return RET_BUG;
 
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8567,7 +8594,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 8571 "gdk.c"
+#line 8598 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8613,7 +8640,7 @@ static int _wrap_gdk_pixbuf_copy(NspGdkPixbuf *self,Stack stack,int rhs,int opt,
   CheckRhs(0,0);
     ret =gdk_pixbuf_copy(GDK_PIXBUF(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8722,7 +8749,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8726 "gdk.c"
+#line 8753 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8766,7 +8793,7 @@ static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&substitute_color, &r, &g, &b) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_add_alpha(GDK_PIXBUF(self->obj),substitute_color,r,g,b);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8799,7 +8826,7 @@ static int _wrap_gdk_pixbuf_apply_embedded_orientation(NspGdkPixbuf *self,Stack 
   CheckRhs(0,0);
     ret =gdk_pixbuf_apply_embedded_orientation(GDK_PIXBUF(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8873,7 +8900,7 @@ static int _wrap_gdk_pixbuf_scale_simple(NspGdkPixbuf *self,Stack stack,int rhs,
       return RET_BUG;
     ret =gdk_pixbuf_scale_simple(GDK_PIXBUF(self->obj),dest_width,dest_height,interp_type);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8891,7 +8918,7 @@ static int _wrap_gdk_pixbuf_composite_color_simple(NspGdkPixbuf *self,Stack stac
       return RET_BUG;
     ret =gdk_pixbuf_composite_color_simple(GDK_PIXBUF(self->obj),dest_width,dest_height,interp_type,overall_alpha,check_size,color1,color2);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8907,7 +8934,7 @@ static int _wrap_gdk_pixbuf_rotate_simple(NspGdkPixbuf *self,Stack stack,int rhs
       return RET_BUG;
     ret =gdk_pixbuf_rotate_simple(GDK_PIXBUF(self->obj),angle);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8921,7 +8948,7 @@ static int _wrap_gdk_pixbuf_flip(NspGdkPixbuf *self,Stack stack,int rhs,int opt,
   if ( GetArgs(stack,rhs,opt,T,&horizontal) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_flip(GDK_PIXBUF(self->obj),horizontal);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8979,7 +9006,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8983 "gdk.c"
+#line 9010 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function * )_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
   { NULL,NULL,NULL,NULL,NULL },
@@ -9193,8 +9220,11 @@ _wrap_gdk_pixbuf_animation_new_from_resource (Stack stack, int rhs, int opt, int
   }
 
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufanimation );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufanimation );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9214,8 +9244,11 @@ _wrap_gdk_pixbuf_animation_new_from_file (Stack stack, int rhs, int opt, int lhs
   }
 
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufanimation );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufanimation );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9254,7 +9287,7 @@ static int _wrap_gdk_pixbuf_animation_get_static_image(NspGdkPixbufAnimation *se
   CheckRhs(0,0);
     ret =gdk_pixbuf_animation_get_static_image(GDK_PIXBUF_ANIMATION(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9482,7 +9515,7 @@ static int _wrap_gdk_pixbuf_animation_iter_get_pixbuf(NspGdkPixbufAnimationIter 
   CheckRhs(0,0);
     ret =gdk_pixbuf_animation_iter_get_pixbuf(GDK_PIXBUF_ANIMATION_ITER(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9717,8 +9750,11 @@ _wrap_gdk_pixbuf_loader_new_with_mime_type (Stack stack, int rhs, int opt, int l
   }
 
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9738,8 +9774,11 @@ _wrap_gdk_pixbuf_loader_new_with_type (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9752,8 +9791,11 @@ _wrap_gdk_pixbuf_loader_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gdk_pixbuf_loader_new())== NULL) return RET_BUG;
 
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9790,7 +9832,7 @@ static int _wrap_gdk_pixbuf_loader_get_pixbuf(NspGdkPixbufLoader *self,Stack sta
   CheckRhs(0,0);
     ret =gdk_pixbuf_loader_get_pixbuf(GDK_PIXBUF_LOADER(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9802,7 +9844,7 @@ static int _wrap_gdk_pixbuf_loader_get_animation(NspGdkPixbufLoader *self,Stack 
   CheckRhs(0,0);
     ret =gdk_pixbuf_loader_get_animation(GDK_PIXBUF_LOADER(self->obj));
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbufanimation))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10023,7 +10065,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10027 "gdk.c"
+#line 10069 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
@@ -10066,7 +10108,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10070 "gdk.c"
+#line 10112 "gdk.c"
 
 
 int _wrap_gdk_drag_status(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_status */
@@ -10144,7 +10186,7 @@ _wrap_gdk_drag_begin(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10148 "gdk.c"
+#line 10190 "gdk.c"
 
 
 int _wrap_gdk_drag_begin_for_device(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_begin_for_device */
@@ -10160,7 +10202,7 @@ int _wrap_gdk_drag_begin_for_device(Stack stack, int rhs, int opt, int lhs) /* g
   if (targets== NULL) return RET_BUG;
     ret =gdk_drag_begin_for_device(GDK_WINDOW(window->obj),GDK_DEVICE(device->obj),targets);
   nsp_type_gdkdragcontext = new_type_gdkdragcontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdragcontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10278,7 +10320,7 @@ int _wrap_gdk_gl_context_get_current(Stack stack, int rhs, int opt, int lhs) /* 
   CheckRhs(0,0);
     ret =gdk_gl_context_get_current();
   nsp_type_gdkglcontext = new_type_gdkglcontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkglcontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10312,7 +10354,7 @@ int _wrap_gdk_keymap_get_default(Stack stack, int rhs, int opt, int lhs) /* keym
   CheckRhs(0,0);
     ret =gdk_keymap_get_default();
   nsp_type_gdkkeymap = new_type_gdkkeymap(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkkeymap))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10444,7 +10486,7 @@ int _wrap_gdk_selection_owner_get(Stack stack, int rhs, int opt, int lhs) /* gdk
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
     ret =gdk_selection_owner_get(selection);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10475,7 +10517,7 @@ int _wrap_gdk_selection_owner_get_for_display(Stack stack, int rhs, int opt, int
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
     ret =gdk_selection_owner_get_for_display(GDK_DISPLAY(display->obj),selection);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10512,7 +10554,7 @@ int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* s
   return 0;
 }
 
-#line 10516 "gdk.c"
+#line 10558 "gdk.c"
 
 
 int _wrap_gdk_selection_send_notify_for_display(Stack stack, int rhs, int opt, int lhs) /* gdk_selection_send_notify_for_display */
@@ -10542,7 +10584,7 @@ int _wrap_gdk_visual_get_best_with_both(Stack stack, int rhs, int opt, int lhs) 
       return RET_BUG;
     ret =gdk_visual_get_best_with_both(depth,visual_type);
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10580,7 +10622,7 @@ int _wrap_gdk_get_default_root_window(Stack stack, int rhs, int opt, int lhs) /*
   CheckRhs(0,0);
     ret =gdk_get_default_root_window();
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10618,7 +10660,7 @@ int _wrap_gdk_offscreen_window_get_embedder(Stack stack, int rhs, int opt, int l
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window) == FAIL) return RET_BUG;
     ret =gdk_offscreen_window_get_embedder(GDK_WINDOW(window->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10630,7 +10672,7 @@ int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_
   CheckRhs(0,0);
     ret =gdk_screen_get_default();
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10658,7 +10700,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10662 "gdk.c"
+#line 10704 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_display_get_default */
@@ -10668,7 +10710,7 @@ int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk
   CheckRhs(0,0);
     ret =gdk_display_get_default();
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10680,7 +10722,7 @@ int _wrap_gdk_display_open_default_libgtk_only(Stack stack, int rhs, int opt, in
   CheckRhs(0,0);
     ret =gdk_display_open_default_libgtk_only();
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10692,7 +10734,7 @@ int _wrap_gdk_display_manager_get(Stack stack, int rhs, int opt, int lhs) /* gdk
   CheckRhs(0,0);
     ret =gdk_display_manager_get();
   nsp_type_gdkdisplaymanager = new_type_gdkdisplaymanager(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplaymanager))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10719,7 +10761,7 @@ int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new *
   return 1;
 }
 
-#line 10723 "gdk.c"
+#line 10765 "gdk.c"
 
 
 int _wrap_gdk_cairo_create(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_create */
@@ -10804,7 +10846,7 @@ int _wrap_gdk_cairo_set_source_pixbuf(Stack stack, int rhs, int opt, int lhs)
   gdk_cairo_set_source_pixbuf(cr,GDK_PIXBUF(((NspGdkPixbuf *) nsp_pixbuf)->obj),x,y);
   return 0;
 }
-#line 10808 "gdk.c"
+#line 10850 "gdk.c"
 
 
 int _wrap_gdk_cairo_set_source_window(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_set_source_window */
@@ -11110,4 +11152,4 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkpixbufloader(T_BASE);
 }
 
-#line 11114 "gdk.c"
+#line 11156 "gdk.c"

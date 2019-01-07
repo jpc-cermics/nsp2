@@ -21,6 +21,7 @@ headers
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
+#include <nsp/gtk/gsource.h>
 
 %%
 init
@@ -277,3 +278,133 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override g_input_stream_read
+
+static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S=NULL;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"count",s_int,NULLOBJ,-1},
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  int count = 256, ret;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,opts, &count, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable =G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "cancellable should be a GCancellable or None");
+         return RET_BUG;
+    }
+  }
+  if ((S=nsp_smatrix_create_with_length(NVOID, 1,1, count)) == NULL)return RET_BUG;
+  ret =g_input_stream_read(G_INPUT_STREAM(self->obj),S->S[0], count,cancellable,&error);
+  Sciprintf("read %d characters\n",ret);
+  S->S[0][ret]='\0';
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( ret >=0)
+    {
+      if (nsp_string_resize(&(S->S[0]),ret)  == FAIL ) return RET_BUG;
+
+    }
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+%%
+override g_output_stream_write
+
+
+static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {stringcopy,new_opts, t_end};
+  nsp_option opts[] = {
+    {"cancellable",obj,NULLOBJ,-1},
+    {NULL,t_end,NULLOBJ,-1} };
+
+  char *buffer;
+  int count;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&buffer,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable =G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "cancellable should be a GCancellable or None");
+         return RET_BUG;
+    }
+  }
+  /* Sciprintf("writing <%s> %dn",buffer,strlen(buffer));*/
+  count = g_output_stream_write(G_OUTPUT_STREAM(self->obj),buffer,strlen(buffer),cancellable,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( nsp_move_double(stack,1,(double) count)==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override ensure_socket_condition
+/* for udp */
+static void _wrap_ensure_socket_condition(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
+/*  (GSocket *socket, GIOCondition  condition, GCancellable *cancellable)*/
+{
+  GSource *source;
+
+  if (!non_blocking)
+    return;
+
+  source = g_socket_create_source (socket, condition, cancellable);
+  g_source_set_callback (source,
+			 (GSourceFunc) source_ready,
+			 NULL, NULL);
+  g_source_attach (source, NULL);
+  g_source_unref (source);
+  g_main_loop_run (loop);
+}
+
+%%
+override ensure_connection_condition
+/* for tcp */
+
+static gboolean
+source_ready (GPollableInputStream *stream,
+	      gpointer              data)
+{
+  g_main_loop_quit (loop);
+  return FALSE;
+}
+
+static void _wrap_ensure_connection_condition(NspGIOStream *self,Stack stack,int rhs,int opt,int lhs)
+
+/* (GIOStream    *stream, GIOCondition  condition, GCancellable *cancellable)*/
+{
+  GSource *source;
+
+  if (!non_blocking)
+    return;
+
+  if (condition & G_IO_IN)
+    source = g_pollable_input_stream_create_source (G_POLLABLE_INPUT_STREAM (g_io_stream_get_input_stream (stream)), cancellable);
+  else
+    source = g_pollable_output_stream_create_source (G_POLLABLE_OUTPUT_STREAM (g_io_stream_get_output_stream (stream)), cancellable);
+
+  g_source_set_callback (source,
+			 (GSourceFunc) source_ready,
+			 NULL, NULL);
+  g_source_attach (source, NULL);
+  g_source_unref (source);
+  g_main_loop_run (loop);
+}
+

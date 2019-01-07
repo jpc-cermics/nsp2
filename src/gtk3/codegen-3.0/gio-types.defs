@@ -299,6 +299,7 @@
   (parent "GObject")
   (c-name "GNetworkAddress")
   (gtype-id "G_TYPE_NETWORK_ADDRESS")
+  (implements "GSocketConnectable")
 )
 
 (define-object GNetworkService
@@ -306,6 +307,7 @@
   (parent "GObject")
   (c-name "GNetworkService")
   (gtype-id "G_TYPE_NETWORK_SERVICE")
+  (implements "GSocketConnectable")
 )
 
 (define-object GOutputStream
@@ -452,6 +454,7 @@
   (parent "GObject")
   (c-name "GSocketAddress")
   (gtype-id "G_TYPE_SOCKET_ADDRESS")
+  (implements "GSocketConnectable")
 )
 
 (define-object GInetSocketAddress
@@ -459,6 +462,7 @@
   (parent "GSocketAddress")
   (c-name "GInetSocketAddress")
   (gtype-id "G_TYPE_INET_SOCKET_ADDRESS")
+  (implements "GSocketConnectable")
 )
 
 (define-object GProxyAddress
@@ -466,6 +470,7 @@
   (parent "GInetSocketAddress")
   (c-name "GProxyAddress")
   (gtype-id "G_TYPE_PROXY_ADDRESS")
+  (implements "GSocketConnectable")
 )
 
 (define-object GSocketAddressEnumerator

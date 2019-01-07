@@ -45,8 +45,9 @@
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
+#include <nsp/gtk/gsource.h>
 
-#line 50 "gio.c"
+#line 51 "gio.c"
 /* ---------- forward type declarations ---------- */
 #include <nsp/gtk/gresource.h>
 #include <nsp/gtk/gappinfo.h>
@@ -569,7 +570,7 @@ static int _wrap_g_dbus_interface_get_object(NspGDBusInterface *self,Stack stack
   CheckRhs(0,0);
     ret =g_dbus_interface_get_object(G_DBUS_INTERFACE(self->obj));
   nsp_type_gdbusobject = new_type_gdbusobject(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusobject))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -591,7 +592,7 @@ static int _wrap_g_dbus_interface_dup_object(NspGDBusInterface *self,Stack stack
   CheckRhs(0,0);
     ret =g_dbus_interface_dup_object(G_DBUS_INTERFACE(self->obj));
   nsp_type_gdbusobject = new_type_gdbusobject(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusobject))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -837,7 +838,7 @@ static int _wrap_g_dbus_object_get_interface(NspGDBusObject *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&interface_name) == FAIL) return RET_BUG;
     ret =g_dbus_object_get_interface(G_DBUS_OBJECT(self->obj),interface_name);
   nsp_type_gdbusinterface = new_type_gdbusinterface(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusinterface))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -1786,7 +1787,7 @@ NspGActionMap *gactionmap_copy(NspGActionMap *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 132 "codegen-3.0/gio.override"
+#line 133 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -1816,7 +1817,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 1820 "gio.c"
+#line 1821 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -1853,7 +1854,7 @@ int _wrap_g_action_map_remove_action(Stack stack, int rhs, int opt, int lhs) /* 
   return RET_BUG;
 }
 #endif
-#line 74 "codegen-3.0/gio.override"
+#line 75 "codegen-3.0/gio.override"
 
 static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1878,7 +1879,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 1882 "gio.c"
+#line 1883 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -2095,7 +2096,7 @@ static int _wrap_g_app_info_dup(NspGAppInfo *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_app_info_dup(G_APP_INFO(self->obj));
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2172,7 +2173,7 @@ static int _wrap_g_app_info_get_icon(NspGAppInfo *self,Stack stack,int rhs,int o
   CheckRhs(0,0);
     ret =g_app_info_get_icon(G_APP_INFO(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2584,8 +2585,11 @@ _wrap_g_app_launch_context_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_app_launch_context_new())== NULL) return RET_BUG;
 
   nsp_type_gapplaunchcontext = new_type_gapplaunchcontext(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplaunchcontext );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplaunchcontext );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2916,8 +2920,11 @@ _wrap_g_application_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_application_new(application_id,flags))== NULL) return RET_BUG;
 
   nsp_type_gapplication = new_type_gapplication(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplication );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplication );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3410,7 +3417,7 @@ static int _wrap_g_application_command_line_get_stdin(NspGApplicationCommandLine
   CheckRhs(0,0);
     ret =g_application_command_line_get_stdin(G_APPLICATION_COMMAND_LINE(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3493,7 +3500,7 @@ static int _wrap_g_application_command_line_create_file_for_arg(NspGApplicationC
   if ( GetArgs(stack,rhs,opt,T,&arg) == FAIL) return RET_BUG;
     ret =g_application_command_line_create_file_for_arg(G_APPLICATION_COMMAND_LINE(self->obj),arg);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3732,8 +3739,11 @@ _wrap_g_async_initable_new_finish (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gasyncinitable = new_type_gasyncinitable(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gasyncinitable );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gasyncinitable );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4203,8 +4213,11 @@ _wrap_g_cancellable_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_cancellable_new())== NULL) return RET_BUG;
 
   nsp_type_gcancellable = new_type_gcancellable(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gcancellable );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gcancellable );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6318,7 +6331,7 @@ static int _wrap_g_drive_get_icon(NspGDrive *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_drive_get_icon(G_DRIVE(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6330,7 +6343,7 @@ static int _wrap_g_drive_get_symbolic_icon(NspGDrive *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =g_drive_get_symbolic_icon(G_DRIVE(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6772,7 +6785,7 @@ static int _wrap_g_emblemed_icon_get_icon(NspGEmblemedIcon *self,Stack stack,int
   CheckRhs(0,0);
     ret =g_emblemed_icon_get_icon(G_EMBLEMED_ICON(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7010,8 +7023,11 @@ _wrap_g_file_new_for_commandline_arg_and_cwd (Stack stack, int rhs, int opt, int
   if ((ret = (GObject *)g_file_new_for_commandline_arg_and_cwd(arg,cwd))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7026,8 +7042,11 @@ _wrap_g_file_new_for_commandline_arg (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_commandline_arg(arg))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7042,8 +7061,11 @@ _wrap_g_file_new_for_uri (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_uri(uri))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7058,8 +7080,11 @@ _wrap_g_file_new_for_path (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_path(path))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7071,7 +7096,7 @@ static int _wrap_g_file_dup(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
   CheckRhs(0,0);
     ret =g_file_dup(G_FILE(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7134,7 +7159,7 @@ static int _wrap_g_file_get_parent(NspGFile *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_file_get_parent(G_FILE(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7159,7 +7184,7 @@ static int _wrap_g_file_get_child(NspGFile *self,Stack stack,int rhs,int opt,int
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =g_file_get_child(G_FILE(self->obj),name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7178,7 +7203,7 @@ static int _wrap_g_file_get_child_for_display_name(NspGFile *self,Stack stack,in
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7215,7 +7240,7 @@ static int _wrap_g_file_resolve_relative_path(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&relative_path) == FAIL) return RET_BUG;
     ret =g_file_resolve_relative_path(G_FILE(self->obj),relative_path);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7264,7 +7289,7 @@ static int _wrap_g_file_read(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileinputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7283,7 +7308,7 @@ static int _wrap_g_file_read_finish(NspGFile *self,Stack stack,int rhs,int opt,i
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileinputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7305,7 +7330,7 @@ static int _wrap_g_file_append_to(NspGFile *self,Stack stack,int rhs,int opt,int
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7327,7 +7352,7 @@ static int _wrap_g_file_create(NspGFile *self,Stack stack,int rhs,int opt,int lh
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7351,7 +7376,7 @@ static int _wrap_g_file_replace(NspGFile *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7370,7 +7395,7 @@ static int _wrap_g_file_append_to_finish(NspGFile *self,Stack stack,int rhs,int 
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7389,7 +7414,7 @@ static int _wrap_g_file_create_finish(NspGFile *self,Stack stack,int rhs,int opt
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7408,7 +7433,7 @@ static int _wrap_g_file_replace_finish(NspGFile *self,Stack stack,int rhs,int op
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7427,7 +7452,7 @@ static int _wrap_g_file_open_readwrite(NspGFile *self,Stack stack,int rhs,int op
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7446,7 +7471,7 @@ static int _wrap_g_file_open_readwrite_finish(NspGFile *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7468,7 +7493,7 @@ static int _wrap_g_file_create_readwrite(NspGFile *self,Stack stack,int rhs,int 
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7487,7 +7512,7 @@ static int _wrap_g_file_create_readwrite_finish(NspGFile *self,Stack stack,int r
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7511,7 +7536,7 @@ static int _wrap_g_file_replace_readwrite(NspGFile *self,Stack stack,int rhs,int
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7530,7 +7555,7 @@ static int _wrap_g_file_replace_readwrite_finish(NspGFile *self,Stack stack,int 
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7575,7 +7600,7 @@ static int _wrap_g_file_find_enclosing_mount(NspGFile *self,Stack stack,int rhs,
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7594,7 +7619,7 @@ static int _wrap_g_file_find_enclosing_mount_finish(NspGFile *self,Stack stack,i
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7617,7 +7642,7 @@ static int _wrap_g_file_enumerate_children(NspGFile *self,Stack stack,int rhs,in
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileenumerator))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7636,7 +7661,7 @@ static int _wrap_g_file_enumerate_children_finish(NspGFile *self,Stack stack,int
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileenumerator))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7656,7 +7681,7 @@ static int _wrap_g_file_set_display_name(NspGFile *self,Stack stack,int rhs,int 
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7675,7 +7700,7 @@ static int _wrap_g_file_set_display_name_finish(NspGFile *self,Stack stack,int r
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7964,7 +7989,7 @@ static int _wrap_g_file_mount_mountable_finish(NspGFile *self,Stack stack,int rh
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8038,7 +8063,7 @@ static int _wrap_g_file_monitor_directory(NspGFile *self,Stack stack,int rhs,int
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8060,7 +8085,7 @@ static int _wrap_g_file_monitor_file(NspGFile *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8082,7 +8107,7 @@ static int _wrap_g_file_monitor(NspGFile *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8149,7 +8174,7 @@ static int _wrap_g_file_query_default_handler(NspGFile *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8569,7 +8594,7 @@ static int _wrap_g_file_enumerator_get_container(NspGFileEnumerator *self,Stack 
   CheckRhs(0,0);
     ret =g_file_enumerator_get_container(G_FILE_ENUMERATOR(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9038,7 +9063,7 @@ static int _wrap_g_io_stream_get_input_stream(NspGIOStream *self,Stack stack,int
   CheckRhs(0,0);
     ret =g_io_stream_get_input_stream(G_IO_STREAM(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9050,7 +9075,7 @@ static int _wrap_g_io_stream_get_output_stream(NspGIOStream *self,Stack stack,in
   CheckRhs(0,0);
     ret =g_io_stream_get_output_stream(G_IO_STREAM(self->obj));
   nsp_type_goutputstream = new_type_goutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_goutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9566,8 +9591,11 @@ _wrap_g_icon_new_for_string (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gicon = new_type_gicon(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gicon );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gicon );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9834,8 +9862,11 @@ _wrap_g_inet_address_new_any (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_any(family))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9853,8 +9884,11 @@ _wrap_g_inet_address_new_loopback (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_loopback(family))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9869,8 +9903,11 @@ _wrap_g_inet_address_new_from_string (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_from_string(string))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10236,8 +10273,11 @@ _wrap_g_inet_address_mask_new_from_string (Stack stack, int rhs, int opt, int lh
   }
 
   nsp_type_ginetaddressmask = new_type_ginetaddressmask(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10258,8 +10298,11 @@ _wrap_g_inet_address_mask_new (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_ginetaddressmask = new_type_ginetaddressmask(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10307,7 +10350,7 @@ static int _wrap_g_inet_address_mask_get_address(NspGInetAddressMask *self,Stack
   CheckRhs(0,0);
     ret =g_inet_address_mask_get_address(G_INET_ADDRESS_MASK(self->obj));
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10803,6 +10846,49 @@ NspGInputStream *ginputstream_copy(NspGInputStream *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
+#line 283 "codegen-3.0/gio.override"
+
+static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S=NULL;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"count",s_int,NULLOBJ,-1},
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  int count = 256, ret;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,opts, &count, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable =G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "cancellable should be a GCancellable or None");
+         return RET_BUG;
+    }
+  }
+  if ((S=nsp_smatrix_create_with_length(NVOID, 1,1, count)) == NULL)return RET_BUG;
+  ret =g_input_stream_read(G_INPUT_STREAM(self->obj),S->S[0], count,cancellable,&error);
+  Sciprintf("read %d characters\n",ret);
+  S->S[0][ret]='\0';
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( ret >=0)
+    {
+      if (nsp_string_resize(&(S->S[0]),ret)  == FAIL ) return RET_BUG;
+
+    }
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+#line 10890 "gio.c"
+
+
 static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,obj_check, t_end};
@@ -10923,6 +11009,7 @@ static int _wrap_g_input_stream_clear_pending(NspGInputStream *self,Stack stack,
 }
 
 static NspMethods ginputstream_methods[] = {
+  {"read",(nsp_method *) _wrap_g_input_stream_read},
   {"skip",(nsp_method *) _wrap_g_input_stream_skip},
   {"close",(nsp_method *) _wrap_g_input_stream_close},
   {"read_finish",(nsp_method *) _wrap_g_input_stream_read_finish},
@@ -11141,7 +11228,7 @@ static int _wrap_g_filter_input_stream_get_base_stream(NspGFilterInputStream *se
   CheckRhs(0,0);
     ret =g_filter_input_stream_get_base_stream(G_FILTER_INPUT_STREAM(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11381,8 +11468,11 @@ _wrap_g_buffered_input_stream_new_sized (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_input_stream_new_sized(G_INPUT_STREAM(base_stream->obj),size))== NULL) return RET_BUG;
 
   nsp_type_gbufferedinputstream = new_type_gbufferedinputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11397,8 +11487,11 @@ _wrap_g_buffered_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_input_stream_new(G_INPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gbufferedinputstream = new_type_gbufferedinputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11697,8 +11790,11 @@ _wrap_g_data_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_data_input_stream_new(G_INPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gdatainputstream = new_type_gdatainputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdatainputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdatainputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12047,8 +12143,11 @@ _wrap_g_converter_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_converter_input_stream_new(G_INPUT_STREAM(base_stream->obj),G_CONVERTER(converter->obj)))== NULL) return RET_BUG;
 
   nsp_type_gconverterinputstream = new_type_gconverterinputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverterinputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverterinputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12060,7 +12159,7 @@ static int _wrap_g_converter_input_stream_get_converter(NspGConverterInputStream
   CheckRhs(0,0);
     ret =g_converter_input_stream_get_converter(G_CONVERTER_INPUT_STREAM(self->obj));
   nsp_type_gconverter = new_type_gconverter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12491,7 +12590,7 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12518,7 +12617,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12736,8 +12835,11 @@ _wrap_g_memory_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_memory_input_stream_new())== NULL) return RET_BUG;
 
   nsp_type_gmemoryinputstream = new_type_gmemoryinputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryinputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryinputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13245,7 +13347,7 @@ static int _wrap_g_menu_link_iter_get_value(NspGMenuLinkIter *self,Stack stack,i
   CheckRhs(0,0);
     ret =g_menu_link_iter_get_value(G_MENU_LINK_ITER(self->obj));
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13507,7 +13609,7 @@ static int _wrap_g_menu_model_iterate_item_attributes(NspGMenuModel *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&item_index) == FAIL) return RET_BUG;
     ret =g_menu_model_iterate_item_attributes(G_MENU_MODEL(self->obj),item_index);
   nsp_type_gmenuattributeiter = new_type_gmenuattributeiter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuattributeiter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13557,7 +13659,7 @@ int _wrap_g_menu_model_get_item_attribute_value(Stack stack, int rhs, int opt, i
   return RET_BUG;
 }
 #endif
-#line 40 "codegen-3.0/gio.override"
+#line 41 "codegen-3.0/gio.override"
 
 #if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_attribute(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -13590,7 +13692,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13594 "gio.c"
+#line 13696 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -13603,7 +13705,7 @@ static int _wrap_g_menu_model_iterate_item_links(NspGMenuModel *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&item_index) == FAIL) return RET_BUG;
     ret =g_menu_model_iterate_item_links(G_MENU_MODEL(self->obj),item_index);
   nsp_type_gmenulinkiter = new_type_gmenulinkiter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenulinkiter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13615,7 +13717,7 @@ int _wrap_g_menu_model_iterate_item_links(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#line 100 "codegen-3.0/gio.override"
+#line 101 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -13646,7 +13748,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13650 "gio.c"
+#line 13752 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -13888,8 +13990,11 @@ _wrap_g_menu_item_new_section (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_section(label,G_MENU_MODEL(section->obj)))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13905,8 +14010,11 @@ _wrap_g_menu_item_new_submenu (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_submenu(label,G_MENU_MODEL(submenu->obj)))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13922,8 +14030,11 @@ _wrap_g_menu_item_new_from_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_from_model(G_MENU_MODEL(model->obj),item_index))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13938,8 +14049,11 @@ _wrap_g_menu_item_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new(label,detailed_action))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14006,7 +14120,7 @@ static int _wrap_g_menu_item_get_link(NspGMenuItem *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&link) == FAIL) return RET_BUG;
     ret =g_menu_item_get_link(G_MENU_ITEM(self->obj),link);
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14435,8 +14549,11 @@ _wrap_g_menu_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_new())== NULL) return RET_BUG;
 
   nsp_type_gmenu = new_type_gmenu(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenu );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenu );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14927,7 +15044,7 @@ static int _wrap_g_mount_get_root(NspGMount *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_mount_get_root(G_MOUNT(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14939,7 +15056,7 @@ static int _wrap_g_mount_get_default_location(NspGMount *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =g_mount_get_default_location(G_MOUNT(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14961,7 +15078,7 @@ static int _wrap_g_mount_get_icon(NspGMount *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_mount_get_icon(G_MOUNT(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14973,7 +15090,7 @@ static int _wrap_g_mount_get_symbolic_icon(NspGMount *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =g_mount_get_symbolic_icon(G_MOUNT(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14995,7 +15112,7 @@ static int _wrap_g_mount_get_volume(NspGMount *self,Stack stack,int rhs,int opt,
   CheckRhs(0,0);
     ret =g_mount_get_volume(G_MOUNT(self->obj));
   nsp_type_gvolume = new_type_gvolume(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolume))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15007,7 +15124,7 @@ static int _wrap_g_mount_get_drive(NspGMount *self,Stack stack,int rhs,int opt,i
   CheckRhs(0,0);
     ret =g_mount_get_drive(G_MOUNT(self->obj));
   nsp_type_gdrive = new_type_gdrive(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdrive))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15381,8 +15498,11 @@ _wrap_g_mount_operation_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_mount_operation_new())== NULL) return RET_BUG;
 
   nsp_type_gmountoperation = new_type_gmountoperation(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmountoperation );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmountoperation );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15546,6 +15666,7 @@ static AttrTab gmountoperation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGNetworkAddress inherits from GObject 
+ * and implements GSocketConnectable
  */
 
 int nsp_type_gnetworkaddress_id=0;
@@ -15560,6 +15681,7 @@ NspTypeGNetworkAddress *nsp_type_gnetworkaddress=NULL;
  */
 NspTypeGNetworkAddress *new_type_gnetworkaddress(type_mode mode)
 {
+  NspTypeGSocketConnectable *t_gsocketconnectable;
   NspTypeGNetworkAddress *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gnetworkaddress != 0 && mode == T_BASE )
@@ -15598,6 +15720,8 @@ NspTypeGNetworkAddress *new_type_gnetworkaddress(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gsocketconnectable = new_type_gsocketconnectable(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gsocketconnectable;
   if ( nsp_type_gnetworkaddress_id == 0 ) 
     {
       /* 
@@ -15737,8 +15861,11 @@ _wrap_g_network_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_network_address_new(hostname,port))== NULL) return RET_BUG;
 
   nsp_type_gnetworkaddress = new_type_gnetworkaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15796,6 +15923,7 @@ static AttrTab gnetworkaddress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGNetworkService inherits from GObject 
+ * and implements GSocketConnectable
  */
 
 int nsp_type_gnetworkservice_id=0;
@@ -15810,6 +15938,7 @@ NspTypeGNetworkService *nsp_type_gnetworkservice=NULL;
  */
 NspTypeGNetworkService *new_type_gnetworkservice(type_mode mode)
 {
+  NspTypeGSocketConnectable *t_gsocketconnectable;
   NspTypeGNetworkService *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gnetworkservice != 0 && mode == T_BASE )
@@ -15848,6 +15977,8 @@ NspTypeGNetworkService *new_type_gnetworkservice(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gsocketconnectable = new_type_gsocketconnectable(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gsocketconnectable;
   if ( nsp_type_gnetworkservice_id == 0 ) 
     {
       /* 
@@ -15986,8 +16117,11 @@ _wrap_g_network_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_network_service_new(service,protocol,domain))== NULL) return RET_BUG;
 
   nsp_type_gnetworkservice = new_type_gnetworkservice(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkservice );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkservice );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16245,6 +16379,43 @@ NspGOutputStream *goutputstream_copy(NspGOutputStream *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
+#line 324 "codegen-3.0/gio.override"
+
+
+static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {stringcopy,new_opts, t_end};
+  nsp_option opts[] = {
+    {"cancellable",obj,NULLOBJ,-1},
+    {NULL,t_end,NULLOBJ,-1} };
+
+  char *buffer;
+  int count;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&buffer,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable =G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "cancellable should be a GCancellable or None");
+         return RET_BUG;
+    }
+  }
+  /* Sciprintf("writing <%s> %dn",buffer,strlen(buffer));*/
+  count = g_output_stream_write(G_OUTPUT_STREAM(self->obj),buffer,strlen(buffer),cancellable,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( nsp_move_double(stack,1,(double) count)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#line 16417 "gio.c"
+
+
 static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj,obj_check, t_end};
@@ -16434,6 +16605,7 @@ static int _wrap_g_output_stream_clear_pending(NspGOutputStream *self,Stack stac
 }
 
 static NspMethods goutputstream_methods[] = {
+  {"write",(nsp_method *) _wrap_g_output_stream_write},
   {"splice",(nsp_method *) _wrap_g_output_stream_splice},
   {"flush",(nsp_method *) _wrap_g_output_stream_flush},
   {"close",(nsp_method *) _wrap_g_output_stream_close},
@@ -16657,8 +16829,11 @@ _wrap_g_memory_output_stream_new_resizable (Stack stack, int rhs, int opt, int l
   if ((ret = (GObject *)g_memory_output_stream_new_resizable())== NULL) return RET_BUG;
 
   nsp_type_gmemoryoutputstream = new_type_gmemoryoutputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryoutputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryoutputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16893,7 +17068,7 @@ static int _wrap_g_filter_output_stream_get_base_stream(NspGFilterOutputStream *
   CheckRhs(0,0);
     ret =g_filter_output_stream_get_base_stream(G_FILTER_OUTPUT_STREAM(self->obj));
   nsp_type_goutputstream = new_type_goutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_goutputstream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17133,8 +17308,11 @@ _wrap_g_buffered_output_stream_new_sized (Stack stack, int rhs, int opt, int lhs
   if ((ret = (GObject *)g_buffered_output_stream_new_sized(G_OUTPUT_STREAM(base_stream->obj),size))== NULL) return RET_BUG;
 
   nsp_type_gbufferedoutputstream = new_type_gbufferedoutputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17149,8 +17327,11 @@ _wrap_g_buffered_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_output_stream_new(G_OUTPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gbufferedoutputstream = new_type_gbufferedoutputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17408,8 +17589,11 @@ _wrap_g_converter_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_converter_output_stream_new(G_OUTPUT_STREAM(base_stream->obj),G_CONVERTER(converter->obj)))== NULL) return RET_BUG;
 
   nsp_type_gconverteroutputstream = new_type_gconverteroutputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverteroutputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverteroutputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17421,7 +17605,7 @@ static int _wrap_g_converter_output_stream_get_converter(NspGConverterOutputStre
   CheckRhs(0,0);
     ret =g_converter_output_stream_get_converter(G_CONVERTER_OUTPUT_STREAM(self->obj));
   nsp_type_gconverter = new_type_gconverter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17640,8 +17824,11 @@ _wrap_g_data_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_data_output_stream_new(G_OUTPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gdataoutputstream = new_type_gdataoutputstream(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdataoutputstream );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdataoutputstream );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19112,8 +19299,11 @@ _wrap_g_settings_new_with_path (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_settings_new_with_path(schema_id,path))== NULL) return RET_BUG;
 
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19128,8 +19318,11 @@ _wrap_g_settings_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_settings_new(schema_id))== NULL) return RET_BUG;
 
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19471,7 +19664,7 @@ static int _wrap_g_settings_get_child(NspGSettings *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =g_settings_get_child(G_SETTINGS(self->obj),name);
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsettings))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19527,7 +19720,7 @@ static int _wrap_g_settings_create_action(NspGSettings *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&key) == FAIL) return RET_BUG;
     ret =g_settings_create_action(G_SETTINGS(self->obj),key);
   nsp_type_gaction = new_type_gaction(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gaction))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19813,8 +20006,11 @@ _wrap_g_simple_action_new_stateful (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_new_stateful(name,parameter_type,state))== NULL) return RET_BUG;
 
   nsp_type_gsimpleaction = new_type_gsimpleaction(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19843,8 +20039,11 @@ _wrap_g_simple_action_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_new(name,parameter_type))== NULL) return RET_BUG;
 
   nsp_type_gsimpleaction = new_type_gsimpleaction(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20105,8 +20304,11 @@ _wrap_g_simple_action_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_group_new())== NULL) return RET_BUG;
 
   nsp_type_gsimpleactiongroup = new_type_gsimpleactiongroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleactiongroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleactiongroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20329,8 +20531,11 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_proxy_resolver_new(default_proxy,ignore_hosts))== NULL) return RET_BUG;
 
   nsp_type_gsimpleproxyresolver = new_type_gsimpleproxyresolver(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleproxyresolver );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleproxyresolver );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20615,8 +20820,11 @@ _wrap_g_socket_new_from_fd (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20645,8 +20853,11 @@ _wrap_g_socket_new (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20699,7 +20910,7 @@ static int _wrap_g_socket_get_local_address(NspGSocket *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20716,7 +20927,7 @@ static int _wrap_g_socket_get_remote_address(NspGSocket *self,Stack stack,int rh
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21043,6 +21254,69 @@ static int _wrap_g_socket_get_available_bytes(NspGSocket *self,Stack stack,int r
   return 1;
 }
 
+static int _wrap_g_socket_condition_check(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GIOCondition condition;
+  NspObject *nsp_condition = NULL;
+  guint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
+      return RET_BUG;
+    ret =g_socket_condition_check(G_SOCKET(self->obj),condition);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_socket_condition_wait(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,obj_check, t_end};
+  GIOCondition condition;
+  NspObject *nsp_condition = NULL;
+  NspGObject *cancellable;
+  GError *error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
+      return RET_BUG;
+    ret =g_socket_condition_wait(G_SOCKET(self->obj),condition,G_CANCELLABLE(cancellable->obj),&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#if GLIB_CHECK_VERSION(2,32,0)
+static int _wrap_g_socket_condition_timed_wait(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,s_int,obj_check, t_end};
+  GIOCondition condition;
+  NspObject *nsp_condition = NULL;
+  gint64 timeout;
+  NspGObject *cancellable;
+  GError *error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &timeout, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
+      return RET_BUG;
+    ret =g_socket_condition_timed_wait(G_SOCKET(self->obj),condition,timeout,G_CANCELLABLE(cancellable->obj),&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#else
+int _wrap_g_socket_condition_timed_wait(Stack stack, int rhs, int opt, int lhs) /* condition_timed_wait */
+{
+  Scierror("Error: function g_socket_condition_timed_wait not available\n");
+  return RET_BUG;
+}
+#endif
 static int _wrap_g_socket_accept(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
@@ -21057,7 +21331,7 @@ static int _wrap_g_socket_accept(NspGSocket *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21165,6 +21439,24 @@ static int _wrap_g_socket_is_closed(NspGSocket *self,Stack stack,int rhs,int opt
   return 1;
 }
 
+static int _wrap_g_socket_create_source(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,obj_check, t_end};
+  GIOCondition condition;
+  NspObject *nsp_condition = NULL, *nsp_ret;
+  NspGObject *cancellable;
+  GSource *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
+      return RET_BUG;
+    ret =g_socket_create_source(G_SOCKET(self->obj),condition,G_CANCELLABLE(cancellable->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gsource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static int _wrap_g_socket_speaks_ipv4(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -21261,7 +21553,7 @@ static int _wrap_g_socket_connection_factory_create_connection(NspGSocket *self,
   CheckRhs(0,0);
     ret =g_socket_connection_factory_create_connection(G_SOCKET(self->obj));
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21296,6 +21588,9 @@ static NspMethods gsocket_methods[] = {
   {"connect",(nsp_method *) _wrap_g_socket_connect},
   {"check_connect_result",(nsp_method *) _wrap_g_socket_check_connect_result},
   {"get_available_bytes",(nsp_method *) _wrap_g_socket_get_available_bytes},
+  {"condition_check",(nsp_method *) _wrap_g_socket_condition_check},
+  {"condition_wait",(nsp_method *) _wrap_g_socket_condition_wait},
+  {"condition_timed_wait",(nsp_method *) _wrap_g_socket_condition_timed_wait},
   {"accept",(nsp_method *) _wrap_g_socket_accept},
   {"listen",(nsp_method *) _wrap_g_socket_listen},
   {"receive",(nsp_method *) _wrap_g_socket_receive},
@@ -21304,6 +21599,7 @@ static NspMethods gsocket_methods[] = {
   {"close",(nsp_method *) _wrap_g_socket_close},
   {"shutdown",(nsp_method *) _wrap_g_socket_shutdown},
   {"is_closed",(nsp_method *) _wrap_g_socket_is_closed},
+  {"create_source",(nsp_method *) _wrap_g_socket_create_source},
   {"speaks_ipv4",(nsp_method *) _wrap_g_socket_speaks_ipv4},
   {"receive_with_blocking",(nsp_method *) _wrap_g_socket_receive_with_blocking},
   {"send_with_blocking",(nsp_method *) _wrap_g_socket_send_with_blocking},
@@ -21332,6 +21628,7 @@ static AttrTab gsocket_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGSocketAddress inherits from GObject 
+ * and implements GSocketConnectable
  */
 
 int nsp_type_gsocketaddress_id=0;
@@ -21346,6 +21643,7 @@ NspTypeGSocketAddress *nsp_type_gsocketaddress=NULL;
  */
 NspTypeGSocketAddress *new_type_gsocketaddress(type_mode mode)
 {
+  NspTypeGSocketConnectable *t_gsocketconnectable;
   NspTypeGSocketAddress *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gsocketaddress != 0 && mode == T_BASE )
@@ -21384,6 +21682,8 @@ NspTypeGSocketAddress *new_type_gsocketaddress(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gsocketconnectable = new_type_gsocketconnectable(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gsocketconnectable;
   if ( nsp_type_gsocketaddress_id == 0 ) 
     {
       /* 
@@ -21555,6 +21855,7 @@ static AttrTab gsocketaddress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGInetSocketAddress inherits from GSocketAddress 
+ * and implements GSocketConnectable
  */
 
 int nsp_type_ginetsocketaddress_id=0;
@@ -21569,6 +21870,7 @@ NspTypeGInetSocketAddress *nsp_type_ginetsocketaddress=NULL;
  */
 NspTypeGInetSocketAddress *new_type_ginetsocketaddress(type_mode mode)
 {
+  NspTypeGSocketConnectable *t_gsocketconnectable;
   NspTypeGInetSocketAddress *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_ginetsocketaddress != 0 && mode == T_BASE )
@@ -21607,6 +21909,8 @@ NspTypeGInetSocketAddress *new_type_ginetsocketaddress(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gsocketconnectable = new_type_gsocketconnectable(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gsocketconnectable;
   if ( nsp_type_ginetsocketaddress_id == 0 ) 
     {
       /* 
@@ -21746,8 +22050,11 @@ _wrap_g_inet_socket_address_new_from_string (Stack stack, int rhs, int opt, int 
   if ((ret = (GObject *)g_inet_socket_address_new_from_string(address,port))== NULL) return RET_BUG;
 
   nsp_type_ginetsocketaddress = new_type_ginetsocketaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21763,8 +22070,11 @@ _wrap_g_inet_socket_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_socket_address_new(G_INET_ADDRESS(address->obj),port))== NULL) return RET_BUG;
 
   nsp_type_ginetsocketaddress = new_type_ginetsocketaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21776,7 +22086,7 @@ static int _wrap_g_inet_socket_address_get_address(NspGInetSocketAddress *self,S
   CheckRhs(0,0);
     ret =g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(self->obj));
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21851,6 +22161,7 @@ static AttrTab ginetsocketaddress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGProxyAddress inherits from GInetSocketAddress 
+ * and implements GSocketConnectable
  */
 
 int nsp_type_gproxyaddress_id=0;
@@ -21865,6 +22176,7 @@ NspTypeGProxyAddress *nsp_type_gproxyaddress=NULL;
  */
 NspTypeGProxyAddress *new_type_gproxyaddress(type_mode mode)
 {
+  NspTypeGSocketConnectable *t_gsocketconnectable;
   NspTypeGProxyAddress *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gproxyaddress != 0 && mode == T_BASE )
@@ -21903,6 +22215,8 @@ NspTypeGProxyAddress *new_type_gproxyaddress(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gsocketconnectable = new_type_gsocketconnectable(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gsocketconnectable;
   if ( nsp_type_gproxyaddress_id == 0 ) 
     {
       /* 
@@ -22043,8 +22357,11 @@ _wrap_g_proxy_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_proxy_address_new(G_INET_ADDRESS(inetaddr->obj),port,protocol,dest_hostname,dest_port,username,password))== NULL) return RET_BUG;
 
   nsp_type_gproxyaddress = new_type_gproxyaddress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gproxyaddress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gproxyaddress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22352,7 +22669,7 @@ static int _wrap_g_socket_address_enumerator_next(NspGSocketAddressEnumerator *s
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22371,7 +22688,7 @@ static int _wrap_g_socket_address_enumerator_next_finish(NspGSocketAddressEnumer
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22788,8 +23105,11 @@ _wrap_g_socket_client_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_client_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketclient = new_type_gsocketclient(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketclient );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketclient );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22864,7 +23184,7 @@ static int _wrap_g_socket_client_get_local_address(NspGSocketClient *self,Stack 
   CheckRhs(0,0);
     ret =g_socket_client_get_local_address(G_SOCKET_CLIENT(self->obj));
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22999,7 +23319,7 @@ static int _wrap_g_socket_client_connect(NspGSocketClient *self,Stack stack,int 
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23020,7 +23340,7 @@ static int _wrap_g_socket_client_connect_to_host(NspGSocketClient *self,Stack st
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23040,7 +23360,7 @@ static int _wrap_g_socket_client_connect_to_service(NspGSocketClient *self,Stack
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23062,7 +23382,7 @@ static int _wrap_g_socket_client_connect_to_uri(NspGSocketClient *self,Stack sta
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23088,7 +23408,7 @@ static int _wrap_g_socket_client_connect_finish(NspGSocketClient *self,Stack sta
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23107,7 +23427,7 @@ static int _wrap_g_socket_client_connect_to_host_finish(NspGSocketClient *self,S
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23126,7 +23446,7 @@ static int _wrap_g_socket_client_connect_to_service_finish(NspGSocketClient *sel
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23145,7 +23465,7 @@ static int _wrap_g_socket_client_connect_to_uri_finish(NspGSocketClient *self,St
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23394,7 +23714,7 @@ static int _wrap_g_socket_connectable_enumerate(NspGSocketConnectable *self,Stac
   CheckRhs(0,0);
     ret =g_socket_connectable_enumerate(G_SOCKET_CONNECTABLE(self->obj));
   nsp_type_gsocketaddressenumerator = new_type_gsocketaddressenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddressenumerator))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23406,7 +23726,7 @@ static int _wrap_g_socket_connectable_proxy_enumerate(NspGSocketConnectable *sel
   CheckRhs(0,0);
     ret =g_socket_connectable_proxy_enumerate(G_SOCKET_CONNECTABLE(self->obj));
   nsp_type_gsocketaddressenumerator = new_type_gsocketaddressenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddressenumerator))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23688,7 +24008,7 @@ static int _wrap_g_socket_connection_get_socket(NspGSocketConnection *self,Stack
   CheckRhs(0,0);
     ret =g_socket_connection_get_socket(G_SOCKET_CONNECTION(self->obj));
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23705,7 +24025,7 @@ static int _wrap_g_socket_connection_get_local_address(NspGSocketConnection *sel
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23722,7 +24042,7 @@ static int _wrap_g_socket_connection_get_remote_address(NspGSocketConnection *se
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24177,8 +24497,11 @@ _wrap_g_socket_listener_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_listener_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketlistener = new_type_gsocketlistener(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketlistener );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketlistener );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24463,8 +24786,11 @@ _wrap_g_socket_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_service_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketservice = new_type_gsocketservice(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketservice );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketservice );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24931,8 +25257,11 @@ _wrap_g_tcp_wrapper_connection_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_tcp_wrapper_connection_new(G_IO_STREAM(base_io_stream->obj),G_SOCKET(socket->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtcpwrapperconnection = new_type_gtcpwrapperconnection(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtcpwrapperconnection );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtcpwrapperconnection );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24944,7 +25273,7 @@ static int _wrap_g_tcp_wrapper_connection_get_base_io_stream(NspGTcpWrapperConne
   CheckRhs(0,0);
     ret =g_tcp_wrapper_connection_get_base_io_stream(G_TCP_WRAPPER_CONNECTION(self->obj));
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25163,8 +25492,11 @@ _wrap_g_threaded_socket_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_threaded_socket_service_new(max_threads))== NULL) return RET_BUG;
 
   nsp_type_gthreadedsocketservice = new_type_gthreadedsocketservice(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gthreadedsocketservice );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gthreadedsocketservice );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25383,8 +25715,11 @@ _wrap_g_tls_certificate_new_from_files (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25404,8 +25739,11 @@ _wrap_g_tls_certificate_new_from_file (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25426,8 +25764,11 @@ _wrap_g_tls_certificate_new_from_pem (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25439,7 +25780,7 @@ static int _wrap_g_tls_certificate_get_issuer(NspGTlsCertificate *self,Stack sta
   CheckRhs(0,0);
     ret =g_tls_certificate_get_issuer(G_TLS_CERTIFICATE(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25730,7 +26071,7 @@ static int _wrap_g_tls_connection_get_database(NspGTlsConnection *self,Stack sta
   CheckRhs(0,0);
     ret =g_tls_connection_get_database(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlsdatabase = new_type_gtlsdatabase(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlsdatabase))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25751,7 +26092,7 @@ static int _wrap_g_tls_connection_get_certificate(NspGTlsConnection *self,Stack 
   CheckRhs(0,0);
     ret =g_tls_connection_get_certificate(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25772,7 +26113,7 @@ static int _wrap_g_tls_connection_get_interaction(NspGTlsConnection *self,Stack 
   CheckRhs(0,0);
     ret =g_tls_connection_get_interaction(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlsinteraction = new_type_gtlsinteraction(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlsinteraction))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25784,7 +26125,7 @@ static int _wrap_g_tls_connection_get_peer_certificate(NspGTlsConnection *self,S
   CheckRhs(0,0);
     ret =g_tls_connection_get_peer_certificate(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26150,7 +26491,7 @@ static int _wrap_g_tls_database_lookup_certificate_for_handle(NspGTlsDatabase *s
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26169,7 +26510,7 @@ static int _wrap_g_tls_database_lookup_certificate_for_handle_finish(NspGTlsData
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26191,7 +26532,7 @@ static int _wrap_g_tls_database_lookup_certificate_issuer(NspGTlsDatabase *self,
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26210,7 +26551,7 @@ static int _wrap_g_tls_database_lookup_certificate_issuer_finish(NspGTlsDatabase
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27051,7 +27392,7 @@ static int _wrap_g_vfs_get_file_for_path(NspGVfs *self,Stack stack,int rhs,int o
   if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
     ret =g_vfs_get_file_for_path(G_VFS(self->obj),path);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27065,7 +27406,7 @@ static int _wrap_g_vfs_get_file_for_uri(NspGVfs *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
     ret =g_vfs_get_file_for_uri(G_VFS(self->obj),uri);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27079,7 +27420,7 @@ static int _wrap_g_vfs_parse_name(NspGVfs *self,Stack stack,int rhs,int opt,int 
   if ( GetArgs(stack,rhs,opt,T,&parse_name) == FAIL) return RET_BUG;
     ret =g_vfs_parse_name(G_VFS(self->obj),parse_name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27308,7 +27649,7 @@ static int _wrap_g_volume_get_icon(NspGVolume *self,Stack stack,int rhs,int opt,
   CheckRhs(0,0);
     ret =g_volume_get_icon(G_VOLUME(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27320,7 +27661,7 @@ static int _wrap_g_volume_get_symbolic_icon(NspGVolume *self,Stack stack,int rhs
   CheckRhs(0,0);
     ret =g_volume_get_symbolic_icon(G_VOLUME(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27342,7 +27683,7 @@ static int _wrap_g_volume_get_drive(NspGVolume *self,Stack stack,int rhs,int opt
   CheckRhs(0,0);
     ret =g_volume_get_drive(G_VOLUME(self->obj));
   nsp_type_gdrive = new_type_gdrive(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdrive))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27354,7 +27695,7 @@ static int _wrap_g_volume_get_mount(NspGVolume *self,Stack stack,int rhs,int opt
   CheckRhs(0,0);
     ret =g_volume_get_mount(G_VOLUME(self->obj));
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27434,7 +27775,7 @@ static int _wrap_g_volume_get_activation_root(NspGVolume *self,Stack stack,int r
   CheckRhs(0,0);
     ret =g_volume_get_activation_root(G_VOLUME(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27729,7 +28070,7 @@ static int _wrap_g_volume_monitor_get_volume_for_uuid(NspGVolumeMonitor *self,St
   if ( GetArgs(stack,rhs,opt,T,&uuid) == FAIL) return RET_BUG;
     ret =g_volume_monitor_get_volume_for_uuid(G_VOLUME_MONITOR(self->obj),uuid);
   nsp_type_gvolume = new_type_gvolume(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolume))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27743,7 +28084,7 @@ static int _wrap_g_volume_monitor_get_mount_for_uuid(NspGVolumeMonitor *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&uuid) == FAIL) return RET_BUG;
     ret =g_volume_monitor_get_mount_for_uuid(G_VOLUME_MONITOR(self->obj),uuid);
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28017,7 +28358,7 @@ int _wrap_g_app_info_create_from_commandline(Stack stack, int rhs, int opt, int 
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28087,7 +28428,7 @@ int _wrap_g_app_info_get_default_for_type(Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&content_type, &must_support_uris) == FAIL) return RET_BUG;
     ret =g_app_info_get_default_for_type(content_type,must_support_uris);
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28101,7 +28442,7 @@ int _wrap_g_app_info_get_default_for_uri_scheme(Stack stack, int rhs, int opt, i
   if ( GetArgs(stack,rhs,opt,T,&uri_scheme) == FAIL) return RET_BUG;
     ret =g_app_info_get_default_for_uri_scheme(uri_scheme);
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28134,7 +28475,7 @@ int _wrap_g_application_id_is_valid(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 163 "codegen-3.0/gio.override"
+#line 164 "codegen-3.0/gio.override"
 /* XXX we want to return the most specialized type */
 
 int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g_application_get_default */
@@ -28149,7 +28490,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 28153 "gio.c"
+#line 28494 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28159,7 +28500,7 @@ int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g
   CheckRhs(0,0);
     ret =g_cancellable_get_current();
   nsp_type_gcancellable = new_type_gcancellable(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gcancellable))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28230,7 +28571,7 @@ int _wrap_g_content_type_get_icon(Stack stack, int rhs, int opt, int lhs) /* g_c
   if ( GetArgs(stack,rhs,opt,T,&type) == FAIL) return RET_BUG;
     ret =g_content_type_get_icon(type);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28244,7 +28585,7 @@ int _wrap_g_content_type_get_symbolic_icon(Stack stack, int rhs, int opt, int lh
   if ( GetArgs(stack,rhs,opt,T,&type) == FAIL) return RET_BUG;
     ret =g_content_type_get_symbolic_icon(type);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28370,7 +28711,7 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28398,7 +28739,7 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28606,7 +28947,7 @@ int _wrap_g_file_parse_name(Stack stack, int rhs, int opt, int lhs) /* g_file_pa
   if ( GetArgs(stack,rhs,opt,T,&parse_name) == FAIL) return RET_BUG;
     ret =g_file_parse_name(parse_name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28629,7 +28970,7 @@ int _wrap_g_icon_deserialize(Stack stack, int rhs, int opt, int lhs) /* g_icon_d
     }
     ret =g_icon_deserialize(value);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28697,7 +29038,7 @@ int _wrap_g_network_address_parse(Stack stack, int rhs, int opt, int lhs) /* g_n
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnectable))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28717,7 +29058,7 @@ int _wrap_g_network_address_parse_uri(Stack stack, int rhs, int opt, int lhs) /*
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnectable))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28729,7 +29070,7 @@ int _wrap_g_resolver_get_default(Stack stack, int rhs, int opt, int lhs) /* g_re
   CheckRhs(0,0);
     ret =g_resolver_get_default();
   nsp_type_gresolver = new_type_gresolver(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gresolver))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28758,7 +29099,7 @@ int _wrap_g_resolver_free_targets(Stack stack, int rhs, int opt, int lhs) /* g_r
   return 0;
 }
 
-#line 251 "codegen-3.0/gio.override"
+#line 252 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resource_from_int */
 {
@@ -28788,10 +29129,10 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28792 "gio.c"
+#line 29133 "gio.c"
 
 
-#line 225 "codegen-3.0/gio.override"
+#line 226 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_resource_new_from_data */
 {
@@ -28816,10 +29157,10 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 28820 "gio.c"
+#line 29161 "gio.c"
 
 
-#line 202 "codegen-3.0/gio.override"
+#line 203 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_load */
 {
@@ -28841,7 +29182,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 28845 "gio.c"
+#line 29186 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -28916,7 +29257,7 @@ int _wrap_g_themed_icon_new(Stack stack, int rhs, int opt, int lhs) /* g_themed_
   if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
     ret =g_themed_icon_new(iconname);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28930,12 +29271,12 @@ int _wrap_g_themed_icon_new_with_default_fallbacks(Stack stack, int rhs, int opt
   if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
     ret =g_themed_icon_new_with_default_fallbacks(iconname);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
-#line 179 "codegen-3.0/gio.override"
+#line 180 "codegen-3.0/gio.override"
 
 int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /* g_themed_icon_new_from_names */
 {
@@ -28957,7 +29298,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28961 "gio.c"
+#line 29302 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -28967,7 +29308,7 @@ int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get
   CheckRhs(0,0);
     ret =g_vfs_get_default();
   nsp_type_gvfs = new_type_gvfs(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvfs))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28979,7 +29320,7 @@ int _wrap_g_vfs_get_local(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_l
   CheckRhs(0,0);
     ret =g_vfs_get_local();
   nsp_type_gvfs = new_type_gvfs(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvfs))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28991,7 +29332,7 @@ int _wrap_g_volume_monitor_get(Stack stack, int rhs, int opt, int lhs) /* g_volu
   CheckRhs(0,0);
     ret =g_volume_monitor_get();
   nsp_type_gvolumemonitor = new_type_gvolumemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolumemonitor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29348,4 +29689,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 29352 "gio.c"
+#line 29693 "gio.c"

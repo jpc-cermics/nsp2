@@ -487,7 +487,7 @@ static int _wrap_gtk_text_iter_get_buffer(NspGtkTextIter *self,Stack stack,int r
   CheckRhs(0,0);
   ret =gtk_text_iter_get_buffer(NSP_GBOXED_GET(self, GtkTextIter));
   nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextbuffer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -706,7 +706,7 @@ static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int r
   CheckRhs(0,0);
   ret =gtk_text_iter_get_pixbuf(NSP_GBOXED_GET(self, GtkTextIter));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -730,7 +730,7 @@ static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack
   CheckRhs(0,0);
   ret =gtk_text_iter_get_child_anchor(NSP_GBOXED_GET(self, GtkTextIter));
   nsp_type_gtktextchildanchor = new_type_gtktextchildanchor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextchildanchor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2158,7 +2158,7 @@ static int _wrap_gtk_icon_info_get_builtin_pixbuf(NspGtkIconInfo *self,Stack sta
   CheckRhs(0,0);
   ret =gtk_icon_info_get_builtin_pixbuf(NSP_GBOXED_GET(self, GtkIconInfo));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2193,7 +2193,7 @@ static int _wrap_gtk_icon_info_load_icon(NspGtkIconInfo *self,Stack stack,int rh
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2241,7 +2241,7 @@ static int _wrap_gtk_icon_info_load_icon_finish(NspGtkIconInfo *self,Stack stack
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2268,7 +2268,7 @@ static int _wrap_gtk_icon_info_load_symbolic_for_context(NspGtkIconInfo *self,St
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2883,7 +2883,7 @@ static int _wrap_gtk_selection_data_get_display(NspGtkSelectionData *self,Stack 
   CheckRhs(0,0);
   ret =gtk_selection_data_get_display(NSP_GBOXED_GET(self, GtkSelectionData));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2956,7 +2956,7 @@ static int _wrap_gtk_selection_data_get_pixbuf(NspGtkSelectionData *self,Stack s
   CheckRhs(0,0);
   ret =gtk_selection_data_get_pixbuf(NSP_GBOXED_GET(self, GtkSelectionData));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3816,7 +3816,7 @@ static int _wrap_gtk_tree_row_reference_get_model(NspGtkTreeRowReference *self,S
   CheckRhs(0,0);
   ret =gtk_tree_row_reference_get_model(NSP_GBOXED_GET(self, GtkTreeRowReference));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4543,7 +4543,7 @@ static int _wrap_gtk_css_section_get_file(NspGtkCssSection *self,Stack stack,int
   CheckRhs(0,0);
   ret =gtk_css_section_get_file(NSP_GBOXED_GET(self, GtkCssSection));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7396,7 +7396,7 @@ static int _wrap_gtk_cell_layout_get_area(NspGtkCellLayout *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_cell_layout_get_area(GTK_CELL_LAYOUT(self->obj));
   nsp_type_gtkcellarea = new_type_gtkcellarea(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellarea))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7927,7 +7927,7 @@ static int _wrap_gtk_tool_shell_get_text_size_group(NspGtkToolShell *self,Stack 
   CheckRhs(0,0);
     ret =gtk_tool_shell_get_text_size_group(GTK_TOOL_SHELL(self->obj));
   nsp_type_gtksizegroup = new_type_gtksizegroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtksizegroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8784,7 +8784,7 @@ static int _wrap_gtk_file_chooser_get_file(NspGtkFileChooser *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_file_chooser_get_file(GTK_FILE_CHOOSER(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8863,7 +8863,7 @@ static int _wrap_gtk_file_chooser_get_current_folder_file(NspGtkFileChooser *sel
   CheckRhs(0,0);
     ret =gtk_file_chooser_get_current_folder_file(GTK_FILE_CHOOSER(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8952,7 +8952,7 @@ static int _wrap_gtk_file_chooser_get_preview_file(NspGtkFileChooser *self,Stack
   CheckRhs(0,0);
     ret =gtk_file_chooser_get_preview_file(GTK_FILE_CHOOSER(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9022,7 +9022,7 @@ static int _wrap_gtk_file_chooser_get_filter(NspGtkFileChooser *self,Stack stack
   CheckRhs(0,0);
     ret =gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(self->obj));
   nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkfilefilter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9381,7 +9381,7 @@ static int _wrap_gtk_font_chooser_get_font_family(NspGtkFontChooser *self,Stack 
   CheckRhs(0,0);
     ret =gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(self->obj));
   nsp_type_pangofontfamily = new_type_pangofontfamily(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontfamily))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9401,7 +9401,7 @@ static int _wrap_gtk_font_chooser_get_font_face(NspGtkFontChooser *self,Stack st
   CheckRhs(0,0);
     ret =gtk_font_chooser_get_font_face(GTK_FONT_CHOOSER(self->obj));
   nsp_type_pangofontface = new_type_pangofontface(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontface))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9800,7 +9800,7 @@ static int _wrap_gtk_scrollable_get_hadjustment(NspGtkScrollable *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_scrollable_get_hadjustment(GTK_SCROLLABLE(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9821,7 +9821,7 @@ static int _wrap_gtk_scrollable_get_vadjustment(NspGtkScrollable *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10385,7 +10385,7 @@ static int _wrap_gtk_recent_chooser_get_filter(NspGtkRecentChooser *self,Stack s
   CheckRhs(0,0);
     ret =gtk_recent_chooser_get_filter(GTK_RECENT_CHOOSER(self->obj));
   nsp_type_gtkrecentfilter = new_type_gtkrecentfilter(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkrecentfilter))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10628,7 +10628,7 @@ static int _wrap_gtk_app_chooser_get_app_info(NspGtkAppChooser *self,Stack stack
   CheckRhs(0,0);
     ret =gtk_app_chooser_get_app_info(GTK_APP_CHOOSER(self->obj));
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11399,8 +11399,11 @@ _wrap_gtk_application_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_application_new(application_id,flags))== NULL) return RET_BUG;
 
   nsp_type_gtkapplication = new_type_gtkapplication(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkapplication );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkapplication );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11441,7 +11444,7 @@ static int _wrap_gtk_application_get_app_menu(NspGtkApplication *self,Stack stac
   CheckRhs(0,0);
     ret =gtk_application_get_app_menu(GTK_APPLICATION(self->obj));
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11478,7 +11481,7 @@ static int _wrap_gtk_application_get_menubar(NspGtkApplication *self,Stack stack
   CheckRhs(0,0);
     ret =gtk_application_get_menubar(GTK_APPLICATION(self->obj));
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11580,7 +11583,7 @@ static int _wrap_gtk_application_get_window_by_id(NspGtkApplication *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&id) == FAIL) return RET_BUG;
     ret =gtk_application_get_window_by_id(GTK_APPLICATION(self->obj),id);
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11600,7 +11603,7 @@ static int _wrap_gtk_application_get_active_window(NspGtkApplication *self,Stack
   CheckRhs(0,0);
     ret =gtk_application_get_active_window(GTK_APPLICATION(self->obj));
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11706,7 +11709,7 @@ static int _wrap_gtk_application_get_menu_by_id(NspGtkApplication *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&id) == FAIL) return RET_BUG;
     ret =gtk_application_get_menu_by_id(GTK_APPLICATION(self->obj),id);
   nsp_type_gmenu = new_type_gmenu(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenu))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11958,8 +11961,11 @@ _wrap_gtk_application_window_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_application_window_new(GTK_APPLICATION(application->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkapplicationwindow = new_type_gtkapplicationwindow(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkapplicationwindow );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkapplicationwindow );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12232,8 +12238,11 @@ _wrap_gtk_builder_new_from_string (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_builder_new_from_string(string,length))== NULL) return RET_BUG;
 
   nsp_type_gtkbuilder = new_type_gtkbuilder(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12248,8 +12257,11 @@ _wrap_gtk_builder_new_from_resource (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_builder_new_from_resource(resource_path))== NULL) return RET_BUG;
 
   nsp_type_gtkbuilder = new_type_gtkbuilder(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12264,8 +12276,11 @@ _wrap_gtk_builder_new_from_file (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_builder_new_from_file(filename))== NULL) return RET_BUG;
 
   nsp_type_gtkbuilder = new_type_gtkbuilder(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12278,8 +12293,11 @@ _wrap_gtk_builder_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_builder_new())== NULL) return RET_BUG;
 
   nsp_type_gtkbuilder = new_type_gtkbuilder(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuilder );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12335,7 +12353,7 @@ static int _wrap_gtk_builder_add_from_string(NspGtkBuilder *self,Stack stack,int
     }
   return 0;
 }
-#line 12339 "gtk.c"
+#line 12357 "gtk.c"
 
 
 static int _wrap_gtk_builder_add_objects_from_file(NspGtkBuilder *self,Stack stack,int rhs,int opt,int lhs)
@@ -12438,7 +12456,7 @@ static int _wrap_gtk_builder_get_object(NspGtkBuilder *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 12442 "gtk.c"
+#line 12460 "gtk.c"
 
 
 static int _wrap_gtk_builder_get_objects(NspGtkBuilder *self,Stack stack,int rhs,int opt,int lhs)
@@ -12566,7 +12584,7 @@ static int _wrap_gtk_builder_connect_signals(NspGtkBuilder *self,Stack stack,int
 }
 
 
-#line 12570 "gtk.c"
+#line 12588 "gtk.c"
 
 
 static int _wrap_gtk_builder_set_translation_domain(NspGtkBuilder *self,Stack stack,int rhs,int opt,int lhs)
@@ -12622,7 +12640,7 @@ static int _wrap_gtk_builder_get_application(NspGtkBuilder *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_builder_get_application(GTK_BUILDER(self->obj));
   nsp_type_gtkapplication = new_type_gtkapplication(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkapplication))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12872,8 +12890,11 @@ _wrap_gtk_window_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_window_new(type))== NULL) return RET_BUG;
 
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindow );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindow );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13038,7 +13059,7 @@ static int _wrap_gtk_window_get_transient_for(NspGtkWindow *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_window_get_transient_for(GTK_WINDOW(self->obj));
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13414,7 +13435,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				  NULL, geom_mask);
   return 0;
 }
-#line 13418 "gtk.c"
+#line 13439 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -13433,7 +13454,7 @@ static int _wrap_gtk_window_get_screen(NspGtkWindow *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gtk_window_get_screen(GTK_WINDOW(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13511,7 +13532,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
-#line 13515 "gtk.c"
+#line 13536 "gtk.c"
 
 
 #line 7447 "codegen-3.0/gtk.override"
@@ -13524,7 +13545,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 13528 "gtk.c"
+#line 13549 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -13568,7 +13589,7 @@ static int _wrap_gtk_window_get_icon(NspGtkWindow *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_window_get_icon(GTK_WINDOW(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13849,7 +13870,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG;
   return 1;
 }
-#line 13853 "gtk.c"
+#line 13874 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -13873,7 +13894,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   return 1;
 }
-#line 13877 "gtk.c"
+#line 13898 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -13896,7 +13917,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   return 1;
 }
-#line 13900 "gtk.c"
+#line 13921 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -13935,7 +13956,7 @@ static int _wrap_gtk_window_get_group(NspGtkWindow *self,Stack stack,int rhs,int
   CheckRhs(0,0);
     ret =gtk_window_get_group(GTK_WINDOW(self->obj));
   nsp_type_gtkwindowgroup = new_type_gtkwindowgroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwindowgroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13980,7 +14001,7 @@ static int _wrap_gtk_window_get_application(NspGtkWindow *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_window_get_application(GTK_WINDOW(self->obj));
   nsp_type_gtkapplication = new_type_gtkapplication(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkapplication))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14484,7 +14505,7 @@ _wrap_gtk_dialog_new(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 14488 "gtk.c"
+#line 14509 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -14610,7 +14631,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG;
   return 1;
 }
-#line 14614 "gtk.c"
+#line 14635 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,10,0)
@@ -14946,7 +14967,7 @@ _wrap_gtk_message_dialog_new(Stack stack,int rhs,int opt,int lhs)
 }
 
 
-#line 14950 "gtk.c"
+#line 14971 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,12,0)
@@ -15006,7 +15027,7 @@ static int _wrap_gtk_message_dialog_format_secondary_text(NspGtkMessageDialog *s
   return 0;
 }
 
-#line 15010 "gtk.c"
+#line 15031 "gtk.c"
 
 
 #line 6327 "codegen-3.0/gtk.override"
@@ -15022,7 +15043,7 @@ static int _wrap_gtk_message_dialog_format_secondary_markup(NspGtkMessageDialog 
 
 
 
-#line 15026 "gtk.c"
+#line 15047 "gtk.c"
 
 
 static int _wrap_gtk_message_dialog_get_message_area(NspGtkMessageDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -15258,8 +15279,11 @@ _wrap_gtk_about_dialog_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_about_dialog_new())== NULL) return RET_BUG;
 
   nsp_type_gtkaboutdialog = new_type_gtkaboutdialog(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaboutdialog );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaboutdialog );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15505,7 +15529,7 @@ static int _wrap_gtk_about_dialog_get_logo(NspGtkAboutDialog *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_about_dialog_get_logo(GTK_ABOUT_DIALOG(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15806,8 +15830,11 @@ _wrap_gtk_assistant_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_assistant_new())== NULL) return RET_BUG;
 
   nsp_type_gtkassistant = new_type_gtkassistant(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkassistant );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkassistant );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15995,7 +16022,7 @@ static int _wrap_gtk_assistant_get_page_header_image(NspGtkAssistant *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &page) == FAIL) return RET_BUG;
     ret =gtk_assistant_get_page_header_image(GTK_ASSISTANT(self->obj),GTK_WIDGET(page->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16034,7 +16061,7 @@ static int _wrap_gtk_assistant_get_page_side_image(NspGtkAssistant *self,Stack s
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &page) == FAIL) return RET_BUG;
     ret =gtk_assistant_get_page_side_image(GTK_ASSISTANT(self->obj),GTK_WIDGET(page->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16334,8 +16361,11 @@ _wrap_gtk_invisible_new_for_screen (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_invisible_new_for_screen(GDK_SCREEN(screen->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkinvisible = new_type_gtkinvisible(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinvisible );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinvisible );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16348,8 +16378,11 @@ _wrap_gtk_invisible_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_invisible_new())== NULL) return RET_BUG;
 
   nsp_type_gtkinvisible = new_type_gtkinvisible(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinvisible );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinvisible );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16370,7 +16403,7 @@ static int _wrap_gtk_invisible_get_screen(NspGtkInvisible *self,Stack stack,int 
   CheckRhs(0,0);
     ret =gtk_invisible_get_screen(GTK_INVISIBLE(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16592,8 +16625,11 @@ _wrap_gtk_offscreen_window_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_offscreen_window_new())== NULL) return RET_BUG;
 
   nsp_type_gtkoffscreenwindow = new_type_gtkoffscreenwindow(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkoffscreenwindow );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkoffscreenwindow );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16618,7 +16654,7 @@ static int _wrap_gtk_offscreen_window_get_pixbuf(NspGtkOffscreenWindow *self,Sta
   CheckRhs(0,0);
     ret =gtk_offscreen_window_get_pixbuf(GTK_OFFSCREEN_WINDOW(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16836,8 +16872,11 @@ _wrap_gtk_window_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_window_group_new())== NULL) return RET_BUG;
 
   nsp_type_gtkwindowgroup = new_type_gtkwindowgroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindowgroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindowgroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17125,8 +17164,11 @@ _wrap_gtk_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_box_new(orientation,spacing))== NULL) return RET_BUG;
 
   nsp_type_gtkbox = new_type_gtkbox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17273,7 +17315,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG;
   return 1;
 }
-#line 17277 "gtk.c"
+#line 17319 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17555,8 +17597,11 @@ _wrap_gtk_grid_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_grid_new())== NULL) return RET_BUG;
 
   nsp_type_gtkgrid = new_type_gtkgrid(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkgrid );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkgrid );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -18077,8 +18122,11 @@ _wrap_gtk_revealer_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_revealer_new())== NULL) return RET_BUG;
 
   nsp_type_gtkrevealer = new_type_gtkrevealer(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrevealer );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrevealer );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -18427,8 +18475,11 @@ _wrap_gtk_list_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_list_box_new())== NULL) return RET_BUG;
 
   nsp_type_gtklistbox = new_type_gtklistbox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklistbox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklistbox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -18510,7 +18561,7 @@ static int _wrap_gtk_list_box_get_adjustment(NspGtkListBox *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_list_box_get_adjustment(GTK_LIST_BOX(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -18935,8 +18986,11 @@ _wrap_gtk_flow_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_flow_box_new())== NULL) return RET_BUG;
 
   nsp_type_gtkflowbox = new_type_gtkflowbox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkflowbox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkflowbox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19560,8 +19614,11 @@ _wrap_gtk_stack_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_stack_new())== NULL) return RET_BUG;
 
   nsp_type_gtkstack = new_type_gtkstack(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstack );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstack );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20140,8 +20197,11 @@ _wrap_gtk_stack_switcher_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_stack_switcher_new())== NULL) return RET_BUG;
 
   nsp_type_gtkstackswitcher = new_type_gtkstackswitcher(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstackswitcher );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstackswitcher );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20171,7 +20231,7 @@ static int _wrap_gtk_stack_switcher_get_stack(NspGtkStackSwitcher *self,Stack st
   CheckRhs(0,0);
     ret =gtk_stack_switcher_get_stack(GTK_STACK_SWITCHER(self->obj));
   nsp_type_gtkstack = new_type_gtkstack(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkstack))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20403,8 +20463,11 @@ _wrap_gtk_stack_sidebar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_stack_sidebar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkstacksidebar = new_type_gtkstacksidebar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstacksidebar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstacksidebar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20442,7 +20505,7 @@ static int _wrap_gtk_stack_sidebar_get_stack(NspGtkStackSidebar *self,Stack stac
   CheckRhs(0,0);
     ret =gtk_stack_sidebar_get_stack(GTK_STACK_SIDEBAR(self->obj));
   nsp_type_gtkstack = new_type_gtkstack(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkstack))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20673,8 +20736,11 @@ _wrap_gtk_action_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_action_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkactionbar = new_type_gtkactionbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkactionbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkactionbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20980,8 +21046,11 @@ _wrap_gtk_header_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_header_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkheaderbar = new_type_gtkheaderbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkheaderbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkheaderbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21456,8 +21525,11 @@ _wrap_gtk_overlay_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_overlay_new())== NULL) return RET_BUG;
 
   nsp_type_gtkoverlay = new_type_gtkoverlay(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkoverlay );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkoverlay );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21758,8 +21830,11 @@ _wrap_gtk_button_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_button_box_new(orientation))== NULL) return RET_BUG;
 
   nsp_type_gtkbuttonbox = new_type_gtkbuttonbox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuttonbox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbuttonbox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22069,8 +22144,11 @@ _wrap_gtk_paned_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_paned_new(orientation))== NULL) return RET_BUG;
 
   nsp_type_gtkpaned = new_type_gtkpaned(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpaned );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpaned );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22170,7 +22248,7 @@ static int _wrap_gtk_paned_get_handle_window(NspGtkPaned *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_paned_get_handle_window(GTK_PANED(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22458,8 +22536,11 @@ _wrap_gtk_layout_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_layout_new(hadjustment,vadjustment))== NULL) return RET_BUG;
 
   nsp_type_gtklayout = new_type_gtklayout(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklayout );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklayout );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22471,7 +22552,7 @@ static int _wrap_gtk_layout_get_bin_window(NspGtkLayout *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =gtk_layout_get_bin_window(GTK_LAYOUT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22517,7 +22598,7 @@ _wrap_gtk_layout_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 
 }
-#line 22521 "gtk.c"
+#line 22602 "gtk.c"
 
 
 static NspMethods gtklayout_methods[] = {
@@ -22740,8 +22821,11 @@ _wrap_gtk_notebook_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_notebook_new())== NULL) return RET_BUG;
 
   nsp_type_gtknotebook = new_type_gtknotebook(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtknotebook );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtknotebook );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22769,7 +22853,7 @@ static int _wrap_gtk_notebook_append_page(NspGtkNotebook *self,Stack stack,int r
   return 1;
 }
 
-#line 22773 "gtk.c"
+#line 22857 "gtk.c"
 
 
 static int _wrap_gtk_notebook_append_page_menu(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -23490,8 +23574,11 @@ _wrap_gtk_expander_new_with_mnemonic (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_expander_new_with_mnemonic(label))== NULL) return RET_BUG;
 
   nsp_type_gtkexpander = new_type_gtkexpander(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkexpander );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkexpander );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23506,8 +23593,11 @@ _wrap_gtk_expander_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_expander_new(label))== NULL) return RET_BUG;
 
   nsp_type_gtkexpander = new_type_gtkexpander(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkexpander );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkexpander );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23917,8 +24007,11 @@ _wrap_gtk_aspect_frame_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_aspect_frame_new(label,xalign,yalign,ratio,obey_child))== NULL) return RET_BUG;
 
   nsp_type_gtkaspectframe = new_type_gtkaspectframe(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaspectframe );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaspectframe );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24155,8 +24248,11 @@ _wrap_gtk_fixed_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_fixed_new())== NULL) return RET_BUG;
 
   nsp_type_gtkfixed = new_type_gtkfixed(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfixed );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfixed );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24419,7 +24515,7 @@ _wrap_gtk_label_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 24423 "gtk.c"
+#line 24519 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -24804,7 +24900,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1;
 }
-#line 24808 "gtk.c"
+#line 24904 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -24814,7 +24910,7 @@ static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_label_get_layout(GTK_LABEL(self->obj));
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24829,7 +24925,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   return 1;
 }
-#line 24833 "gtk.c"
+#line 24929 "gtk.c"
 
 
 static int _wrap_gtk_label_set_single_line_mode(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -25217,8 +25313,11 @@ _wrap_gtk_image_new_from_surface (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_surface(surface))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25237,8 +25336,11 @@ _wrap_gtk_image_new_from_gicon (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_gicon(G_ICON(icon->obj),size))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25257,8 +25359,11 @@ _wrap_gtk_image_new_from_icon_name (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_icon_name(icon_name,size))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25273,8 +25378,11 @@ _wrap_gtk_image_new_from_animation (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_animation(GDK_PIXBUF_ANIMATION(animation->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25289,8 +25397,11 @@ _wrap_gtk_image_new_from_pixbuf (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_pixbuf(GDK_PIXBUF(pixbuf->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25305,8 +25416,11 @@ _wrap_gtk_image_new_from_resource (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_resource(resource_path))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25321,8 +25435,11 @@ _wrap_gtk_image_new_from_file (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_image_new_from_file(filename))== NULL) return RET_BUG;
 
   nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimage );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25472,7 +25589,7 @@ _wrap_gtk_image_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;;
 }
-#line 25476 "gtk.c"
+#line 25593 "gtk.c"
 
 
 static int _wrap_gtk_image_clear(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -25593,7 +25710,7 @@ static int _wrap_gtk_image_get_pixbuf(NspGtkImage *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_image_get_pixbuf(GTK_IMAGE(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25605,7 +25722,7 @@ static int _wrap_gtk_image_get_animation(NspGtkImage *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gtk_image_get_animation(GTK_IMAGE(self->obj));
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbufanimation))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25631,7 +25748,7 @@ static int _wrap_gtk_image_get_icon_name(NspGtkImage *self,Stack stack,int rhs,i
 
 
 
-#line 25635 "gtk.c"
+#line 25752 "gtk.c"
 
 
 static int _wrap_gtk_image_get_pixel_size(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -25872,8 +25989,11 @@ _wrap_gtk_spinner_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_spinner_new())== NULL) return RET_BUG;
 
   nsp_type_gtkspinner = new_type_gtkspinner(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinner );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinner );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26111,8 +26231,11 @@ _wrap_gtk_info_bar_new_with_buttons (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_info_bar_new_with_buttons(first_button_text))== NULL) return RET_BUG;
 
   nsp_type_gtkinfobar = new_type_gtkinfobar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinfobar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinfobar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26125,8 +26248,11 @@ _wrap_gtk_info_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_info_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkinfobar = new_type_gtkinfobar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinfobar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinfobar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26501,8 +26627,11 @@ _wrap_gtk_progress_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_progress_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkprogressbar = new_type_gtkprogressbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkprogressbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkprogressbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26855,8 +26984,11 @@ _wrap_gtk_level_bar_new_for_interval (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_level_bar_new_for_interval(min_value,max_value))== NULL) return RET_BUG;
 
   nsp_type_gtklevelbar = new_type_gtklevelbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklevelbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklevelbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26869,8 +27001,11 @@ _wrap_gtk_level_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_level_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtklevelbar = new_type_gtklevelbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklevelbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklevelbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27331,8 +27466,11 @@ _wrap_gtk_statusbar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_statusbar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkstatusbar = new_type_gtkstatusbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstatusbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstatusbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27624,8 +27762,11 @@ _wrap_gtk_accel_label_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_accel_label_new(string))== NULL) return RET_BUG;
 
   nsp_type_gtkaccellabel = new_type_gtkaccellabel(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccellabel );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccellabel );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27916,8 +28057,11 @@ _wrap_gtk_button_new_from_icon_name (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_button_new_from_icon_name(icon_name,size))== NULL) return RET_BUG;
 
   nsp_type_gtkbutton = new_type_gtkbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27970,7 +28114,7 @@ _wrap_gtk_button_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 27974 "gtk.c"
+#line 28118 "gtk.c"
 
 
 static int _wrap_gtk_button_clicked(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -28249,7 +28393,7 @@ static int _wrap_gtk_button_get_event_window(NspGtkButton *self,Stack stack,int 
   CheckRhs(0,0);
     ret =gtk_button_get_event_window(GTK_BUTTON(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28514,7 +28658,7 @@ _wrap_gtk_check_button_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 28518 "gtk.c"
+#line 28662 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -28766,7 +28910,7 @@ _wrap_gtk_radio_button_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 28770 "gtk.c"
+#line 28914 "gtk.c"
 
 
 #line 4599 "codegen-3.0/gtk.override"
@@ -28778,7 +28922,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 28782 "gtk.c"
+#line 28926 "gtk.c"
 
 
 static int _wrap_gtk_radio_button_join_group(NspGtkRadioButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -29030,7 +29174,7 @@ _wrap_gtk_toggle_button_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 29034 "gtk.c"
+#line 29178 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -29318,8 +29462,11 @@ _wrap_gtk_link_button_new_with_label (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_link_button_new_with_label(uri,label))== NULL) return RET_BUG;
 
   nsp_type_gtklinkbutton = new_type_gtklinkbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklinkbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklinkbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29334,8 +29481,11 @@ _wrap_gtk_link_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_link_button_new(uri))== NULL) return RET_BUG;
 
   nsp_type_gtklinkbutton = new_type_gtklinkbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklinkbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklinkbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29595,8 +29745,11 @@ _wrap_gtk_menu_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtkmenubutton = new_type_gtkmenubutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29626,7 +29779,7 @@ static int _wrap_gtk_menu_button_get_popup(NspGtkMenuButton *self,Stack stack,in
   CheckRhs(0,0);
     ret =gtk_menu_button_get_popup(GTK_MENU_BUTTON(self->obj));
   nsp_type_gtkmenu = new_type_gtkmenu(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkmenu))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29663,7 +29816,7 @@ static int _wrap_gtk_menu_button_get_popover(NspGtkMenuButton *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_menu_button_get_popover(GTK_MENU_BUTTON(self->obj));
   nsp_type_gtkpopover = new_type_gtkpopover(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkpopover))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29737,7 +29890,7 @@ static int _wrap_gtk_menu_button_get_menu_model(NspGtkMenuButton *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_menu_button_get_menu_model(GTK_MENU_BUTTON(self->obj));
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30047,8 +30200,11 @@ _wrap_gtk_switch_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_switch_new())== NULL) return RET_BUG;
 
   nsp_type_gtkswitch = new_type_gtkswitch(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkswitch );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkswitch );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30338,8 +30494,11 @@ _wrap_gtk_scale_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_scale_button_new(size,min,max,step,icons))== NULL) return RET_BUG;
 
   nsp_type_gtkscalebutton = new_type_gtkscalebutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscalebutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscalebutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30386,7 +30545,7 @@ static int _wrap_gtk_scale_button_get_adjustment(NspGtkScaleButton *self,Stack s
   CheckRhs(0,0);
     ret =gtk_scale_button_get_adjustment(GTK_SCALE_BUTTON(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30659,8 +30818,11 @@ _wrap_gtk_volume_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_volume_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtkvolumebutton = new_type_gtkvolumebutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvolumebutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvolumebutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30878,8 +31040,11 @@ _wrap_gtk_lock_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_lock_button_new(G_PERMISSION(permission->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtklockbutton = new_type_gtklockbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklockbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklockbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30892,7 +31057,7 @@ static int _wrap_gtk_lock_button_get_permission(NspGtkLockButton *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_lock_button_get_permission(GTK_LOCK_BUTTON(self->obj));
   nsp_type_gpermission = new_type_gpermission(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gpermission))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31141,8 +31306,11 @@ _wrap_gtk_model_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_model_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtkmodelbutton = new_type_gtkmodelbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmodelbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmodelbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31382,7 +31550,7 @@ _wrap_gtk_entry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 31386 "gtk.c"
+#line 31554 "gtk.c"
 
 
 static int _wrap_gtk_entry_get_buffer(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -31392,7 +31560,7 @@ static int _wrap_gtk_entry_get_buffer(NspGtkEntry *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_entry_get_buffer(GTK_ENTRY(self->obj));
   nsp_type_gtkentrybuffer = new_type_gtkentrybuffer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkentrybuffer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31419,7 +31587,7 @@ static int _wrap_gtk_entry_get_text_area(NspGtkEntry *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 31423 "gtk.c"
+#line 31591 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_visibility(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -31670,7 +31838,7 @@ static int _wrap_gtk_entry_get_layout(NspGtkEntry *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_entry_get_layout(GTK_ENTRY(self->obj));
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31687,7 +31855,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 31691 "gtk.c"
+#line 31859 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_alignment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -31724,7 +31892,7 @@ static int _wrap_gtk_entry_get_completion(NspGtkEntry *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =gtk_entry_get_completion(GTK_ENTRY(self->obj));
   nsp_type_gtkentrycompletion = new_type_gtkentrycompletion(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkentrycompletion))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31765,7 +31933,7 @@ static int _wrap_gtk_entry_get_cursor_hadjustment(NspGtkEntry *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_entry_get_cursor_hadjustment(GTK_ENTRY(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31911,7 +32079,7 @@ static int _wrap_gtk_entry_get_icon_pixbuf(NspGtkEntry *self,Stack stack,int rhs
       return RET_BUG;
     ret =gtk_entry_get_icon_pixbuf(GTK_ENTRY(self->obj),icon_pos);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -31941,7 +32109,7 @@ static int _wrap_gtk_entry_get_icon_gicon(NspGtkEntry *self,Stack stack,int rhs,
       return RET_BUG;
     ret =gtk_entry_get_icon_gicon(GTK_ENTRY(self->obj),icon_pos);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -32093,7 +32261,7 @@ static int _wrap_gtk_entry_get_icon_area(NspGtkEntry *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 32097 "gtk.c"
+#line 32265 "gtk.c"
 
 
 static int _wrap_gtk_entry_im_context_filter_keypress(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -32585,8 +32753,11 @@ _wrap_gtk_entry_buffer_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_entry_buffer_new(initial_chars,n_initial_chars))== NULL) return RET_BUG;
 
   nsp_type_gtkentrybuffer = new_type_gtkentrybuffer(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrybuffer );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrybuffer );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -32916,8 +33087,11 @@ _wrap_gtk_entry_completion_new_with_area (Stack stack, int rhs, int opt, int lhs
   if ((ret = (GObject *)gtk_entry_completion_new_with_area(GTK_CELL_AREA(area->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkentrycompletion = new_type_gtkentrycompletion(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrycompletion );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrycompletion );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -32930,8 +33104,11 @@ _wrap_gtk_entry_completion_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_entry_completion_new())== NULL) return RET_BUG;
 
   nsp_type_gtkentrycompletion = new_type_gtkentrycompletion(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrycompletion );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrycompletion );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -32976,7 +33153,7 @@ static int _wrap_gtk_entry_completion_get_model(NspGtkEntryCompletion *self,Stac
   CheckRhs(0,0);
     ret =gtk_entry_completion_get_model(GTK_ENTRY_COMPLETION(self->obj));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33424,8 +33601,11 @@ _wrap_gtk_scale_new_with_range (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_scale_new_with_range(orientation,min,max,step))== NULL) return RET_BUG;
 
   nsp_type_gtkscale = new_type_gtkscale(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscale );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscale );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33456,8 +33636,11 @@ _wrap_gtk_scale_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_scale_new(orientation,adjustment))== NULL) return RET_BUG;
 
   nsp_type_gtkscale = new_type_gtkscale(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscale );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscale );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33560,7 +33743,7 @@ static int _wrap_gtk_scale_get_layout(NspGtkScale *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =gtk_scale_get_layout(GTK_SCALE(self->obj));
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33824,8 +34007,11 @@ _wrap_gtk_spin_button_new_with_range (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_spin_button_new_with_range(min,max,step))== NULL) return RET_BUG;
 
   nsp_type_gtkspinbutton = new_type_gtkspinbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33856,8 +34042,11 @@ _wrap_gtk_spin_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_spin_button_new(adjustment,climb_rate,digits))== NULL) return RET_BUG;
 
   nsp_type_gtkspinbutton = new_type_gtkspinbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33903,7 +34092,7 @@ static int _wrap_gtk_spin_button_get_adjustment(NspGtkSpinButton *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -33948,7 +34137,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1;
 
 }
-#line 33952 "gtk.c"
+#line 34141 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -33972,7 +34161,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG;
   return 1;
 }
-#line 33976 "gtk.c"
+#line 34165 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -34340,8 +34529,11 @@ _wrap_gtk_search_entry_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_search_entry_new())== NULL) return RET_BUG;
 
   nsp_type_gtksearchentry = new_type_gtksearchentry(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksearchentry );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksearchentry );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -34588,8 +34780,11 @@ _wrap_gtk_search_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_search_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtksearchbar = new_type_gtksearchbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksearchbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksearchbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -34925,8 +35120,11 @@ _wrap_gtk_text_mark_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_mark_new(name,left_gravity))== NULL) return RET_BUG;
 
   nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextmark );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextmark );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -34974,7 +35172,7 @@ static int _wrap_gtk_text_mark_get_buffer(NspGtkTextMark *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_text_mark_get_buffer(GTK_TEXT_MARK(self->obj));
   nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextbuffer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35219,8 +35417,11 @@ _wrap_gtk_text_buffer_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_buffer_new(table))== NULL) return RET_BUG;
 
   nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextbuffer );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextbuffer );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35250,7 +35451,7 @@ static int _wrap_gtk_text_buffer_get_tag_table(NspGtkTextBuffer *self,Stack stac
   CheckRhs(0,0);
     ret =gtk_text_buffer_get_tag_table(GTK_TEXT_BUFFER(self->obj));
   nsp_type_gtktexttagtable = new_type_gtktexttagtable(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktexttagtable))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35265,7 +35466,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 35269 "gtk.c"
+#line 35470 "gtk.c"
 
 
 #line 6052 "codegen-3.0/gtk.override"
@@ -35282,7 +35483,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 35286 "gtk.c"
+#line 35487 "gtk.c"
 
 
 #line 6067 "codegen-3.0/gtk.override"
@@ -35296,7 +35497,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 35300 "gtk.c"
+#line 35501 "gtk.c"
 
 
 #line 6079 "codegen-3.0/gtk.override"
@@ -35316,7 +35517,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 35320 "gtk.c"
+#line 35521 "gtk.c"
 
 
 #line 6097 "codegen-3.0/gtk.override"
@@ -35331,7 +35532,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 35335 "gtk.c"
+#line 35536 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -35425,7 +35626,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 35429 "gtk.c"
+#line 35630 "gtk.c"
 
 
 #line 5807 "codegen-3.0/gtk.override"
@@ -35460,7 +35661,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 35464 "gtk.c"
+#line 35665 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,16,0)
@@ -35660,7 +35861,7 @@ static int _wrap_gtk_text_buffer_create_child_anchor(NspGtkTextBuffer *self,Stac
   }
     ret =gtk_text_buffer_create_child_anchor(GTK_TEXT_BUFFER(self->obj),iter);
   nsp_type_gtktextchildanchor = new_type_gtktextchildanchor(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextchildanchor))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35704,7 +35905,7 @@ static int _wrap_gtk_text_buffer_create_mark(NspGtkTextBuffer *self,Stack stack,
   }
     ret =gtk_text_buffer_create_mark(GTK_TEXT_BUFFER(self->obj),mark_name,where,left_gravity);
   nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextmark))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35744,7 +35945,7 @@ static int _wrap_gtk_text_buffer_get_mark(NspGtkTextBuffer *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =gtk_text_buffer_get_mark(GTK_TEXT_BUFFER(self->obj),name);
   nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextmark))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35782,7 +35983,7 @@ static int _wrap_gtk_text_buffer_get_insert(NspGtkTextBuffer *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_text_buffer_get_insert(GTK_TEXT_BUFFER(self->obj));
   nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextmark))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -35794,7 +35995,7 @@ static int _wrap_gtk_text_buffer_get_selection_bound(NspGtkTextBuffer *self,Stac
   CheckRhs(0,0);
     ret =gtk_text_buffer_get_selection_bound(GTK_TEXT_BUFFER(self->obj));
   nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextmark))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -36005,7 +36206,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36009 "gtk.c"
+#line 36210 "gtk.c"
 
 
 #line 5895 "codegen-3.0/gtk.override"
@@ -36025,7 +36226,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36029 "gtk.c"
+#line 36230 "gtk.c"
 
 
 #line 5913 "codegen-3.0/gtk.override"
@@ -36045,7 +36246,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36049 "gtk.c"
+#line 36250 "gtk.c"
 
 
 #line 5931 "codegen-3.0/gtk.override"
@@ -36064,7 +36265,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36068 "gtk.c"
+#line 36269 "gtk.c"
 
 
 #line 5948 "codegen-3.0/gtk.override"
@@ -36082,7 +36283,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36086 "gtk.c"
+#line 36287 "gtk.c"
 
 
 #line 5964 "codegen-3.0/gtk.override"
@@ -36096,7 +36297,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36100 "gtk.c"
+#line 36301 "gtk.c"
 
 
 #line 5976 "codegen-3.0/gtk.override"
@@ -36110,7 +36311,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36114 "gtk.c"
+#line 36315 "gtk.c"
 
 
 #line 5988 "codegen-3.0/gtk.override"
@@ -36130,7 +36331,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 36134 "gtk.c"
+#line 36335 "gtk.c"
 
 
 #line 6006 "codegen-3.0/gtk.override"
@@ -36148,7 +36349,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 36152 "gtk.c"
+#line 36353 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -36268,7 +36469,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 36272 "gtk.c"
+#line 36473 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -36651,8 +36852,11 @@ _wrap_gtk_text_tag_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_tag_new(name))== NULL) return RET_BUG;
 
   nsp_type_gtktexttag = new_type_gtktexttag(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttag );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttag );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -36919,8 +37123,11 @@ _wrap_gtk_text_tag_table_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_tag_table_new())== NULL) return RET_BUG;
 
   nsp_type_gtktexttagtable = new_type_gtktexttagtable(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttagtable );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttagtable );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -36943,7 +37150,7 @@ static int _wrap_gtk_text_tag_table_lookup(NspGtkTextTagTable *self,Stack stack,
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =gtk_text_tag_table_lookup(GTK_TEXT_TAG_TABLE(self->obj),name);
   nsp_type_gtktexttag = new_type_gtktexttag(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktexttag))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -37177,8 +37384,11 @@ _wrap_gtk_text_view_new_with_buffer (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_view_new_with_buffer(GTK_TEXT_BUFFER(buffer->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtktextview = new_type_gtktextview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -37191,8 +37401,11 @@ _wrap_gtk_text_view_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_view_new())== NULL) return RET_BUG;
 
   nsp_type_gtktextview = new_type_gtktextview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -37213,7 +37426,7 @@ static int _wrap_gtk_text_view_get_buffer(NspGtkTextView *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_text_view_get_buffer(GTK_TEXT_VIEW(self->obj));
   nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktextbuffer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -37299,7 +37512,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 37303 "gtk.c"
+#line 37516 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -37360,7 +37573,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 37364 "gtk.c"
+#line 37577 "gtk.c"
 
 
 #line 6850 "codegen-3.0/gtk.override"
@@ -37380,7 +37593,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   return 1;
 }
 
-#line 37384 "gtk.c"
+#line 37597 "gtk.c"
 
 
 #line 6868 "codegen-3.0/gtk.override"
@@ -37404,7 +37617,7 @@ _wrap_gtk_text_view_get_iter_at_position(NspGObject *self,Stack stack,int rhs,in
   return Max(lhs,1);
 }
 
-#line 37408 "gtk.c"
+#line 37621 "gtk.c"
 
 
 #line 6831 "codegen-3.0/gtk.override"
@@ -37425,7 +37638,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG;
   return 1;
 }
-#line 37429 "gtk.c"
+#line 37642 "gtk.c"
 
 
 #line 6814 "codegen-3.0/gtk.override"
@@ -37444,7 +37657,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 37448 "gtk.c"
+#line 37661 "gtk.c"
 
 
 #line 6133 "codegen-3.0/gtk.override"
@@ -37466,7 +37679,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 37470 "gtk.c"
+#line 37683 "gtk.c"
 
 
 #line 6153 "codegen-3.0/gtk.override"
@@ -37488,7 +37701,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 37492 "gtk.c"
+#line 37705 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -37502,7 +37715,7 @@ static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int r
       return RET_BUG;
     ret =gtk_text_view_get_window(GTK_TEXT_VIEW(self->obj),win);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -38340,8 +38553,11 @@ _wrap_gtk_text_child_anchor_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_text_child_anchor_new())== NULL) return RET_BUG;
 
   nsp_type_gtktextchildanchor = new_type_gtktextchildanchor(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextchildanchor );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextchildanchor );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -38355,7 +38571,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 38359 "gtk.c"
+#line 38575 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -38657,7 +38873,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 38661 "gtk.c"
+#line 38877 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -38667,7 +38883,7 @@ static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stac
   CheckRhs(0,0);
     ret =gtk_tree_selection_get_tree_view(GTK_TREE_SELECTION(self->obj));
   nsp_type_gtktreeview = new_type_gtktreeview(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreeview))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -38713,7 +38929,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 38717 "gtk.c"
+#line 38933 "gtk.c"
 
 
 #line 3463 "codegen-3.0/gtk.override"
@@ -38726,7 +38942,7 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 38730 "gtk.c"
+#line 38946 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_count_selected_rows(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -38800,7 +39016,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 38804 "gtk.c"
+#line 39020 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -39196,8 +39412,11 @@ _wrap_gtk_tree_view_column_new_with_area (Stack stack, int rhs, int opt, int lhs
   if ((ret = (GObject *)gtk_tree_view_column_new_with_area(GTK_CELL_AREA(area->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtktreeviewcolumn = new_type_gtktreeviewcolumn(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreeviewcolumn );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreeviewcolumn );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -39257,7 +39476,7 @@ _wrap_gtk_tree_view_column_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 39261 "gtk.c"
+#line 39480 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_pack_start(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -39332,7 +39551,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 39336 "gtk.c"
+#line 39555 "gtk.c"
 
 
 #line 2797 "codegen-3.0/gtk.override"
@@ -39406,7 +39625,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 39410 "gtk.c"
+#line 39629 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -39783,7 +40002,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 39787 "gtk.c"
+#line 40006 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -40113,8 +40332,11 @@ _wrap_gtk_tree_view_new_with_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tree_view_new_with_model(GTK_TREE_MODEL(model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtktreeview = new_type_gtktreeview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreeview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreeview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -40150,7 +40372,7 @@ _wrap_gtk_tree_view_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 40154 "gtk.c"
+#line 40376 "gtk.c"
 
 
 #line 2580 "codegen-3.0/gtk.override"
@@ -40174,7 +40396,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 40178 "gtk.c"
+#line 40400 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -40205,7 +40427,7 @@ static int _wrap_gtk_tree_view_get_selection(NspGtkTreeView *self,Stack stack,in
   CheckRhs(0,0);
     ret =gtk_tree_view_get_selection(GTK_TREE_VIEW(self->obj));
   nsp_type_gtktreeselection = new_type_gtktreeselection(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreeselection))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -40414,7 +40636,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 40418 "gtk.c"
+#line 40640 "gtk.c"
 
 
 #line 2869 "codegen-3.0/gtk.override"
@@ -40466,7 +40688,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG;
   return 1;
 }
-#line 40470 "gtk.c"
+#line 40692 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,4,0)
@@ -40495,7 +40717,7 @@ static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&n) == FAIL) return RET_BUG;
     ret =gtk_tree_view_get_column(GTK_TREE_VIEW(self->obj),n);
   nsp_type_gtktreeviewcolumn = new_type_gtktreeviewcolumn(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreeviewcolumn))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -40511,7 +40733,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 40515 "gtk.c"
+#line 40737 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -40539,7 +40761,7 @@ static int _wrap_gtk_tree_view_get_expander_column(NspGtkTreeView *self,Stack st
   CheckRhs(0,0);
     ret =gtk_tree_view_get_expander_column(GTK_TREE_VIEW(self->obj));
   nsp_type_gtktreeviewcolumn = new_type_gtktreeviewcolumn(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreeviewcolumn))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -40804,7 +41026,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 40808 "gtk.c"
+#line 41030 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -40814,7 +41036,7 @@ static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_tree_view_get_bin_window(GTK_TREE_VIEW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -40847,7 +41069,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 40851 "gtk.c"
+#line 41073 "gtk.c"
 
 
 #line 3059 "codegen-3.0/gtk.override"
@@ -40877,7 +41099,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 40881 "gtk.c"
+#line 41103 "gtk.c"
 
 
 #line 3087 "codegen-3.0/gtk.override"
@@ -40906,7 +41128,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 40910 "gtk.c"
+#line 41132 "gtk.c"
 
 
 #line 3044 "codegen-3.0/gtk.override"
@@ -40923,7 +41145,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 40927 "gtk.c"
+#line 41149 "gtk.c"
 
 
 #line 3181 "codegen-3.0/gtk.override"
@@ -40960,7 +41182,7 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 40964 "gtk.c"
+#line 41186 "gtk.c"
 
 
 #line 3216 "codegen-3.0/gtk.override"
@@ -40990,7 +41212,7 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 40994 "gtk.c"
+#line 41216 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -41090,7 +41312,7 @@ static int _wrap_gtk_tree_view_get_search_entry(NspGtkTreeView *self,Stack stack
   CheckRhs(0,0);
     ret =gtk_tree_view_get_search_entry(GTK_TREE_VIEW(self->obj));
   nsp_type_gtkentry = new_type_gtkentry(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkentry))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -41396,7 +41618,7 @@ _wrap_gtk_tree_view_get_tooltip_context (NspGObject *self,Stack stack,int rhs,in
   return Max(lhs,1);
 }
 
-#line 41400 "gtk.c"
+#line 41622 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_tooltip_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -41719,8 +41941,11 @@ _wrap_gtk_cell_view_new_with_context (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_view_new_with_context(GTK_CELL_AREA(area->obj),GTK_CELL_AREA_CONTEXT(context->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkcellview = new_type_gtkcellview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -41770,7 +41995,7 @@ _wrap_gtk_cell_view_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 41774 "gtk.c"
+#line 41999 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -41801,7 +42026,7 @@ static int _wrap_gtk_cell_view_get_model(NspGtkCellView *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =gtk_cell_view_get_model(GTK_CELL_VIEW(self->obj));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -42121,8 +42346,11 @@ _wrap_gtk_icon_view_new_with_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_icon_view_new_with_model(GTK_TREE_MODEL(model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkiconview = new_type_gtkiconview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -42137,8 +42365,11 @@ _wrap_gtk_icon_view_new_with_area (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_icon_view_new_with_area(GTK_CELL_AREA(area->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkiconview = new_type_gtkiconview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -42151,8 +42382,11 @@ _wrap_gtk_icon_view_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_icon_view_new())== NULL) return RET_BUG;
 
   nsp_type_gtkiconview = new_type_gtkiconview(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -42199,7 +42433,7 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 42203 "gtk.c"
+#line 42437 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_set_text_column(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -42569,7 +42803,7 @@ static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack sta
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 42573 "gtk.c"
+#line 42807 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_select_all(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -42685,7 +42919,7 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 42689 "gtk.c"
+#line 42923 "gtk.c"
 
 
 #line 2670 "codegen-3.0/gtk.override"
@@ -42716,7 +42950,7 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 42720 "gtk.c"
+#line 42954 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_unset_model_drag_source(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -43162,8 +43396,11 @@ _wrap_gtk_tree_model_sort_new_with_model (Stack stack, int rhs, int opt, int lhs
   if ((ret = (GObject *)gtk_tree_model_sort_new_with_model(GTK_TREE_MODEL(child_model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtktreemodelsort = new_type_gtktreemodelsort(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreemodelsort );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreemodelsort );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -43175,7 +43412,7 @@ static int _wrap_gtk_tree_model_sort_get_model(NspGtkTreeModelSort *self,Stack s
   CheckRhs(0,0);
     ret =gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(self->obj));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -43539,8 +43776,11 @@ _wrap_gtk_tree_model_filter_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tree_model_filter_new(GTK_TREE_MODEL(child_model->obj),root))== NULL) return RET_BUG;
 
   nsp_type_gtktreemodelfilter = new_type_gtktreemodelfilter(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreemodelfilter );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreemodelfilter );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -43561,7 +43801,7 @@ static int _wrap_gtk_tree_model_filter_get_model(NspGtkTreeModelFilter *self,Sta
   CheckRhs(0,0);
     ret =gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(self->obj));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -43920,7 +44160,7 @@ static int _wrap_gtk_cell_area_create_context(NspGtkCellArea *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_cell_area_create_context(GTK_CELL_AREA(self->obj));
   nsp_type_gtkcellareacontext = new_type_gtkcellareacontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellareacontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -43934,7 +44174,7 @@ static int _wrap_gtk_cell_area_copy_context(NspGtkCellArea *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkcellareacontext, &context) == FAIL) return RET_BUG;
     ret =gtk_cell_area_copy_context(GTK_CELL_AREA(self->obj),GTK_CELL_AREA_CONTEXT(context->obj));
   nsp_type_gtkcellareacontext = new_type_gtkcellareacontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellareacontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44095,7 +44335,7 @@ static int _wrap_gtk_cell_area_get_focus_cell(NspGtkCellArea *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_cell_area_get_focus_cell(GTK_CELL_AREA(self->obj));
   nsp_type_gtkcellrenderer = new_type_gtkcellrenderer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellrenderer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44138,7 +44378,7 @@ static int _wrap_gtk_cell_area_get_focus_from_sibling(NspGtkCellArea *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkcellrenderer, &renderer) == FAIL) return RET_BUG;
     ret =gtk_cell_area_get_focus_from_sibling(GTK_CELL_AREA(self->obj),GTK_CELL_RENDERER(renderer->obj));
   nsp_type_gtkcellrenderer = new_type_gtkcellrenderer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellrenderer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44150,7 +44390,7 @@ static int _wrap_gtk_cell_area_get_edited_cell(NspGtkCellArea *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_cell_area_get_edited_cell(GTK_CELL_AREA(self->obj));
   nsp_type_gtkcellrenderer = new_type_gtkcellrenderer(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellrenderer))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44162,7 +44402,7 @@ static int _wrap_gtk_cell_area_get_edit_widget(NspGtkCellArea *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_cell_area_get_edit_widget(GTK_CELL_AREA(self->obj));
   nsp_type_gtkcelleditable = new_type_gtkcelleditable(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcelleditable))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44438,8 +44678,11 @@ _wrap_gtk_cell_area_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_area_box_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellareabox = new_type_gtkcellareabox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellareabox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellareabox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -44700,7 +44943,7 @@ static int _wrap_gtk_cell_area_context_get_area(NspGtkCellAreaContext *self,Stac
   CheckRhs(0,0);
     ret =gtk_cell_area_context_get_area(GTK_CELL_AREA_CONTEXT(self->obj));
   nsp_type_gtkcellarea = new_type_gtkcellarea(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcellarea))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -45091,7 +45334,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG;
   return 1;
 }
-#line 45095 "gtk.c"
+#line 45338 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_alignment(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45113,7 +45356,7 @@ _wrap_gtk_cell_renderer_get_alignment(NspGObject *self,Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG;
   return 1;
 }
-#line 45117 "gtk.c"
+#line 45360 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_padding(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45136,7 +45379,7 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
   return 1;
 }
 
-#line 45140 "gtk.c"
+#line 45383 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_visible(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45438,8 +45681,11 @@ _wrap_gtk_cell_renderer_accel_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_accel_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrendereraccel = new_type_gtkcellrendereraccel(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendereraccel );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendereraccel );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -45651,8 +45897,11 @@ _wrap_gtk_cell_renderer_combo_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_combo_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrenderercombo = new_type_gtkcellrenderercombo(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderercombo );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderercombo );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -45864,8 +46113,11 @@ _wrap_gtk_cell_renderer_pixbuf_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_pixbuf_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrendererpixbuf = new_type_gtkcellrendererpixbuf(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererpixbuf );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererpixbuf );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -46077,8 +46329,11 @@ _wrap_gtk_cell_renderer_progress_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_progress_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrendererprogress = new_type_gtkcellrendererprogress(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererprogress );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererprogress );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -46290,8 +46545,11 @@ _wrap_gtk_cell_renderer_spin_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_spin_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrendererspin = new_type_gtkcellrendererspin(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererspin );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererspin );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -46503,8 +46761,11 @@ _wrap_gtk_cell_renderer_text_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_text_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrenderertext = new_type_gtkcellrenderertext(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertext );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertext );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -46730,8 +46991,11 @@ _wrap_gtk_cell_renderer_toggle_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_toggle_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrenderertoggle = new_type_gtkcellrenderertoggle(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertoggle );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertoggle );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -47007,8 +47271,11 @@ _wrap_gtk_cell_renderer_spinner_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_cell_renderer_spinner_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcellrendererspinner = new_type_gtkcellrendererspinner(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererspinner );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererspinner );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -47292,7 +47559,7 @@ _wrap_gtk_list_store_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47296 "gtk.c"
+#line 47563 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_list_store(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -47367,7 +47634,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 47371 "gtk.c"
+#line 47638 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -47412,7 +47679,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47416 "gtk.c"
+#line 47683 "gtk.c"
 
 
 #line 1935 "codegen-3.0/gtk.override"
@@ -47439,7 +47706,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47443 "gtk.c"
+#line 47710 "gtk.c"
 
 
 #line 1960 "codegen-3.0/gtk.override"
@@ -47466,7 +47733,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47470 "gtk.c"
+#line 47737 "gtk.c"
 
 
 static int _wrap_gtk_list_store_insert_with_values(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -47508,7 +47775,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47512 "gtk.c"
+#line 47779 "gtk.c"
 
 
 #line 2008 "codegen-3.0/gtk.override"
@@ -47534,7 +47801,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47538 "gtk.c"
+#line 47805 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -47947,7 +48214,7 @@ _wrap_gtk_tree_store_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47951 "gtk.c"
+#line 48218 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_tree_store(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -48023,7 +48290,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 48027 "gtk.c"
+#line 48294 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -48074,7 +48341,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48078 "gtk.c"
+#line 48345 "gtk.c"
 
 
 #line 2187 "codegen-3.0/gtk.override"
@@ -48109,7 +48376,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48113 "gtk.c"
+#line 48380 "gtk.c"
 
 
 #line 2220 "codegen-3.0/gtk.override"
@@ -48144,7 +48411,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48148 "gtk.c"
+#line 48415 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_insert_with_values(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -48217,7 +48484,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48221 "gtk.c"
+#line 48488 "gtk.c"
 
 
 #line 2301 "codegen-3.0/gtk.override"
@@ -48270,7 +48537,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 48274 "gtk.c"
+#line 48541 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -48672,8 +48939,11 @@ _wrap_gtk_combo_box_new_with_entry (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_combo_box_new_with_entry())== NULL) return RET_BUG;
 
   nsp_type_gtkcombobox = new_type_gtkcombobox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombobox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombobox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -48765,7 +49035,7 @@ _wrap_gtk_combo_box_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 48769 "gtk.c"
+#line 49039 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_get_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -48947,7 +49217,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 48951 "gtk.c"
+#line 49221 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -48994,7 +49264,7 @@ static int _wrap_gtk_combo_box_get_model(NspGtkComboBox *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =gtk_combo_box_get_model(GTK_COMBO_BOX(self->obj));
   nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodel))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49095,7 +49365,7 @@ static int _wrap_gtk_combo_box_get_popup_accessible(NspGtkComboBox *self,Stack s
   CheckRhs(0,0);
     ret =gtk_combo_box_get_popup_accessible(GTK_COMBO_BOX(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49392,8 +49662,11 @@ _wrap_gtk_combo_box_text_new_with_entry (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_combo_box_text_new_with_entry())== NULL) return RET_BUG;
 
   nsp_type_gtkcomboboxtext = new_type_gtkcomboboxtext(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcomboboxtext );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcomboboxtext );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49406,8 +49679,11 @@ _wrap_gtk_combo_box_text_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_combo_box_text_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcomboboxtext = new_type_gtkcomboboxtext(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcomboboxtext );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcomboboxtext );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49720,8 +49996,11 @@ _wrap_gtk_menu_new_from_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_new_from_model(G_MENU_MODEL(model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkmenu = new_type_gtkmenu(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenu );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenu );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49734,8 +50013,11 @@ _wrap_gtk_menu_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_new())== NULL) return RET_BUG;
 
   nsp_type_gtkmenu = new_type_gtkmenu(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenu );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenu );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49805,7 +50087,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 49809 "gtk.c"
+#line 50091 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -49859,7 +50141,7 @@ static int _wrap_gtk_menu_get_accel_group(NspGtkMenu *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gtk_menu_get_accel_group(GTK_MENU(self->obj));
   nsp_type_gtkaccelgroup = new_type_gtkaccelgroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkaccelgroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -49949,7 +50231,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 49953 "gtk.c"
+#line 50235 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -50344,8 +50626,11 @@ _wrap_gtk_menu_bar_new_from_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_bar_new_from_model(G_MENU_MODEL(model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkmenubar = new_type_gtkmenubar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -50358,8 +50643,11 @@ _wrap_gtk_menu_bar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_bar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkmenubar = new_type_gtkmenubar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -50643,7 +50931,7 @@ _wrap_gtk_menu_item_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 50647 "gtk.c"
+#line 50935 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -51047,8 +51335,11 @@ _wrap_gtk_radio_menu_item_new_with_label_from_widget (Stack stack, int rhs, int 
   if ((ret = (GObject *)gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(group->obj),label))== NULL) return RET_BUG;
 
   nsp_type_gtkradiomenuitem = new_type_gtkradiomenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -51064,8 +51355,11 @@ _wrap_gtk_radio_menu_item_new_with_mnemonic_from_widget (Stack stack, int rhs, i
   if ((ret = (GObject *)gtk_radio_menu_item_new_with_mnemonic_from_widget(GTK_RADIO_MENU_ITEM(group->obj),label))== NULL) return RET_BUG;
 
   nsp_type_gtkradiomenuitem = new_type_gtkradiomenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -51080,8 +51374,11 @@ _wrap_gtk_radio_menu_item_new_from_widget (Stack stack, int rhs, int opt, int lh
   if ((ret = (GObject *)gtk_radio_menu_item_new_from_widget(GTK_RADIO_MENU_ITEM(group->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkradiomenuitem = new_type_gtkradiomenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiomenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -51132,7 +51429,7 @@ _wrap_gtk_radio_menu_item_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 51136 "gtk.c"
+#line 51433 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_get_group(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -51378,7 +51675,7 @@ _wrap_gtk_check_menu_item_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 51382 "gtk.c"
+#line 51679 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -51664,8 +51961,11 @@ _wrap_gtk_separator_menu_item_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_separator_menu_item_new())== NULL) return RET_BUG;
 
   nsp_type_gtkseparatormenuitem = new_type_gtkseparatormenuitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatormenuitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatormenuitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -51887,8 +52187,11 @@ _wrap_gtk_toolbar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_toolbar_new())== NULL) return RET_BUG;
 
   nsp_type_gtktoolbar = new_type_gtktoolbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -51932,7 +52235,7 @@ static int _wrap_gtk_toolbar_get_nth_item(NspGtkToolbar *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&n) == FAIL) return RET_BUG;
     ret =gtk_toolbar_get_nth_item(GTK_TOOLBAR(self->obj),n);
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktoolitem))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -52283,8 +52586,11 @@ _wrap_gtk_tool_item_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tool_item_new())== NULL) return RET_BUG;
 
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -52485,7 +52791,7 @@ static int _wrap_gtk_tool_item_get_text_size_group(NspGtkToolItem *self,Stack st
   CheckRhs(0,0);
     ret =gtk_tool_item_get_text_size_group(GTK_TOOL_ITEM(self->obj));
   nsp_type_gtksizegroup = new_type_gtksizegroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtksizegroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -52800,8 +53106,11 @@ _wrap_gtk_tool_palette_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tool_palette_new())== NULL) return RET_BUG;
 
   nsp_type_gtktoolpalette = new_type_gtktoolpalette(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolpalette );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolpalette );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -52934,7 +53243,7 @@ static int _wrap_gtk_tool_palette_get_drop_item(NspGtkToolPalette *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
     ret =gtk_tool_palette_get_drop_item(GTK_TOOL_PALETTE(self->obj),x,y);
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktoolitem))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -52948,7 +53257,7 @@ static int _wrap_gtk_tool_palette_get_drop_group(NspGtkToolPalette *self,Stack s
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
     ret =gtk_tool_palette_get_drop_group(GTK_TOOL_PALETTE(self->obj),x,y);
   nsp_type_gtktoolitemgroup = new_type_gtktoolitemgroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktoolitemgroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -53241,8 +53550,11 @@ _wrap_gtk_tool_item_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tool_item_group_new(label))== NULL) return RET_BUG;
 
   nsp_type_gtktoolitemgroup = new_type_gtktoolitemgroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolitemgroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolitemgroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -53395,7 +53707,7 @@ static int _wrap_gtk_tool_item_group_get_nth_item(NspGtkToolItemGroup *self,Stac
   if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
     ret =gtk_tool_item_group_get_nth_item(GTK_TOOL_ITEM_GROUP(self->obj),index);
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktoolitem))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -53409,7 +53721,7 @@ static int _wrap_gtk_tool_item_group_get_drop_item(NspGtkToolItemGroup *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
     ret =gtk_tool_item_group_get_drop_item(GTK_TOOL_ITEM_GROUP(self->obj),x,y);
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktoolitem))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -53645,8 +53957,11 @@ _wrap_gtk_separator_tool_item_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_separator_tool_item_new())== NULL) return RET_BUG;
 
   nsp_type_gtkseparatortoolitem = new_type_gtkseparatortoolitem(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatortoolitem );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatortoolitem );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -53902,8 +54217,11 @@ _wrap_gtk_tool_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_tool_button_new(icon_widget,label))== NULL) return RET_BUG;
 
   nsp_type_gtktoolbutton = new_type_gtktoolbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -54245,8 +54563,11 @@ _wrap_gtk_menu_tool_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_menu_tool_button_new(icon_widget,label))== NULL) return RET_BUG;
 
   nsp_type_gtkmenutoolbutton = new_type_gtkmenutoolbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenutoolbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenutoolbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -54509,8 +54830,11 @@ _wrap_gtk_toggle_tool_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_toggle_tool_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtktoggletoolbutton = new_type_gtktoggletoolbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoggletoolbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoggletoolbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -54752,8 +55076,11 @@ _wrap_gtk_radio_tool_button_new_from_widget (Stack stack, int rhs, int opt, int 
   if ((ret = (GObject *)gtk_radio_tool_button_new_from_widget(GTK_RADIO_TOOL_BUTTON(group->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkradiotoolbutton = new_type_gtkradiotoolbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiotoolbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradiotoolbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -54815,7 +55142,7 @@ _wrap_gtk_radio_tool_button_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 54819 "gtk.c"
+#line 55146 "gtk.c"
 
 
 #line 7542 "codegen-3.0/gtk.override"
@@ -54828,7 +55155,7 @@ _wrap_gtk_radio_tool_button_get_group(NspGObject *self,Stack stack,int rhs,int o
 }
 
 
-#line 54832 "gtk.c"
+#line 55159 "gtk.c"
 
 
 static int _wrap_gtk_radio_tool_button_set_group(NspGtkRadioToolButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -55065,8 +55392,11 @@ _wrap_gtk_popover_new_from_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_popover_new_from_model(GTK_WIDGET(relative_to->obj),G_MENU_MODEL(model->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkpopover = new_type_gtkpopover(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopover );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopover );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -55089,8 +55419,11 @@ _wrap_gtk_popover_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_popover_new(GTK_WIDGET(relative_to->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkpopover = new_type_gtkpopover(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopover );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopover );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -55190,7 +55523,7 @@ int _wrap_gtk_popover_get_pointing_to(Stack stack, int rhs, int opt, int lhs) /*
 
 
 
-#line 55194 "gtk.c"
+#line 55527 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,12,0)
@@ -55548,8 +55881,11 @@ _wrap_gtk_popover_menu_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_popover_menu_new())== NULL) return RET_BUG;
 
   nsp_type_gtkpopovermenu = new_type_gtkpopovermenu(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopovermenu );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpopovermenu );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -55813,8 +56149,11 @@ _wrap_gtk_color_button_new_with_rgba (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_color_button_new_with_rgba(rgba))== NULL) return RET_BUG;
 
   nsp_type_gtkcolorbutton = new_type_gtkcolorbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -55827,8 +56166,11 @@ _wrap_gtk_color_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_color_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcolorbutton = new_type_gtkcolorbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -56074,8 +56416,11 @@ _wrap_gtk_color_chooser_widget_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_color_chooser_widget_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcolorchooserwidget = new_type_gtkcolorchooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorchooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorchooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -56297,8 +56642,11 @@ _wrap_gtk_color_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_color_chooser_dialog_new(title,GTK_WINDOW(parent->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkcolorchooserdialog = new_type_gtkcolorchooserdialog(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorchooserdialog );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorchooserdialog );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -56519,8 +56867,11 @@ _wrap_gtk_file_chooser_button_new_with_dialog (Stack stack, int rhs, int opt, in
   if ((ret = (GObject *)gtk_file_chooser_button_new_with_dialog(GTK_WIDGET(dialog->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -56539,8 +56890,11 @@ _wrap_gtk_file_chooser_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_file_chooser_button_new(title,action))== NULL) return RET_BUG;
 
   nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -56863,7 +57217,7 @@ _wrap_gtk_file_chooser_dialog_new(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 56867 "gtk.c"
+#line 57221 "gtk.c"
 
 
 static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
@@ -57085,8 +57439,11 @@ _wrap_gtk_file_chooser_widget_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_file_chooser_widget_new(action))== NULL) return RET_BUG;
 
   nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -57302,8 +57659,11 @@ _wrap_gtk_file_filter_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_file_filter_new())== NULL) return RET_BUG;
 
   nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilefilter );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilefilter );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -57583,8 +57943,11 @@ _wrap_gtk_font_button_new_with_font (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_font_button_new_with_font(fontname))== NULL) return RET_BUG;
 
   nsp_type_gtkfontbutton = new_type_gtkfontbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -57597,8 +57960,11 @@ _wrap_gtk_font_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_font_button_new())== NULL) return RET_BUG;
 
   nsp_type_gtkfontbutton = new_type_gtkfontbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -57943,8 +58309,11 @@ _wrap_gtk_font_chooser_widget_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_font_chooser_widget_new())== NULL) return RET_BUG;
 
   nsp_type_gtkfontchooserwidget = new_type_gtkfontchooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontchooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontchooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58166,8 +58535,11 @@ _wrap_gtk_font_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_font_chooser_dialog_new(title,GTK_WINDOW(parent->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkfontchooserdialog = new_type_gtkfontchooserdialog(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontchooserdialog );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontchooserdialog );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58383,8 +58755,11 @@ _wrap_gtk_places_sidebar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_places_sidebar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkplacessidebar = new_type_gtkplacessidebar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkplacessidebar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkplacessidebar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58434,7 +58809,7 @@ static int _wrap_gtk_places_sidebar_get_location(NspGtkPlacesSidebar *self,Stack
   CheckRhs(0,0);
     ret =gtk_places_sidebar_get_location(GTK_PLACES_SIDEBAR(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58661,7 +59036,7 @@ static int _wrap_gtk_places_sidebar_get_nth_bookmark(NspGtkPlacesSidebar *self,S
   if ( GetArgs(stack,rhs,opt,T,&n) == FAIL) return RET_BUG;
     ret =gtk_places_sidebar_get_nth_bookmark(GTK_PLACES_SIDEBAR(self->obj),n);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58909,8 +59284,11 @@ _wrap_gtk_frame_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_frame_new(label))== NULL) return RET_BUG;
 
   nsp_type_gtkframe = new_type_gtkframe(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkframe );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkframe );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -58974,7 +59352,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 58978 "gtk.c"
+#line 59356 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -59226,8 +59604,11 @@ _wrap_gtk_separator_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_separator_new(orientation))== NULL) return RET_BUG;
 
   nsp_type_gtkseparator = new_type_gtkseparator(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparator );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparator );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -59464,8 +59845,11 @@ _wrap_gtk_scrollbar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_scrollbar_new(orientation,adjustment))== NULL) return RET_BUG;
 
   nsp_type_gtkscrollbar = new_type_gtkscrollbar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscrollbar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscrollbar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -59704,8 +60088,11 @@ _wrap_gtk_scrolled_window_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_scrolled_window_new(hadjustment,vadjustment))== NULL) return RET_BUG;
 
   nsp_type_gtkscrolledwindow = new_type_gtkscrolledwindow(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscrolledwindow );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscrolledwindow );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -59735,7 +60122,7 @@ static int _wrap_gtk_scrolled_window_get_hadjustment(NspGtkScrolledWindow *self,
   CheckRhs(0,0);
     ret =gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -59747,7 +60134,7 @@ static int _wrap_gtk_scrolled_window_get_vadjustment(NspGtkScrolledWindow *self,
   CheckRhs(0,0);
     ret =gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -60210,8 +60597,11 @@ _wrap_gtk_print_operation_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_print_operation_new())== NULL) return RET_BUG;
 
   nsp_type_gtkprintoperation = new_type_gtkprintoperation(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkprintoperation );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkprintoperation );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -60930,8 +61320,11 @@ _wrap_gtk_adjustment_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_adjustment_new(value,lower,upper,step_incr,page_incr,page_size))== NULL) return RET_BUG;
 
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkadjustment );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkadjustment );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -61325,8 +61718,11 @@ _wrap_gtk_calendar_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_calendar_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcalendar = new_type_gtkcalendar(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcalendar );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcalendar );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -61405,7 +61801,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG;
   return 1;
 }
-#line 61409 "gtk.c"
+#line 61805 "gtk.c"
 
 
 #line 5250 "codegen-3.0/gtk.override"
@@ -61463,7 +61859,7 @@ static int _wrap_gtk_calendar_set_detail_func(NspGObject *self, Stack stack,int 
   return 0;
 }
 
-#line 61467 "gtk.c"
+#line 61863 "gtk.c"
 
 
 static int _wrap_gtk_calendar_set_detail_width_chars(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -61741,8 +62137,11 @@ _wrap_gtk_drawing_area_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_drawing_area_new())== NULL) return RET_BUG;
 
   nsp_type_gtkdrawingarea = new_type_gtkdrawingarea(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkdrawingarea );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkdrawingarea );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -61958,8 +62357,11 @@ _wrap_gtk_event_box_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_event_box_new())== NULL) return RET_BUG;
 
   nsp_type_gtkeventbox = new_type_gtkeventbox(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkeventbox );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkeventbox );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -62664,8 +63066,11 @@ _wrap_gtk_size_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_size_group_new(mode))== NULL) return RET_BUG;
 
   nsp_type_gtksizegroup = new_type_gtksizegroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksizegroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksizegroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -63253,8 +63658,11 @@ _wrap_gtk_viewport_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_viewport_new(hadjustment,vadjustment))== NULL) return RET_BUG;
 
   nsp_type_gtkviewport = new_type_gtkviewport(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkviewport );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkviewport );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -63287,7 +63695,7 @@ static int _wrap_gtk_viewport_get_bin_window(NspGtkViewport *self,Stack stack,in
   CheckRhs(0,0);
     ret =gtk_viewport_get_bin_window(GTK_VIEWPORT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -63299,7 +63707,7 @@ static int _wrap_gtk_viewport_get_view_window(NspGtkViewport *self,Stack stack,i
   CheckRhs(0,0);
     ret =gtk_viewport_get_view_window(GTK_VIEWPORT(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -63749,7 +64157,7 @@ _wrap_gtk_widget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 63753 "gtk.c"
+#line 64161 "gtk.c"
 
 
 #line 636 "codegen-3.0/gtk.override"
@@ -63764,7 +64172,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 63768 "gtk.c"
+#line 64176 "gtk.c"
 
 
 static int _wrap_gtk_widget_destroy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -63925,7 +64333,7 @@ static int _wrap_gtk_widget_get_frame_clock(NspGtkWidget *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_widget_get_frame_clock(GTK_WIDGET(self->obj));
   nsp_type_gdkframeclock = new_type_gdkframeclock(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkframeclock))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -64106,7 +64514,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 64110 "gtk.c"
+#line 64518 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -64265,7 +64673,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else
     return RET_BUG;
 }
-#line 64269 "gtk.c"
+#line 64677 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,14,0)
@@ -64714,7 +65122,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 64718 "gtk.c"
+#line 65126 "gtk.c"
 
 
 static int _wrap_gtk_widget_set_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -64733,7 +65141,7 @@ static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_widget_get_parent_window(GTK_WIDGET(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -64772,7 +65180,7 @@ static int _wrap_gtk_widget_get_window(NspGtkWidget *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gtk_widget_get_window(GTK_WIDGET(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65033,7 +65441,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 65037 "gtk.c"
+#line 65445 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -65059,7 +65467,7 @@ static int _wrap_gtk_widget_get_visual(NspGtkWidget *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gtk_widget_get_visual(GTK_WIDGET(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65080,7 +65488,7 @@ static int _wrap_gtk_widget_get_screen(NspGtkWidget *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =gtk_widget_get_screen(GTK_WIDGET(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65118,7 +65526,7 @@ static int _wrap_gtk_widget_get_display(NspGtkWidget *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =gtk_widget_get_display(GTK_WIDGET(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65137,7 +65545,7 @@ static int _wrap_gtk_widget_get_root_window(NspGtkWidget *self,Stack stack,int r
   CheckRhs(0,0);
     ret =gtk_widget_get_root_window(GTK_WIDGET(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65150,7 +65558,7 @@ static int _wrap_gtk_widget_get_settings(NspGtkWidget *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =gtk_widget_get_settings(GTK_WIDGET(self->obj));
   nsp_type_gtksettings = new_type_gtksettings(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtksettings))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65165,7 +65573,7 @@ static int _wrap_gtk_widget_get_clipboard(NspGtkWidget *self,Stack stack,int rhs
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
     ret =gtk_widget_get_clipboard(GTK_WIDGET(self->obj),selection);
   nsp_type_gtkclipboard = new_type_gtkclipboard(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkclipboard))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65288,7 +65696,7 @@ static int _wrap_gtk_widget_get_accessible(NspGtkWidget *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =gtk_widget_get_accessible(GTK_WIDGET(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65517,7 +65925,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 65521 "gtk.c"
+#line 65929 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -65676,7 +66084,7 @@ static int _wrap_gtk_widget_create_pango_context(NspGtkWidget *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_widget_create_pango_context(GTK_WIDGET(self->obj));
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65688,7 +66096,7 @@ static int _wrap_gtk_widget_get_pango_context(NspGtkWidget *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_widget_get_pango_context(GTK_WIDGET(self->obj));
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65702,7 +66110,7 @@ static int _wrap_gtk_widget_create_pango_layout(NspGtkWidget *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&text) == FAIL) return RET_BUG;
     ret =gtk_widget_create_pango_layout(GTK_WIDGET(self->obj),text);
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65813,7 +66221,7 @@ static int _wrap_gtk_widget_get_tooltip_window(NspGtkWidget *self,Stack stack,in
   CheckRhs(0,0);
     ret =gtk_widget_get_tooltip_window(GTK_WIDGET(self->obj));
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwindow))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65897,7 +66305,7 @@ static int _wrap_gtk_widget_get_style_context(NspGtkWidget *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_widget_get_style_context(GTK_WIDGET(self->obj));
   nsp_type_gtkstylecontext = new_type_gtkstylecontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkstylecontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -65996,7 +66404,7 @@ static int _wrap_gtk_widget_add_tick_callback(NspGObject *self,Stack stack,int r
 }
 
 
-#line 66000 "gtk.c"
+#line 66408 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,8,0)
@@ -66065,7 +66473,7 @@ static int _wrap_gtk_widget_get_action_group(NspGtkWidget *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&prefix) == FAIL) return RET_BUG;
     ret =gtk_widget_get_action_group(GTK_WIDGET(self->obj),prefix);
   nsp_type_gactiongroup = new_type_gactiongroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gactiongroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -66101,7 +66509,7 @@ int _wrap_gtk_widget_list_action_prefixes(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 66105 "gtk.c"
+#line 66513 "gtk.c"
 
 
 static NspMethods gtkwidget_methods[] = {
@@ -66633,7 +67041,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 66637 "gtk.c"
+#line 67045 "gtk.c"
 
 
 #line 1145 "codegen-3.0/gtk.override"
@@ -66659,7 +67067,7 @@ _wrap_gtk_container_forall(NspGtkContainer *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 66663 "gtk.c"
+#line 67071 "gtk.c"
 
 
 #line 773 "codegen-3.0/gtk.override"
@@ -66672,7 +67080,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 66676 "gtk.c"
+#line 67084 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_draw(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -66724,7 +67132,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 66728 "gtk.c"
+#line 67136 "gtk.c"
 
 
 #line 817 "codegen-3.0/gtk.override"
@@ -66736,7 +67144,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 66740 "gtk.c"
+#line 67148 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -66800,7 +67208,7 @@ static int _wrap_gtk_container_get_focus_vadjustment(NspGtkContainer *self,Stack
   CheckRhs(0,0);
     ret =gtk_container_get_focus_vadjustment(GTK_CONTAINER(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -66821,7 +67229,7 @@ static int _wrap_gtk_container_get_focus_hadjustment(NspGtkContainer *self,Stack
   CheckRhs(0,0);
     ret =gtk_container_get_focus_hadjustment(GTK_CONTAINER(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -66860,7 +67268,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1;
 }
 
-#line 66864 "gtk.c"
+#line 67272 "gtk.c"
 
 
 #line 1039 "codegen-3.0/gtk.override"
@@ -66914,7 +67322,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   return 0;
 }
 
-#line 66918 "gtk.c"
+#line 67326 "gtk.c"
 
 
 #line 920 "codegen-3.0/gtk.override"
@@ -66971,7 +67379,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 66975 "gtk.c"
+#line 67383 "gtk.c"
 
 
 #line 975 "codegen-3.0/gtk.override"
@@ -67037,7 +67445,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 67041 "gtk.c"
+#line 67449 "gtk.c"
 
 
 #line 874 "codegen-3.0/gtk.override"
@@ -67085,7 +67493,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 67089 "gtk.c"
+#line 67497 "gtk.c"
 
 
 #line 827 "codegen-3.0/gtk.override"
@@ -67134,7 +67542,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 67138 "gtk.c"
+#line 67546 "gtk.c"
 
 
 #if GTK_CHECK_VERSION(3,2,0)
@@ -67986,7 +68394,7 @@ static int _wrap_gtk_range_get_adjustment(NspGtkRange *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =gtk_range_get_adjustment(GTK_RANGE(self->obj));
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -68496,7 +68904,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 68500 "gtk.c"
+#line 68908 "gtk.c"
 
 
 #line 6710 "codegen-3.0/gtk.override"
@@ -68520,7 +68928,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 68524 "gtk.c"
+#line 68932 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -68580,7 +68988,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 68584 "gtk.c"
+#line 68992 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -68814,8 +69222,11 @@ _wrap_gtk_recent_manager_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_recent_manager_new())== NULL) return RET_BUG;
 
   nsp_type_gtkrecentmanager = new_type_gtkrecentmanager(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentmanager );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentmanager );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -69139,7 +69550,7 @@ _wrap_gtk_recent_chooser_dialog_new_for_manager (Stack stack, int rhs, int opt, 
 }
 
 
-#line 69143 "gtk.c"
+#line 69554 "gtk.c"
 
 
 #line 7931 "codegen-3.0/gtk.override"
@@ -69162,7 +69573,7 @@ _wrap_gtk_recent_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 69166 "gtk.c"
+#line 69577 "gtk.c"
 
 
 static NspMethods *gtkrecentchooserdialog_get_methods(void) { return NULL;};
@@ -69381,8 +69792,11 @@ _wrap_gtk_recent_chooser_widget_new_for_manager (Stack stack, int rhs, int opt, 
   if ((ret = (GObject *)gtk_recent_chooser_widget_new_for_manager(GTK_RECENT_MANAGER(manager->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkrecentchooserwidget = new_type_gtkrecentchooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -69395,8 +69809,11 @@ _wrap_gtk_recent_chooser_widget_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_recent_chooser_widget_new())== NULL) return RET_BUG;
 
   nsp_type_gtkrecentchooserwidget = new_type_gtkrecentchooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -69612,8 +70029,11 @@ _wrap_gtk_recent_filter_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_recent_filter_new())== NULL) return RET_BUG;
 
   nsp_type_gtkrecentfilter = new_type_gtkrecentfilter(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentfilter );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentfilter );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -69926,8 +70346,11 @@ _wrap_gtk_app_chooser_button_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_app_chooser_button_new(content_type))== NULL) return RET_BUG;
 
   nsp_type_gtkappchooserbutton = new_type_gtkappchooserbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserbutton );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserbutton );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -70262,8 +70685,11 @@ _wrap_gtk_app_chooser_dialog_new_for_content_type (Stack stack, int rhs, int opt
   if ((ret = (GObject *)gtk_app_chooser_dialog_new_for_content_type(GTK_WINDOW(parent->obj),flags,content_type))== NULL) return RET_BUG;
 
   nsp_type_gtkappchooserdialog = new_type_gtkappchooserdialog(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserdialog );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserdialog );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -70282,8 +70708,11 @@ _wrap_gtk_app_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_app_chooser_dialog_new(GTK_WINDOW(parent->obj),flags,G_FILE(file->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtkappchooserdialog = new_type_gtkappchooserdialog(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserdialog );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserdialog );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -70541,8 +70970,11 @@ _wrap_gtk_app_chooser_widget_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_app_chooser_widget_new(content_type))== NULL) return RET_BUG;
 
   nsp_type_gtkappchooserwidget = new_type_gtkappchooserwidget(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserwidget );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkappchooserwidget );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71137,8 +71569,11 @@ _wrap_gtk_style_context_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_style_context_new())== NULL) return RET_BUG;
 
   nsp_type_gtkstylecontext = new_type_gtkstylecontext(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstylecontext );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstylecontext );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71215,7 +71650,7 @@ static int _wrap_gtk_style_context_get_property(NspGtkStyleContext *self,Stack s
   return 1;
 }
 
-#line 71219 "gtk.c"
+#line 71654 "gtk.c"
 
 
 #line 7997 "codegen-3.0/gtk.override"
@@ -71226,7 +71661,7 @@ static int _wrap_gtk_style_context_get(NspGtkStyleContext *self,Stack stack,int 
   return RET_BUG;
 }
 
-#line 71230 "gtk.c"
+#line 71665 "gtk.c"
 
 
 static int _wrap_gtk_style_context_set_state(NspGtkStyleContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -71331,7 +71766,7 @@ static int _wrap_gtk_style_context_get_parent(NspGtkStyleContext *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_style_context_get_parent(GTK_STYLE_CONTEXT(self->obj));
   nsp_type_gtkstylecontext = new_type_gtkstylecontext(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkstylecontext))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71454,7 +71889,7 @@ static int _wrap_gtk_style_context_get_screen(NspGtkStyleContext *self,Stack sta
   CheckRhs(0,0);
     ret =gtk_style_context_get_screen(GTK_STYLE_CONTEXT(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71484,7 +71919,7 @@ static int _wrap_gtk_style_context_get_frame_clock(NspGtkStyleContext *self,Stac
   CheckRhs(0,0);
     ret =gtk_style_context_get_frame_clock(GTK_STYLE_CONTEXT(self->obj));
   nsp_type_gdkframeclock = new_type_gdkframeclock(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkframeclock))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71917,8 +72352,11 @@ _wrap_gtk_ui_manager_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_ui_manager_new())== NULL) return RET_BUG;
 
   nsp_type_gtkuimanager = new_type_gtkuimanager(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkuimanager );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkuimanager );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -71977,7 +72415,7 @@ static int _wrap_gtk_ui_manager_get_accel_group(NspGtkUIManager *self,Stack stac
   CheckRhs(0,0);
     ret =gtk_ui_manager_get_accel_group(GTK_UI_MANAGER(self->obj));
   nsp_type_gtkaccelgroup = new_type_gtkaccelgroup(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkaccelgroup))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -72020,7 +72458,7 @@ static int _wrap_gtk_ui_manager_get_action(NspGtkUIManager *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
     ret =gtk_ui_manager_get_action(GTK_UI_MANAGER(self->obj),path);
   nsp_type_gtkaction = new_type_gtkaction(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkaction))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -72340,8 +72778,11 @@ _wrap_gtk_action_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_action_group_new(name))== NULL) return RET_BUG;
 
   nsp_type_gtkactiongroup = new_type_gtkactiongroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkactiongroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkactiongroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -72417,7 +72858,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 72421 "gtk.c"
+#line 72862 "gtk.c"
 
 
 #line 7430 "codegen-3.0/gtk.override"
@@ -72436,7 +72877,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 72440 "gtk.c"
+#line 72881 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -72723,7 +73164,7 @@ _wrap_gtk_action_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 72727 "gtk.c"
+#line 73168 "gtk.c"
 
 
 static int _wrap_gtk_action_get_name(NspGtkAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -73546,7 +73987,7 @@ _wrap_gtk_image_menu_item_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 73550 "gtk.c"
+#line 73991 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -74189,8 +74630,11 @@ _wrap_gtk_icon_theme_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_icon_theme_new())== NULL) return RET_BUG;
 
   nsp_type_gtkicontheme = new_type_gtkicontheme(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkicontheme );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkicontheme );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -74337,7 +74781,7 @@ static int _wrap_gtk_icon_theme_choose_icon(NspGtkIconTheme *self,Stack stack,in
   return 1;
 }
 
-#line 74341 "gtk.c"
+#line 74785 "gtk.c"
 
 
 #line 7720 "codegen-3.0/gtk.override"
@@ -74360,7 +74804,7 @@ static int _wrap_gtk_icon_theme_choose_icon_for_scale(NspGtkIconTheme *self,Stac
   return 1;
 }
 
-#line 74364 "gtk.c"
+#line 74808 "gtk.c"
 
 
 static int _wrap_gtk_icon_theme_load_icon(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
@@ -74381,7 +74825,7 @@ static int _wrap_gtk_icon_theme_load_icon(NspGtkIconTheme *self,Stack stack,int 
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -74405,7 +74849,7 @@ static int _wrap_gtk_icon_theme_load_icon_for_scale(NspGtkIconTheme *self,Stack 
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -74518,7 +74962,7 @@ static int _wrap_gtk_icon_theme_list_icons(NspGtkIconTheme *self,Stack stack,int
 }
 
 
-#line 74522 "gtk.c"
+#line 74966 "gtk.c"
 
 
 #line 7764 "codegen-3.0/gtk.override"
@@ -74534,7 +74978,7 @@ static int _wrap_gtk_icon_theme_list_contexts(NspGtkIconTheme *self,Stack stack,
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
-#line 74538 "gtk.c"
+#line 74982 "gtk.c"
 
 
 static int _wrap_gtk_icon_theme_get_example_icon_name(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
@@ -74787,8 +75231,11 @@ _wrap_gtk_accel_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_accel_group_new())== NULL) return RET_BUG;
 
   nsp_type_gtkaccelgroup = new_type_gtkaccelgroup(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccelgroup );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccelgroup );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -75055,8 +75502,11 @@ _wrap_gtk_css_provider_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)gtk_css_provider_new())== NULL) return RET_BUG;
 
   nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcssprovider );
-   if ( nsp_ret == NULL) return RET_BUG;
+  /* prefer most specialized class than the one specified indef file
+   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcssprovider );
+    */
+  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -75558,7 +76008,7 @@ static int _wrap_gtk_clipboard_get_display(NspGtkClipboard *self,Stack stack,int
   CheckRhs(0,0);
     ret =gtk_clipboard_get_display(GTK_CLIPBOARD(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -75657,7 +76107,7 @@ static int _wrap_gtk_clipboard_request_text(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 75661 "gtk.c"
+#line 76111 "gtk.c"
 
 
 static int _wrap_gtk_clipboard_wait_for_contents(NspGtkClipboard *self,Stack stack,int rhs,int opt,int lhs)
@@ -75693,7 +76143,7 @@ static int _wrap_gtk_clipboard_wait_for_image(NspGtkClipboard *self,Stack stack,
   CheckRhs(0,0);
     ret =gtk_clipboard_wait_for_image(GTK_CLIPBOARD(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -75785,7 +76235,7 @@ static int _wrap_gtk_clipboard_set_can_store(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 75789 "gtk.c"
+#line 76239 "gtk.c"
 
 
 static int _wrap_gtk_clipboard_store(NspGtkClipboard *self,Stack stack,int rhs,int opt,int lhs)
@@ -75870,7 +76320,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 75874 "gtk.c"
+#line 76324 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs) /* gtk_accelerator_valid */
@@ -76241,7 +76691,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 76245 "gtk.c"
+#line 76695 "gtk.c"
 
 
 int _wrap_gtk_clipboard_get(Stack stack, int rhs, int opt, int lhs) /* gtk_clipboard_get */
@@ -76257,7 +76707,7 @@ int _wrap_gtk_clipboard_get(Stack stack, int rhs, int opt, int lhs) /* gtk_clipb
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
     ret =gtk_clipboard_get(selection);
   nsp_type_gtkclipboard = new_type_gtkclipboard(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkclipboard))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76272,7 +76722,7 @@ int _wrap_gtk_clipboard_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display) == FAIL) return RET_BUG;
     ret =gtk_clipboard_get_default(GDK_DISPLAY(display->obj));
   nsp_type_gtkclipboard = new_type_gtkclipboard(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkclipboard))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76309,7 +76759,7 @@ int _wrap_gtk_css_provider_get_default(Stack stack, int rhs, int opt, int lhs) /
   CheckRhs(0,0);
     ret =gtk_css_provider_get_default();
   nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcssprovider))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76323,7 +76773,7 @@ int _wrap_gtk_css_provider_get_named(Stack stack, int rhs, int opt, int lhs) /* 
   if ( GetArgs(stack,rhs,opt,T,&name, &variant) == FAIL) return RET_BUG;
     ret =gtk_css_provider_get_named(name,variant);
   nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkcssprovider))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76460,7 +76910,7 @@ _wrap_gtk_drag_dest_set(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 76464 "gtk.c"
+#line 76914 "gtk.c"
 
 
 int _wrap_gtk_drag_dest_set_proxy(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_dest_set_proxy */
@@ -76522,7 +76972,7 @@ _wrap_gtk_drag_dest_find_target(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 76526 "gtk.c"
+#line 76976 "gtk.c"
 
 
 #line 5405 "codegen-3.0/gtk.override"
@@ -76554,7 +77004,7 @@ _wrap_gtk_drag_dest_get_target_list(Stack stack,int rhs,int opt,int lhs)
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 76558 "gtk.c"
+#line 77008 "gtk.c"
 
 
 #line 5435 "codegen-3.0/gtk.override"
@@ -76578,7 +77028,7 @@ _wrap_gtk_drag_dest_set_target_list(Stack stack,int rhs,int opt,int lhs)
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 76582 "gtk.c"
+#line 77032 "gtk.c"
 
 
 int _wrap_gtk_drag_dest_add_text_targets(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_dest_add_text_targets */
@@ -76660,7 +77110,7 @@ _wrap_gtk_drag_source_set(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 76664 "gtk.c"
+#line 77114 "gtk.c"
 
 
 int _wrap_gtk_drag_source_unset(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_source_unset */
@@ -76814,7 +77264,7 @@ int _wrap_gtk_entry_new_with_buffer(Stack stack, int rhs, int opt, int lhs) /* g
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkentrybuffer, &buffer) == FAIL) return RET_BUG;
   ret =(GtkEntry*) gtk_entry_new_with_buffer(GTK_ENTRY_BUFFER(buffer->obj));
   nsp_type_gtkentry = new_type_gtkentry(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkentry))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76826,7 +77276,7 @@ int _wrap_gtk_icon_theme_get_default(Stack stack, int rhs, int opt, int lhs) /* 
   CheckRhs(0,0);
     ret =gtk_icon_theme_get_default();
   nsp_type_gtkicontheme = new_type_gtkicontheme(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkicontheme))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76840,7 +77290,7 @@ int _wrap_gtk_icon_theme_get_for_screen(Stack stack, int rhs, int opt, int lhs) 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkscreen, &screen) == FAIL) return RET_BUG;
     ret =gtk_icon_theme_get_for_screen(GDK_SCREEN(screen->obj));
   nsp_type_gtkicontheme = new_type_gtkicontheme(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkicontheme))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -76955,7 +77405,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 76959 "gtk.c"
+#line 77409 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs) /* gtk_main_level */
@@ -76987,7 +77437,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 76991 "gtk.c"
+#line 77441 "gtk.c"
 
 
 #line 3827 "codegen-3.0/gtk.override"
@@ -77003,7 +77453,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 77007 "gtk.c"
+#line 77457 "gtk.c"
 
 
 int _wrap_gtk_grab_add(Stack stack, int rhs, int opt, int lhs) /* gtk_grab_add */
@@ -77084,7 +77534,7 @@ int _wrap_gtk_get_current_event_device(Stack stack, int rhs, int opt, int lhs) /
   CheckRhs(0,0);
     ret =gtk_get_current_event_device();
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -77129,7 +77579,7 @@ int _wrap_gtk_recent_manager_get_default(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(0,0);
     ret =gtk_recent_manager_get_default();
   nsp_type_gtkrecentmanager = new_type_gtkrecentmanager(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkrecentmanager))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -77525,7 +77975,7 @@ _wrap_gtk_selection_add_targets(Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 77529 "gtk.c"
+#line 77979 "gtk.c"
 
 
 int _wrap_gtk_selection_clear_targets(Stack stack, int rhs, int opt, int lhs) /* gtk_selection_clear_targets */
@@ -77575,7 +78025,7 @@ int _wrap_gtk_settings_get_default(Stack stack, int rhs, int opt, int lhs) /* gt
   CheckRhs(0,0);
     ret =gtk_settings_get_default();
   nsp_type_gtksettings = new_type_gtksettings(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtksettings))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -77589,7 +78039,7 @@ int _wrap_gtk_settings_get_for_screen(Stack stack, int rhs, int opt, int lhs) /*
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkscreen, &screen) == FAIL) return RET_BUG;
     ret =gtk_settings_get_for_screen(GDK_SCREEN(screen->obj));
   nsp_type_gtksettings = new_type_gtksettings(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtksettings))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -77930,7 +78380,7 @@ _wrap_gtk_tree_get_row_drag_data(Stack stack,int rhs,int opt,int lhs)
   return RetArgs(stack,lhs,Tr,nsp_model,nsp_path);
 }
 
-#line 77934 "gtk.c"
+#line 78384 "gtk.c"
 
 
 int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_inserted */
@@ -78133,7 +78583,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 78137 "gtk.c"
+#line 78587 "gtk.c"
 
 
 #line 6904 "codegen-3.0/gtk.override"
@@ -78153,7 +78603,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 78157 "gtk.c"
+#line 78607 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs) /* icon_size_lookup_for_settings */
@@ -79119,4 +79569,4 @@ void gtk_drag_set_icon_gicon  (GdkDragContext *context,
                                gint            hot_x,
                                gint            hot_y);
 
-#line 79123 "gtk.c"
+#line 79573 "gtk.c"

@@ -26,6 +26,7 @@ extern void cairo_add_constants(NspObject *module, const gchar *strip_prefix);
 extern void gio_add_constants(NspObject *module, const gchar *strip_prefix);
 extern void glib_add_constants(NspObject *module, const gchar *strip_prefix);
 
+
 /* init nsp gtk object types */
 
 void nsp_init_gtk_types(void)
@@ -72,10 +73,6 @@ NspHash *nsp_cairo_hash_table = NULL;
 NspHash *nsp_gio_hash_table = NULL;
 NspHash *nsp_glib_hash_table = NULL;
 
-
-void glib_add_constants(NspObject *module, const gchar *strip_prefix)
-{
-}
 
 
 #define PANGO_ENTER(name,value) \

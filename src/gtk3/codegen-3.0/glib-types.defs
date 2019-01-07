@@ -281,19 +281,19 @@
 ;;   )
 ;; )
 
-;; (define-enum GIOCondition
-;;   (in-module "GIOConditio")
-;;   (c-name "GIOCondition")
-;;   (gtype-id "G_TYPE_IO_CONDITION")
-;;   (values
-;;     '("in" "G_IO_IN")
-;;     '("out" "G_IO_OUT")
-;;     '("pri" "G_IO_PRI")
-;;     '("err" "G_IO_ERR")
-;;     '("hup" "G_IO_HUP")
-;;     '("nval" "G_IO_NVAL")
-;;   )
-;; )
+(define-flags GIOCondition
+  (in-module "GIOConditio")
+  (c-name "GIOCondition")
+  (gtype-id "G_TYPE_IO_CONDITION")
+  (values
+    '("in" "G_IO_IN")
+    '("out" "G_IO_OUT")
+    '("pri" "G_IO_PRI")
+    '("err" "G_IO_ERR")
+    '("hup" "G_IO_HUP")
+    '("nval" "G_IO_NVAL")
+  )
+)
 
 ;; (define-enum GMarkupError
 ;;   (in-module "GMarkup")
@@ -1067,5 +1067,11 @@
   (release-func "g_error_free")
 )
 
-
+(define-boxed GSource
+  (in-module "Gtk")
+  (c-name "GSource")
+  (gtype-id "G_TYPE_SOURCE")
+  ;; (copy-func "g_error_copy")
+  ;; (release-func "g_error_free")
+)
 

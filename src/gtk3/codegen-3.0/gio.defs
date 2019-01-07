@@ -7726,19 +7726,21 @@
 (define-function g_input_stream_get_type
   (c-name "g_input_stream_get_type")
   (return-type "GType")
-)
+  )
 
-;; (define-method read
-;;   (of-object "GInputStream")
-;;   (c-name "g_input_stream_read")
-;;   (return-type "gssize")
-;;   (parameters
-;;     '("void*" "buffer")
-;;     '("gsize" "count")
-;;     '("GCancellable*" "cancellable")
-;;     '("GError**" "error")
-;;   )
-;; )
+;; changed for nsp
+
+(define-method read
+  (of-object "GInputStream")
+  (c-name "g_input_stream_read")
+  (return-type "gssize")
+  (parameters
+    ;;'("void*" "buffer")
+    '("gsize" "count" (null-ok) (default "256"))
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
+    '("GError**" "error")
+  )
+)
 
 (define-method read_all
   (of-object "GInputStream")
@@ -9933,12 +9935,14 @@
   (return-type "GType")
 )
 
+;; changed for nsp 
+
 (define-method write
   (of-object "GOutputStream")
   (c-name "g_output_stream_write")
   (return-type "gssize")
   (parameters
-    '("const-void*" "buffer")
+   '("const-gchar*" "buffer")
     '("gsize" "count")
     '("GCancellable*" "cancellable")
     '("GError**" "error")
