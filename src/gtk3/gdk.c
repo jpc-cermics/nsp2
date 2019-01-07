@@ -474,7 +474,7 @@ static int _wrap_gdk_events_get_distance(NspGdkEvent *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_event2, GDK_TYPE_EVENT))
       event2 = nspg_boxed_get(nsp_event2, GdkEvent);
   else {
-      Scierror( "event2 should be a GdkEvent");
+      Scierror( "Error: event2 should be a GdkEvent\n");
       return RET_BUG;
   }
   ret =gdk_events_get_distance(NSP_GBOXED_GET(self, GdkEvent),event2,&distance);
@@ -493,7 +493,7 @@ static int _wrap_gdk_events_get_angle(NspGdkEvent *self,Stack stack,int rhs,int 
   if (nspg_boxed_check(nsp_event2, GDK_TYPE_EVENT))
       event2 = nspg_boxed_get(nsp_event2, GdkEvent);
   else {
-      Scierror( "event2 should be a GdkEvent");
+      Scierror( "Error: event2 should be a GdkEvent\n");
       return RET_BUG;
   }
   ret =gdk_events_get_angle(NSP_GBOXED_GET(self, GdkEvent),event2,&angle);
@@ -512,7 +512,7 @@ static int _wrap_gdk_events_get_center(NspGdkEvent *self,Stack stack,int rhs,int
   if (nspg_boxed_check(nsp_event2, GDK_TYPE_EVENT))
       event2 = nspg_boxed_get(nsp_event2, GdkEvent);
   else {
-      Scierror( "event2 should be a GdkEvent");
+      Scierror( "Error: event2 should be a GdkEvent\n");
       return RET_BUG;
   }
   ret =gdk_events_get_center(NSP_GBOXED_GET(self, GdkEvent),event2,&x,&y);
@@ -3008,7 +3008,7 @@ static int _wrap_gdk_display_put_event(NspGdkDisplay *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     gdk_display_put_event(GDK_DISPLAY(self->obj),event);
@@ -5105,7 +5105,7 @@ static int _wrap_gdk_window_move_region(NspGdkWindow *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_move_region(GDK_WINDOW(self->obj),region,dx,dy);
@@ -5131,7 +5131,7 @@ static int _wrap_gdk_window_shape_combine_region(NspGdkWindow *self,Stack stack,
   if (nspg_boxed_check(nsp_shape_region, CAIRO_GOBJECT_TYPE_REGION))
       shape_region = nspg_boxed_get(nsp_shape_region, cairo_region_t);
   else {
-      Scierror( "shape_region should be a cairo_region_t");
+      Scierror( "Error: shape_region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_shape_combine_region(GDK_WINDOW(self->obj),shape_region,offset_x,offset_y);
@@ -5196,7 +5196,7 @@ static int _wrap_gdk_window_input_shape_combine_region(NspGdkWindow *self,Stack 
   if (nspg_boxed_check(nsp_shape_region, CAIRO_GOBJECT_TYPE_REGION))
       shape_region = nspg_boxed_get(nsp_shape_region, cairo_region_t);
   else {
-      Scierror( "shape_region should be a cairo_region_t");
+      Scierror( "Error: shape_region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_input_shape_combine_region(GDK_WINDOW(self->obj),shape_region,offset_x,offset_y);
@@ -5391,7 +5391,7 @@ static int _wrap_gdk_window_mark_paint_from_clip(NspGdkWindow *self,Stack stack,
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gdk_window_mark_paint_from_clip(GDK_WINDOW(self->obj),cr);
@@ -5414,7 +5414,7 @@ static int _wrap_gdk_window_begin_paint_region(NspGdkWindow *self,Stack stack,in
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_begin_paint_region(GDK_WINDOW(self->obj),region);
@@ -5488,7 +5488,7 @@ static int _wrap_gdk_window_set_background_rgba(NspGdkWindow *self,Stack stack,i
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
   else {
-      Scierror( "rgba should be a GdkRGBA");
+      Scierror( "Error: rgba should be a GdkRGBA\n");
       return RET_BUG;
   }
     gdk_window_set_background_rgba(GDK_WINDOW(self->obj),rgba);
@@ -5504,7 +5504,7 @@ static int _wrap_gdk_window_set_background_pattern(NspGdkWindow *self,Stack stac
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     gdk_window_set_background_pattern(GDK_WINDOW(self->obj),pattern);
@@ -5537,7 +5537,7 @@ static int _wrap_gdk_window_set_cursor(NspGdkWindow *self,Stack stack,int rhs,in
     if ( IsGdkCursor((NspObject *)nsp_cursor))
       cursor = GDK_CURSOR(nsp_cursor->obj);
     else if (! IsNone((NspObject *)nsp_cursor)) {
-         Scierror( "cursor should be a GdkCursor or None");
+         Scierror( "Error: cursor should be a GdkCursor or None\n");
          return RET_BUG;
     }
   }
@@ -6259,7 +6259,7 @@ static int _wrap_gdk_window_invalidate_region(NspGdkWindow *self,Stack stack,int
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_invalidate_region(GDK_WINDOW(self->obj),region,invalidate_children);
@@ -6417,7 +6417,7 @@ static int _wrap_gdk_window_set_opaque_region(NspGdkWindow *self,Stack stack,int
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_window_set_opaque_region(GDK_WINDOW(self->obj),region);
@@ -6493,7 +6493,7 @@ static int _wrap_gdk_window_show_window_menu(NspGdkWindow *self,Stack stack,int 
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gdk_window_show_window_menu(GDK_WINDOW(self->obj),event);
@@ -7998,7 +7998,7 @@ _wrap_gdk_cursor_new_from_surface (Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if ((ret = (GObject *)gdk_cursor_new_from_surface(GDK_DISPLAY(display->obj),surface,x,y))== NULL) return RET_BUG;
@@ -8765,14 +8765,14 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
     { option_keys =  ((NspSMatrix *) nsp_option_keys)->S;}
   else
     {
-      Scierror("Error: option_keys should be of type SMat");
+      Scierror("Error: option_keys should be of type SMat\n");
       return RET_BUG;
     }
   if ( IsSMat(nsp_option_values))
     { option_values =  ((NspSMatrix *) nsp_option_values)->S;}
   else
     {
-      Scierror("Error: option_values should be of type SMat");
+      Scierror("Error: option_values should be of type SMat\n");
       return RET_BUG;
     }
     ret =gdk_pixbuf_savev(GDK_PIXBUF(self->obj),filename,type,option_keys,option_values,&error);
@@ -10790,7 +10790,7 @@ int _wrap_gdk_cairo_get_clip_rectangle(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_rect, &rect))
@@ -10810,13 +10810,13 @@ int _wrap_gdk_cairo_set_source_rgba(Stack stack, int rhs, int opt, int lhs) /* g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
   else {
-      Scierror( "rgba should be a GdkRGBA");
+      Scierror( "Error: rgba should be a GdkRGBA\n");
       return RET_BUG;
   }
     gdk_cairo_set_source_rgba(cr,rgba);
@@ -10860,7 +10860,7 @@ int _wrap_gdk_cairo_set_source_window(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gdk_cairo_set_source_window(cr,GDK_WINDOW(window->obj),x,y);
@@ -10877,13 +10877,13 @@ int _wrap_gdk_cairo_region(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gdk_cairo_region(cr,region);
@@ -10900,7 +10900,7 @@ int _wrap_gdk_cairo_region_create_from_surface(Stack stack, int rhs, int opt, in
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =gdk_cairo_region_create_from_surface(surface);
@@ -10923,7 +10923,7 @@ int _wrap_gdk_cairo_draw_from_gl(Stack stack, int rhs, int opt, int lhs) /* gdk_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gdk_cairo_draw_from_gl(cr,GDK_WINDOW(window->obj),source,source_type,buffer_scale,x,y,width,height);

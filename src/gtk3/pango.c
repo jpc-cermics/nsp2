@@ -352,7 +352,7 @@ static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int r
   if (nspg_boxed_check(nsp_other, PANGO_TYPE_ATTR_LIST))
       other = nspg_boxed_get(nsp_other, PangoAttrList);
   else {
-      Scierror( "other should be a PangoAttrList");
+      Scierror( "Error: other should be a PangoAttrList\n");
       return RET_BUG;
   }
   pango_attr_list_splice(NSP_GBOXED_GET(self, PangoAttrList),other,pos,len);
@@ -1081,7 +1081,7 @@ static int _wrap_pango_font_description_merge(NspPangoFontDescription *self,Stac
   if (nspg_boxed_check(nsp_desc_to_merge, PANGO_TYPE_FONT_DESCRIPTION))
       desc_to_merge = nspg_boxed_get(nsp_desc_to_merge, PangoFontDescription);
   else {
-      Scierror( "desc_to_merge should be a PangoFontDescription");
+      Scierror( "Error: desc_to_merge should be a PangoFontDescription\n");
       return RET_BUG;
   }
   pango_font_description_merge(NSP_GBOXED_GET(self, PangoFontDescription),desc_to_merge,replace_existing);
@@ -1098,7 +1098,7 @@ static int _wrap_pango_font_description_merge_static(NspPangoFontDescription *se
   if (nspg_boxed_check(nsp_desc_to_merge, PANGO_TYPE_FONT_DESCRIPTION))
       desc_to_merge = nspg_boxed_get(nsp_desc_to_merge, PangoFontDescription);
   else {
-      Scierror( "desc_to_merge should be a PangoFontDescription");
+      Scierror( "Error: desc_to_merge should be a PangoFontDescription\n");
       return RET_BUG;
   }
   pango_font_description_merge_static(NSP_GBOXED_GET(self, PangoFontDescription),desc_to_merge,replace_existing);
@@ -1115,13 +1115,13 @@ static int _wrap_pango_font_description_better_match(NspPangoFontDescription *se
   if (nspg_boxed_check(nsp_old_match, PANGO_TYPE_FONT_DESCRIPTION))
       old_match = nspg_boxed_get(nsp_old_match, PangoFontDescription);
   else {
-      Scierror( "old_match should be a PangoFontDescription");
+      Scierror( "Error: old_match should be a PangoFontDescription\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_new_match, PANGO_TYPE_FONT_DESCRIPTION))
       new_match = nspg_boxed_get(nsp_new_match, PangoFontDescription);
   else {
-      Scierror( "new_match should be a PangoFontDescription");
+      Scierror( "Error: new_match should be a PangoFontDescription\n");
       return RET_BUG;
   }
   ret =pango_font_description_better_match(NSP_GBOXED_GET(self, PangoFontDescription),old_match,new_match);
@@ -2641,7 +2641,7 @@ static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int r
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     ret =pango_context_load_font(PANGO_CONTEXT(self->obj),desc);
@@ -2662,13 +2662,13 @@ static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,in
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
       language = nspg_boxed_get(nsp_language, PangoLanguage);
   else {
-      Scierror( "language should be a PangoLanguage");
+      Scierror( "Error: language should be a PangoLanguage\n");
       return RET_BUG;
   }
     ret =pango_context_load_fontset(PANGO_CONTEXT(self->obj),desc,language);
@@ -2734,7 +2734,7 @@ static int _wrap_pango_context_set_font_description(NspPangoContext *self,Stack 
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     pango_context_set_font_description(PANGO_CONTEXT(self->obj),desc);
@@ -2776,7 +2776,7 @@ static int _wrap_pango_context_set_language(NspPangoContext *self,Stack stack,in
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
       language = nspg_boxed_get(nsp_language, PangoLanguage);
   else {
-      Scierror( "language should be a PangoLanguage");
+      Scierror( "Error: language should be a PangoLanguage\n");
       return RET_BUG;
   }
     pango_context_set_language(PANGO_CONTEXT(self->obj),language);
@@ -3112,7 +3112,7 @@ static int _wrap_pango_font_get_metrics(NspPangoFont *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
       language = nspg_boxed_get(nsp_language, PangoLanguage);
   else {
-      Scierror( "language should be a PangoLanguage");
+      Scierror( "Error: language should be a PangoLanguage\n");
       return RET_BUG;
   }
     ret =pango_font_get_metrics(PANGO_FONT(self->obj),language);
@@ -3871,7 +3871,7 @@ static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int 
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     ret =pango_font_map_load_font(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc);
@@ -3893,13 +3893,13 @@ static int _wrap_pango_font_map_load_fontset(NspPangoFontMap *self,Stack stack,i
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
       language = nspg_boxed_get(nsp_language, PangoLanguage);
   else {
-      Scierror( "language should be a PangoLanguage");
+      Scierror( "Error: language should be a PangoLanguage\n");
       return RET_BUG;
   }
     ret =pango_font_map_load_fontset(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc,language);
@@ -4439,7 +4439,7 @@ static int _wrap_pango_layout_set_attributes(NspPangoLayout *self,Stack stack,in
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
   else {
-      Scierror( "attrs should be a PangoAttrList");
+      Scierror( "Error: attrs should be a PangoAttrList\n");
       return RET_BUG;
   }
     pango_layout_set_attributes(PANGO_LAYOUT(self->obj),attrs);
@@ -4555,7 +4555,7 @@ static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack st
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
   else {
-      Scierror( "desc should be a PangoFontDescription");
+      Scierror( "Error: desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     pango_layout_set_font_description(PANGO_LAYOUT(self->obj),desc);
@@ -4748,7 +4748,7 @@ static int _wrap_pango_layout_set_tabs(NspPangoLayout *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
   else {
-      Scierror( "tabs should be a PangoTabArray");
+      Scierror( "Error: tabs should be a PangoTabArray\n");
       return RET_BUG;
   }
     pango_layout_set_tabs(PANGO_LAYOUT(self->obj),tabs);
@@ -5379,7 +5379,7 @@ int _wrap_pango_parse_enum(Stack stack, int rhs, int opt, int lhs) /* pango_pars
     { possible_values =  ((NspSMatrix *) nsp_possible_values)->S;}
   else
     {
-      Scierror("Error: possible_values should be of type SMat");
+      Scierror("Error: possible_values should be of type SMat\n");
       return RET_BUG;
     }
     ret =pango_parse_enum(type,str,&value,warn,possible_values);
@@ -5475,7 +5475,7 @@ int _wrap_pango_cairo_update_context(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_update_context(cr,PANGO_CONTEXT(context->obj));
@@ -5513,7 +5513,7 @@ int _wrap_pango_cairo_create_context(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =pango_cairo_create_context(cr);
@@ -5533,7 +5533,7 @@ int _wrap_pango_cairo_create_layout(Stack stack, int rhs, int opt, int lhs) /* p
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =pango_cairo_create_layout(cr);
@@ -5553,7 +5553,7 @@ int _wrap_pango_cairo_update_layout(Stack stack, int rhs, int opt, int lhs) /* p
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_update_layout(cr,PANGO_LAYOUT(layout->obj));
@@ -5571,13 +5571,13 @@ int _wrap_pango_cairo_show_glyph_string(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_glyphs, PANGO_TYPE_GLYPH_STRING))
       glyphs = nspg_boxed_get(nsp_glyphs, PangoGlyphString);
   else {
-      Scierror( "glyphs should be a PangoGlyphString");
+      Scierror( "Error: glyphs should be a PangoGlyphString\n");
       return RET_BUG;
   }
     pango_cairo_show_glyph_string(cr,PANGO_FONT(font->obj),glyphs);
@@ -5594,7 +5594,7 @@ int _wrap_pango_cairo_show_layout(Stack stack, int rhs, int opt, int lhs) /* pan
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_show_layout(cr,PANGO_LAYOUT(layout->obj));
@@ -5611,7 +5611,7 @@ int _wrap_pango_cairo_show_error_underline(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_show_error_underline(cr,x,y,width,height);
@@ -5629,13 +5629,13 @@ int _wrap_pango_cairo_glyph_string_path(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_glyphs, PANGO_TYPE_GLYPH_STRING))
       glyphs = nspg_boxed_get(nsp_glyphs, PangoGlyphString);
   else {
-      Scierror( "glyphs should be a PangoGlyphString");
+      Scierror( "Error: glyphs should be a PangoGlyphString\n");
       return RET_BUG;
   }
     pango_cairo_glyph_string_path(cr,PANGO_FONT(font->obj),glyphs);
@@ -5652,7 +5652,7 @@ int _wrap_pango_cairo_layout_path(Stack stack, int rhs, int opt, int lhs) /* pan
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_layout_path(cr,PANGO_LAYOUT(layout->obj));
@@ -5669,7 +5669,7 @@ int _wrap_pango_cairo_error_underline_path(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     pango_cairo_error_underline_path(cr,x,y,width,height);

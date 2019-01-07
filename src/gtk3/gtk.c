@@ -511,7 +511,7 @@ static int _wrap_gtk_text_iter_assign(NspGtkTextIter *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_other, GTK_TYPE_TEXT_ITER))
       other = nspg_boxed_get(nsp_other, GtkTextIter);
   else {
-      Scierror( "other should be a GtkTextIter");
+      Scierror( "Error: other should be a GtkTextIter\n");
       return RET_BUG;
   }
   gtk_text_iter_assign(NSP_GBOXED_GET(self, GtkTextIter),other);
@@ -768,7 +768,7 @@ static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int r
     if ( IsGtkTextTag((NspObject *)nsp_tag))
       tag = GTK_TEXT_TAG(nsp_tag->obj);
     else if (! IsNone((NspObject *)nsp_tag)) {
-         Scierror( "tag should be a GtkTextTag or None");
+         Scierror( "Error: tag should be a GtkTextTag or None\n");
          return RET_BUG;
     }
   }
@@ -791,7 +791,7 @@ static int _wrap_gtk_text_iter_ends_tag(NspGtkTextIter *self,Stack stack,int rhs
     if ( IsGtkTextTag((NspObject *)nsp_tag))
       tag = GTK_TEXT_TAG(nsp_tag->obj);
     else if (! IsNone((NspObject *)nsp_tag)) {
-         Scierror( "tag should be a GtkTextTag or None");
+         Scierror( "Error: tag should be a GtkTextTag or None\n");
          return RET_BUG;
     }
   }
@@ -814,7 +814,7 @@ static int _wrap_gtk_text_iter_toggles_tag(NspGtkTextIter *self,Stack stack,int 
     if ( IsGtkTextTag((NspObject *)nsp_tag))
       tag = GTK_TEXT_TAG(nsp_tag->obj);
     else if (! IsNone((NspObject *)nsp_tag)) {
-         Scierror( "tag should be a GtkTextTag or None");
+         Scierror( "Error: tag should be a GtkTextTag or None\n");
          return RET_BUG;
     }
   }
@@ -976,7 +976,7 @@ static int _wrap_gtk_text_iter_get_attributes(NspGtkTextIter *self,Stack stack,i
   if (nspg_boxed_check(nsp_values, GTK_TYPE_TEXT_ATTRIBUTES))
       values = nspg_boxed_get(nsp_values, GtkTextAttributes);
   else {
-      Scierror( "values should be a GtkTextAttributes");
+      Scierror( "Error: values should be a GtkTextAttributes\n");
       return RET_BUG;
   }
   ret =gtk_text_iter_get_attributes(NSP_GBOXED_GET(self, GtkTextIter),values);
@@ -1497,7 +1497,7 @@ static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,in
   if (nspg_boxed_check(nsp_g_rhs, GTK_TYPE_TEXT_ITER))
       g_rhs = nspg_boxed_get(nsp_g_rhs, GtkTextIter);
   else {
-      Scierror( "g_rhs should be a GtkTextIter");
+      Scierror( "Error: g_rhs should be a GtkTextIter\n");
       return RET_BUG;
   }
   ret =gtk_text_iter_equal(NSP_GBOXED_GET(self, GtkTextIter),g_rhs);
@@ -1515,7 +1515,7 @@ static int _wrap_gtk_text_iter_compare(NspGtkTextIter *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_g_rhs, GTK_TYPE_TEXT_ITER))
       g_rhs = nspg_boxed_get(nsp_g_rhs, GtkTextIter);
   else {
-      Scierror( "g_rhs should be a GtkTextIter");
+      Scierror( "Error: g_rhs should be a GtkTextIter\n");
       return RET_BUG;
   }
   ret =gtk_text_iter_compare(NSP_GBOXED_GET(self, GtkTextIter),g_rhs);
@@ -1533,13 +1533,13 @@ static int _wrap_gtk_text_iter_in_range(NspGtkTextIter *self,Stack stack,int rhs
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
   ret =gtk_text_iter_in_range(NSP_GBOXED_GET(self, GtkTextIter),start,end);
@@ -1556,7 +1556,7 @@ static int _wrap_gtk_text_iter_order(NspGtkTextIter *self,Stack stack,int rhs,in
   if (nspg_boxed_check(nsp_second, GTK_TYPE_TEXT_ITER))
       second = nspg_boxed_get(nsp_second, GtkTextIter);
   else {
-      Scierror( "second should be a GtkTextIter");
+      Scierror( "Error: second should be a GtkTextIter\n");
       return RET_BUG;
   }
   gtk_text_iter_order(NSP_GBOXED_GET(self, GtkTextIter),second);
@@ -2972,7 +2972,7 @@ static int _wrap_gtk_selection_data_set_uris(NspGtkSelectionData *self,Stack sta
     { uris =  ((NspSMatrix *) nsp_uris)->S;}
   else
     {
-      Scierror("Error: uris should be of type SMat");
+      Scierror("Error: uris should be of type SMat\n");
       return RET_BUG;
     }
   ret =gtk_selection_data_set_uris(NSP_GBOXED_GET(self, GtkSelectionData),uris);
@@ -3311,7 +3311,7 @@ static int _wrap_gtk_text_attributes_copy_values(NspGtkTextAttributes *self,Stac
   if (nspg_boxed_check(nsp_dest, GTK_TYPE_TEXT_ATTRIBUTES))
       dest = nspg_boxed_get(nsp_dest, GtkTextAttributes);
   else {
-      Scierror( "dest should be a GtkTextAttributes");
+      Scierror( "Error: dest should be a GtkTextAttributes\n");
       return RET_BUG;
   }
   gtk_text_attributes_copy_values(NSP_GBOXED_GET(self, GtkTextAttributes),dest);
@@ -3760,7 +3760,7 @@ _wrap_gtk_tree_row_reference_new_proxy (Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ((ret = (GObject *)gtk_tree_row_reference_new_proxy(G_OBJECT(proxy->obj),GTK_TREE_MODEL(model->obj),path))== NULL) return RET_BUG;
@@ -3784,7 +3784,7 @@ _wrap_gtk_tree_row_reference_new (Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ((ret = (GObject *)gtk_tree_row_reference_new(GTK_TREE_MODEL(model->obj),path))== NULL) return RET_BUG;
@@ -4205,7 +4205,7 @@ static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_b, GTK_TYPE_TREE_PATH))
       b = nspg_boxed_get(nsp_b, GtkTreePath);
   else {
-      Scierror( "b should be a GtkTreePath");
+      Scierror( "Error: b should be a GtkTreePath\n");
       return RET_BUG;
   }
   ret =gtk_tree_path_compare(NSP_GBOXED_GET(self, GtkTreePath),b);
@@ -4255,7 +4255,7 @@ static int _wrap_gtk_tree_path_is_ancestor(NspGtkTreePath *self,Stack stack,int 
   if (nspg_boxed_check(nsp_descendant, GTK_TYPE_TREE_PATH))
       descendant = nspg_boxed_get(nsp_descendant, GtkTreePath);
   else {
-      Scierror( "descendant should be a GtkTreePath");
+      Scierror( "Error: descendant should be a GtkTreePath\n");
       return RET_BUG;
   }
   ret =gtk_tree_path_is_ancestor(NSP_GBOXED_GET(self, GtkTreePath),descendant);
@@ -4273,7 +4273,7 @@ static int _wrap_gtk_tree_path_is_descendant(NspGtkTreePath *self,Stack stack,in
   if (nspg_boxed_check(nsp_ancestor, GTK_TYPE_TREE_PATH))
       ancestor = nspg_boxed_get(nsp_ancestor, GtkTreePath);
   else {
-      Scierror( "ancestor should be a GtkTreePath");
+      Scierror( "Error: ancestor should be a GtkTreePath\n");
       return RET_BUG;
   }
   ret =gtk_tree_path_is_descendant(NSP_GBOXED_GET(self, GtkTreePath),ancestor);
@@ -6114,7 +6114,7 @@ static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(self->obj),iter);
@@ -6156,7 +6156,7 @@ static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int r
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_get_path(GTK_TREE_MODEL(self->obj),iter);
@@ -6209,7 +6209,7 @@ static int _wrap_gtk_tree_model_iter_previous(NspGtkTreeModel *self,Stack stack,
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_iter_previous(GTK_TREE_MODEL(self->obj),iter);
@@ -6281,7 +6281,7 @@ static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_iter_has_child(GTK_TREE_MODEL(self->obj),iter);
@@ -6303,7 +6303,7 @@ static int _wrap_gtk_tree_model_iter_n_children(NspGtkTreeModel *self,Stack stac
     if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
     else if (! IsNone(nsp_iter)) {
-      Scierror("iter should be a GtkTreeIter or None");
+      Scierror("Error: iter should be a GtkTreeIter or None\n");
       return RET_BUG;
     }
   }
@@ -6387,7 +6387,7 @@ static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int r
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_ref_node(GTK_TREE_MODEL(self->obj),iter);
@@ -6403,7 +6403,7 @@ static int _wrap_gtk_tree_model_unref_node(NspGtkTreeModel *self,Stack stack,int
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_unref_node(GTK_TREE_MODEL(self->obj),iter);
@@ -6419,7 +6419,7 @@ static int _wrap_gtk_tree_model_get(NspGtkTreeModel *self,Stack stack,int rhs,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_get(GTK_TREE_MODEL(self->obj),iter);
@@ -6499,13 +6499,13 @@ static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,in
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_row_changed(GTK_TREE_MODEL(self->obj),path,iter);
@@ -6522,13 +6522,13 @@ static int _wrap_gtk_tree_model_row_inserted(NspGtkTreeModel *self,Stack stack,i
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_row_inserted(GTK_TREE_MODEL(self->obj),path,iter);
@@ -6545,13 +6545,13 @@ static int _wrap_gtk_tree_model_row_has_child_toggled(NspGtkTreeModel *self,Stac
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_row_has_child_toggled(GTK_TREE_MODEL(self->obj),path,iter);
@@ -6567,7 +6567,7 @@ static int _wrap_gtk_tree_model_row_deleted(NspGtkTreeModel *self,Stack stack,in
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_model_row_deleted(GTK_TREE_MODEL(self->obj),path);
@@ -6585,13 +6585,13 @@ static int _wrap_gtk_tree_model_rows_reordered(NspGtkTreeModel *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_rows_reordered(GTK_TREE_MODEL(self->obj),path,iter,&new_order);
@@ -6610,13 +6610,13 @@ static int _wrap_gtk_tree_model_rows_reordered_with_length(NspGtkTreeModel *self
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_rows_reordered_with_length(GTK_TREE_MODEL(self->obj),path,iter,&new_order,length);
@@ -7623,7 +7623,7 @@ static int _wrap_gtk_cell_editable_start_editing(NspGtkCellEditable *self,Stack 
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     gtk_cell_editable_start_editing(GTK_CELL_EDITABLE(self->obj),event);
@@ -8175,7 +8175,7 @@ static int _wrap_gtk_color_chooser_set_rgba(NspGtkColorChooser *self,Stack stack
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(self->obj),color);
@@ -8237,7 +8237,7 @@ static int _wrap_gtk_color_chooser_add_palette(NspGtkColorChooser *self,Stack st
   if (nspg_boxed_check(nsp_colors, GDK_TYPE_RGBA))
       colors = nspg_boxed_get(nsp_colors, GdkRGBA);
   else {
-      Scierror( "colors should be a GdkRGBA");
+      Scierror( "Error: colors should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(self->obj),orientation,colors_per_line,n_colors,colors);
@@ -9461,7 +9461,7 @@ static int _wrap_gtk_font_chooser_set_font_desc(NspGtkFontChooser *self,Stack st
   if (nspg_boxed_check(nsp_font_desc, PANGO_TYPE_FONT_DESCRIPTION))
       font_desc = nspg_boxed_get(nsp_font_desc, PangoFontDescription);
   else {
-      Scierror( "font_desc should be a PangoFontDescription");
+      Scierror( "Error: font_desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     gtk_font_chooser_set_font_desc(GTK_FONT_CHOOSER(self->obj),font_desc);
@@ -9888,7 +9888,7 @@ static int _wrap_gtk_scrollable_get_border(NspGtkScrollable *self,Stack stack,in
   if (nspg_boxed_check(nsp_border, GTK_TYPE_BORDER))
       border = nspg_boxed_get(nsp_border, GtkBorder);
   else {
-      Scierror( "border should be a GtkBorder");
+      Scierror( "Error: border should be a GtkBorder\n");
       return RET_BUG;
   }
     ret =gtk_scrollable_get_border(GTK_SCROLLABLE(self->obj),border);
@@ -10867,13 +10867,13 @@ static int _wrap_gtk_tree_drag_dest_drag_data_received(NspGtkTreeDragDest *self,
   if (nspg_boxed_check(nsp_dest, GTK_TYPE_TREE_PATH))
       dest = nspg_boxed_get(nsp_dest, GtkTreePath);
   else {
-      Scierror( "dest should be a GtkTreePath");
+      Scierror( "Error: dest should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_selection_data, GTK_TYPE_SELECTION_DATA))
       selection_data = nspg_boxed_get(nsp_selection_data, GtkSelectionData);
   else {
-      Scierror( "selection_data should be a GtkSelectionData");
+      Scierror( "Error: selection_data should be a GtkSelectionData\n");
       return RET_BUG;
   }
     ret =gtk_tree_drag_dest_drag_data_received(GTK_TREE_DRAG_DEST(self->obj),dest,selection_data);
@@ -10892,13 +10892,13 @@ static int _wrap_gtk_tree_drag_dest_row_drop_possible(NspGtkTreeDragDest *self,S
   if (nspg_boxed_check(nsp_dest_path, GTK_TYPE_TREE_PATH))
       dest_path = nspg_boxed_get(nsp_dest_path, GtkTreePath);
   else {
-      Scierror( "dest_path should be a GtkTreePath");
+      Scierror( "Error: dest_path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_selection_data, GTK_TYPE_SELECTION_DATA))
       selection_data = nspg_boxed_get(nsp_selection_data, GtkSelectionData);
   else {
-      Scierror( "selection_data should be a GtkSelectionData");
+      Scierror( "Error: selection_data should be a GtkSelectionData\n");
       return RET_BUG;
   }
     ret =gtk_tree_drag_dest_row_drop_possible(GTK_TREE_DRAG_DEST(self->obj),dest_path,selection_data);
@@ -11121,7 +11121,7 @@ static int _wrap_gtk_tree_drag_source_row_draggable(NspGtkTreeDragSource *self,S
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_drag_source_row_draggable(GTK_TREE_DRAG_SOURCE(self->obj),path);
@@ -11139,7 +11139,7 @@ static int _wrap_gtk_tree_drag_source_drag_data_delete(NspGtkTreeDragSource *sel
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_drag_source_drag_data_delete(GTK_TREE_DRAG_SOURCE(self->obj),path);
@@ -11158,13 +11158,13 @@ static int _wrap_gtk_tree_drag_source_drag_data_get(NspGtkTreeDragSource *self,S
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_selection_data, GTK_TYPE_SELECTION_DATA))
       selection_data = nspg_boxed_get(nsp_selection_data, GtkSelectionData);
   else {
-      Scierror( "selection_data should be a GtkSelectionData");
+      Scierror( "Error: selection_data should be a GtkSelectionData\n");
       return RET_BUG;
   }
     ret =gtk_tree_drag_source_drag_data_get(GTK_TREE_DRAG_SOURCE(self->obj),path,selection_data);
@@ -12369,7 +12369,7 @@ static int _wrap_gtk_builder_add_objects_from_file(NspGtkBuilder *self,Stack sta
     { object_ids =  ((NspSMatrix *) nsp_object_ids)->S;}
   else
     {
-      Scierror("Error: object_ids should be of type SMat");
+      Scierror("Error: object_ids should be of type SMat\n");
       return RET_BUG;
     }
     ret =gtk_builder_add_objects_from_file(GTK_BUILDER(self->obj),filename,object_ids,&error);
@@ -12395,7 +12395,7 @@ static int _wrap_gtk_builder_add_objects_from_resource(NspGtkBuilder *self,Stack
     { object_ids =  ((NspSMatrix *) nsp_object_ids)->S;}
   else
     {
-      Scierror("Error: object_ids should be of type SMat");
+      Scierror("Error: object_ids should be of type SMat\n");
       return RET_BUG;
     }
     ret =gtk_builder_add_objects_from_resource(GTK_BUILDER(self->obj),resource_path,object_ids,&error);
@@ -12427,7 +12427,7 @@ static int _wrap_gtk_builder_add_objects_from_string(NspGtkBuilder *self,Stack s
     { object_ids =  ((NspSMatrix *) nsp_object_ids)->S;}
   else
     {
-      Scierror("Error: object_ids should be of type SMat");
+      Scierror("Error: object_ids should be of type SMat\n");
       return RET_BUG;
     }
     ret =gtk_builder_add_objects_from_string(GTK_BUILDER(self->obj),buffer,length,object_ids,&error);
@@ -13695,7 +13695,7 @@ static int _wrap_gtk_window_activate_key(NspGtkWindow *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_window_activate_key(GTK_WINDOW(self->obj),(GdkEventKey *)event);
@@ -13713,7 +13713,7 @@ static int _wrap_gtk_window_propagate_key_event(NspGtkWindow *self,Stack stack,i
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_window_propagate_key_event(GTK_WINDOW(self->obj),(GdkEventKey *)event);
@@ -15463,7 +15463,7 @@ static int _wrap_gtk_about_dialog_set_authors(NspGtkAboutDialog *self,Stack stac
     { authors = (const gchar **) ((NspSMatrix *) nsp_authors)->S;}
   else
     {
-      Scierror("Error: authors should be of type SMat");
+      Scierror("Error: authors should be of type SMat\n");
       return RET_BUG;
     }
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(self->obj),authors);
@@ -15480,7 +15480,7 @@ static int _wrap_gtk_about_dialog_set_documenters(NspGtkAboutDialog *self,Stack 
     { documenters = (const gchar **) ((NspSMatrix *) nsp_documenters)->S;}
   else
     {
-      Scierror("Error: documenters should be of type SMat");
+      Scierror("Error: documenters should be of type SMat\n");
       return RET_BUG;
     }
     gtk_about_dialog_set_documenters(GTK_ABOUT_DIALOG(self->obj),documenters);
@@ -15497,7 +15497,7 @@ static int _wrap_gtk_about_dialog_set_artists(NspGtkAboutDialog *self,Stack stac
     { artists = (const gchar **) ((NspSMatrix *) nsp_artists)->S;}
   else
     {
-      Scierror("Error: artists should be of type SMat");
+      Scierror("Error: artists should be of type SMat\n");
       return RET_BUG;
     }
     gtk_about_dialog_set_artists(GTK_ABOUT_DIALOG(self->obj),artists);
@@ -15573,7 +15573,7 @@ static int _wrap_gtk_about_dialog_add_credit_section(NspGtkAboutDialog *self,Sta
     { people = (const gchar **) ((NspSMatrix *) nsp_people)->S;}
   else
     {
-      Scierror("Error: people should be of type SMat");
+      Scierror("Error: people should be of type SMat\n");
       return RET_BUG;
     }
     gtk_about_dialog_add_credit_section(GTK_ABOUT_DIALOG(self->obj),section_name,people);
@@ -22521,7 +22521,7 @@ _wrap_gtk_layout_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_hadjustment))
       hadjustment = GTK_ADJUSTMENT(nsp_hadjustment->obj);
     else if (! IsNone((NspObject *)nsp_hadjustment)) {
-         Scierror( "hadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: hadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -22529,7 +22529,7 @@ _wrap_gtk_layout_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_vadjustment))
       vadjustment = GTK_ADJUSTMENT(nsp_vadjustment->obj);
     else if (! IsNone((NspObject *)nsp_vadjustment)) {
-         Scierror( "vadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: vadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -24545,7 +24545,7 @@ static int _wrap_gtk_label_set_attributes(NspGtkLabel *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
   else {
-      Scierror( "attrs should be a PangoAttrList");
+      Scierror( "Error: attrs should be a PangoAttrList\n");
       return RET_BUG;
   }
     gtk_label_set_attributes(GTK_LABEL(self->obj),attrs);
@@ -25307,7 +25307,7 @@ _wrap_gtk_image_new_from_surface (Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if ((ret = (GObject *)gtk_image_new_from_surface(surface))== NULL) return RET_BUG;
@@ -25671,7 +25671,7 @@ static int _wrap_gtk_image_set_from_surface(NspGtkImage *self,Stack stack,int rh
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     gtk_image_set_from_surface(GTK_IMAGE(self->obj),surface);
@@ -30488,7 +30488,7 @@ _wrap_gtk_scale_button_new (Stack stack, int rhs, int opt, int lhs)
     { icons = (const gchar **) ((NspSMatrix *) nsp_icons)->S;}
   else
     {
-      Scierror("Error: icons should be of type SMat");
+      Scierror("Error: icons should be of type SMat\n");
       return RET_BUG;
     }
   if ((ret = (GObject *)gtk_scale_button_new(size,min,max,step,icons))== NULL) return RET_BUG;
@@ -30513,7 +30513,7 @@ static int _wrap_gtk_scale_button_set_icons(NspGtkScaleButton *self,Stack stack,
     { icons = (const gchar **) ((NspSMatrix *) nsp_icons)->S;}
   else
     {
-      Scierror("Error: icons should be of type SMat");
+      Scierror("Error: icons should be of type SMat\n");
       return RET_BUG;
     }
     gtk_scale_button_set_icons(GTK_SCALE_BUTTON(self->obj),icons);
@@ -31669,7 +31669,7 @@ static int _wrap_gtk_entry_set_inner_border(NspGtkEntry *self,Stack stack,int rh
   if (nspg_boxed_check(nsp_border, GTK_TYPE_BORDER))
       border = nspg_boxed_get(nsp_border, GtkBorder);
   else {
-      Scierror( "border should be a GtkBorder");
+      Scierror( "Error: border should be a GtkBorder\n");
       return RET_BUG;
   }
     gtk_entry_set_inner_border(GTK_ENTRY(self->obj),border);
@@ -32274,7 +32274,7 @@ static int _wrap_gtk_entry_im_context_filter_keypress(NspGtkEntry *self,Stack st
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_entry_im_context_filter_keypress(GTK_ENTRY(self->obj),(GdkEventKey *)event);
@@ -32373,7 +32373,7 @@ static int _wrap_gtk_entry_set_attributes(NspGtkEntry *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
   else {
-      Scierror( "attrs should be a PangoAttrList");
+      Scierror( "Error: attrs should be a PangoAttrList\n");
       return RET_BUG;
   }
     gtk_entry_set_attributes(GTK_ENTRY(self->obj),attrs);
@@ -32418,7 +32418,7 @@ static int _wrap_gtk_entry_set_tabs(NspGtkEntry *self,Stack stack,int rhs,int op
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
   else {
-      Scierror( "tabs should be a PangoTabArray");
+      Scierror( "Error: tabs should be a PangoTabArray\n");
       return RET_BUG;
   }
     gtk_entry_set_tabs(GTK_ENTRY(self->obj),tabs);
@@ -33138,7 +33138,7 @@ static int _wrap_gtk_entry_completion_set_model(NspGtkEntryCompletion *self,Stac
     if ( IsGtkTreeModel((NspObject *)nsp_model))
       model = GTK_TREE_MODEL(nsp_model->obj);
     else if (! IsNone((NspObject *)nsp_model)) {
-         Scierror( "model should be a GtkTreeModel or None");
+         Scierror( "Error: model should be a GtkTreeModel or None\n");
          return RET_BUG;
     }
   }
@@ -33629,7 +33629,7 @@ _wrap_gtk_scale_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_adjustment))
       adjustment = GTK_ADJUSTMENT(nsp_adjustment->obj);
     else if (! IsNone((NspObject *)nsp_adjustment)) {
-         Scierror( "adjustment should be a GtkAdjustment or None");
+         Scierror( "Error: adjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -34035,7 +34035,7 @@ _wrap_gtk_spin_button_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_adjustment))
       adjustment = GTK_ADJUSTMENT(nsp_adjustment->obj);
     else if (! IsNone((NspObject *)nsp_adjustment)) {
-         Scierror( "adjustment should be a GtkAdjustment or None");
+         Scierror( "Error: adjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -34068,7 +34068,7 @@ static int _wrap_gtk_spin_button_configure(NspGtkSpinButton *self,Stack stack,in
     if ( IsGtkAdjustment((NspObject *)nsp_adjustment))
       adjustment = GTK_ADJUSTMENT(nsp_adjustment->obj);
     else if (! IsNone((NspObject *)nsp_adjustment)) {
-         Scierror( "adjustment should be a GtkAdjustment or None");
+         Scierror( "Error: adjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -34549,7 +34549,7 @@ static int _wrap_gtk_search_entry_handle_event(NspGtkSearchEntry *self,Stack sta
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_search_entry_handle_event(GTK_SEARCH_ENTRY(self->obj),event);
@@ -34885,7 +34885,7 @@ static int _wrap_gtk_search_bar_handle_event(NspGtkSearchBar *self,Stack stack,i
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_search_bar_handle_event(GTK_SEARCH_BAR(self->obj),event);
@@ -35410,7 +35410,7 @@ _wrap_gtk_text_buffer_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkTextTagTable((NspObject *)nsp_table))
       table = GTK_TEXT_TAG_TABLE(nsp_table->obj);
     else if (! IsNone((NspObject *)nsp_table)) {
-         Scierror( "table should be a GtkTextTagTable or None");
+         Scierror( "Error: table should be a GtkTextTagTable or None\n");
          return RET_BUG;
     }
   }
@@ -35544,19 +35544,19 @@ static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_insert_range(GTK_TEXT_BUFFER(self->obj),iter,start,end);
@@ -35573,19 +35573,19 @@ static int _wrap_gtk_text_buffer_insert_range_interactive(NspGtkTextBuffer *self
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_insert_range_interactive(GTK_TEXT_BUFFER(self->obj),iter,start,end,default_editable);
@@ -35676,7 +35676,7 @@ static int _wrap_gtk_text_buffer_insert_markup(NspGtkTextBuffer *self,Stack stac
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_insert_markup(GTK_TEXT_BUFFER(self->obj),iter,markup,len);
@@ -35699,13 +35699,13 @@ static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int r
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_delete(GTK_TEXT_BUFFER(self->obj),start,end);
@@ -35722,13 +35722,13 @@ static int _wrap_gtk_text_buffer_delete_interactive(NspGtkTextBuffer *self,Stack
   if (nspg_boxed_check(nsp_start_iter, GTK_TYPE_TEXT_ITER))
       start_iter = nspg_boxed_get(nsp_start_iter, GtkTextIter);
   else {
-      Scierror( "start_iter should be a GtkTextIter");
+      Scierror( "Error: start_iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end_iter, GTK_TYPE_TEXT_ITER))
       end_iter = nspg_boxed_get(nsp_end_iter, GtkTextIter);
   else {
-      Scierror( "end_iter should be a GtkTextIter");
+      Scierror( "Error: end_iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_delete_interactive(GTK_TEXT_BUFFER(self->obj),start_iter,end_iter,default_editable);
@@ -35746,7 +35746,7 @@ static int _wrap_gtk_text_buffer_backspace(NspGtkTextBuffer *self,Stack stack,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_backspace(GTK_TEXT_BUFFER(self->obj),iter,interactive,default_editable);
@@ -35768,13 +35768,13 @@ static int _wrap_gtk_text_buffer_get_text(NspGtkTextBuffer *self,Stack stack,int
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_get_text(GTK_TEXT_BUFFER(self->obj),start,end,include_hidden_chars);
@@ -35797,13 +35797,13 @@ static int _wrap_gtk_text_buffer_get_slice(NspGtkTextBuffer *self,Stack stack,in
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_get_slice(GTK_TEXT_BUFFER(self->obj),start,end,include_hidden_chars);
@@ -35822,7 +35822,7 @@ static int _wrap_gtk_text_buffer_insert_pixbuf(NspGtkTextBuffer *self,Stack stac
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_insert_pixbuf(GTK_TEXT_BUFFER(self->obj),iter,GDK_PIXBUF(pixbuf->obj));
@@ -35839,7 +35839,7 @@ static int _wrap_gtk_text_buffer_insert_child_anchor(NspGtkTextBuffer *self,Stac
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_insert_child_anchor(GTK_TEXT_BUFFER(self->obj),iter,GTK_TEXT_CHILD_ANCHOR(anchor->obj));
@@ -35856,7 +35856,7 @@ static int _wrap_gtk_text_buffer_create_child_anchor(NspGtkTextBuffer *self,Stac
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_create_child_anchor(GTK_TEXT_BUFFER(self->obj),iter);
@@ -35876,7 +35876,7 @@ static int _wrap_gtk_text_buffer_add_mark(NspGtkTextBuffer *self,Stack stack,int
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_add_mark(GTK_TEXT_BUFFER(self->obj),GTK_TEXT_MARK(mark->obj),where);
@@ -35900,7 +35900,7 @@ static int _wrap_gtk_text_buffer_create_mark(NspGtkTextBuffer *self,Stack stack,
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_buffer_create_mark(GTK_TEXT_BUFFER(self->obj),mark_name,where,left_gravity);
@@ -35920,7 +35920,7 @@ static int _wrap_gtk_text_buffer_move_mark(NspGtkTextBuffer *self,Stack stack,in
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_move_mark(GTK_TEXT_BUFFER(self->obj),GTK_TEXT_MARK(mark->obj),where);
@@ -35960,7 +35960,7 @@ static int _wrap_gtk_text_buffer_move_mark_by_name(NspGtkTextBuffer *self,Stack 
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_move_mark_by_name(GTK_TEXT_BUFFER(self->obj),name,where);
@@ -36009,7 +36009,7 @@ static int _wrap_gtk_text_buffer_place_cursor(NspGtkTextBuffer *self,Stack stack
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_place_cursor(GTK_TEXT_BUFFER(self->obj),where);
@@ -36025,13 +36025,13 @@ static int _wrap_gtk_text_buffer_select_range(NspGtkTextBuffer *self,Stack stack
   if (nspg_boxed_check(nsp_ins, GTK_TYPE_TEXT_ITER))
       ins = nspg_boxed_get(nsp_ins, GtkTextIter);
   else {
-      Scierror( "ins should be a GtkTextIter");
+      Scierror( "Error: ins should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_bound, GTK_TYPE_TEXT_ITER))
       bound = nspg_boxed_get(nsp_bound, GtkTextIter);
   else {
-      Scierror( "bound should be a GtkTextIter");
+      Scierror( "Error: bound should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_select_range(GTK_TEXT_BUFFER(self->obj),ins,bound);
@@ -36048,13 +36048,13 @@ static int _wrap_gtk_text_buffer_apply_tag(NspGtkTextBuffer *self,Stack stack,in
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_apply_tag(GTK_TEXT_BUFFER(self->obj),GTK_TEXT_TAG(tag->obj),start,end);
@@ -36071,13 +36071,13 @@ static int _wrap_gtk_text_buffer_remove_tag(NspGtkTextBuffer *self,Stack stack,i
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_remove_tag(GTK_TEXT_BUFFER(self->obj),GTK_TEXT_TAG(tag->obj),start,end);
@@ -36094,13 +36094,13 @@ static int _wrap_gtk_text_buffer_apply_tag_by_name(NspGtkTextBuffer *self,Stack 
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_apply_tag_by_name(GTK_TEXT_BUFFER(self->obj),name,start,end);
@@ -36117,13 +36117,13 @@ static int _wrap_gtk_text_buffer_remove_tag_by_name(NspGtkTextBuffer *self,Stack
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_remove_tag_by_name(GTK_TEXT_BUFFER(self->obj),name,start,end);
@@ -36139,13 +36139,13 @@ static int _wrap_gtk_text_buffer_remove_all_tags(NspGtkTextBuffer *self,Stack st
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_remove_all_tags(GTK_TEXT_BUFFER(self->obj),start,end);
@@ -36362,7 +36362,7 @@ static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_get_iter_at_child_anchor(GTK_TEXT_BUFFER(self->obj),iter,GTK_TEXT_CHILD_ANCHOR(anchor->obj));
@@ -36444,7 +36444,7 @@ static int _wrap_gtk_text_buffer_paste_clipboard(NspGtkTextBuffer *self,Stack st
   if (nspg_boxed_check(nsp_override_location, GTK_TYPE_TEXT_ITER))
       override_location = nspg_boxed_get(nsp_override_location, GtkTextIter);
   else {
-      Scierror( "override_location should be a GtkTextIter");
+      Scierror( "Error: override_location should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_text_buffer_paste_clipboard(GTK_TEXT_BUFFER(self->obj),GTK_CLIPBOARD(clipboard->obj),override_location,default_editable);
@@ -36891,13 +36891,13 @@ static int _wrap_gtk_text_tag_event(NspGtkTextTag *self,Stack stack,int rhs,int 
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_tag_event(GTK_TEXT_TAG(self->obj),G_OBJECT(event_object->obj),event,iter);
@@ -37447,7 +37447,7 @@ static int _wrap_gtk_text_view_scroll_to_iter(NspGtkTextView *self,Stack stack,i
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(self->obj),iter,within_margin,use_align,xalign,yalign);
@@ -37543,7 +37543,7 @@ static int _wrap_gtk_text_view_get_cursor_locations(NspGtkTextView *self,Stack s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_strong, &strong))
@@ -37768,7 +37768,7 @@ static int _wrap_gtk_text_view_forward_display_line(NspGtkTextView *self,Stack s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_forward_display_line(GTK_TEXT_VIEW(self->obj),iter);
@@ -37786,7 +37786,7 @@ static int _wrap_gtk_text_view_backward_display_line(NspGtkTextView *self,Stack 
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_backward_display_line(GTK_TEXT_VIEW(self->obj),iter);
@@ -37804,7 +37804,7 @@ static int _wrap_gtk_text_view_forward_display_line_end(NspGtkTextView *self,Sta
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_forward_display_line_end(GTK_TEXT_VIEW(self->obj),iter);
@@ -37822,7 +37822,7 @@ static int _wrap_gtk_text_view_backward_display_line_start(NspGtkTextView *self,
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_backward_display_line_start(GTK_TEXT_VIEW(self->obj),iter);
@@ -37840,7 +37840,7 @@ static int _wrap_gtk_text_view_starts_display_line(NspGtkTextView *self,Stack st
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_starts_display_line(GTK_TEXT_VIEW(self->obj),iter);
@@ -37858,7 +37858,7 @@ static int _wrap_gtk_text_view_move_visually(NspGtkTextView *self,Stack stack,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_text_view_move_visually(GTK_TEXT_VIEW(self->obj),iter,count);
@@ -37876,7 +37876,7 @@ static int _wrap_gtk_text_view_im_context_filter_keypress(NspGtkTextView *self,S
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_text_view_im_context_filter_keypress(GTK_TEXT_VIEW(self->obj),(GdkEventKey *)event);
@@ -38137,7 +38137,7 @@ static int _wrap_gtk_text_view_set_tabs(NspGtkTextView *self,Stack stack,int rhs
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
   else {
-      Scierror( "tabs should be a PangoTabArray");
+      Scierror( "Error: tabs should be a PangoTabArray\n");
       return RET_BUG;
   }
     gtk_text_view_set_tabs(GTK_TEXT_VIEW(self->obj),tabs);
@@ -39028,7 +39028,7 @@ static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack 
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_selection_select_path(GTK_TREE_SELECTION(self->obj),path);
@@ -39044,7 +39044,7 @@ static int _wrap_gtk_tree_selection_unselect_path(NspGtkTreeSelection *self,Stac
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_selection_unselect_path(GTK_TREE_SELECTION(self->obj),path);
@@ -39060,7 +39060,7 @@ static int _wrap_gtk_tree_selection_select_iter(NspGtkTreeSelection *self,Stack 
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_selection_select_iter(GTK_TREE_SELECTION(self->obj),iter);
@@ -39076,7 +39076,7 @@ static int _wrap_gtk_tree_selection_unselect_iter(NspGtkTreeSelection *self,Stac
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_selection_unselect_iter(GTK_TREE_SELECTION(self->obj),iter);
@@ -39093,7 +39093,7 @@ static int _wrap_gtk_tree_selection_path_is_selected(NspGtkTreeSelection *self,S
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_selection_path_is_selected(GTK_TREE_SELECTION(self->obj),path);
@@ -39111,7 +39111,7 @@ static int _wrap_gtk_tree_selection_iter_is_selected(NspGtkTreeSelection *self,S
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_selection_iter_is_selected(GTK_TREE_SELECTION(self->obj),iter);
@@ -39142,13 +39142,13 @@ static int _wrap_gtk_tree_selection_select_range(NspGtkTreeSelection *self,Stack
   if (nspg_boxed_check(nsp_start_path, GTK_TYPE_TREE_PATH))
       start_path = nspg_boxed_get(nsp_start_path, GtkTreePath);
   else {
-      Scierror( "start_path should be a GtkTreePath");
+      Scierror( "Error: start_path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end_path, GTK_TYPE_TREE_PATH))
       end_path = nspg_boxed_get(nsp_end_path, GtkTreePath);
   else {
-      Scierror( "end_path should be a GtkTreePath");
+      Scierror( "Error: end_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_selection_select_range(GTK_TREE_SELECTION(self->obj),start_path,end_path);
@@ -39164,13 +39164,13 @@ static int _wrap_gtk_tree_selection_unselect_range(NspGtkTreeSelection *self,Sta
   if (nspg_boxed_check(nsp_start_path, GTK_TYPE_TREE_PATH))
       start_path = nspg_boxed_get(nsp_start_path, GtkTreePath);
   else {
-      Scierror( "start_path should be a GtkTreePath");
+      Scierror( "Error: start_path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end_path, GTK_TYPE_TREE_PATH))
       end_path = nspg_boxed_get(nsp_end_path, GtkTreePath);
   else {
-      Scierror( "end_path should be a GtkTreePath");
+      Scierror( "Error: end_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_selection_unselect_range(GTK_TREE_SELECTION(self->obj),start_path,end_path);
@@ -39978,7 +39978,7 @@ static int _wrap_gtk_tree_view_column_cell_set_cell_data(NspGtkTreeViewColumn *s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_view_column_cell_set_cell_data(GTK_TREE_VIEW_COLUMN(self->obj),GTK_TREE_MODEL(tree_model->obj),iter,is_expander,is_expanded);
@@ -40412,7 +40412,7 @@ static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rh
     if ( IsGtkTreeModel((NspObject *)nsp_model))
       model = GTK_TREE_MODEL(nsp_model->obj);
     else if (! IsNone((NspObject *)nsp_model)) {
-         Scierror( "model should be a GtkTreeModel or None");
+         Scierror( "Error: model should be a GtkTreeModel or None\n");
          return RET_BUG;
     }
   }
@@ -40794,14 +40794,14 @@ static int _wrap_gtk_tree_view_scroll_to_cell(NspGtkTreeView *self,Stack stack,i
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ( nsp_column != NULL ) {
     if ( IsGtkTreeViewColumn((NspObject *)nsp_column))
       column = GTK_TREE_VIEW_COLUMN(nsp_column->obj);
     else if (! IsNone((NspObject *)nsp_column)) {
-         Scierror( "column should be a GtkTreeViewColumn or None");
+         Scierror( "Error: column should be a GtkTreeViewColumn or None\n");
          return RET_BUG;
     }
   }
@@ -40819,7 +40819,7 @@ static int _wrap_gtk_tree_view_row_activated(NspGtkTreeView *self,Stack stack,in
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_view_row_activated(GTK_TREE_VIEW(self->obj),path,GTK_TREE_VIEW_COLUMN(column->obj));
@@ -40849,7 +40849,7 @@ static int _wrap_gtk_tree_view_expand_to_path(NspGtkTreeView *self,Stack stack,i
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_view_expand_to_path(GTK_TREE_VIEW(self->obj),path);
@@ -40866,7 +40866,7 @@ static int _wrap_gtk_tree_view_expand_row(NspGtkTreeView *self,Stack stack,int r
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_view_expand_row(GTK_TREE_VIEW(self->obj),path,open_all);
@@ -40884,7 +40884,7 @@ static int _wrap_gtk_tree_view_collapse_row(NspGtkTreeView *self,Stack stack,int
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_view_collapse_row(GTK_TREE_VIEW(self->obj),path);
@@ -40902,7 +40902,7 @@ static int _wrap_gtk_tree_view_row_expanded(NspGtkTreeView *self,Stack stack,int
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_view_row_expanded(GTK_TREE_VIEW(self->obj),path);
@@ -40944,14 +40944,14 @@ static int _wrap_gtk_tree_view_set_cursor(NspGtkTreeView *self,Stack stack,int r
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ( nsp_focus_column != NULL ) {
     if ( IsGtkTreeViewColumn((NspObject *)nsp_focus_column))
       focus_column = GTK_TREE_VIEW_COLUMN(nsp_focus_column->obj);
     else if (! IsNone((NspObject *)nsp_focus_column)) {
-         Scierror( "focus_column should be a GtkTreeViewColumn or None");
+         Scierror( "Error: focus_column should be a GtkTreeViewColumn or None\n");
          return RET_BUG;
     }
   }
@@ -40977,14 +40977,14 @@ static int _wrap_gtk_tree_view_set_cursor_on_cell(NspGtkTreeView *self,Stack sta
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ( nsp_focus_column != NULL ) {
     if ( IsGtkTreeViewColumn((NspObject *)nsp_focus_column))
       focus_column = GTK_TREE_VIEW_COLUMN(nsp_focus_column->obj);
     else if (! IsNone((NspObject *)nsp_focus_column)) {
-         Scierror( "focus_column should be a GtkTreeViewColumn or None");
+         Scierror( "Error: focus_column should be a GtkTreeViewColumn or None\n");
          return RET_BUG;
     }
   }
@@ -40992,7 +40992,7 @@ static int _wrap_gtk_tree_view_set_cursor_on_cell(NspGtkTreeView *self,Stack sta
     if ( IsGtkCellRenderer((NspObject *)nsp_focus_cell))
       focus_cell = GTK_CELL_RENDERER(nsp_focus_cell->obj);
     else if (! IsNone((NspObject *)nsp_focus_cell)) {
-         Scierror( "focus_cell should be a GtkCellRenderer or None");
+         Scierror( "Error: focus_cell should be a GtkCellRenderer or None\n");
          return RET_BUG;
     }
   }
@@ -41239,7 +41239,7 @@ static int _wrap_gtk_tree_view_set_drag_dest_row(NspGtkTreeView *self,Stack stac
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(GTK_TYPE_TREE_VIEW_DROP_POSITION, nsp_pos, &pos)== FAIL)
@@ -41258,7 +41258,7 @@ static int _wrap_gtk_tree_view_create_row_drag_icon(NspGtkTreeView *self,Stack s
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_view_create_row_drag_icon(GTK_TREE_VIEW(self->obj),path);
@@ -41546,7 +41546,7 @@ static int _wrap_gtk_tree_view_set_tooltip_row(NspGtkTreeView *self,Stack stack,
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_view_set_tooltip_row(GTK_TREE_VIEW(self->obj),GTK_TOOLTIP(tooltip->obj),path);
@@ -41563,7 +41563,7 @@ static int _wrap_gtk_tree_view_set_tooltip_cell(NspGtkTreeView *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_view_set_tooltip_cell(GTK_TREE_VIEW(self->obj),GTK_TOOLTIP(tooltip->obj),path,GTK_TREE_VIEW_COLUMN(column->obj),GTK_CELL_RENDERER(cell->obj));
@@ -42011,7 +42011,7 @@ static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rh
     if ( IsGtkTreeModel((NspObject *)nsp_model))
       model = GTK_TREE_MODEL(nsp_model->obj);
     else if (! IsNone((NspObject *)nsp_model)) {
-         Scierror( "model should be a GtkTreeModel or None");
+         Scierror( "Error: model should be a GtkTreeModel or None\n");
          return RET_BUG;
     }
   }
@@ -42044,7 +42044,7 @@ static int _wrap_gtk_cell_view_set_displayed_row(NspGtkCellView *self,Stack stac
     if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
     else if (! IsNone(nsp_path)) {
-      Scierror("path should be a GtkTreePath or None");
+      Scierror("Error: path should be a GtkTreePath or None\n");
       return RET_BUG;
     }
   }
@@ -42074,7 +42074,7 @@ static int _wrap_gtk_cell_view_set_background_rgba(NspGtkCellView *self,Stack st
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
   else {
-      Scierror( "rgba should be a GdkRGBA");
+      Scierror( "Error: rgba should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_cell_view_set_background_rgba(GTK_CELL_VIEW(self->obj),rgba);
@@ -42404,7 +42404,7 @@ static int _wrap_gtk_icon_view_set_model(NspGtkIconView *self,Stack stack,int rh
     if ( IsGtkTreeModel((NspObject *)nsp_model))
       model = GTK_TREE_MODEL(nsp_model->obj);
     else if (! IsNone((NspObject *)nsp_model)) {
-         Scierror( "model should be a GtkTreeModel or None");
+         Scierror( "Error: model should be a GtkTreeModel or None\n");
          return RET_BUG;
     }
   }
@@ -42716,7 +42716,7 @@ static int _wrap_gtk_icon_view_select_path(NspGtkIconView *self,Stack stack,int 
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_select_path(GTK_ICON_VIEW(self->obj),path);
@@ -42732,7 +42732,7 @@ static int _wrap_gtk_icon_view_unselect_path(NspGtkIconView *self,Stack stack,in
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_unselect_path(GTK_ICON_VIEW(self->obj),path);
@@ -42749,7 +42749,7 @@ static int _wrap_gtk_icon_view_path_is_selected(NspGtkIconView *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_icon_view_path_is_selected(GTK_ICON_VIEW(self->obj),path);
@@ -42767,7 +42767,7 @@ static int _wrap_gtk_icon_view_get_item_row(NspGtkIconView *self,Stack stack,int
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_icon_view_get_item_row(GTK_ICON_VIEW(self->obj),path);
@@ -42785,7 +42785,7 @@ static int _wrap_gtk_icon_view_get_item_column(NspGtkIconView *self,Stack stack,
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_icon_view_get_item_column(GTK_ICON_VIEW(self->obj),path);
@@ -42829,7 +42829,7 @@ static int _wrap_gtk_icon_view_item_activated(NspGtkIconView *self,Stack stack,i
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_item_activated(GTK_ICON_VIEW(self->obj),path);
@@ -42852,14 +42852,14 @@ static int _wrap_gtk_icon_view_set_cursor(NspGtkIconView *self,Stack stack,int r
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if ( nsp_cell != NULL ) {
     if ( IsGtkCellRenderer((NspObject *)nsp_cell))
       cell = GTK_CELL_RENDERER(nsp_cell->obj);
     else if (! IsNone((NspObject *)nsp_cell)) {
-         Scierror( "cell should be a GtkCellRenderer or None");
+         Scierror( "Error: cell should be a GtkCellRenderer or None\n");
          return RET_BUG;
     }
   }
@@ -42878,7 +42878,7 @@ static int _wrap_gtk_icon_view_scroll_to_path(NspGtkIconView *self,Stack stack,i
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_scroll_to_path(GTK_ICON_VIEW(self->obj),path,use_align,row_align,col_align);
@@ -43000,7 +43000,7 @@ static int _wrap_gtk_icon_view_set_drag_dest_item(NspGtkIconView *self,Stack sta
     if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
     else if (! IsNone(nsp_path)) {
-      Scierror("path should be a GtkTreePath or None");
+      Scierror("Error: path should be a GtkTreePath or None\n");
       return RET_BUG;
     }
   }
@@ -43020,7 +43020,7 @@ static int _wrap_gtk_icon_view_create_drag_icon(NspGtkIconView *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_icon_view_create_drag_icon(GTK_ICON_VIEW(self->obj),path);
@@ -43053,7 +43053,7 @@ static int _wrap_gtk_icon_view_get_cell_rect(NspGtkIconView *self,Stack stack,in
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_rect, &rect))
@@ -43080,7 +43080,7 @@ static int _wrap_gtk_icon_view_set_tooltip_item(NspGtkIconView *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_set_tooltip_item(GTK_ICON_VIEW(self->obj),GTK_TOOLTIP(tooltip->obj),path);
@@ -43097,7 +43097,7 @@ static int _wrap_gtk_icon_view_set_tooltip_cell(NspGtkIconView *self,Stack stack
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_icon_view_set_tooltip_cell(GTK_ICON_VIEW(self->obj),GTK_TOOLTIP(tooltip->obj),path,GTK_CELL_RENDERER(cell->obj));
@@ -43426,7 +43426,7 @@ static int _wrap_gtk_tree_model_sort_convert_child_path_to_path(NspGtkTreeModelS
   if (nspg_boxed_check(nsp_child_path, GTK_TYPE_TREE_PATH))
       child_path = nspg_boxed_get(nsp_child_path, GtkTreePath);
   else {
-      Scierror( "child_path should be a GtkTreePath");
+      Scierror( "Error: child_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_sort_convert_child_path_to_path(GTK_TREE_MODEL_SORT(self->obj),child_path);
@@ -43447,13 +43447,13 @@ static int _wrap_gtk_tree_model_sort_convert_child_iter_to_iter(NspGtkTreeModelS
   if (nspg_boxed_check(nsp_sort_iter, GTK_TYPE_TREE_ITER))
       sort_iter = nspg_boxed_get(nsp_sort_iter, GtkTreeIter);
   else {
-      Scierror( "sort_iter should be a GtkTreeIter");
+      Scierror( "Error: sort_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
   else {
-      Scierror( "child_iter should be a GtkTreeIter");
+      Scierror( "Error: child_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_sort_convert_child_iter_to_iter(GTK_TREE_MODEL_SORT(self->obj),sort_iter,child_iter);
@@ -43470,7 +43470,7 @@ static int _wrap_gtk_tree_model_sort_convert_path_to_child_path(NspGtkTreeModelS
   if (nspg_boxed_check(nsp_sorted_path, GTK_TYPE_TREE_PATH))
       sorted_path = nspg_boxed_get(nsp_sorted_path, GtkTreePath);
   else {
-      Scierror( "sorted_path should be a GtkTreePath");
+      Scierror( "Error: sorted_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_sort_convert_path_to_child_path(GTK_TREE_MODEL_SORT(self->obj),sorted_path);
@@ -43490,13 +43490,13 @@ static int _wrap_gtk_tree_model_sort_convert_iter_to_child_iter(NspGtkTreeModelS
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
   else {
-      Scierror( "child_iter should be a GtkTreeIter");
+      Scierror( "Error: child_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_sorted_iter, GTK_TYPE_TREE_ITER))
       sorted_iter = nspg_boxed_get(nsp_sorted_iter, GtkTreeIter);
   else {
-      Scierror( "sorted_iter should be a GtkTreeIter");
+      Scierror( "Error: sorted_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_sort_convert_iter_to_child_iter(GTK_TREE_MODEL_SORT(self->obj),child_iter,sorted_iter);
@@ -43527,7 +43527,7 @@ static int _wrap_gtk_tree_model_sort_iter_is_valid(NspGtkTreeModelSort *self,Sta
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_sort_iter_is_valid(GTK_TREE_MODEL_SORT(self->obj),iter);
@@ -43769,7 +43769,7 @@ _wrap_gtk_tree_model_filter_new (Stack stack, int rhs, int opt, int lhs)
     if (nspg_boxed_check(nsp_root, GTK_TYPE_TREE_PATH))
       root = nspg_boxed_get(nsp_root, GtkTreePath);
     else if (! IsNone(nsp_root)) {
-      Scierror("root should be a GtkTreePath or None");
+      Scierror("Error: root should be a GtkTreePath or None\n");
       return RET_BUG;
     }
   }
@@ -43816,13 +43816,13 @@ static int _wrap_gtk_tree_model_filter_convert_child_iter_to_iter(NspGtkTreeMode
   if (nspg_boxed_check(nsp_filter_iter, GTK_TYPE_TREE_ITER))
       filter_iter = nspg_boxed_get(nsp_filter_iter, GtkTreeIter);
   else {
-      Scierror( "filter_iter should be a GtkTreeIter");
+      Scierror( "Error: filter_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
   else {
-      Scierror( "child_iter should be a GtkTreeIter");
+      Scierror( "Error: child_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(self->obj),filter_iter,child_iter);
@@ -43839,13 +43839,13 @@ static int _wrap_gtk_tree_model_filter_convert_iter_to_child_iter(NspGtkTreeMode
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
   else {
-      Scierror( "child_iter should be a GtkTreeIter");
+      Scierror( "Error: child_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_filter_iter, GTK_TYPE_TREE_ITER))
       filter_iter = nspg_boxed_get(nsp_filter_iter, GtkTreeIter);
   else {
-      Scierror( "filter_iter should be a GtkTreeIter");
+      Scierror( "Error: filter_iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(self->obj),child_iter,filter_iter);
@@ -43861,7 +43861,7 @@ static int _wrap_gtk_tree_model_filter_convert_child_path_to_path(NspGtkTreeMode
   if (nspg_boxed_check(nsp_child_path, GTK_TYPE_TREE_PATH))
       child_path = nspg_boxed_get(nsp_child_path, GtkTreePath);
   else {
-      Scierror( "child_path should be a GtkTreePath");
+      Scierror( "Error: child_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_filter_convert_child_path_to_path(GTK_TREE_MODEL_FILTER(self->obj),child_path);
@@ -43881,7 +43881,7 @@ static int _wrap_gtk_tree_model_filter_convert_path_to_child_path(NspGtkTreeMode
   if (nspg_boxed_check(nsp_filter_path, GTK_TYPE_TREE_PATH))
       filter_path = nspg_boxed_get(nsp_filter_path, GtkTreePath);
   else {
-      Scierror( "filter_path should be a GtkTreePath");
+      Scierror( "Error: filter_path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_model_filter_convert_path_to_child_path(GTK_TREE_MODEL_FILTER(self->obj),filter_path);
@@ -44248,7 +44248,7 @@ static int _wrap_gtk_cell_area_apply_attributes(NspGtkCellArea *self,Stack stack
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_cell_area_apply_attributes(GTK_CELL_AREA(self->obj),GTK_TREE_MODEL(tree_model->obj),iter,is_expander,is_expanded);
@@ -45299,13 +45299,13 @@ static int _wrap_gtk_cell_renderer_get_preferred_size(NspGtkCellRenderer *self,S
   if (nspg_boxed_check(nsp_minimum_size, GTK_TYPE_REQUISITION))
       minimum_size = nspg_boxed_get(nsp_minimum_size, GtkRequisition);
   else {
-      Scierror( "minimum_size should be a GtkRequisition");
+      Scierror( "Error: minimum_size should be a GtkRequisition\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_natural_size, GTK_TYPE_REQUISITION))
       natural_size = nspg_boxed_get(nsp_natural_size, GtkRequisition);
   else {
-      Scierror( "natural_size should be a GtkRequisition");
+      Scierror( "Error: natural_size should be a GtkRequisition\n");
       return RET_BUG;
   }
     gtk_cell_renderer_get_preferred_size(GTK_CELL_RENDERER(self->obj),GTK_WIDGET(widget->obj),minimum_size,natural_size);
@@ -47647,7 +47647,7 @@ static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_list_store_remove(GTK_LIST_STORE(self->obj),iter);
@@ -47746,7 +47746,7 @@ static int _wrap_gtk_list_store_insert_with_values(NspGtkListStore *self,Stack s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_list_store_insert_with_values(GTK_LIST_STORE(self->obj),iter,position);
@@ -47821,7 +47821,7 @@ static int _wrap_gtk_list_store_iter_is_valid(NspGtkListStore *self,Stack stack,
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_list_store_iter_is_valid(GTK_LIST_STORE(self->obj),iter);
@@ -47847,13 +47847,13 @@ static int _wrap_gtk_list_store_swap(NspGtkListStore *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_a, GTK_TYPE_TREE_ITER))
       a = nspg_boxed_get(nsp_a, GtkTreeIter);
   else {
-      Scierror( "a should be a GtkTreeIter");
+      Scierror( "Error: a should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_b, GTK_TYPE_TREE_ITER))
       b = nspg_boxed_get(nsp_b, GtkTreeIter);
   else {
-      Scierror( "b should be a GtkTreeIter");
+      Scierror( "Error: b should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_list_store_swap(GTK_LIST_STORE(self->obj),a,b);
@@ -47872,14 +47872,14 @@ static int _wrap_gtk_list_store_move_after(NspGtkListStore *self,Stack stack,int
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if ( nsp_position != NULL ) {
     if (nspg_boxed_check(nsp_position, GTK_TYPE_TREE_ITER))
       position = nspg_boxed_get(nsp_position, GtkTreeIter);
     else if (! IsNone(nsp_position)) {
-      Scierror("position should be a GtkTreeIter or None");
+      Scierror("Error: position should be a GtkTreeIter or None\n");
       return RET_BUG;
     }
   }
@@ -47899,14 +47899,14 @@ static int _wrap_gtk_list_store_move_before(NspGtkListStore *self,Stack stack,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if ( nsp_position != NULL ) {
     if (nspg_boxed_check(nsp_position, GTK_TYPE_TREE_ITER))
       position = nspg_boxed_get(nsp_position, GtkTreeIter);
     else if (! IsNone(nsp_position)) {
-      Scierror("position should be a GtkTreeIter or None");
+      Scierror("Error: position should be a GtkTreeIter or None\n");
       return RET_BUG;
     }
   }
@@ -48303,7 +48303,7 @@ static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_store_remove(GTK_TREE_STORE(self->obj),iter);
@@ -48424,13 +48424,13 @@ static int _wrap_gtk_tree_store_insert_with_values(NspGtkTreeStore *self,Stack s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_parent, GTK_TYPE_TREE_ITER))
       parent = nspg_boxed_get(nsp_parent, GtkTreeIter);
   else {
-      Scierror( "parent should be a GtkTreeIter");
+      Scierror( "Error: parent should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_store_insert_with_values(GTK_TREE_STORE(self->obj),iter,parent,position);
@@ -48550,13 +48550,13 @@ static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_descendant, GTK_TYPE_TREE_ITER))
       descendant = nspg_boxed_get(nsp_descendant, GtkTreeIter);
   else {
-      Scierror( "descendant should be a GtkTreeIter");
+      Scierror( "Error: descendant should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_store_is_ancestor(GTK_TREE_STORE(self->obj),iter,descendant);
@@ -48574,7 +48574,7 @@ static int _wrap_gtk_tree_store_iter_depth(NspGtkTreeStore *self,Stack stack,int
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_store_iter_depth(GTK_TREE_STORE(self->obj),iter);
@@ -48599,7 +48599,7 @@ static int _wrap_gtk_tree_store_iter_is_valid(NspGtkTreeStore *self,Stack stack,
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     ret =gtk_tree_store_iter_is_valid(GTK_TREE_STORE(self->obj),iter);
@@ -48617,7 +48617,7 @@ static int _wrap_gtk_tree_store_reorder(NspGtkTreeStore *self,Stack stack,int rh
   if (nspg_boxed_check(nsp_parent, GTK_TYPE_TREE_ITER))
       parent = nspg_boxed_get(nsp_parent, GtkTreeIter);
   else {
-      Scierror( "parent should be a GtkTreeIter");
+      Scierror( "Error: parent should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_store_reorder(GTK_TREE_STORE(self->obj),parent,&new_order);
@@ -48633,13 +48633,13 @@ static int _wrap_gtk_tree_store_swap(NspGtkTreeStore *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_a, GTK_TYPE_TREE_ITER))
       a = nspg_boxed_get(nsp_a, GtkTreeIter);
   else {
-      Scierror( "a should be a GtkTreeIter");
+      Scierror( "Error: a should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_b, GTK_TYPE_TREE_ITER))
       b = nspg_boxed_get(nsp_b, GtkTreeIter);
   else {
-      Scierror( "b should be a GtkTreeIter");
+      Scierror( "Error: b should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_store_swap(GTK_TREE_STORE(self->obj),a,b);
@@ -48658,14 +48658,14 @@ static int _wrap_gtk_tree_store_move_before(NspGtkTreeStore *self,Stack stack,in
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if ( nsp_position != NULL ) {
     if (nspg_boxed_check(nsp_position, GTK_TYPE_TREE_ITER))
       position = nspg_boxed_get(nsp_position, GtkTreeIter);
     else if (! IsNone(nsp_position)) {
-      Scierror("position should be a GtkTreeIter or None");
+      Scierror("Error: position should be a GtkTreeIter or None\n");
       return RET_BUG;
     }
   }
@@ -48685,14 +48685,14 @@ static int _wrap_gtk_tree_store_move_after(NspGtkTreeStore *self,Stack stack,int
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
   if ( nsp_position != NULL ) {
     if (nspg_boxed_check(nsp_position, GTK_TYPE_TREE_ITER))
       position = nspg_boxed_get(nsp_position, GtkTreeIter);
     else if (! IsNone(nsp_position)) {
-      Scierror("position should be a GtkTreeIter or None");
+      Scierror("Error: position should be a GtkTreeIter or None\n");
       return RET_BUG;
     }
   }
@@ -49229,7 +49229,7 @@ static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(self->obj),iter);
@@ -49249,7 +49249,7 @@ static int _wrap_gtk_combo_box_set_model(NspGtkComboBox *self,Stack stack,int rh
     if ( IsGtkTreeModel((NspObject *)nsp_model))
       model = GTK_TREE_MODEL(nsp_model->obj);
     else if (! IsNone((NspObject *)nsp_model)) {
-         Scierror( "model should be a GtkTreeModel or None");
+         Scierror( "Error: model should be a GtkTreeModel or None\n");
          return RET_BUG;
     }
   }
@@ -52348,7 +52348,7 @@ static int _wrap_gtk_toolbar_set_drop_highlight_item(NspGtkToolbar *self,Stack s
     if ( IsGtkToolItem((NspObject *)nsp_tool_item))
       tool_item = GTK_TOOL_ITEM(nsp_tool_item->obj);
     else if (! IsNone((NspObject *)nsp_tool_item)) {
-         Scierror( "tool_item should be a GtkToolItem or None");
+         Scierror( "Error: tool_item should be a GtkToolItem or None\n");
          return RET_BUG;
     }
   }
@@ -52836,7 +52836,7 @@ static int _wrap_gtk_tool_item_set_proxy_menu_item(NspGtkToolItem *self,Stack st
     if ( IsGtkWidget((NspObject *)nsp_menu_item))
       menu_item = GTK_WIDGET(nsp_menu_item->obj);
     else if (! IsNone((NspObject *)nsp_menu_item)) {
-         Scierror( "menu_item should be a GtkWidget or None");
+         Scierror( "Error: menu_item should be a GtkWidget or None\n");
          return RET_BUG;
     }
   }
@@ -53272,7 +53272,7 @@ static int _wrap_gtk_tool_palette_get_drag_item(NspGtkToolPalette *self,Stack st
   if (nspg_boxed_check(nsp_selection, GTK_TYPE_SELECTION_DATA))
       selection = nspg_boxed_get(nsp_selection, GtkSelectionData);
   else {
-      Scierror( "selection should be a GtkSelectionData");
+      Scierror( "Error: selection should be a GtkSelectionData\n");
       return RET_BUG;
   }
     ret =gtk_tool_palette_get_drag_item(GTK_TOOL_PALETTE(self->obj),selection);
@@ -54210,7 +54210,7 @@ _wrap_gtk_tool_button_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkWidget((NspObject *)nsp_icon_widget))
       icon_widget = GTK_WIDGET(nsp_icon_widget->obj);
     else if (! IsNone((NspObject *)nsp_icon_widget)) {
-         Scierror( "icon_widget should be a GtkWidget or None");
+         Scierror( "Error: icon_widget should be a GtkWidget or None\n");
          return RET_BUG;
     }
   }
@@ -54556,7 +54556,7 @@ _wrap_gtk_menu_tool_button_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkWidget((NspObject *)nsp_icon_widget))
       icon_widget = GTK_WIDGET(nsp_icon_widget->obj);
     else if (! IsNone((NspObject *)nsp_icon_widget)) {
-         Scierror( "icon_widget should be a GtkWidget or None");
+         Scierror( "Error: icon_widget should be a GtkWidget or None\n");
          return RET_BUG;
     }
   }
@@ -56143,7 +56143,7 @@ _wrap_gtk_color_button_new_with_rgba (Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
   else {
-      Scierror( "rgba should be a GdkRGBA");
+      Scierror( "Error: rgba should be a GdkRGBA\n");
       return RET_BUG;
   }
   if ((ret = (GObject *)gtk_color_button_new_with_rgba(rgba))== NULL) return RET_BUG;
@@ -59838,7 +59838,7 @@ _wrap_gtk_scrollbar_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_adjustment))
       adjustment = GTK_ADJUSTMENT(nsp_adjustment->obj);
     else if (! IsNone((NspObject *)nsp_adjustment)) {
-         Scierror( "adjustment should be a GtkAdjustment or None");
+         Scierror( "Error: adjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -60073,7 +60073,7 @@ _wrap_gtk_scrolled_window_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_hadjustment))
       hadjustment = GTK_ADJUSTMENT(nsp_hadjustment->obj);
     else if (! IsNone((NspObject *)nsp_hadjustment)) {
-         Scierror( "hadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: hadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -60081,7 +60081,7 @@ _wrap_gtk_scrolled_window_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_vadjustment))
       vadjustment = GTK_ADJUSTMENT(nsp_vadjustment->obj);
     else if (! IsNone((NspObject *)nsp_vadjustment)) {
-         Scierror( "vadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: vadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -63643,7 +63643,7 @@ _wrap_gtk_viewport_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_hadjustment))
       hadjustment = GTK_ADJUSTMENT(nsp_hadjustment->obj);
     else if (! IsNone((NspObject *)nsp_hadjustment)) {
-         Scierror( "hadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: hadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -63651,7 +63651,7 @@ _wrap_gtk_viewport_new (Stack stack, int rhs, int opt, int lhs)
     if ( IsGtkAdjustment((NspObject *)nsp_vadjustment))
       vadjustment = GTK_ADJUSTMENT(nsp_vadjustment->obj);
     else if (! IsNone((NspObject *)nsp_vadjustment)) {
-         Scierror( "vadjustment should be a GtkAdjustment or None");
+         Scierror( "Error: vadjustment should be a GtkAdjustment or None\n");
          return RET_BUG;
     }
   }
@@ -64272,7 +64272,7 @@ static int _wrap_gtk_widget_draw(NspGtkWidget *self,Stack stack,int rhs,int opt,
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_widget_draw(GTK_WIDGET(self->obj),cr);
@@ -64304,7 +64304,7 @@ static int _wrap_gtk_widget_queue_draw_region(NspGtkWidget *self,Stack stack,int
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gtk_widget_queue_draw_region(GTK_WIDGET(self->obj),region);
@@ -64449,13 +64449,13 @@ static int _wrap_gtk_widget_get_preferred_size(NspGtkWidget *self,Stack stack,in
   if (nspg_boxed_check(nsp_minimum_size, GTK_TYPE_REQUISITION))
       minimum_size = nspg_boxed_get(nsp_minimum_size, GtkRequisition);
   else {
-      Scierror( "minimum_size should be a GtkRequisition");
+      Scierror( "Error: minimum_size should be a GtkRequisition\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_natural_size, GTK_TYPE_REQUISITION))
       natural_size = nspg_boxed_get(nsp_natural_size, GtkRequisition);
   else {
-      Scierror( "natural_size should be a GtkRequisition");
+      Scierror( "Error: natural_size should be a GtkRequisition\n");
       return RET_BUG;
   }
     gtk_widget_get_preferred_size(GTK_WIDGET(self->obj),minimum_size,natural_size);
@@ -64582,7 +64582,7 @@ static int _wrap_gtk_widget_event(NspGtkWidget *self,Stack stack,int rhs,int opt
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_widget_event(GTK_WIDGET(self->obj),event);
@@ -64600,7 +64600,7 @@ static int _wrap_gtk_widget_send_expose(NspGtkWidget *self,Stack stack,int rhs,i
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_widget_send_expose(GTK_WIDGET(self->obj),event);
@@ -64618,7 +64618,7 @@ static int _wrap_gtk_widget_send_focus_change(NspGtkWidget *self,Stack stack,int
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_widget_send_focus_change(GTK_WIDGET(self->obj),event);
@@ -64692,7 +64692,7 @@ static int _wrap_gtk_widget_region_intersect(NspGtkWidget *self,Stack stack,int 
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =gtk_widget_region_intersect(GTK_WIDGET(self->obj),region);
@@ -65956,7 +65956,7 @@ static int _wrap_gtk_widget_override_color(NspGtkWidget *self,Stack stack,int rh
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_widget_override_color(GTK_WIDGET(self->obj),state,color);
@@ -65983,7 +65983,7 @@ static int _wrap_gtk_widget_override_background_color(NspGtkWidget *self,Stack s
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_widget_override_background_color(GTK_WIDGET(self->obj),state,color);
@@ -66007,7 +66007,7 @@ static int _wrap_gtk_widget_override_font(NspGtkWidget *self,Stack stack,int rhs
   if (nspg_boxed_check(nsp_font_desc, PANGO_TYPE_FONT_DESCRIPTION))
       font_desc = nspg_boxed_get(nsp_font_desc, PangoFontDescription);
   else {
-      Scierror( "font_desc should be a PangoFontDescription");
+      Scierror( "Error: font_desc should be a PangoFontDescription\n");
       return RET_BUG;
   }
     gtk_widget_override_font(GTK_WIDGET(self->obj),font_desc);
@@ -66032,7 +66032,7 @@ static int _wrap_gtk_widget_override_symbolic_color(NspGtkWidget *self,Stack sta
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_widget_override_symbolic_color(GTK_WIDGET(self->obj),name,color);
@@ -66056,13 +66056,13 @@ static int _wrap_gtk_widget_override_cursor(NspGtkWidget *self,Stack stack,int r
   if (nspg_boxed_check(nsp_cursor, GDK_TYPE_RGBA))
       cursor = nspg_boxed_get(nsp_cursor, GdkRGBA);
   else {
-      Scierror( "cursor should be a GdkRGBA");
+      Scierror( "Error: cursor should be a GdkRGBA\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_secondary_cursor, GDK_TYPE_RGBA))
       secondary_cursor = nspg_boxed_get(nsp_secondary_cursor, GdkRGBA);
   else {
-      Scierror( "secondary_cursor should be a GdkRGBA");
+      Scierror( "Error: secondary_cursor should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_widget_override_cursor(GTK_WIDGET(self->obj),cursor,secondary_cursor);
@@ -66154,7 +66154,7 @@ static int _wrap_gtk_widget_shape_combine_region(NspGtkWidget *self,Stack stack,
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gtk_widget_shape_combine_region(GTK_WIDGET(self->obj),region);
@@ -66170,7 +66170,7 @@ static int _wrap_gtk_widget_input_shape_combine_region(NspGtkWidget *self,Stack 
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     gtk_widget_input_shape_combine_region(GTK_WIDGET(self->obj),region);
@@ -67093,7 +67093,7 @@ static int _wrap_gtk_container_propagate_draw(NspGtkContainer *self,Stack stack,
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_container_propagate_draw(GTK_CONTAINER(self->obj),GTK_WIDGET(child->obj),cr);
@@ -71963,7 +71963,7 @@ static int _wrap_gtk_style_context_lookup_color(NspGtkStyleContext *self,Stack s
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     ret =gtk_style_context_lookup_color(GTK_STYLE_CONTEXT(self->obj),color_name,color);
@@ -72016,7 +72016,7 @@ static int _wrap_gtk_style_context_get_color(NspGtkStyleContext *self,Stack stac
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_style_context_get_color(GTK_STYLE_CONTEXT(self->obj),state,color);
@@ -72035,7 +72035,7 @@ static int _wrap_gtk_style_context_get_border(NspGtkStyleContext *self,Stack sta
   if (nspg_boxed_check(nsp_border, GTK_TYPE_BORDER))
       border = nspg_boxed_get(nsp_border, GtkBorder);
   else {
-      Scierror( "border should be a GtkBorder");
+      Scierror( "Error: border should be a GtkBorder\n");
       return RET_BUG;
   }
     gtk_style_context_get_border(GTK_STYLE_CONTEXT(self->obj),state,border);
@@ -72054,7 +72054,7 @@ static int _wrap_gtk_style_context_get_padding(NspGtkStyleContext *self,Stack st
   if (nspg_boxed_check(nsp_padding, GTK_TYPE_BORDER))
       padding = nspg_boxed_get(nsp_padding, GtkBorder);
   else {
-      Scierror( "padding should be a GtkBorder");
+      Scierror( "Error: padding should be a GtkBorder\n");
       return RET_BUG;
   }
     gtk_style_context_get_padding(GTK_STYLE_CONTEXT(self->obj),state,padding);
@@ -72073,7 +72073,7 @@ static int _wrap_gtk_style_context_get_margin(NspGtkStyleContext *self,Stack sta
   if (nspg_boxed_check(nsp_margin, GTK_TYPE_BORDER))
       margin = nspg_boxed_get(nsp_margin, GtkBorder);
   else {
-      Scierror( "margin should be a GtkBorder");
+      Scierror( "Error: margin should be a GtkBorder\n");
       return RET_BUG;
   }
     gtk_style_context_get_margin(GTK_STYLE_CONTEXT(self->obj),state,margin);
@@ -76542,7 +76542,7 @@ int _wrap_gtk_bindings_activate_event(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_bindings_activate_event(G_OBJECT(object->obj),(GdkEventKey *)event);
@@ -76810,7 +76810,7 @@ int _wrap_gtk_alternative_dialog_button_order(Stack stack, int rhs, int opt, int
     if ( IsGdkScreen((NspObject *)nsp_screen))
       screen = GDK_SCREEN(nsp_screen->obj);
     else if (! IsNone((NspObject *)nsp_screen)) {
-         Scierror( "screen should be a GdkScreen or None");
+         Scierror( "Error: screen should be a GdkScreen or None\n");
          return RET_BUG;
     }
   }
@@ -77207,7 +77207,7 @@ int _wrap_gtk_drag_set_icon_surface(Stack stack, int rhs, int opt, int lhs) /* g
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     gtk_drag_set_icon_surface(GDK_DRAG_CONTEXT(context->obj),surface);
@@ -77389,7 +77389,7 @@ int _wrap_gtk_main_do_event(Stack stack, int rhs, int opt, int lhs) /* gtk_main_
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     gtk_main_do_event(event);
@@ -77595,7 +77595,7 @@ int _wrap_gtk_render_check(Stack stack, int rhs, int opt, int lhs) /* gtk_render
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_check(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77613,7 +77613,7 @@ int _wrap_gtk_render_option(Stack stack, int rhs, int opt, int lhs) /* gtk_rende
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_option(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77631,7 +77631,7 @@ int _wrap_gtk_render_arrow(Stack stack, int rhs, int opt, int lhs) /* gtk_render
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_arrow(GTK_STYLE_CONTEXT(context->obj),cr,angle,x,y,size);
@@ -77649,7 +77649,7 @@ int _wrap_gtk_render_background(Stack stack, int rhs, int opt, int lhs) /* gtk_r
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_background(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77667,7 +77667,7 @@ int _wrap_gtk_render_frame(Stack stack, int rhs, int opt, int lhs) /* gtk_render
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_frame(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77685,7 +77685,7 @@ int _wrap_gtk_render_expander(Stack stack, int rhs, int opt, int lhs) /* gtk_ren
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_expander(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77703,7 +77703,7 @@ int _wrap_gtk_render_focus(Stack stack, int rhs, int opt, int lhs) /* gtk_render
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_focus(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77721,7 +77721,7 @@ int _wrap_gtk_render_layout(Stack stack, int rhs, int opt, int lhs) /* gtk_rende
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_layout(GTK_STYLE_CONTEXT(context->obj),cr,x,y,PANGO_LAYOUT(layout->obj));
@@ -77739,7 +77739,7 @@ int _wrap_gtk_render_line(Stack stack, int rhs, int opt, int lhs) /* gtk_render_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_line(GTK_STYLE_CONTEXT(context->obj),cr,x0,y0,x1,y1);
@@ -77758,7 +77758,7 @@ int _wrap_gtk_render_slider(Stack stack, int rhs, int opt, int lhs) /* gtk_rende
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(GTK_TYPE_ORIENTATION, nsp_orientation, &orientation)== FAIL)
@@ -77779,7 +77779,7 @@ int _wrap_gtk_render_frame_gap(Stack stack, int rhs, int opt, int lhs) /* gtk_re
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(GTK_TYPE_POSITION_TYPE, nsp_gap_side, &gap_side)== FAIL)
@@ -77800,7 +77800,7 @@ int _wrap_gtk_render_extension(Stack stack, int rhs, int opt, int lhs) /* gtk_re
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(GTK_TYPE_POSITION_TYPE, nsp_gap_side, &gap_side)== FAIL)
@@ -77820,7 +77820,7 @@ int _wrap_gtk_render_handle(Stack stack, int rhs, int opt, int lhs) /* gtk_rende
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_handle(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77838,7 +77838,7 @@ int _wrap_gtk_render_activity(Stack stack, int rhs, int opt, int lhs) /* gtk_ren
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_activity(GTK_STYLE_CONTEXT(context->obj),cr,x,y,width,height);
@@ -77856,7 +77856,7 @@ int _wrap_gtk_render_icon(Stack stack, int rhs, int opt, int lhs) /* gtk_render_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_render_icon(GTK_STYLE_CONTEXT(context->obj),cr,GDK_PIXBUF(pixbuf->obj),x,y);
@@ -77875,13 +77875,13 @@ int _wrap_gtk_render_icon_surface(Stack stack, int rhs, int opt, int lhs) /* gtk
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     gtk_render_icon_surface(GTK_STYLE_CONTEXT(context->obj),cr,surface,x,y);
@@ -77925,7 +77925,7 @@ int _wrap_gtk_selection_owner_set_for_display(Stack stack, int rhs, int opt, int
     if ( IsGtkWidget((NspObject *)nsp_widget))
       widget = GTK_WIDGET(nsp_widget->obj);
     else if (! IsNone((NspObject *)nsp_widget)) {
-         Scierror( "widget should be a GtkWidget or None");
+         Scierror( "Error: widget should be a GtkWidget or None\n");
          return RET_BUG;
     }
   }
@@ -78103,7 +78103,7 @@ int _wrap_gtk_render_insertion_cursor(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(PANGO_TYPE_DIRECTION, nsp_direction, &direction)== FAIL)
@@ -78328,13 +78328,13 @@ int _wrap_gtk_tree_set_row_drag_data(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_selection_data, GTK_TYPE_SELECTION_DATA))
       selection_data = nspg_boxed_get(nsp_selection_data, GtkSelectionData);
   else {
-      Scierror( "selection_data should be a GtkSelectionData");
+      Scierror( "Error: selection_data should be a GtkSelectionData\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     ret =gtk_tree_set_row_drag_data(selection_data,GTK_TREE_MODEL(tree_model->obj),path);
@@ -78393,7 +78393,7 @@ int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_row_reference_inserted(G_OBJECT(proxy->obj),path);
@@ -78410,7 +78410,7 @@ int _wrap_gtk_tree_row_reference_deleted(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
     gtk_tree_row_reference_deleted(G_OBJECT(proxy->obj),path);
@@ -78429,13 +78429,13 @@ int _wrap_gtk_tree_row_reference_reordered(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
   else {
-      Scierror( "path should be a GtkTreePath");
+      Scierror( "Error: path should be a GtkTreePath\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
   else {
-      Scierror( "iter should be a GtkTreeIter");
+      Scierror( "Error: iter should be a GtkTreeIter\n");
       return RET_BUG;
   }
     gtk_tree_row_reference_reordered(G_OBJECT(proxy->obj),path,iter,&new_order);
@@ -78474,7 +78474,7 @@ int _wrap_gtk_cairo_should_draw_window(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =gtk_cairo_should_draw_window(cr,GDK_WINDOW(window->obj));
@@ -78492,7 +78492,7 @@ int _wrap_gtk_cairo_transform_to_window(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     gtk_cairo_transform_to_window(cr,GTK_WIDGET(widget->obj),GDK_WINDOW(window->obj));

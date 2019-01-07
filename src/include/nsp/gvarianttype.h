@@ -95,7 +95,7 @@ extern int int_gvarianttype_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGVariantType *nsp_gvarianttype_xdr_load_partial(XDR *xdrs, NspGVariantType *M);
 extern int nsp_gvarianttype_xdr_save(XDR  *xdrs, NspGVariantType *M);
 
-#line 47 "codegen/glib.override"
+#line 48 "codegen/glib.override"
 GVariantType *nsp_copy_GVariantType(const GVariantType *gv);
 
 #line 102 "./gvarianttype.h"
@@ -113,7 +113,7 @@ static AttrTab gvarianttype_attrs[];
 static NspMethods *gvarianttype_get_methods(void);
 /* static int int_gvarianttype_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGVariantType *nsp_gvarianttype_create_void(const char *name,NspTypeBase *type);
-#line 35 "codegen/glib.override"
+#line 36 "codegen/glib.override"
 
 static int nsp_destroy_GVariantType(GVariantType *v,NspGVariantType *H);
 static int nsp_print_GVariantType(int indent,GVariantType *v,NspGVariantType *M);

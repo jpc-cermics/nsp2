@@ -1286,7 +1286,7 @@ int _wrap_cairo_create(Stack stack, int rhs, int opt, int lhs) /* cairo_create *
   if (nspg_boxed_check(nsp_target, CAIRO_GOBJECT_TYPE_SURFACE))
       target = nspg_boxed_get(nsp_target, cairo_surface_t);
   else {
-      Scierror( "target should be a cairo_surface_t");
+      Scierror( "Error: target should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_create(target);
@@ -1306,7 +1306,7 @@ int _wrap_cairo_reference(Stack stack, int rhs, int opt, int lhs) /* cairo_refer
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_reference(cr);
@@ -1326,7 +1326,7 @@ int _wrap_cairo_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo_destroy
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_destroy(cr);
@@ -1342,7 +1342,7 @@ int _wrap_cairo_save(Stack stack, int rhs, int opt, int lhs) /* cairo_save */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_save(cr);
@@ -1358,7 +1358,7 @@ int _wrap_cairo_restore(Stack stack, int rhs, int opt, int lhs) /* cairo_restore
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_restore(cr);
@@ -1374,7 +1374,7 @@ int _wrap_cairo_push_group(Stack stack, int rhs, int opt, int lhs) /* cairo_push
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_push_group(cr);
@@ -1391,7 +1391,7 @@ int _wrap_cairo_push_group_with_content(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_CONTENT, nsp_content, &content)== FAIL)
@@ -1410,7 +1410,7 @@ int _wrap_cairo_pop_group(Stack stack, int rhs, int opt, int lhs) /* cairo_pop_g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_pop_group(cr);
@@ -1430,7 +1430,7 @@ int _wrap_cairo_pop_group_to_source(Stack stack, int rhs, int opt, int lhs) /* c
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_pop_group_to_source(cr);
@@ -1447,7 +1447,7 @@ int _wrap_cairo_set_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_se
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_OPERATOR, nsp_op, &op)== FAIL)
@@ -1466,13 +1466,13 @@ int _wrap_cairo_set_source(Stack stack, int rhs, int opt, int lhs) /* cairo_set_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_source, CAIRO_GOBJECT_TYPE_PATTERN))
       source = nspg_boxed_get(nsp_source, cairo_pattern_t);
   else {
-      Scierror( "source should be a cairo_pattern_t");
+      Scierror( "Error: source should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_set_source(cr,source);
@@ -1489,7 +1489,7 @@ int _wrap_cairo_set_source_rgb(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_source_rgb(cr,red,green,blue);
@@ -1506,7 +1506,7 @@ int _wrap_cairo_set_source_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_source_rgba(cr,red,green,blue,alpha);
@@ -1524,13 +1524,13 @@ int _wrap_cairo_set_source_surface(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_set_source_surface(cr,surface,x,y);
@@ -1547,7 +1547,7 @@ int _wrap_cairo_set_tolerance(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_tolerance(cr,tolerance);
@@ -1564,7 +1564,7 @@ int _wrap_cairo_set_antialias(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_ANTIALIAS, nsp_antialias, &antialias)== FAIL)
@@ -1583,7 +1583,7 @@ int _wrap_cairo_set_fill_rule(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_FILL_RULE, nsp_fill_rule, &fill_rule)== FAIL)
@@ -1602,7 +1602,7 @@ int _wrap_cairo_set_line_width(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_line_width(cr,width);
@@ -1619,7 +1619,7 @@ int _wrap_cairo_set_line_cap(Stack stack, int rhs, int opt, int lhs) /* cairo_se
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_LINE_CAP, nsp_line_cap, &line_cap)== FAIL)
@@ -1638,7 +1638,7 @@ int _wrap_cairo_set_line_join(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_LINE_JOIN, nsp_line_join, &line_join)== FAIL)
@@ -1657,7 +1657,7 @@ int _wrap_cairo_set_miter_limit(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_miter_limit(cr,limit);
@@ -1674,7 +1674,7 @@ int _wrap_cairo_translate(Stack stack, int rhs, int opt, int lhs) /* cairo_trans
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_translate(cr,tx,ty);
@@ -1691,7 +1691,7 @@ int _wrap_cairo_scale(Stack stack, int rhs, int opt, int lhs) /* cairo_scale */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_scale(cr,sx,sy);
@@ -1708,7 +1708,7 @@ int _wrap_cairo_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_rotate *
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_rotate(cr,angle);
@@ -1725,13 +1725,13 @@ int _wrap_cairo_transform(Stack stack, int rhs, int opt, int lhs) /* cairo_trans
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_transform(cr,matrix);
@@ -1748,13 +1748,13 @@ int _wrap_cairo_set_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_set_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_set_matrix(cr,matrix);
@@ -1770,7 +1770,7 @@ int _wrap_cairo_identity_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_identity_matrix(cr);
@@ -1787,7 +1787,7 @@ int _wrap_cairo_user_to_device(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_user_to_device(cr,&x,&y);
@@ -1804,7 +1804,7 @@ int _wrap_cairo_user_to_device_distance(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_user_to_device_distance(cr,&dx,&dy);
@@ -1821,7 +1821,7 @@ int _wrap_cairo_device_to_user(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_device_to_user(cr,&x,&y);
@@ -1838,7 +1838,7 @@ int _wrap_cairo_device_to_user_distance(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_device_to_user_distance(cr,&dx,&dy);
@@ -1854,7 +1854,7 @@ int _wrap_cairo_new_path(Stack stack, int rhs, int opt, int lhs) /* cairo_new_pa
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_new_path(cr);
@@ -1871,7 +1871,7 @@ int _wrap_cairo_move_to(Stack stack, int rhs, int opt, int lhs) /* cairo_move_to
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_move_to(cr,x,y);
@@ -1887,7 +1887,7 @@ int _wrap_cairo_new_sub_path(Stack stack, int rhs, int opt, int lhs) /* cairo_ne
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_new_sub_path(cr);
@@ -1904,7 +1904,7 @@ int _wrap_cairo_line_to(Stack stack, int rhs, int opt, int lhs) /* cairo_line_to
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_line_to(cr,x,y);
@@ -1921,7 +1921,7 @@ int _wrap_cairo_curve_to(Stack stack, int rhs, int opt, int lhs) /* cairo_curve_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_curve_to(cr,x1,y1,x2,y2,x3,y3);
@@ -1938,7 +1938,7 @@ int _wrap_cairo_arc(Stack stack, int rhs, int opt, int lhs) /* cairo_arc */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_arc(cr,xc,yc,radius,angle1,angle2);
@@ -1955,7 +1955,7 @@ int _wrap_cairo_arc_negative(Stack stack, int rhs, int opt, int lhs) /* cairo_ar
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_arc_negative(cr,xc,yc,radius,angle1,angle2);
@@ -1972,7 +1972,7 @@ int _wrap_cairo_rel_move_to(Stack stack, int rhs, int opt, int lhs) /* cairo_rel
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_rel_move_to(cr,dx,dy);
@@ -1989,7 +1989,7 @@ int _wrap_cairo_rel_line_to(Stack stack, int rhs, int opt, int lhs) /* cairo_rel
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_rel_line_to(cr,dx,dy);
@@ -2006,7 +2006,7 @@ int _wrap_cairo_rel_curve_to(Stack stack, int rhs, int opt, int lhs) /* cairo_re
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_rel_curve_to(cr,dx1,dy1,dx2,dy2,dx3,dy3);
@@ -2023,7 +2023,7 @@ int _wrap_cairo_rectangle(Stack stack, int rhs, int opt, int lhs) /* cairo_recta
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_rectangle(cr,x,y,width,height);
@@ -2039,7 +2039,7 @@ int _wrap_cairo_close_path(Stack stack, int rhs, int opt, int lhs) /* cairo_clos
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_close_path(cr);
@@ -2056,7 +2056,7 @@ int _wrap_cairo_path_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_pa
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_path_extents(cr,&x1,&y1,&x2,&y2);
@@ -2072,7 +2072,7 @@ int _wrap_cairo_paint(Stack stack, int rhs, int opt, int lhs) /* cairo_paint */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_paint(cr);
@@ -2089,7 +2089,7 @@ int _wrap_cairo_paint_with_alpha(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_paint_with_alpha(cr,alpha);
@@ -2106,13 +2106,13 @@ int _wrap_cairo_mask(Stack stack, int rhs, int opt, int lhs) /* cairo_mask */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mask(cr,pattern);
@@ -2130,13 +2130,13 @@ int _wrap_cairo_mask_surface(Stack stack, int rhs, int opt, int lhs) /* cairo_ma
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_mask_surface(cr,surface,surface_x,surface_y);
@@ -2152,7 +2152,7 @@ int _wrap_cairo_stroke(Stack stack, int rhs, int opt, int lhs) /* cairo_stroke *
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_stroke(cr);
@@ -2168,7 +2168,7 @@ int _wrap_cairo_stroke_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_stroke_preserve(cr);
@@ -2184,7 +2184,7 @@ int _wrap_cairo_fill(Stack stack, int rhs, int opt, int lhs) /* cairo_fill */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_fill(cr);
@@ -2200,7 +2200,7 @@ int _wrap_cairo_fill_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo_f
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_fill_preserve(cr);
@@ -2216,7 +2216,7 @@ int _wrap_cairo_copy_page(Stack stack, int rhs, int opt, int lhs) /* cairo_copy_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_copy_page(cr);
@@ -2232,7 +2232,7 @@ int _wrap_cairo_show_page(Stack stack, int rhs, int opt, int lhs) /* cairo_show_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_show_page(cr);
@@ -2249,7 +2249,7 @@ int _wrap_cairo_stroke_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_stroke_extents(cr,&x1,&y1,&x2,&y2);
@@ -2266,7 +2266,7 @@ int _wrap_cairo_fill_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_fi
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_fill_extents(cr,&x1,&y1,&x2,&y2);
@@ -2282,7 +2282,7 @@ int _wrap_cairo_reset_clip(Stack stack, int rhs, int opt, int lhs) /* cairo_rese
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_reset_clip(cr);
@@ -2298,7 +2298,7 @@ int _wrap_cairo_clip(Stack stack, int rhs, int opt, int lhs) /* cairo_clip */
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_clip(cr);
@@ -2314,7 +2314,7 @@ int _wrap_cairo_clip_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo_c
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_clip_preserve(cr);
@@ -2331,7 +2331,7 @@ int _wrap_cairo_clip_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_cl
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_clip_extents(cr,&x1,&y1,&x2,&y2);
@@ -2350,7 +2350,7 @@ int _wrap_cairo_select_font_face(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_FONT_SLANT, nsp_slant, &slant)== FAIL)
@@ -2371,7 +2371,7 @@ int _wrap_cairo_set_font_size(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_set_font_size(cr,size);
@@ -2388,13 +2388,13 @@ int _wrap_cairo_set_font_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_set_font_matrix(cr,matrix);
@@ -2411,13 +2411,13 @@ int _wrap_cairo_get_font_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_get_font_matrix(cr,matrix);
@@ -2434,7 +2434,7 @@ int _wrap_cairo_show_text(Stack stack, int rhs, int opt, int lhs) /* cairo_show_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_show_text(cr,utf8);
@@ -2451,7 +2451,7 @@ int _wrap_cairo_text_path(Stack stack, int rhs, int opt, int lhs) /* cairo_text_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_text_path(cr,utf8);
@@ -2468,7 +2468,7 @@ int _wrap_cairo_get_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_ge
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_operator(cr);
@@ -2486,7 +2486,7 @@ int _wrap_cairo_get_source(Stack stack, int rhs, int opt, int lhs) /* cairo_get_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_source(cr);
@@ -2507,7 +2507,7 @@ int _wrap_cairo_get_tolerance(Stack stack, int rhs, int opt, int lhs) /* cairo_g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_tolerance(cr);
@@ -2525,7 +2525,7 @@ int _wrap_cairo_get_antialias(Stack stack, int rhs, int opt, int lhs) /* cairo_g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_antialias(cr);
@@ -2543,7 +2543,7 @@ int _wrap_cairo_get_current_point(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_get_current_point(cr,&x,&y);
@@ -2560,7 +2560,7 @@ int _wrap_cairo_get_fill_rule(Stack stack, int rhs, int opt, int lhs) /* cairo_g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_fill_rule(cr);
@@ -2578,7 +2578,7 @@ int _wrap_cairo_get_line_width(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_line_width(cr);
@@ -2596,7 +2596,7 @@ int _wrap_cairo_get_line_cap(Stack stack, int rhs, int opt, int lhs) /* cairo_ge
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_line_cap(cr);
@@ -2614,7 +2614,7 @@ int _wrap_cairo_get_line_join(Stack stack, int rhs, int opt, int lhs) /* cairo_g
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_line_join(cr);
@@ -2632,7 +2632,7 @@ int _wrap_cairo_get_miter_limit(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_miter_limit(cr);
@@ -2650,7 +2650,7 @@ int _wrap_cairo_get_dash_count(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_dash_count(cr);
@@ -2668,7 +2668,7 @@ int _wrap_cairo_get_dash(Stack stack, int rhs, int opt, int lhs) /* cairo_get_da
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     cairo_get_dash(cr,&dashes,&offset);
@@ -2685,13 +2685,13 @@ int _wrap_cairo_get_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_get_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_get_matrix(cr,matrix);
@@ -2708,7 +2708,7 @@ int _wrap_cairo_get_target(Stack stack, int rhs, int opt, int lhs) /* cairo_get_
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_target(cr);
@@ -2729,7 +2729,7 @@ int _wrap_cairo_get_group_target(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_get_group_target(cr);
@@ -2750,7 +2750,7 @@ int _wrap_cairo_status(Stack stack, int rhs, int opt, int lhs) /* cairo_status *
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
     ret =cairo_status(cr);
@@ -2783,7 +2783,7 @@ int _wrap_cairo_surface_create_similar(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_SURFACE))
       other = nspg_boxed_get(nsp_other, cairo_surface_t);
   else {
-      Scierror( "other should be a cairo_surface_t");
+      Scierror( "Error: other should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_CONTENT, nsp_content, &content)== FAIL)
@@ -2807,7 +2807,7 @@ int _wrap_cairo_surface_create_similar_image(Stack stack, int rhs, int opt, int 
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_SURFACE))
       other = nspg_boxed_get(nsp_other, cairo_surface_t);
   else {
-      Scierror( "other should be a cairo_surface_t");
+      Scierror( "Error: other should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_FORMAT, nsp_format, &format)== FAIL)
@@ -2829,13 +2829,13 @@ int _wrap_cairo_surface_unmap_image(Stack stack, int rhs, int opt, int lhs) /* c
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_image, CAIRO_GOBJECT_TYPE_SURFACE))
       image = nspg_boxed_get(nsp_image, cairo_surface_t);
   else {
-      Scierror( "image should be a cairo_surface_t");
+      Scierror( "Error: image should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_unmap_image(surface,image);
@@ -2852,7 +2852,7 @@ int _wrap_cairo_surface_create_for_rectangle(Stack stack, int rhs, int opt, int 
   if (nspg_boxed_check(nsp_target, CAIRO_GOBJECT_TYPE_SURFACE))
       target = nspg_boxed_get(nsp_target, cairo_surface_t);
   else {
-      Scierror( "target should be a cairo_surface_t");
+      Scierror( "Error: target should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_create_for_rectangle(target,x,y,width,height);
@@ -2873,7 +2873,7 @@ int _wrap_cairo_surface_observer_elapsed(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_observer_elapsed(surface);
@@ -2890,7 +2890,7 @@ int _wrap_cairo_surface_reference(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_reference(surface);
@@ -2910,7 +2910,7 @@ int _wrap_cairo_surface_finish(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_finish(surface);
@@ -2926,7 +2926,7 @@ int _wrap_cairo_surface_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_destroy(surface);
@@ -2943,7 +2943,7 @@ int _wrap_cairo_surface_status(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_status(surface);
@@ -2961,7 +2961,7 @@ int _wrap_cairo_surface_get_content(Stack stack, int rhs, int opt, int lhs) /* c
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_get_content(surface);
@@ -2980,7 +2980,7 @@ int _wrap_cairo_surface_write_to_png(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_surface_write_to_png(surface,filename);
@@ -2997,7 +2997,7 @@ int _wrap_cairo_surface_flush(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_flush(surface);
@@ -3013,7 +3013,7 @@ int _wrap_cairo_surface_mark_dirty(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_mark_dirty(surface);
@@ -3030,7 +3030,7 @@ int _wrap_cairo_surface_mark_dirty_rectangle(Stack stack, int rhs, int opt, int 
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_mark_dirty_rectangle(surface,x,y,width,height);
@@ -3047,7 +3047,7 @@ int _wrap_cairo_surface_set_device_scale(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_set_device_scale(surface,x_scale,y_scale);
@@ -3064,7 +3064,7 @@ int _wrap_cairo_surface_get_device_scale(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_get_device_scale(surface,&x_scale,&y_scale);
@@ -3081,7 +3081,7 @@ int _wrap_cairo_surface_set_device_offset(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_set_device_offset(surface,x_offset,y_offset);
@@ -3098,7 +3098,7 @@ int _wrap_cairo_surface_get_device_offset(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_get_device_offset(surface,&x_offset,&y_offset);
@@ -3115,7 +3115,7 @@ int _wrap_cairo_surface_set_fallback_resolution(Stack stack, int rhs, int opt, i
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_set_fallback_resolution(surface,x_pixels_per_inch,y_pixels_per_inch);
@@ -3132,7 +3132,7 @@ int _wrap_cairo_surface_get_fallback_resolution(Stack stack, int rhs, int opt, i
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_get_fallback_resolution(surface,&x_pixels_per_inch,&y_pixels_per_inch);
@@ -3148,7 +3148,7 @@ int _wrap_cairo_surface_copy_page(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_copy_page(surface);
@@ -3164,7 +3164,7 @@ int _wrap_cairo_surface_show_page(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_surface_show_page(surface);
@@ -3232,7 +3232,7 @@ int _wrap_cairo_image_surface_get_format(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_image_surface_get_format(surface);
@@ -3250,7 +3250,7 @@ int _wrap_cairo_image_surface_get_width(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_image_surface_get_width(surface);
@@ -3268,7 +3268,7 @@ int _wrap_cairo_image_surface_get_height(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_image_surface_get_height(surface);
@@ -3286,7 +3286,7 @@ int _wrap_cairo_image_surface_get_stride(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_image_surface_get_stride(surface);
@@ -3322,7 +3322,7 @@ int _wrap_cairo_recording_surface_create(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_extents, CAIRO_GOBJECT_TYPE_RECTANGLE))
       extents = nspg_boxed_get(nsp_extents, cairo_rectangle_t);
   else {
-      Scierror( "extents should be a cairo_rectangle_t");
+      Scierror( "Error: extents should be a cairo_rectangle_t\n");
       return RET_BUG;
   }
     ret =cairo_recording_surface_create(content,extents);
@@ -3343,7 +3343,7 @@ int _wrap_cairo_recording_surface_ink_extents(Stack stack, int rhs, int opt, int
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_recording_surface_ink_extents(surface,&x0,&y0,&width,&height);
@@ -3390,7 +3390,7 @@ int _wrap_cairo_pattern_create_for_surface(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_create_for_surface(surface);
@@ -3453,7 +3453,7 @@ int _wrap_cairo_pattern_reference(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_reference(pattern);
@@ -3473,7 +3473,7 @@ int _wrap_cairo_pattern_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_pattern_destroy(pattern);
@@ -3490,7 +3490,7 @@ int _wrap_cairo_pattern_status(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_status(pattern);
@@ -3508,7 +3508,7 @@ int _wrap_cairo_pattern_add_color_stop_rgb(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_pattern_add_color_stop_rgb(pattern,offset,red,green,blue);
@@ -3525,7 +3525,7 @@ int _wrap_cairo_pattern_add_color_stop_rgba(Stack stack, int rhs, int opt, int l
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_pattern_add_color_stop_rgba(pattern,offset,red,green,blue,alpha);
@@ -3541,7 +3541,7 @@ int _wrap_cairo_mesh_pattern_begin_patch(Stack stack, int rhs, int opt, int lhs)
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mesh_pattern_begin_patch(pattern);
@@ -3557,7 +3557,7 @@ int _wrap_cairo_mesh_pattern_end_patch(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mesh_pattern_end_patch(pattern);
@@ -3574,7 +3574,7 @@ int _wrap_cairo_mesh_pattern_curve_to(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mesh_pattern_curve_to(pattern,x1,y1,x2,y2,x3,y3);
@@ -3591,7 +3591,7 @@ int _wrap_cairo_mesh_pattern_line_to(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mesh_pattern_line_to(pattern,x,y);
@@ -3608,7 +3608,7 @@ int _wrap_cairo_mesh_pattern_move_to(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     cairo_mesh_pattern_move_to(pattern,x,y);
@@ -3625,13 +3625,13 @@ int _wrap_cairo_pattern_set_matrix(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_pattern_set_matrix(pattern,matrix);
@@ -3648,13 +3648,13 @@ int _wrap_cairo_pattern_get_matrix(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_pattern_get_matrix(pattern,matrix);
@@ -3671,7 +3671,7 @@ int _wrap_cairo_pattern_set_extend(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_EXTEND, nsp_extend, &extend)== FAIL)
@@ -3690,7 +3690,7 @@ int _wrap_cairo_pattern_get_extend(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_extend(pattern);
@@ -3708,7 +3708,7 @@ int _wrap_cairo_pattern_set_filter(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_FILTER, nsp_filter, &filter)== FAIL)
@@ -3727,7 +3727,7 @@ int _wrap_cairo_pattern_get_filter(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_filter(pattern);
@@ -3746,7 +3746,7 @@ int _wrap_cairo_pattern_get_rgba(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_rgba(pattern,&red,&green,&blue,&alpha);
@@ -3766,7 +3766,7 @@ int _wrap_cairo_pattern_get_color_stop_rgba(Stack stack, int rhs, int opt, int l
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_color_stop_rgba(pattern,index,&offset,&red,&green,&blue,&alpha);
@@ -3785,7 +3785,7 @@ int _wrap_cairo_pattern_get_color_stop_count(Stack stack, int rhs, int opt, int 
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_color_stop_count(pattern,&count);
@@ -3804,7 +3804,7 @@ int _wrap_cairo_pattern_get_linear_points(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_linear_points(pattern,&x0,&y0,&x1,&y1);
@@ -3823,7 +3823,7 @@ int _wrap_cairo_pattern_get_radial_circles(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
       pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
   else {
-      Scierror( "pattern should be a cairo_pattern_t");
+      Scierror( "Error: pattern should be a cairo_pattern_t\n");
       return RET_BUG;
   }
     ret =cairo_pattern_get_radial_circles(pattern,&x0,&y0,&r0,&x1,&y1,&r1);
@@ -3841,7 +3841,7 @@ int _wrap_cairo_matrix_init(Stack stack, int rhs, int opt, int lhs) /* cairo_mat
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_init(matrix,xx,yx,xy,yy,x0,y0);
@@ -3857,7 +3857,7 @@ int _wrap_cairo_matrix_init_identity(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_init_identity(matrix);
@@ -3874,7 +3874,7 @@ int _wrap_cairo_matrix_init_translate(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_init_translate(matrix,tx,ty);
@@ -3891,7 +3891,7 @@ int _wrap_cairo_matrix_init_scale(Stack stack, int rhs, int opt, int lhs) /* cai
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_init_scale(matrix,sx,sy);
@@ -3908,7 +3908,7 @@ int _wrap_cairo_matrix_init_rotate(Stack stack, int rhs, int opt, int lhs) /* ca
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_init_rotate(matrix,radians);
@@ -3925,7 +3925,7 @@ int _wrap_cairo_matrix_translate(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_translate(matrix,tx,ty);
@@ -3942,7 +3942,7 @@ int _wrap_cairo_matrix_scale(Stack stack, int rhs, int opt, int lhs) /* cairo_ma
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_scale(matrix,sx,sy);
@@ -3959,7 +3959,7 @@ int _wrap_cairo_matrix_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_m
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_rotate(matrix,radians);
@@ -3976,7 +3976,7 @@ int _wrap_cairo_matrix_invert(Stack stack, int rhs, int opt, int lhs) /* cairo_m
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     ret =cairo_matrix_invert(matrix);
@@ -3993,19 +3993,19 @@ int _wrap_cairo_matrix_multiply(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_result, CAIRO_GOBJECT_TYPE_MATRIX))
       result = nspg_boxed_get(nsp_result, cairo_matrix_t);
   else {
-      Scierror( "result should be a cairo_matrix_t");
+      Scierror( "Error: result should be a cairo_matrix_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_a, CAIRO_GOBJECT_TYPE_MATRIX))
       a = nspg_boxed_get(nsp_a, cairo_matrix_t);
   else {
-      Scierror( "a should be a cairo_matrix_t");
+      Scierror( "Error: a should be a cairo_matrix_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_b, CAIRO_GOBJECT_TYPE_MATRIX))
       b = nspg_boxed_get(nsp_b, cairo_matrix_t);
   else {
-      Scierror( "b should be a cairo_matrix_t");
+      Scierror( "Error: b should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_multiply(result,a,b);
@@ -4022,7 +4022,7 @@ int _wrap_cairo_matrix_transform_distance(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_transform_distance(matrix,&dx,&dy);
@@ -4039,7 +4039,7 @@ int _wrap_cairo_matrix_transform_point(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
       matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
   else {
-      Scierror( "matrix should be a cairo_matrix_t");
+      Scierror( "Error: matrix should be a cairo_matrix_t\n");
       return RET_BUG;
   }
     cairo_matrix_transform_point(matrix,&x,&y);
@@ -4068,7 +4068,7 @@ int _wrap_cairo_region_copy(Stack stack, int rhs, int opt, int lhs) /* cairo_reg
   if (nspg_boxed_check(nsp_original, CAIRO_GOBJECT_TYPE_REGION))
       original = nspg_boxed_get(nsp_original, cairo_region_t);
   else {
-      Scierror( "original should be a cairo_region_t");
+      Scierror( "Error: original should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_copy(original);
@@ -4088,7 +4088,7 @@ int _wrap_cairo_region_reference(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_reference(region);
@@ -4108,7 +4108,7 @@ int _wrap_cairo_region_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo_
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     cairo_region_destroy(region);
@@ -4125,7 +4125,7 @@ int _wrap_cairo_region_status(Stack stack, int rhs, int opt, int lhs) /* cairo_r
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_status(region);
@@ -4143,7 +4143,7 @@ int _wrap_cairo_region_num_rectangles(Stack stack, int rhs, int opt, int lhs) /*
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_num_rectangles(region);
@@ -4161,7 +4161,7 @@ int _wrap_cairo_region_translate(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
       region = nspg_boxed_get(nsp_region, cairo_region_t);
   else {
-      Scierror( "region should be a cairo_region_t");
+      Scierror( "Error: region should be a cairo_region_t\n");
       return RET_BUG;
   }
     cairo_region_translate(region,dx,dy);
@@ -4178,13 +4178,13 @@ int _wrap_cairo_region_subtract(Stack stack, int rhs, int opt, int lhs) /* cairo
   if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
       dst = nspg_boxed_get(nsp_dst, cairo_region_t);
   else {
-      Scierror( "dst should be a cairo_region_t");
+      Scierror( "Error: dst should be a cairo_region_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
       other = nspg_boxed_get(nsp_other, cairo_region_t);
   else {
-      Scierror( "other should be a cairo_region_t");
+      Scierror( "Error: other should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_subtract(dst,other);
@@ -4202,13 +4202,13 @@ int _wrap_cairo_region_intersect(Stack stack, int rhs, int opt, int lhs) /* cair
   if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
       dst = nspg_boxed_get(nsp_dst, cairo_region_t);
   else {
-      Scierror( "dst should be a cairo_region_t");
+      Scierror( "Error: dst should be a cairo_region_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
       other = nspg_boxed_get(nsp_other, cairo_region_t);
   else {
-      Scierror( "other should be a cairo_region_t");
+      Scierror( "Error: other should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_intersect(dst,other);
@@ -4226,13 +4226,13 @@ int _wrap_cairo_region_union(Stack stack, int rhs, int opt, int lhs) /* cairo_re
   if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
       dst = nspg_boxed_get(nsp_dst, cairo_region_t);
   else {
-      Scierror( "dst should be a cairo_region_t");
+      Scierror( "Error: dst should be a cairo_region_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
       other = nspg_boxed_get(nsp_other, cairo_region_t);
   else {
-      Scierror( "other should be a cairo_region_t");
+      Scierror( "Error: other should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_union(dst,other);
@@ -4250,13 +4250,13 @@ int _wrap_cairo_region_xor(Stack stack, int rhs, int opt, int lhs) /* cairo_regi
   if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
       dst = nspg_boxed_get(nsp_dst, cairo_region_t);
   else {
-      Scierror( "dst should be a cairo_region_t");
+      Scierror( "Error: dst should be a cairo_region_t\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
       other = nspg_boxed_get(nsp_other, cairo_region_t);
   else {
-      Scierror( "other should be a cairo_region_t");
+      Scierror( "Error: other should be a cairo_region_t\n");
       return RET_BUG;
   }
     ret =cairo_region_xor(dst,other);
@@ -4297,7 +4297,7 @@ int _wrap_cairo_pdf_surface_restrict_to_version(Stack stack, int rhs, int opt, i
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_version, &version)== FAIL)
@@ -4330,7 +4330,7 @@ int _wrap_cairo_pdf_surface_set_size(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_pdf_surface_set_size(surface,width_in_points,height_in_points);
@@ -4363,7 +4363,7 @@ int _wrap_cairo_ps_surface_restrict_to_level(Stack stack, int rhs, int opt, int 
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_level, &level)== FAIL)
@@ -4396,7 +4396,7 @@ int _wrap_cairo_ps_surface_set_size(Stack stack, int rhs, int opt, int lhs) /* c
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_ps_surface_set_size(surface,width_in_points,height_in_points);
@@ -4413,7 +4413,7 @@ int _wrap_cairo_ps_surface_dsc_comment(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_ps_surface_dsc_comment(surface,comment);
@@ -4429,7 +4429,7 @@ int _wrap_cairo_ps_surface_dsc_begin_setup(Stack stack, int rhs, int opt, int lh
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_ps_surface_dsc_begin_setup(surface);
@@ -4445,7 +4445,7 @@ int _wrap_cairo_ps_surface_dsc_begin_page_setup(Stack stack, int rhs, int opt, i
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
     cairo_ps_surface_dsc_begin_page_setup(surface);
@@ -4478,7 +4478,7 @@ int _wrap_cairo_svg_surface_restrict_to_version(Stack stack, int rhs, int opt, i
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
   else {
-      Scierror( "surface should be a cairo_surface_t");
+      Scierror( "Error: surface should be a cairo_surface_t\n");
       return RET_BUG;
   }
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_version, &version)== FAIL)

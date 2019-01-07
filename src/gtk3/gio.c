@@ -46,8 +46,10 @@
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/gsource.h>
+#include <nsp/gtk/gmainloop.h>
+#include <nsp/gtk/gmaincontext.h>
 
-#line 51 "gio.c"
+#line 53 "gio.c"
 /* ---------- forward type declarations ---------- */
 #include <nsp/gtk/gresource.h>
 #include <nsp/gtk/gappinfo.h>
@@ -1787,7 +1789,7 @@ NspGActionMap *gactionmap_copy(NspGActionMap *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 133 "codegen-3.0/gio.override"
+#line 135 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -1817,7 +1819,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 1821 "gio.c"
+#line 1823 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -1854,7 +1856,7 @@ int _wrap_g_action_map_remove_action(Stack stack, int rhs, int opt, int lhs) /* 
   return RET_BUG;
 }
 #endif
-#line 75 "codegen-3.0/gio.override"
+#line 77 "codegen-3.0/gio.override"
 
 static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1879,7 +1881,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 1883 "gio.c"
+#line 1885 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -3086,7 +3088,7 @@ static int _wrap_g_application_run(NspGApplication *self,Stack stack,int rhs,int
     { argv =  ((NspSMatrix *) nsp_argv)->S;}
   else
     {
-      Scierror("Error: argv should be of type SMat");
+      Scierror("Error: argv should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_application_run(G_APPLICATION(self->obj),argc,argv);
@@ -8196,7 +8198,7 @@ static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int 
     { new_etag =  ((NspSMatrix *) nsp_new_etag)->S;}
   else
     {
-      Scierror("Error: new_etag should be of type SMat");
+      Scierror("Error: new_etag should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_file_replace_contents(G_FILE(self->obj),contents,length,etag,make_backup,flags,new_etag,G_CANCELLABLE(cancellable->obj),&error);
@@ -8221,7 +8223,7 @@ static int _wrap_g_file_replace_contents_finish(NspGFile *self,Stack stack,int r
     { new_etag =  ((NspSMatrix *) nsp_new_etag)->S;}
   else
     {
-      Scierror("Error: new_etag should be of type SMat");
+      Scierror("Error: new_etag should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_file_replace_contents_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),new_etag,&error);
@@ -10846,7 +10848,7 @@ NspGInputStream *ginputstream_copy(NspGInputStream *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 283 "codegen-3.0/gio.override"
+#line 285 "codegen-3.0/gio.override"
 
 static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -10886,7 +10888,7 @@ static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 10890 "gio.c"
+#line 10892 "gio.c"
 
 
 static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -12581,7 +12583,7 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
     { type =  ((NspSMatrix *) nsp_type)->S;}
   else
     {
-      Scierror("Error: type should be of type SMat");
+      Scierror("Error: type should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_loadable_icon_load(G_LOADABLE_ICON(self->obj),size,type,G_CANCELLABLE(cancellable->obj),&error);
@@ -12608,7 +12610,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
     { type =  ((NspSMatrix *) nsp_type)->S;}
   else
     {
-      Scierror("Error: type should be of type SMat");
+      Scierror("Error: type should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_loadable_icon_load_finish(G_LOADABLE_ICON(self->obj),G_ASYNC_RESULT(res->obj),type,&error);
@@ -13659,7 +13661,7 @@ int _wrap_g_menu_model_get_item_attribute_value(Stack stack, int rhs, int opt, i
   return RET_BUG;
 }
 #endif
-#line 41 "codegen-3.0/gio.override"
+#line 43 "codegen-3.0/gio.override"
 
 #if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_model_get_item_attribute(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -13692,7 +13694,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13696 "gio.c"
+#line 13698 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -13717,7 +13719,7 @@ int _wrap_g_menu_model_iterate_item_links(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#line 101 "codegen-3.0/gio.override"
+#line 103 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -13748,7 +13750,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13752 "gio.c"
+#line 13754 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -16379,7 +16381,7 @@ NspGOutputStream *goutputstream_copy(NspGOutputStream *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 324 "codegen-3.0/gio.override"
+#line 326 "codegen-3.0/gio.override"
 
 
 static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -16413,7 +16415,7 @@ static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rh
   return 1;
 }
 
-#line 16417 "gio.c"
+#line 16419 "gio.c"
 
 
 static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -20525,7 +20527,7 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
     { ignore_hosts =  ((NspSMatrix *) nsp_ignore_hosts)->S;}
   else
     {
-      Scierror("Error: ignore_hosts should be of type SMat");
+      Scierror("Error: ignore_hosts should be of type SMat\n");
       return RET_BUG;
     }
   if ((ret = (GObject *)g_simple_proxy_resolver_new(default_proxy,ignore_hosts))== NULL) return RET_BUG;
@@ -20568,7 +20570,7 @@ static int _wrap_g_simple_proxy_resolver_set_ignore_hosts(NspGSimpleProxyResolve
     { ignore_hosts =  ((NspSMatrix *) nsp_ignore_hosts)->S;}
   else
     {
-      Scierror("Error: ignore_hosts should be of type SMat");
+      Scierror("Error: ignore_hosts should be of type SMat\n");
       return RET_BUG;
     }
     g_simple_proxy_resolver_set_ignore_hosts(G_SIMPLE_PROXY_RESOLVER(self->obj),ignore_hosts);
@@ -21230,7 +21232,7 @@ static int _wrap_g_socket_connect(NspGSocket *self,Stack stack,int rhs,int opt,i
     if ( IsGCancellable((NspObject *)nsp_cancellable))
       cancellable = G_CANCELLABLE(nsp_cancellable->obj);
     else if (! IsNone((NspObject *)nsp_cancellable)) {
-         Scierror( "cancellable should be a GCancellable or None");
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
          return RET_BUG;
     }
   }
@@ -28487,7 +28489,7 @@ int _wrap_g_application_id_is_valid(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 164 "codegen-3.0/gio.override"
+#line 166 "codegen-3.0/gio.override"
 /* XXX we want to return the most specialized type */
 
 int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g_application_get_default */
@@ -28502,7 +28504,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 28506 "gio.c"
+#line 28508 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28714,7 +28716,7 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
     { out_guid =  ((NspSMatrix *) nsp_out_guid)->S;}
   else
     {
-      Scierror("Error: out_guid should be of type SMat");
+      Scierror("Error: out_guid should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_dbus_address_get_stream_finish(G_ASYNC_RESULT(res->obj),out_guid,&error);
@@ -28742,7 +28744,7 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
     { out_guid =  ((NspSMatrix *) nsp_out_guid)->S;}
   else
     {
-      Scierror("Error: out_guid should be of type SMat");
+      Scierror("Error: out_guid should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_dbus_address_get_stream_sync(address,out_guid,G_CANCELLABLE(cancellable->obj),&error);
@@ -28787,7 +28789,7 @@ int _wrap_g_dbus_error_is_remote_error(Stack stack, int rhs, int opt, int lhs) /
   if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
       error = nspg_boxed_get(nsp_error, GError);
   else {
-      Scierror( "error should be a GError");
+      Scierror( "Error: error should be a GError\n");
       return RET_BUG;
   }
     ret =g_dbus_error_is_remote_error(error);
@@ -28805,7 +28807,7 @@ int _wrap_g_dbus_error_get_remote_error(Stack stack, int rhs, int opt, int lhs) 
   if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
       error = nspg_boxed_get(nsp_error, GError);
   else {
-      Scierror( "error should be a GError");
+      Scierror( "Error: error should be a GError\n");
       return RET_BUG;
   }
     ret =g_dbus_error_get_remote_error(error);
@@ -28824,7 +28826,7 @@ int _wrap_g_dbus_error_strip_remote_error(Stack stack, int rhs, int opt, int lhs
   if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
       error = nspg_boxed_get(nsp_error, GError);
   else {
-      Scierror( "error should be a GError");
+      Scierror( "Error: error should be a GError\n");
       return RET_BUG;
   }
     ret =g_dbus_error_strip_remote_error(error);
@@ -28842,7 +28844,7 @@ int _wrap_g_dbus_error_encode_gerror(Stack stack, int rhs, int opt, int lhs) /* 
   if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
       error = nspg_boxed_get(nsp_error, GError);
   else {
-      Scierror( "error should be a GError");
+      Scierror( "Error: error should be a GError\n");
       return RET_BUG;
   }
     ret =g_dbus_error_encode_gerror(error);
@@ -29111,7 +29113,7 @@ int _wrap_g_resolver_free_targets(Stack stack, int rhs, int opt, int lhs) /* g_r
   return 0;
 }
 
-#line 252 "codegen-3.0/gio.override"
+#line 254 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resource_from_int */
 {
@@ -29141,10 +29143,10 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29145 "gio.c"
+#line 29147 "gio.c"
 
 
-#line 226 "codegen-3.0/gio.override"
+#line 228 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_resource_new_from_data */
 {
@@ -29169,10 +29171,10 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 29173 "gio.c"
+#line 29175 "gio.c"
 
 
-#line 203 "codegen-3.0/gio.override"
+#line 205 "codegen-3.0/gio.override"
 
 int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_load */
 {
@@ -29194,7 +29196,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 29198 "gio.c"
+#line 29200 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -29288,7 +29290,7 @@ int _wrap_g_themed_icon_new_with_default_fallbacks(Stack stack, int rhs, int opt
   return 1;
 }
 
-#line 180 "codegen-3.0/gio.override"
+#line 182 "codegen-3.0/gio.override"
 
 int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /* g_themed_icon_new_from_names */
 {
@@ -29310,7 +29312,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29314 "gio.c"
+#line 29316 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -29701,4 +29703,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 29705 "gio.c"
+#line 29707 "gio.c"

@@ -22,6 +22,8 @@ headers
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/gsource.h>
+#include <nsp/gtk/gmainloop.h>
+#include <nsp/gtk/gmaincontext.h>
 
 %%
 init

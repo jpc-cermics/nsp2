@@ -45,8 +45,9 @@
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
-
-#line 50 "glib.c"
+#include <nsp/gtk/gmaincontext.h>
+#include <nsp/gtk/gmainloop.h>
+#line 51 "glib.c"
 
 /* -----------NspGError ----------- */
 
@@ -259,7 +260,7 @@ static int _wrap_g_error_copy(NspGError *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 270 "codegen-3.0/glib.override"
+#line 271 "codegen-3.0/glib.override"
 
 static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -272,7 +273,7 @@ static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 276 "glib.c"
+#line 277 "glib.c"
 
 
 static NspMethods gerror_methods[] = {
@@ -481,6 +482,24 @@ NspGSource *gsource_copy(NspGSource *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
+static int _wrap_g_source_attach(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GMainContext *context = NULL;
+  NspObject *nsp_context = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_context) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
+      context = nspg_boxed_get(nsp_context, GMainContext);
+  else {
+      Scierror( "Error: context should be a GMainContext\n");
+      return RET_BUG;
+  }
+  ret =g_source_attach(NSP_GBOXED_GET(self, GSource),context);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static int _wrap_g_source_destroy(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -530,6 +549,19 @@ static int _wrap_g_source_get_id(NspGSource *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
   ret =g_source_get_id(NSP_GBOXED_GET(self, GSource));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_source_get_context(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GMainContext *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_source_get_context(NSP_GBOXED_GET(self, GSource));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gmaincontext))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
@@ -603,7 +635,7 @@ static int _wrap_g_source_add_child_source(NspGSource *self,Stack stack,int rhs,
   if (nspg_boxed_check(nsp_child_source, G_TYPE_SOURCE))
       child_source = nspg_boxed_get(nsp_child_source, GSource);
   else {
-      Scierror( "child_source should be a GSource");
+      Scierror( "Error: child_source should be a GSource\n");
       return RET_BUG;
   }
   g_source_add_child_source(NSP_GBOXED_GET(self, GSource),child_source);
@@ -619,7 +651,7 @@ static int _wrap_g_source_remove_child_source(NspGSource *self,Stack stack,int r
   if (nspg_boxed_check(nsp_child_source, G_TYPE_SOURCE))
       child_source = nspg_boxed_get(nsp_child_source, GSource);
   else {
-      Scierror( "child_source should be a GSource");
+      Scierror( "Error: child_source should be a GSource\n");
       return RET_BUG;
   }
   g_source_remove_child_source(NSP_GBOXED_GET(self, GSource),child_source);
@@ -636,12 +668,14 @@ static int _wrap_g_source_get_time(NspGSource *self,Stack stack,int rhs,int opt,
 }
 
 static NspMethods gsource_methods[] = {
+  {"attach",(nsp_method *) _wrap_g_source_attach},
   {"destroy",(nsp_method *) _wrap_g_source_destroy},
   {"set_priority",(nsp_method *) _wrap_g_source_set_priority},
   {"get_priority",(nsp_method *) _wrap_g_source_get_priority},
   {"set_can_recurse",(nsp_method *) _wrap_g_source_set_can_recurse},
   {"get_can_recurse",(nsp_method *) _wrap_g_source_get_can_recurse},
   {"get_id",(nsp_method *) _wrap_g_source_get_id},
+  {"get_context",(nsp_method *) _wrap_g_source_get_context},
   {"is_destroyed",(nsp_method *) _wrap_g_source_is_destroyed},
   {"set_name",(nsp_method *) _wrap_g_source_set_name},
   {"get_name",(nsp_method *) _wrap_g_source_get_name},
@@ -659,6 +693,598 @@ static NspMethods *gsource_get_methods(void) { return gsource_methods;};
  *-------------------------------------------*/
 
 static AttrTab gsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* -----------NspGMainContext ----------- */
+
+
+#define  NspGMainContext_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gmaincontext.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGMainContext inherits from GBoxed 
+ */
+
+int nsp_type_gmaincontext_id=0;
+NspTypeGMainContext *nsp_type_gmaincontext=NULL;
+
+/*
+ * Type object for NspGMainContext 
+ * all the instance of NspTypeGMainContext share the same id. 
+ * nsp_type_gmaincontext: is an instance of NspTypeGMainContext 
+ *    used for objects of NspGMainContext type (i.e built with new_gmaincontext) 
+ * other instances are used for derived classes 
+ */
+NspTypeGMainContext *new_type_gmaincontext(type_mode mode)
+{
+  NspTypeGMainContext *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gmaincontext != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gmaincontext;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gmaincontext_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gmaincontext_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gmaincontext;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gmaincontext */ 
+
+  top->s_type =  (s_type_func *) nsp_gmaincontext_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gmaincontext_type_short_string;
+  /* top->create = (create_func*) int_gmaincontext_create;*/
+
+  /* specific methods for gmaincontext */
+
+  type->init = (init_func *) init_gmaincontext;
+
+  /* 
+   * NspGMainContext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gmaincontext_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGMainContext called nsp_type_gmaincontext
+       */
+      type->id =  nsp_type_gmaincontext_id = nsp_new_type_id();
+      nsp_type_gmaincontext = type;
+      if ( nsp_register_type(nsp_type_gmaincontext) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gmaincontext, G_TYPE_MAIN_CONTEXT);
+      return ( mode == T_BASE ) ? type : new_type_gmaincontext(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gmaincontext_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGMainContext instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gmaincontext(NspGMainContext *Obj,NspTypeGMainContext *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGMainContext 
+ */
+
+NspGMainContext *new_gmaincontext() 
+{
+  NspGMainContext *loc;
+  /* type must exists */
+  nsp_type_gmaincontext = new_type_gmaincontext(T_BASE);
+  if ( (loc = malloc(sizeof(NspGMainContext)))== NULLGMAINCONTEXT) return loc;
+  /* initialize object */
+  if ( init_gmaincontext(loc,nsp_type_gmaincontext) == FAIL) return NULLGMAINCONTEXT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGMainContext 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gmaincontext_type_name[]="GMainContext";
+static char gmaincontext_short_type_name[]="GMainContext";
+
+static char *nsp_gmaincontext_type_as_string(void)
+{
+  return(gmaincontext_type_name);
+}
+
+static char *nsp_gmaincontext_type_short_string(NspObject *v)
+{
+  return(gmaincontext_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGMainContext objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGMainContext   *nsp_gmaincontext_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gmaincontext_id)  == TRUE  ) return ((NspGMainContext *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gmaincontext));
+  return NULL;
+}
+
+int IsGMainContextObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gmaincontext_id);
+}
+
+int IsGMainContext(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gmaincontext_id);
+}
+
+NspGMainContext  *GetGMainContextCopy(Stack stack, int i)
+{
+  if (  GetGMainContext(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGMainContext  *GetGMainContext(Stack stack, int i)
+{
+  NspGMainContext *M;
+  if (( M = nsp_gmaincontext_object(NthObj(i))) == NULLGMAINCONTEXT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGMainContext *gmaincontext_copy(NspGMainContext *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gmaincontext);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GMainContext
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int
+_wrap_g_main_context_new (Stack stack, int rhs, int opt, int lhs)
+{
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  if ((ret = (GObject *)g_main_context_new())== NULL) return RET_BUG;
+
+  nsp_type_gmaincontext = new_type_gmaincontext(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_gmaincontext);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_main_context_iteration(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool, t_end};
+  int may_block, ret;
+  if ( GetArgs(stack,rhs,opt,T,&may_block) == FAIL) return RET_BUG;
+  ret =g_main_context_iteration(NSP_GBOXED_GET(self, GMainContext),may_block);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_context_pending(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_main_context_pending(NSP_GBOXED_GET(self, GMainContext));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_context_find_source_by_id(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, t_end};
+  int source_id;
+  GSource *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&source_id) == FAIL) return RET_BUG;
+  ret =g_main_context_find_source_by_id(NSP_GBOXED_GET(self, GMainContext),source_id);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gsource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_main_context_wakeup(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_context_wakeup(NSP_GBOXED_GET(self, GMainContext));
+  return 0;
+}
+
+static int _wrap_g_main_context_acquire(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_main_context_acquire(NSP_GBOXED_GET(self, GMainContext));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_context_release(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_context_release(NSP_GBOXED_GET(self, GMainContext));
+  return 0;
+}
+
+static int _wrap_g_main_context_is_owner(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_main_context_is_owner(NSP_GBOXED_GET(self, GMainContext));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_context_prepare(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, t_end};
+  int priority, ret;
+  if ( GetArgs(stack,rhs,opt,T,&priority) == FAIL) return RET_BUG;
+  ret =g_main_context_prepare(NSP_GBOXED_GET(self, GMainContext),&priority);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_context_dispatch(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_context_dispatch(NSP_GBOXED_GET(self, GMainContext));
+  return 0;
+}
+
+static int _wrap_g_main_context_push_thread_default(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_context_push_thread_default(NSP_GBOXED_GET(self, GMainContext));
+  return 0;
+}
+
+static int _wrap_g_main_context_pop_thread_default(NspGMainContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_context_pop_thread_default(NSP_GBOXED_GET(self, GMainContext));
+  return 0;
+}
+
+static NspMethods gmaincontext_methods[] = {
+  {"iteration",(nsp_method *) _wrap_g_main_context_iteration},
+  {"pending",(nsp_method *) _wrap_g_main_context_pending},
+  {"find_source_by_id",(nsp_method *) _wrap_g_main_context_find_source_by_id},
+  {"wakeup",(nsp_method *) _wrap_g_main_context_wakeup},
+  {"acquire",(nsp_method *) _wrap_g_main_context_acquire},
+  {"release",(nsp_method *) _wrap_g_main_context_release},
+  {"is_owner",(nsp_method *) _wrap_g_main_context_is_owner},
+  {"prepare",(nsp_method *) _wrap_g_main_context_prepare},
+  {"dispatch",(nsp_method *) _wrap_g_main_context_dispatch},
+  {"push_thread_default",(nsp_method *) _wrap_g_main_context_push_thread_default},
+  {"pop_thread_default",(nsp_method *) _wrap_g_main_context_pop_thread_default},
+  { NULL, NULL}
+};
+
+static NspMethods *gmaincontext_get_methods(void) { return gmaincontext_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gmaincontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* -----------NspGMainLoop ----------- */
+
+
+#define  NspGMainLoop_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gmainloop.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGMainLoop inherits from GBoxed 
+ */
+
+int nsp_type_gmainloop_id=0;
+NspTypeGMainLoop *nsp_type_gmainloop=NULL;
+
+/*
+ * Type object for NspGMainLoop 
+ * all the instance of NspTypeGMainLoop share the same id. 
+ * nsp_type_gmainloop: is an instance of NspTypeGMainLoop 
+ *    used for objects of NspGMainLoop type (i.e built with new_gmainloop) 
+ * other instances are used for derived classes 
+ */
+NspTypeGMainLoop *new_type_gmainloop(type_mode mode)
+{
+  NspTypeGMainLoop *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gmainloop != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gmainloop;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gmainloop_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gmainloop_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gmainloop;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gmainloop */ 
+
+  top->s_type =  (s_type_func *) nsp_gmainloop_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gmainloop_type_short_string;
+  /* top->create = (create_func*) int_gmainloop_create;*/
+
+  /* specific methods for gmainloop */
+
+  type->init = (init_func *) init_gmainloop;
+
+  /* 
+   * NspGMainLoop interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gmainloop_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGMainLoop called nsp_type_gmainloop
+       */
+      type->id =  nsp_type_gmainloop_id = nsp_new_type_id();
+      nsp_type_gmainloop = type;
+      if ( nsp_register_type(nsp_type_gmainloop) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gmainloop, G_TYPE_MAIN_LOOP);
+      return ( mode == T_BASE ) ? type : new_type_gmainloop(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gmainloop_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGMainLoop instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gmainloop(NspGMainLoop *Obj,NspTypeGMainLoop *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGMainLoop 
+ */
+
+NspGMainLoop *new_gmainloop() 
+{
+  NspGMainLoop *loc;
+  /* type must exists */
+  nsp_type_gmainloop = new_type_gmainloop(T_BASE);
+  if ( (loc = malloc(sizeof(NspGMainLoop)))== NULLGMAINLOOP) return loc;
+  /* initialize object */
+  if ( init_gmainloop(loc,nsp_type_gmainloop) == FAIL) return NULLGMAINLOOP;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGMainLoop 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gmainloop_type_name[]="GMainLoop";
+static char gmainloop_short_type_name[]="GMainLoop";
+
+static char *nsp_gmainloop_type_as_string(void)
+{
+  return(gmainloop_type_name);
+}
+
+static char *nsp_gmainloop_type_short_string(NspObject *v)
+{
+  return(gmainloop_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGMainLoop objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGMainLoop   *nsp_gmainloop_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gmainloop_id)  == TRUE  ) return ((NspGMainLoop *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gmainloop));
+  return NULL;
+}
+
+int IsGMainLoopObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gmainloop_id);
+}
+
+int IsGMainLoop(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gmainloop_id);
+}
+
+NspGMainLoop  *GetGMainLoopCopy(Stack stack, int i)
+{
+  if (  GetGMainLoop(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGMainLoop  *GetGMainLoop(Stack stack, int i)
+{
+  NspGMainLoop *M;
+  if (( M = nsp_gmainloop_object(NthObj(i))) == NULLGMAINLOOP)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGMainLoop *gmainloop_copy(NspGMainLoop *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gmainloop);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GMainLoop
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int
+_wrap_g_main_loop_new (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj,s_bool, t_end};
+  GMainContext *context = NULL;
+  NspObject *nsp_context = NULL;
+  int is_running;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_context, &is_running) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
+      context = nspg_boxed_get(nsp_context, GMainContext);
+  else {
+      Scierror( "Error: context should be a GMainContext\n");
+      return RET_BUG;
+  }
+  if ((ret = (GObject *)g_main_loop_new(context,is_running))== NULL) return RET_BUG;
+
+  nsp_type_gmainloop = new_type_gmainloop(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_LOOP, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_gmainloop);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_main_loop_run(NspGMainLoop *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_loop_run(NSP_GBOXED_GET(self, GMainLoop));
+  return 0;
+}
+
+static int _wrap_g_main_loop_quit(NspGMainLoop *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_main_loop_quit(NSP_GBOXED_GET(self, GMainLoop));
+  return 0;
+}
+
+static int _wrap_g_main_loop_is_running(NspGMainLoop *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret =g_main_loop_is_running(NSP_GBOXED_GET(self, GMainLoop));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_main_loop_get_context(NspGMainLoop *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GMainContext *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_main_loop_get_context(NSP_GBOXED_GET(self, GMainLoop));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gmaincontext))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static NspMethods gmainloop_methods[] = {
+  {"run",(nsp_method *) _wrap_g_main_loop_run},
+  {"quit",(nsp_method *) _wrap_g_main_loop_quit},
+  {"is_running",(nsp_method *) _wrap_g_main_loop_is_running},
+  {"get_context",(nsp_method *) _wrap_g_main_loop_get_context},
+  { NULL, NULL}
+};
+
+static NspMethods *gmainloop_get_methods(void) { return gmainloop_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gmainloop_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* -----------NspGVariantType ----------- */
@@ -1952,7 +2578,7 @@ _wrap_g_variant_new_parsed (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 186 "codegen-3.0/glib.override"
+#line 187 "codegen-3.0/glib.override"
 
 static int
 _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
@@ -2013,7 +2639,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 2017 "glib.c"
+#line 2643 "glib.c"
 
 
 static int
@@ -2479,7 +3105,7 @@ int _wrap_g_get_locale_variants(Stack stack, int rhs, int opt, int lhs) /* g_get
   return 1;
 }
 
-#line 248 "codegen-3.0/glib.override"
+#line 249 "codegen-3.0/glib.override"
 
 int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_from_uri */
 {
@@ -2500,7 +3126,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 2504 "glib.c"
+#line 3130 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -2628,7 +3254,7 @@ int _wrap_g_environ_getenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
     { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
-      Scierror("Error: envp should be of type SMat");
+      Scierror("Error: envp should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_environ_getenv(envp,variable);
@@ -2648,7 +3274,7 @@ int _wrap_g_environ_setenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
     { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
-      Scierror("Error: envp should be of type SMat");
+      Scierror("Error: envp should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_environ_setenv(envp,variable,value,overwrite);
@@ -2670,7 +3296,7 @@ int _wrap_g_environ_unsetenv(Stack stack, int rhs, int opt, int lhs) /* g_enviro
     { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
-      Scierror("Error: envp should be of type SMat");
+      Scierror("Error: envp should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_environ_unsetenv(envp,variable);
@@ -2690,7 +3316,7 @@ int _wrap_g_propagate_error(Stack stack, int rhs, int opt, int lhs) /* g_propaga
   if (nspg_boxed_check(nsp_src, G_TYPE_ERROR))
       src = nspg_boxed_get(nsp_src, GError);
   else {
-      Scierror( "src should be a GError");
+      Scierror( "Error: src should be a GError\n");
       return RET_BUG;
   }
     g_propagate_error(&dest,src);
@@ -2806,7 +3432,7 @@ int _wrap_g_file_open_tmp(Stack stack, int rhs, int opt, int lhs) /* g_file_open
     { name_used =  ((NspSMatrix *) nsp_name_used)->S;}
   else
     {
-      Scierror("Error: name_used should be of type SMat");
+      Scierror("Error: name_used should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_file_open_tmp(tmpl,name_used,&error);
@@ -2846,7 +3472,7 @@ int _wrap_g_build_pathv(Stack stack, int rhs, int opt, int lhs) /* g_build_pathv
     { args =  ((NspSMatrix *) nsp_args)->S;}
   else
     {
-      Scierror("Error: args should be of type SMat");
+      Scierror("Error: args should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_build_pathv(separator,args);
@@ -2865,7 +3491,7 @@ int _wrap_g_build_filenamev(Stack stack, int rhs, int opt, int lhs) /* g_build_f
     { args =  ((NspSMatrix *) nsp_args)->S;}
   else
     {
-      Scierror("Error: args should be of type SMat");
+      Scierror("Error: args should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_build_filenamev(args);
@@ -3077,6 +3703,19 @@ int _wrap_g_list_alloc(Stack stack, int rhs, int opt, int lhs) /* g_list_alloc *
 
 }
 
+int _wrap_g_main_context_default(Stack stack, int rhs, int opt, int lhs) /* g_main_context_default */
+{
+  GMainContext *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =g_main_context_default();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gmaincontext))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 int _wrap_g_main_depth(Stack stack, int rhs, int opt, int lhs) /* g_main_depth */
 {
   int ret;
@@ -3094,6 +3733,32 @@ int _wrap_g_main_current_source(Stack stack, int rhs, int opt, int lhs) /* g_mai
     ret =g_main_current_source();
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gsource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_g_main_context_get_thread_default(Stack stack, int rhs, int opt, int lhs) /* g_main_context_get_thread_default */
+{
+  GMainContext *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =g_main_context_get_thread_default();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gmaincontext))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_g_main_context_ref_thread_default(Stack stack, int rhs, int opt, int lhs) /* g_main_context_ref_thread_default */
+{
+  GMainContext *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =g_main_context_ref_thread_default();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_MAIN_CONTEXT, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gmaincontext))== NULL)
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -3557,7 +4222,7 @@ int _wrap_g_strtod(Stack stack, int rhs, int opt, int lhs) /* g_strtod */
     { endptr =  ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
-      Scierror("Error: endptr should be of type SMat");
+      Scierror("Error: endptr should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_strtod(nptr,endptr);
@@ -3577,7 +4242,7 @@ int _wrap_g_ascii_strtod(Stack stack, int rhs, int opt, int lhs) /* g_ascii_strt
     { endptr =  ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
-      Scierror("Error: endptr should be of type SMat");
+      Scierror("Error: endptr should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_ascii_strtod(nptr,endptr);
@@ -3800,7 +4465,7 @@ int _wrap_g_strjoinv(Stack stack, int rhs, int opt, int lhs) /* g_strjoinv */
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
-      Scierror("Error: str_array should be of type SMat");
+      Scierror("Error: str_array should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_strjoinv(separator,str_array);
@@ -3819,7 +4484,7 @@ int _wrap_g_strfreev(Stack stack, int rhs, int opt, int lhs) /* g_strfreev */
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
-      Scierror("Error: str_array should be of type SMat");
+      Scierror("Error: str_array should be of type SMat\n");
       return RET_BUG;
     }
     g_strfreev(str_array);
@@ -3836,7 +4501,7 @@ int _wrap_g_strdupv(Stack stack, int rhs, int opt, int lhs) /* g_strdupv */
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
-      Scierror("Error: str_array should be of type SMat");
+      Scierror("Error: str_array should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_strdupv(str_array);
@@ -3858,7 +4523,7 @@ int _wrap_g_strv_length(Stack stack, int rhs, int opt, int lhs) /* g_strv_length
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
-      Scierror("Error: str_array should be of type SMat");
+      Scierror("Error: str_array should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_strv_length(str_array);
@@ -4362,7 +5027,7 @@ int _wrap_g_utf8_validate(Stack stack, int rhs, int opt, int lhs) /* g_utf8_vali
     { end = (const gchar **) ((NspSMatrix *) nsp_end)->S;}
   else
     {
-      Scierror("Error: end should be of type SMat");
+      Scierror("Error: end should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_utf8_validate(str,max_len,end);
@@ -4708,7 +5373,7 @@ int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_p
     { endptr = (const gchar **) ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
-      Scierror("Error: endptr should be of type SMat");
+      Scierror("Error: endptr should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_variant_parse(type,text,limit,endptr,&error);
@@ -4735,7 +5400,7 @@ int _wrap_g_variant_parse_error_print_context(Stack stack, int rhs, int opt, int
   if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
       error = nspg_boxed_get(nsp_error, GError);
   else {
-      Scierror( "error should be a GError");
+      Scierror( "Error: error should be a GError\n");
       return RET_BUG;
   }
     ret =g_variant_parse_error_print_context(error,source_str);
@@ -4767,7 +5432,7 @@ int _wrap_g_variant_type_string_scan(Stack stack, int rhs, int opt, int lhs) /* 
     { endptr = (const gchar **) ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
-      Scierror("Error: endptr should be of type SMat");
+      Scierror("Error: endptr should be of type SMat\n");
       return RET_BUG;
     }
     ret =g_variant_type_string_scan(string,limit,endptr);
@@ -4795,6 +5460,10 @@ static OpTab glib_func[]={
  /* gerror_new g_error_new_literal */
  /* gerror_new g_error_new_valist */
  /* gsource_new g_source_new */
+  { "g_main_context_new", _wrap_g_main_context_new},
+  { "gmaincontext_new", _wrap_g_main_context_new},
+  { "g_main_loop_new", _wrap_g_main_loop_new},
+  { "gmainloop_new", _wrap_g_main_loop_new},
   { "g_variant_type_new", _wrap_g_variant_type_new},
   { "gvarianttype_new", _wrap_g_variant_type_new},
   { "g_variant_type_new_array", _wrap_g_variant_type_new_array},
@@ -4877,8 +5546,11 @@ static OpTab glib_func[]={
   { "g_hostname_to_ascii", _wrap_g_hostname_to_ascii},
   { "g_hostname_to_unicode", _wrap_g_hostname_to_unicode},
   { "g_list_alloc", _wrap_g_list_alloc},
+  { "g_main_context_default", _wrap_g_main_context_default},
   { "g_main_depth", _wrap_g_main_depth},
   { "g_main_current_source", _wrap_g_main_current_source},
+  { "g_main_context_get_thread_default", _wrap_g_main_context_get_thread_default},
+  { "g_main_context_ref_thread_default", _wrap_g_main_context_ref_thread_default},
   { "g_source_set_name_by_id", _wrap_g_source_set_name_by_id},
   { "g_source_remove", _wrap_g_source_remove},
   { "g_markup_escape_text", _wrap_g_markup_escape_text},
@@ -5057,11 +5729,13 @@ void nsp_initialize_glib_types(void)
 {
   new_type_gerror(T_BASE);
   new_type_gsource(T_BASE);
+  new_type_gmaincontext(T_BASE);
+  new_type_gmainloop(T_BASE);
   new_type_gvarianttype(T_BASE);
   new_type_gvariant(T_BASE);
 }
 
-#line 284 "codegen-3.0/glib.override"
+#line 285 "codegen-3.0/glib.override"
 
 static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
@@ -5139,4 +5813,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 5143 "glib.c"
+#line 5817 "glib.c"

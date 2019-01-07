@@ -39,6 +39,8 @@ glib.c: glib.defs
 	@$(PROG) -cp "codegen-3.0/" -p $* -o $*.c $*
 	@mv gerror.h ../../include/nsp/gtk/
 	@mv gsource.h ../../include/nsp/gtk/
+	@mv gmaincontext.h ../../include/nsp/gtk/
+	@mv gmainloop.h ../../include/nsp/gtk
 	@mv *.h ../../include/nsp/
 	@mv $*.c ../
 

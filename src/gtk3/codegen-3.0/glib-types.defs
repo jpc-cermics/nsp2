@@ -1066,11 +1066,25 @@
   (copy-func "g_error_copy")
   (release-func "g_error_free")
 )
-
 (define-boxed GSource
   (in-module "Gtk")
   (c-name "GSource")
   (gtype-id "G_TYPE_SOURCE")
+  ;; (copy-func "g_error_copy")
+  ;; (release-func "g_error_free")
+)
+
+(define-boxed GMainContext
+  (in-module "Gtk")
+  (c-name "GMainContext")
+  (gtype-id "G_TYPE_MAIN_CONTEXT")
+  ;; (copy-func "g_error_copy")
+  ;; (release-func "g_error_free")
+)
+(define-boxed GMainLoop
+  (in-module "Gtk")
+  (c-name "GMainLoop")
+  (gtype-id "G_TYPE_MAIN_LOOP")
   ;; (copy-func "g_error_copy")
   ;; (release-func "g_error_free")
 )

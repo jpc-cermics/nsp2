@@ -483,13 +483,13 @@ static int _wrap_gtk_source_buffer_ensure_highlight(NspGtkSourceBuffer *self,Sta
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_buffer_ensure_highlight(GTK_SOURCE_BUFFER(self->obj),start,end);
@@ -535,7 +535,7 @@ static int _wrap_gtk_source_buffer_create_source_mark(NspGtkSourceBuffer *self,S
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
   else {
-      Scierror( "where should be a GtkTextIter");
+      Scierror( "Error: where should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_create_source_mark(GTK_SOURCE_BUFFER(self->obj),name,category,where);
@@ -556,7 +556,7 @@ static int _wrap_gtk_source_buffer_forward_iter_to_source_mark(NspGtkSourceBuffe
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_forward_iter_to_source_mark(GTK_SOURCE_BUFFER(self->obj),iter,category);
@@ -575,7 +575,7 @@ static int _wrap_gtk_source_buffer_backward_iter_to_source_mark(NspGtkSourceBuff
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_backward_iter_to_source_mark(GTK_SOURCE_BUFFER(self->obj),iter,category);
@@ -595,7 +595,7 @@ static int _wrap_gtk_source_buffer_get_source_marks_at_iter(NspGtkSourceBuffer *
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_get_source_marks_at_iter(GTK_SOURCE_BUFFER(self->obj),iter,category);
@@ -626,13 +626,13 @@ static int _wrap_gtk_source_buffer_remove_source_marks(NspGtkSourceBuffer *self,
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_buffer_remove_source_marks(GTK_SOURCE_BUFFER(self->obj),start,end,category);
@@ -650,7 +650,7 @@ static int _wrap_gtk_source_buffer_iter_has_context_class(NspGtkSourceBuffer *se
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_iter_has_context_class(GTK_SOURCE_BUFFER(self->obj),iter,context_class);
@@ -668,7 +668,7 @@ static int _wrap_gtk_source_buffer_get_context_classes_at_iter(NspGtkSourceBuffe
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_get_context_classes_at_iter(GTK_SOURCE_BUFFER(self->obj),iter);
@@ -690,7 +690,7 @@ static int _wrap_gtk_source_buffer_iter_forward_to_context_class_toggle(NspGtkSo
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_iter_forward_to_context_class_toggle(GTK_SOURCE_BUFFER(self->obj),iter,context_class);
@@ -709,7 +709,7 @@ static int _wrap_gtk_source_buffer_iter_backward_to_context_class_toggle(NspGtkS
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_buffer_iter_backward_to_context_class_toggle(GTK_SOURCE_BUFFER(self->obj),iter,context_class);
@@ -729,13 +729,13 @@ static int _wrap_gtk_source_buffer_change_case(NspGtkSourceBuffer *self,Stack st
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_buffer_change_case(GTK_SOURCE_BUFFER(self->obj),case_type,start,end);
@@ -751,13 +751,13 @@ static int _wrap_gtk_source_buffer_join_lines(NspGtkSourceBuffer *self,Stack sta
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_buffer_join_lines(GTK_SOURCE_BUFFER(self->obj),start,end);
@@ -775,13 +775,13 @@ static int _wrap_gtk_source_buffer_sort_lines(NspGtkSourceBuffer *self,Stack sta
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_flags_get_value(GTK_SOURCE_TYPE_SORT_FLAGS, nsp_flags, &flags)==FAIL)
@@ -1164,7 +1164,7 @@ static int _wrap_gtk_source_completion_create_context(NspGtkSourceCompletion *se
   if (nspg_boxed_check(nsp_position, GTK_TYPE_TEXT_ITER))
       position = nspg_boxed_get(nsp_position, GtkTextIter);
   else {
-      Scierror( "position should be a GtkTextIter");
+      Scierror( "Error: position should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_completion_create_context(GTK_SOURCE_COMPLETION(self->obj),position);
@@ -1425,7 +1425,7 @@ static int _wrap_gtk_source_completion_context_get_iter(NspGtkSourceCompletionCo
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_completion_context_get_iter(GTK_SOURCE_COMPLETION_CONTEXT(self->obj),iter);
@@ -1675,7 +1675,7 @@ static int _wrap_gtk_source_completion_info_move_to_iter(NspGtkSourceCompletionI
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_completion_info_move_to_iter(GTK_SOURCE_COMPLETION_INFO(self->obj),GTK_TEXT_VIEW(view->obj),iter);
@@ -2544,7 +2544,7 @@ static int _wrap_gtk_source_completion_provider_get_start_iter(NspGtkSourceCompl
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_completion_provider_get_start_iter(GTK_SOURCE_COMPLETION_PROVIDER(self->obj),GTK_SOURCE_COMPLETION_CONTEXT(context->obj),GTK_SOURCE_COMPLETION_PROPOSAL(proposal->obj),iter);
@@ -2563,7 +2563,7 @@ static int _wrap_gtk_source_completion_provider_activate_proposal(NspGtkSourceCo
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_completion_provider_activate_proposal(GTK_SOURCE_COMPLETION_PROVIDER(self->obj),GTK_SOURCE_COMPLETION_PROPOSAL(proposal->obj),iter);
@@ -4095,7 +4095,7 @@ static int _wrap_gtk_source_gutter_renderer_begin(NspGtkSourceGutterRenderer *se
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_background_area, &background_area))
@@ -4105,13 +4105,13 @@ static int _wrap_gtk_source_gutter_renderer_begin(NspGtkSourceGutterRenderer *se
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_gutter_renderer_begin(GTK_SOURCE_GUTTER_RENDERER(self->obj),cr,&background_area,&cell_area,start,end);
@@ -4130,7 +4130,7 @@ static int _wrap_gtk_source_gutter_renderer_draw(NspGtkSourceGutterRenderer *sel
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
   else {
-      Scierror( "cr should be a cairo_t");
+      Scierror( "Error: cr should be a cairo_t\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_background_area, &background_area))
@@ -4140,13 +4140,13 @@ static int _wrap_gtk_source_gutter_renderer_draw(NspGtkSourceGutterRenderer *sel
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_flags_get_value(GTK_SOURCE_TYPE_GUTTER_RENDERER_STATE, nsp_state, &state)==FAIL)
@@ -4268,7 +4268,7 @@ static int _wrap_gtk_source_gutter_renderer_get_background(NspGtkSourceGutterRen
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     ret =gtk_source_gutter_renderer_get_background(GTK_SOURCE_GUTTER_RENDERER(self->obj),color);
@@ -4285,7 +4285,7 @@ static int _wrap_gtk_source_gutter_renderer_set_background(NspGtkSourceGutterRen
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
   else {
-      Scierror( "color should be a GdkRGBA");
+      Scierror( "Error: color should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_source_gutter_renderer_set_background(GTK_SOURCE_GUTTER_RENDERER(self->obj),color);
@@ -4303,7 +4303,7 @@ static int _wrap_gtk_source_gutter_renderer_activate(NspGtkSourceGutterRenderer 
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area))
@@ -4311,7 +4311,7 @@ static int _wrap_gtk_source_gutter_renderer_activate(NspGtkSourceGutterRenderer 
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     gtk_source_gutter_renderer_activate(GTK_SOURCE_GUTTER_RENDERER(self->obj),iter,&area,event);
@@ -4330,7 +4330,7 @@ static int _wrap_gtk_source_gutter_renderer_query_activatable(NspGtkSourceGutter
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area))
@@ -4338,7 +4338,7 @@ static int _wrap_gtk_source_gutter_renderer_query_activatable(NspGtkSourceGutter
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
   else {
-      Scierror( "event should be a GdkEvent");
+      Scierror( "Error: event should be a GdkEvent\n");
       return RET_BUG;
   }
     ret =gtk_source_gutter_renderer_query_activatable(GTK_SOURCE_GUTTER_RENDERER(self->obj),iter,&area,event);
@@ -4365,7 +4365,7 @@ static int _wrap_gtk_source_gutter_renderer_query_tooltip(NspGtkSourceGutterRend
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area))
@@ -4385,13 +4385,13 @@ static int _wrap_gtk_source_gutter_renderer_query_data(NspGtkSourceGutterRendere
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_flags_get_value(GTK_SOURCE_TYPE_GUTTER_RENDERER_STATE, nsp_state, &state)==FAIL)
@@ -5521,7 +5521,7 @@ static int _wrap_gtk_source_language_manager_set_search_path(NspGtkSourceLanguag
     { dirs =  ((NspSMatrix *) nsp_dirs)->S;}
   else
     {
-      Scierror("Error: dirs should be of type SMat");
+      Scierror("Error: dirs should be of type SMat\n");
       return RET_BUG;
     }
     gtk_source_language_manager_set_search_path(GTK_SOURCE_LANGUAGE_MANAGER(self->obj),dirs);
@@ -6050,7 +6050,7 @@ static int _wrap_gtk_source_mark_attributes_set_background(NspGtkSourceMarkAttri
   if (nspg_boxed_check(nsp_background, GDK_TYPE_RGBA))
       background = nspg_boxed_get(nsp_background, GdkRGBA);
   else {
-      Scierror( "background should be a GdkRGBA");
+      Scierror( "Error: background should be a GdkRGBA\n");
       return RET_BUG;
   }
     gtk_source_mark_attributes_set_background(GTK_SOURCE_MARK_ATTRIBUTES(self->obj),background);
@@ -6067,7 +6067,7 @@ static int _wrap_gtk_source_mark_attributes_get_background(NspGtkSourceMarkAttri
   if (nspg_boxed_check(nsp_background, GDK_TYPE_RGBA))
       background = nspg_boxed_get(nsp_background, GdkRGBA);
   else {
-      Scierror( "background should be a GdkRGBA");
+      Scierror( "Error: background should be a GdkRGBA\n");
       return RET_BUG;
   }
     ret =gtk_source_mark_attributes_get_background(GTK_SOURCE_MARK_ATTRIBUTES(self->obj),background);
@@ -6931,13 +6931,13 @@ static int _wrap_gtk_source_search_context_get_occurrence_position(NspGtkSourceS
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_get_occurrence_position(GTK_SOURCE_SEARCH_CONTEXT(self->obj),match_start,match_end);
@@ -6955,19 +6955,19 @@ static int _wrap_gtk_source_search_context_forward(NspGtkSourceSearchContext *se
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_forward(GTK_SOURCE_SEARCH_CONTEXT(self->obj),iter,match_start,match_end);
@@ -6987,13 +6987,13 @@ static int _wrap_gtk_source_search_context_forward_finish(NspGtkSourceSearchCont
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_forward_finish(GTK_SOURCE_SEARCH_CONTEXT(self->obj),G_ASYNC_RESULT(result->obj),match_start,match_end,&error);
@@ -7015,19 +7015,19 @@ static int _wrap_gtk_source_search_context_backward(NspGtkSourceSearchContext *s
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_backward(GTK_SOURCE_SEARCH_CONTEXT(self->obj),iter,match_start,match_end);
@@ -7047,13 +7047,13 @@ static int _wrap_gtk_source_search_context_backward_finish(NspGtkSourceSearchCon
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_backward_finish(GTK_SOURCE_SEARCH_CONTEXT(self->obj),G_ASYNC_RESULT(result->obj),match_start,match_end,&error);
@@ -7077,13 +7077,13 @@ static int _wrap_gtk_source_search_context_replace(NspGtkSourceSearchContext *se
   if (nspg_boxed_check(nsp_match_start, GTK_TYPE_TEXT_ITER))
       match_start = nspg_boxed_get(nsp_match_start, GtkTextIter);
   else {
-      Scierror( "match_start should be a GtkTextIter");
+      Scierror( "Error: match_start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_match_end, GTK_TYPE_TEXT_ITER))
       match_end = nspg_boxed_get(nsp_match_end, GtkTextIter);
   else {
-      Scierror( "match_end should be a GtkTextIter");
+      Scierror( "Error: match_end should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_search_context_replace(GTK_SOURCE_SEARCH_CONTEXT(self->obj),match_start,match_end,replace,replace_length,&error);
@@ -8350,7 +8350,7 @@ static int _wrap_gtk_source_style_scheme_manager_set_search_path(NspGtkSourceSty
     { path =  ((NspSMatrix *) nsp_path)->S;}
   else
     {
-      Scierror("Error: path should be of type SMat");
+      Scierror("Error: path should be of type SMat\n");
       return RET_BUG;
     }
     gtk_source_style_scheme_manager_set_search_path(GTK_SOURCE_STYLE_SCHEME_MANAGER(self->obj),path);
@@ -9028,13 +9028,13 @@ static int _wrap_gtk_source_view_indent_lines(NspGtkSourceView *self,Stack stack
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_view_indent_lines(GTK_SOURCE_VIEW(self->obj),start,end);
@@ -9050,13 +9050,13 @@ static int _wrap_gtk_source_view_unindent_lines(NspGtkSourceView *self,Stack sta
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
   else {
-      Scierror( "start should be a GtkTextIter");
+      Scierror( "Error: start should be a GtkTextIter\n");
       return RET_BUG;
   }
   if (nspg_boxed_check(nsp_end, GTK_TYPE_TEXT_ITER))
       end = nspg_boxed_get(nsp_end, GtkTextIter);
   else {
-      Scierror( "end should be a GtkTextIter");
+      Scierror( "Error: end should be a GtkTextIter\n");
       return RET_BUG;
   }
     gtk_source_view_unindent_lines(GTK_SOURCE_VIEW(self->obj),start,end);
@@ -9231,7 +9231,7 @@ static int _wrap_gtk_source_view_get_visual_column(NspGtkSourceView *self,Stack 
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   else {
-      Scierror( "iter should be a GtkTextIter");
+      Scierror( "Error: iter should be a GtkTextIter\n");
       return RET_BUG;
   }
     ret =gtk_source_view_get_visual_column(GTK_SOURCE_VIEW(self->obj),iter);
