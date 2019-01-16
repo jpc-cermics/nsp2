@@ -62,7 +62,7 @@
   (c-name "g_action_activate")
   (return-type "none")
   (parameters
-    '("GVariant*" "parameter"  (null-ok) (default "NULL"))
+   '("GVariant*" "parameter"  (null-ok) (default "NULL"))
   )
 )
 

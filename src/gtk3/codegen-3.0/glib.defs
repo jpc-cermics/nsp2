@@ -5263,8 +5263,8 @@
   (is-constructor-of "GMainLoop")
   (return-type "GMainLoop*")
   (parameters
-    '("GMainContext*" "context")
-    '("gboolean" "is_running")
+    '("GMainContext*" "context"  (null-ok) (default "NULL"))
+    '("gboolean" "is_running" (default "TRUE"))
   )
 )
 

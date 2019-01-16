@@ -570,17 +570,23 @@ NspGMainLoop *gmainloop_copy(NspGMainLoop *self)
 static int
 _wrap_g_main_loop_new (Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj,s_bool, t_end};
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"context",obj,NULLOBJ,-1},
+	{"is_running",s_bool,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GMainContext *context = NULL;
   NspObject *nsp_context = NULL;
-  int is_running;
+  int is_running = TRUE;
   GObject *ret; NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_context, &is_running) == FAIL) return RET_BUG;
-  if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_context, &is_running) == FAIL) return RET_BUG;
+  if ( nsp_context != NULL ) {
+    if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
       context = nspg_boxed_get(nsp_context, GMainContext);
-  else {
-      Scierror( "Error: context should be a GMainContext\n");
+    else if (! IsNone(nsp_context)) {
+      Scierror("Error: context should be a GMainContext or None\n");
       return RET_BUG;
+    }
   }
   if ((ret = (GObject *)g_main_loop_new(context,is_running))== NULL) return RET_BUG;
 
@@ -1271,7 +1277,7 @@ static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1275 "glib.c"
+#line 1281 "glib.c"
 
 
 static NspMethods gerror_methods[] = {
@@ -2641,7 +2647,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 2645 "glib.c"
+#line 2651 "glib.c"
 
 
 static int
@@ -3128,7 +3134,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 3132 "glib.c"
+#line 3138 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -5815,4 +5821,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 5819 "glib.c"
+#line 5825 "glib.c"
