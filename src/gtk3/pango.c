@@ -2595,7 +2595,7 @@ static int _wrap_pango_context_get_font_map(NspPangoContext *self,Stack stack,in
   CheckRhs(0,0);
     ret =pango_context_get_font_map(PANGO_CONTEXT(self->obj));
   nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2646,7 +2646,7 @@ static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int r
   }
     ret =pango_context_load_font(PANGO_CONTEXT(self->obj),desc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2673,7 +2673,7 @@ static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,in
   }
     ret =pango_context_load_fontset(PANGO_CONTEXT(self->obj),desc,language);
   nsp_type_pangofontset = new_type_pangofontset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3152,7 +3152,7 @@ static int _wrap_pango_font_get_font_map(NspPangoFont *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =pango_font_get_font_map(PANGO_FONT(self->obj));
   nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3855,7 +3855,7 @@ static int _wrap_pango_font_map_create_context(NspPangoFontMap *self,Stack stack
   CheckRhs(0,0);
     ret =pango_font_map_create_context(PANGO_FONT_MAP(self->obj));
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3876,7 +3876,7 @@ static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int 
   }
     ret =pango_font_map_load_font(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3904,7 +3904,7 @@ static int _wrap_pango_font_map_load_fontset(NspPangoFontMap *self,Stack stack,i
   }
     ret =pango_font_map_load_fontset(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc,language);
   nsp_type_pangofontset = new_type_pangofontset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4164,7 +4164,7 @@ static int _wrap_pango_fontset_get_font(NspPangoFontset *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&wc) == FAIL) return RET_BUG;
     ret =pango_fontset_get_font(PANGO_FONTSET(self->obj),wc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4397,10 +4397,7 @@ _wrap_pango_layout_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)pango_layout_new(PANGO_CONTEXT(context->obj)))== NULL) return RET_BUG;
 
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_pangolayout );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -4413,7 +4410,7 @@ static int _wrap_pango_layout_copy(NspPangoLayout *self,Stack stack,int rhs,int 
   CheckRhs(0,0);
     ret =pango_layout_copy(PANGO_LAYOUT(self->obj));
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4425,7 +4422,7 @@ static int _wrap_pango_layout_get_context(NspPangoLayout *self,Stack stack,int r
   CheckRhs(0,0);
     ret =pango_layout_get_context(PANGO_LAYOUT(self->obj));
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4472,7 +4469,7 @@ _wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lh
   return 0;
 }
 
-#line 4476 "pango.c"
+#line 4473 "pango.c"
 
 
 static int _wrap_pango_layout_get_text(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4505,7 +4502,7 @@ _wrap_pango_layout_set_markup(NspGObject *self, Stack stack,int rhs,int opt,int 
   pango_layout_set_markup(PANGO_LAYOUT(self->obj), markup, length);
   return 0;
 }
-#line 4509 "pango.c"
+#line 4506 "pango.c"
 
 
 #line 615 "codegen-3.0/pango.override"
@@ -4543,7 +4540,7 @@ _wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,i
   Scierror("%s: To be done \n",NspFname(stack));
   return RET_BUG;
 }
-#line 4547 "pango.c"
+#line 4544 "pango.c"
 
 
 static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4577,7 +4574,7 @@ _wrap_pango_layout_get_font_description(NspPangoLayout *self,Stack stack,int rhs
   return 1;
 }
 
-#line 4581 "pango.c"
+#line 4578 "pango.c"
 
 
 static int _wrap_pango_layout_set_width(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4854,7 +4851,7 @@ _wrap_pango_layout_index_to_pos(NspGObject *self, Stack stack,int rhs,int opt,in
     return RET_BUG;
   return 1;
 }
-#line 4858 "pango.c"
+#line 4855 "pango.c"
 
 
 static int _wrap_pango_layout_index_to_line_x(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4885,7 +4882,7 @@ _wrap_pango_layout_get_cursor_pos(NspGObject *self, Stack stack,int rhs,int opt,
 			(double)	weak_pos.width,(double) weak_pos.height) == FAIL) return RET_BUG ;
   return 2;
 }
-#line 4889 "pango.c"
+#line 4886 "pango.c"
 
 
 #line 685 "codegen-3.0/pango.override"
@@ -4906,7 +4903,7 @@ _wrap_pango_layout_move_cursor_visually(NspGObject *self, Stack stack,int rhs,in
   if ( nsp_move_doubles(stack,1,1,2,(double) new_index,(double) new_trailing)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4910 "pango.c"
+#line 4907 "pango.c"
 
 
 #line 704 "codegen-3.0/pango.override"
@@ -4924,7 +4921,7 @@ _wrap_pango_layout_xy_to_index(NspGObject *self, Stack stack,int rhs,int opt,int
   if ( nsp_move_doubles(stack,1,1,2,(double) index,(double) trailing)== FAIL)  return RET_BUG;
   return 1;
 }
-#line 4928 "pango.c"
+#line 4925 "pango.c"
 
 
 #line 720 "codegen-3.0/pango.override"
@@ -4941,7 +4938,7 @@ _wrap_pango_layout_get_extents(NspGObject *self, Stack stack,int rhs,int opt,int
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ;
   return 2;
 }
-#line 4945 "pango.c"
+#line 4942 "pango.c"
 
 
 #line 735 "codegen-3.0/pango.override"
@@ -4959,7 +4956,7 @@ _wrap_pango_layout_get_pixel_extents(NspGObject *self, Stack stack,int rhs,int o
   return 2;
 
 }
-#line 4963 "pango.c"
+#line 4960 "pango.c"
 
 
 #line 751 "codegen-3.0/pango.override"
@@ -4973,7 +4970,7 @@ _wrap_pango_layout_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 4977 "pango.c"
+#line 4974 "pango.c"
 
 
 #line 763 "codegen-3.0/pango.override"
@@ -4987,7 +4984,7 @@ _wrap_pango_layout_get_pixel_size(NspGObject *self, Stack stack,int rhs,int opt,
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4991 "pango.c"
+#line 4988 "pango.c"
 
 
 static int _wrap_pango_layout_get_baseline(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5151,7 +5148,7 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
   Scierror("%s: To be done \n",NspFname(stack));
   return RET_BUG;
 }
-#line 5155 "pango.c"
+#line 5152 "pango.c"
 
 
 int _wrap_pango_bidi_type_for_unichar(Stack stack, int rhs, int opt, int lhs) /* pango_bidi_type_for_unichar */
@@ -5448,7 +5445,7 @@ int _wrap_pango_cairo_font_map_new_for_font_type(Stack stack, int rhs, int opt, 
       return RET_BUG;
     ret =pango_cairo_font_map_new_for_font_type(fonttype);
   nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5460,7 +5457,7 @@ int _wrap_pango_cairo_font_map_get_default(Stack stack, int rhs, int opt, int lh
   CheckRhs(0,0);
     ret =pango_cairo_font_map_get_default();
   nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5518,7 +5515,7 @@ int _wrap_pango_cairo_create_context(Stack stack, int rhs, int opt, int lhs) /* 
   }
     ret =pango_cairo_create_context(cr);
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5538,7 +5535,7 @@ int _wrap_pango_cairo_create_layout(Stack stack, int rhs, int opt, int lhs) /* p
   }
     ret =pango_cairo_create_layout(cr);
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5796,4 +5793,4 @@ void nsp_initialize_pango_types(void)
   new_type_pangolayout(T_BASE);
 }
 
-#line 5800 "pango.c"
+#line 5797 "pango.c"

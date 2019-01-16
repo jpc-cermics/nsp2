@@ -862,7 +862,7 @@ int _wrap_g_irepository_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   CheckRhs(0,0);
     ret =g_irepository_get_default();
   nsp_type_girepository = new_type_girepository(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_girepository))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }

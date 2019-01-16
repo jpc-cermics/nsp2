@@ -2,6 +2,7 @@
 ;; object definitions ...
 
 ;; a structure encapsulated in a Nsp object
+
 (define-structref gvarianttype
   (in-module "Nsp")
   (parent "Object")
@@ -35,7 +36,6 @@
   )
   (gtype-id "gvariant")
 )
-
 
 ;; Enumerations and flags ...
 
@@ -1057,22 +1057,7 @@
 ;;    )
 ;;   )
 
-;; in glib
-
-(define-boxed GError
-  (in-module "Gtk")
-  (c-name "GError")
-  (gtype-id "G_TYPE_ERROR")
-  (copy-func "g_error_copy")
-  (release-func "g_error_free")
-)
-(define-boxed GSource
-  (in-module "Gtk")
-  (c-name "GSource")
-  (gtype-id "G_TYPE_SOURCE")
-  ;; (copy-func "g_error_copy")
-  ;; (release-func "g_error_free")
-)
+;; in glib gmain.h
 
 (define-boxed GMainContext
   (in-module "Gtk")
@@ -1081,6 +1066,7 @@
   ;; (copy-func "g_error_copy")
   ;; (release-func "g_error_free")
 )
+
 (define-boxed GMainLoop
   (in-module "Gtk")
   (c-name "GMainLoop")
@@ -1089,3 +1075,21 @@
   ;; (release-func "g_error_free")
 )
 
+(define-boxed GSource
+  (in-module "Gtk")
+  (c-name "GSource")
+  (gtype-id "G_TYPE_SOURCE")
+  ;; (copy-func "g_error_copy")
+  ;; (release-func "g_error_free")
+)
+
+;; typedef struct _GSourceCallbackFuncs    GSourceCallbackFuncs;
+;; typedef struct _GSourceFuncs            GSourceFuncs;
+
+(define-boxed GError
+  (in-module "Gtk")
+  (c-name "GError")
+  (gtype-id "G_TYPE_ERROR")
+  (copy-func "g_error_copy")
+  (release-func "g_error_free")
+)

@@ -782,8 +782,8 @@
   (c-name "g_application_register")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
-    '("GError**" "error")
+   '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
+   '("GError**" "error")
   )
 )
 
@@ -999,7 +999,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1021,7 +1021,7 @@
   (parameters
     '("GType" "object_type")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
     '("const-gchar*" "first_property_name")
@@ -1037,7 +1037,7 @@
     '("guint" "n_parameters")
     '("GParameter*" "parameters")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1051,7 +1051,7 @@
     '("const-gchar*" "first_property_name")
     '("va_list" "var_args")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1184,7 +1184,7 @@
   (return-type "gssize")
   (parameters
     '("gssize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1196,7 +1196,7 @@
   (parameters
     '("gssize" "count")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1217,7 +1217,7 @@
   (c-name "g_buffered_input_stream_read_byte")
   (return-type "int")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1316,18 +1316,18 @@
 
 (define-function g_cancellable_new
   (c-name "g_cancellable_new")
-  (is-constructor-of "GCancellable")
+  (is-constructor-of "GCancellable" )
   (return-type "GCancellable*")
 )
 
 (define-method is_cancelled
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_is_cancelled")
   (return-type "gboolean")
 )
 
 (define-method set_error_if_cancelled
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_set_error_if_cancelled")
   (return-type "gboolean")
   (parameters
@@ -1336,13 +1336,13 @@
 )
 
 (define-method get_fd
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_get_fd")
   (return-type "int")
 )
 
 (define-method make_pollfd
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_make_pollfd")
   (return-type "gboolean")
   (parameters
@@ -1351,7 +1351,7 @@
 )
 
 (define-method release_fd
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_release_fd")
   (return-type "none")
 )
@@ -1359,9 +1359,9 @@
 (define-function g_cancellable_source_new
   (c-name "g_cancellable_source_new")
   (is-constructor-of "GCancellableSource")
-  (return-type "GCancellableSource*")
+  (return-type "GCancellableSource*") 
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -1371,25 +1371,25 @@
 )
 
 (define-method push_current
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_push_current")
   (return-type "none")
 )
 
 (define-method pop_current
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_pop_current")
   (return-type "none")
 )
 
 (define-method reset
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_reset")
   (return-type "none")
 )
 
 (define-method connect
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_connect")
   (return-type "gulong")
   (parameters
@@ -1400,7 +1400,7 @@
 )
 
 (define-method disconnect
-  (of-object "GCancellable")
+  (of-object "GCancellable" )
   (c-name "g_cancellable_disconnect")
   (return-type "none")
   (parameters
@@ -1409,7 +1409,7 @@
 )
 
 (define-method cancel
-  (of-object "GCancellable")
+  (of-object "GCancellable" ) 
   (c-name "g_cancellable_cancel")
   (return-type "none")
 )
@@ -1778,7 +1778,7 @@
   (c-name "g_data_input_stream_read_byte")
   (return-type "guchar")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1788,7 +1788,7 @@
   (c-name "g_data_input_stream_read_int16")
   (return-type "gint16")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1798,7 +1798,7 @@
   (c-name "g_data_input_stream_read_uint16")
   (return-type "guint16")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1808,7 +1808,7 @@
   (c-name "g_data_input_stream_read_int32")
   (return-type "gint32")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1818,7 +1818,7 @@
   (c-name "g_data_input_stream_read_uint32")
   (return-type "guint32")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1828,7 +1828,7 @@
 ;;   (c-name "g_data_input_stream_read_int64")
 ;;   (return-type "gint64")
 ;;   (parameters
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -1838,7 +1838,7 @@
 ;;   (c-name "g_data_input_stream_read_uint64")
 ;;   (return-type "guint64")
 ;;   (parameters
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -1849,7 +1849,7 @@
   (return-type "char*")
   (parameters
     '("gsize*" "length")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1861,7 +1861,7 @@
   (return-type "char*")
   (parameters
     '("gsize*" "length")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1872,7 +1872,7 @@
   (return-type "none")
   (parameters
     '("gint" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1908,7 +1908,7 @@
   (parameters
     '("const-gchar*" "stop_chars")
     '("gsize*" "length")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1920,7 +1920,7 @@
   (parameters
     '("const-gchar*" "stop_chars")
     '("gint" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -1945,7 +1945,7 @@
     '("const-gchar*" "stop_chars")
     '("gssize" "stop_chars_len")
     '("gsize*" "length")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -1958,7 +1958,7 @@
     '("const-gchar*" "stop_chars")
     '("gssize" "stop_chars_len")
     '("gint" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2014,7 +2014,7 @@
   (return-type "gboolean")
   (parameters
     '("guchar" "data")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2025,7 +2025,7 @@
   (return-type "gboolean")
   (parameters
     '("gint16" "data")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2036,7 +2036,7 @@
   (return-type "gboolean")
   (parameters
     '("guint16" "data")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2047,7 +2047,7 @@
   (return-type "gboolean")
   (parameters
     '("gint32" "data")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2058,7 +2058,7 @@
   (return-type "gboolean")
   (parameters
     '("guint32" "data")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2069,7 +2069,7 @@
 ;;   (return-type "gboolean")
 ;;   (parameters
 ;;     '("gint64" "data")
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -2080,7 +2080,7 @@
 ;;   (return-type "gboolean")
 ;;   (parameters
 ;;     '("guint64" "data")
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -2091,7 +2091,7 @@
   (return-type "gboolean")
   (parameters
     '("const-char*" "str")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2149,7 +2149,7 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2171,7 +2171,7 @@
   (parameters
     '("const-gchar*" "address")
     '("gchar**" "out_guid")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2181,7 +2181,7 @@
   (return-type "gchar*")
   (parameters
     '("GBusType" "bus_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2235,7 +2235,7 @@
   (return-type "none")
   (parameters
     '("GBusType" "bus_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2255,7 +2255,7 @@
   (return-type "GDBusConnection*")
   (parameters
     '("GBusType" "bus_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2268,7 +2268,7 @@
     '("const-gchar*" "guid")
     '("GDBusConnectionFlags" "flags")
     '("GDBusAuthObserver*" "observer")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2293,7 +2293,7 @@
     '("const-gchar*" "guid")
     '("GDBusConnectionFlags" "flags")
     '("GDBusAuthObserver*" "observer")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2305,7 +2305,7 @@
     '("const-gchar*" "address")
     '("GDBusConnectionFlags" "flags")
     '("GDBusAuthObserver*" "observer")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2329,7 +2329,7 @@
     '("const-gchar*" "address")
     '("GDBusConnectionFlags" "flags")
     '("GDBusAuthObserver*" "observer")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2403,7 +2403,7 @@
   (c-name "g_dbus_connection_close")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2424,7 +2424,7 @@
   (c-name "g_dbus_connection_close_sync")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2434,7 +2434,7 @@
   (c-name "g_dbus_connection_flush")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2455,7 +2455,7 @@
   (c-name "g_dbus_connection_flush_sync")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2481,7 +2481,7 @@
     '("GDBusSendMessageFlags" "flags")
     '("gint" "timeout_msec")
     '("volatile-guint32*" "out_serial")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2506,7 +2506,7 @@
     '("GDBusSendMessageFlags" "flags")
     '("gint" "timeout_msec")
     '("volatile-guint32*" "out_serial")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2538,7 +2538,7 @@
     '("const-GVariantType*" "reply_type")
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2567,7 +2567,7 @@
     '("const-GVariantType*" "reply_type")
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -2587,7 +2587,7 @@
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
     '("GUnixFDList*" "fd_list")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -2621,7 +2621,7 @@
     '("gint" "timeout_msec")
     '("GUnixFDList*" "fd_list")
     '("GUnixFDList**" "out_fd_list")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -3973,7 +3973,7 @@
     '("GDBusProxyTypeFunc" "get_proxy_type_func")
     '("gpointer" "get_proxy_type_user_data")
     '("GDestroyNotify" "get_proxy_type_destroy_notify")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4001,7 +4001,7 @@
     '("GDBusProxyTypeFunc" "get_proxy_type_func")
     '("gpointer" "get_proxy_type_user_data")
     '("GDestroyNotify" "get_proxy_type_destroy_notify")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4017,7 +4017,7 @@
     '("GDBusProxyTypeFunc" "get_proxy_type_func")
     '("gpointer" "get_proxy_type_user_data")
     '("GDestroyNotify" "get_proxy_type_destroy_notify")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4045,7 +4045,7 @@
     '("GDBusProxyTypeFunc" "get_proxy_type_func")
     '("gpointer" "get_proxy_type_user_data")
     '("GDestroyNotify" "get_proxy_type_destroy_notify")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4247,7 +4247,7 @@
     '("const-gchar*" "name")
     '("const-gchar*" "object_path")
     '("const-gchar*" "interface_name")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4274,7 +4274,7 @@
     '("const-gchar*" "name")
     '("const-gchar*" "object_path")
     '("const-gchar*" "interface_name")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4289,7 +4289,7 @@
     '("const-gchar*" "name")
     '("const-gchar*" "object_path")
     '("const-gchar*" "interface_name")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4316,7 +4316,7 @@
     '("const-gchar*" "name")
     '("const-gchar*" "object_path")
     '("const-gchar*" "interface_name")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4421,7 +4421,7 @@
     '("GVariant*" "parameters")
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4446,7 +4446,7 @@
     '("GVariant*" "parameters")
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4461,7 +4461,7 @@
     '("GDBusCallFlags" "flags")
     '("gint" "timeout_msec")
     '("GUnixFDList*" "fd_list")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4489,7 +4489,7 @@
     '("gint" "timeout_msec")
     '("GUnixFDList*" "fd_list")
     '("GUnixFDList**" "out_fd_list")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4512,7 +4512,7 @@
     '("GDBusServerFlags" "flags")
     '("const-gchar*" "guid")
     '("GDBusAuthObserver*" "observer")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -4694,7 +4694,7 @@
   (c-name "g_drive_poll_for_media")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4750,7 +4750,7 @@
   (parameters
     '("GDriveStartFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4779,7 +4779,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4802,7 +4802,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -4910,8 +4910,6 @@
   (c-name "g_emblemed_icon_clear_emblems")
   (return-type "none")
 )
-
-
 
 ;; From gfile.h
 
@@ -5110,7 +5108,7 @@
   (c-name "g_file_read")
   (return-type "GFileInputStream*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5121,7 +5119,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5143,7 +5141,7 @@
   (return-type "GFileOutputStream*")
   (parameters
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5154,7 +5152,7 @@
   (return-type "GFileOutputStream*")
   (parameters
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5167,7 +5165,7 @@
     '("const-char*" "etag")
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5179,7 +5177,7 @@
   (parameters
     '("GFileCreateFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5202,7 +5200,7 @@
   (parameters
     '("GFileCreateFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5227,7 +5225,7 @@
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5248,7 +5246,7 @@
   (c-name "g_file_open_readwrite")
   (return-type "GFileIOStream*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5259,7 +5257,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5281,7 +5279,7 @@
   (return-type "GFileIOStream*")
   (parameters
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5293,7 +5291,7 @@
   (parameters
     '("GFileCreateFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5317,7 +5315,7 @@
     '("const-char*" "etag")
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5331,7 +5329,7 @@
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5352,7 +5350,7 @@
   (c-name "g_file_query_exists")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -5362,7 +5360,7 @@
   (return-type "GFileType")
   (parameters
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -5373,7 +5371,7 @@
   (parameters
     '("const-char*" "attributes")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5386,7 +5384,7 @@
     '("const-char*" "attributes")
     '("GFileQueryInfoFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5408,7 +5406,7 @@
   (return-type "GFileInfo*")
   (parameters
     '("const-char*" "attributes")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5420,7 +5418,7 @@
   (parameters
     '("const-char*" "attributes")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5441,7 +5439,7 @@
   (c-name "g_file_find_enclosing_mount")
   (return-type "GMount*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5452,7 +5450,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5475,7 +5473,7 @@
   (parameters
     '("const-char*" "attributes")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5488,7 +5486,7 @@
     '("const-char*" "attributes")
     '("GFileQueryInfoFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5510,7 +5508,7 @@
   (return-type "GFile*")
   (parameters
     '("const-char*" "display_name")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5522,7 +5520,7 @@
   (parameters
     '("const-char*" "display_name")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5543,7 +5541,7 @@
   (c-name "g_file_delete")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5555,7 +5553,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5577,7 +5575,7 @@
   (c-name "g_file_trash")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5589,7 +5587,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5613,7 +5611,7 @@
   (parameters
     '("GFile*" "destination")
     '("GFileCopyFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileProgressCallback" "progress_callback")
     '("gpointer" "progress_callback_data")
     '("GError**" "error")
@@ -5628,7 +5626,7 @@
     '("GFile*" "destination")
     '("GFileCopyFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileProgressCallback" "progress_callback")
     '("gpointer" "progress_callback_data")
     '("GAsyncReadyCallback" "callback")
@@ -5653,7 +5651,7 @@
   (parameters
     '("GFile*" "destination")
     '("GFileCopyFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileProgressCallback" "progress_callback")
     '("gpointer" "progress_callback_data")
     '("GError**" "error")
@@ -5665,7 +5663,7 @@
   (c-name "g_file_make_directory")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5677,7 +5675,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5699,7 +5697,7 @@
   (c-name "g_file_make_directory_with_parents")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5710,7 +5708,7 @@
   (return-type "gboolean")
   (parameters
     '("const-char*" "symlink_value")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5720,7 +5718,7 @@
   (c-name "g_file_query_settable_attributes")
   (return-type "GFileAttributeInfoList*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5730,7 +5728,7 @@
   (c-name "g_file_query_writable_namespaces")
   (return-type "GFileAttributeInfoList*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5744,7 +5742,7 @@
     '("GFileAttributeType" "type")
     '("gpointer" "value_p")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5756,7 +5754,7 @@
   (parameters
     '("GFileInfo*" "info")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5769,7 +5767,7 @@
     '("GFileInfo*" "info")
     '("GFileQueryInfoFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5794,7 +5792,7 @@
     '("const-char*" "attribute")
     '("const-char*" "value")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5807,7 +5805,7 @@
     '("const-char*" "attribute")
     '("const-char*" "value")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5820,7 +5818,7 @@
     '("const-char*" "attribute")
     '("guint32" "value")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5833,7 +5831,7 @@
     '("const-char*" "attribute")
     '("gint32" "value")
     '("GFileQueryInfoFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5846,7 +5844,7 @@
 ;;     '("const-char*" "attribute")
 ;;     '("guint64" "value")
 ;;     '("GFileQueryInfoFlags" "flags")
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -5859,7 +5857,7 @@
 ;;     '("const-char*" "attribute")
 ;;     '("gint64" "value")
 ;;     '("GFileQueryInfoFlags" "flags")
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -5871,7 +5869,7 @@
   (parameters
     '("GMountMountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5894,7 +5892,7 @@
   (parameters
     '("GMountMountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5917,7 +5915,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5940,7 +5938,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -5963,7 +5961,7 @@
   (parameters
     '("GFile*" "destination")
     '("GFileCopyFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5974,7 +5972,7 @@
   (return-type "GFileMonitor*")
   (parameters
     '("GFileMonitorFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5985,7 +5983,7 @@
   (return-type "GFileMonitor*")
   (parameters
     '("GFileMonitorFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -5996,7 +5994,7 @@
   (return-type "GFileMonitor*")
   (parameters
     '("GFileMonitorFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -6008,7 +6006,7 @@
   (return-type "gboolean")
   (parameters
     '("GFileMeasureFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileMeasureProgressCallback" "progress_callback")
     '("gpointer" "progress_data")
     '("guint64*" "disk_usage")
@@ -6026,7 +6024,7 @@
   (parameters
     '("GFileMeasureFlags" "flags")
     '("gint" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileMeasureProgressCallback" "progress_callback")
     '("gpointer" "progress_data")
     '("GAsyncReadyCallback" "callback")
@@ -6055,7 +6053,7 @@
   (parameters
     '("GDriveStartFlags" "flags")
     '("GMountOperation*" "start_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6078,7 +6076,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6099,7 +6097,7 @@
   (c-name "g_file_poll_mountable")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6120,7 +6118,7 @@
   (c-name "g_file_query_default_handler")
   (return-type "GAppInfo*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -6130,7 +6128,7 @@
   (c-name "g_file_load_contents")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("char**" "contents")
     '("gsize*" "length")
     '("char**" "etag_out")
@@ -6143,7 +6141,7 @@
   (c-name "g_file_load_contents_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6167,7 +6165,7 @@
   (c-name "g_file_load_partial_contents_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GFileReadMoreCallback" "read_more_callback")
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
@@ -6198,7 +6196,7 @@
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
     '("char**" "new_etag")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -6213,7 +6211,7 @@
     '("const-char*" "etag")
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6229,7 +6227,7 @@
     '("const-char*" "etag")
     '("gboolean" "make_backup")
     '("GFileCreateFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6319,7 +6317,7 @@
   (c-name "g_file_enumerator_next_file")
   (return-type "GFileInfo*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -6329,7 +6327,7 @@
   (c-name "g_file_enumerator_close")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -6341,7 +6339,7 @@
   (parameters
     '("int" "num_files")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -6363,7 +6361,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7065,7 +7063,7 @@
   (return-type "GFileInfo*")
   (parameters
     '("const-char*" "attributes")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7077,7 +7075,7 @@
   (parameters
     '("const-char*" "attributes")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7108,7 +7106,7 @@
   (return-type "GFileInfo*")
   (parameters
     '("const-char*" "attributes")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7120,7 +7118,7 @@
   (parameters
     '("const-char*" "attributes")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7240,7 +7238,7 @@
   (return-type "GFileInfo*")
   (parameters
     '("const-char*" "attributes")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7252,7 +7250,7 @@
   (parameters
     '("const-char*" "attributes")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7677,7 +7675,7 @@
   (c-name "g_initable_init")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7687,7 +7685,7 @@
   (return-type "gpointer")
   (parameters
     '("GType" "object_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
     '("const-gchar*" "first_property_name")
   )
@@ -7701,7 +7699,7 @@
     '("GType" "object_type")
     '("guint" "n_parameters")
     '("GParameter*" "parameters")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7714,7 +7712,7 @@
     '("GType" "object_type")
     '("const-gchar*" "first_property_name")
     '("va_list" "var_args")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7750,7 +7748,7 @@
     '("void*" "buffer")
     '("gsize" "count")
     '("gsize*" "bytes_read")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7762,7 +7760,7 @@
   (return-type "GBytes*")
   (parameters
     '("gsize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7773,7 +7771,7 @@
   (return-type "gssize")
   (parameters
     '("gsize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7783,7 +7781,7 @@
   (c-name "g_input_stream_close")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -7796,7 +7794,7 @@
     '("void*" "buffer")
     '("gsize" "count")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7820,7 +7818,7 @@
   (parameters
     '("gsize" "count")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7844,7 +7842,7 @@
   (parameters
     '("gsize" "count")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -7866,7 +7864,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -8523,7 +8521,7 @@
     '("GIOStream*" "stream2")
     '("GIOStreamSpliceFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -8543,7 +8541,7 @@
   (c-name "g_io_stream_close")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -8554,7 +8552,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -8617,7 +8615,7 @@
   (parameters
     '("int" "size")
     '("char**" "type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -8628,7 +8626,7 @@
   (return-type "none")
   (parameters
     '("int" "size")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9385,7 +9383,7 @@
   (parameters
     '("GMountMountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9407,7 +9405,7 @@
   (return-type "none")
   (parameters
     '("gboolean" "force_rescan")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9429,7 +9427,7 @@
   (return-type "gchar**")
   (parameters
     '("gboolean" "force_rescan")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -9459,7 +9457,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9482,7 +9480,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9719,7 +9717,7 @@
   (return-type "gboolean")
   (parameters
     '("GSocketConnectable*" "connectable")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -9730,7 +9728,7 @@
   (return-type "none")
   (parameters
     '("GSocketConnectable*" "connectable")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -9944,7 +9942,7 @@
   (parameters
    '("const-gchar*" "buffer")
     '("gsize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -9957,7 +9955,7 @@
     '("const-void*" "buffer")
     '("gsize" "count")
     '("gsize*" "bytes_written")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -9969,7 +9967,7 @@
   (return-type "gboolean")
   (parameters
     '("gsize*" "bytes_written")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
     '("const-gchar*" "format")
   )
@@ -9983,7 +9981,7 @@
   (return-type "gboolean")
   (parameters
     '("gsize*" "bytes_written")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
     '("const-gchar*" "format")
     '("va_list" "args")
@@ -9997,7 +9995,7 @@
   (return-type "gssize")
   (parameters
     '("GBytes*" "bytes")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10009,7 +10007,7 @@
   (parameters
     '("GInputStream*" "source")
     '("GOutputStreamSpliceFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10019,7 +10017,7 @@
   (c-name "g_output_stream_flush")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10029,7 +10027,7 @@
   (c-name "g_output_stream_close")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10042,7 +10040,7 @@
     '("const-void*" "buffer")
     '("gsize" "count")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10066,7 +10064,7 @@
   (parameters
     '("GBytes*" "bytes")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10091,7 +10089,7 @@
     '("GInputStream*" "source")
     '("GOutputStreamSpliceFlags" "flags")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10113,7 +10111,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10135,7 +10133,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10198,7 +10196,7 @@
   (c-name "g_permission_acquire")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10208,7 +10206,7 @@
   (c-name "g_permission_acquire_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10229,7 +10227,7 @@
   (c-name "g_permission_release")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10239,7 +10237,7 @@
   (c-name "g_permission_release_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10310,7 +10308,7 @@
   (c-name "g_pollable_input_stream_create_source")
   (return-type "GSource*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -10321,7 +10319,7 @@
   (parameters
     '("void*" "buffer")
     '("gsize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10352,7 +10350,7 @@
   (c-name "g_pollable_output_stream_create_source")
   (return-type "GSource*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -10363,7 +10361,7 @@
   (parameters
     '("const-void*" "buffer")
     '("gsize" "count")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10388,7 +10386,7 @@
   (parameters
     '("gpointer" "pollable_stream")
     '("GSource*" "child_source")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -10400,7 +10398,7 @@
 ;;     '("void*" "buffer")
 ;;     '("gsize" "count")
 ;;     '("gboolean" "blocking")
-;;     '("GCancellable*" "cancellable")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
 ;;     '("GError**" "error")
 ;;   )
 ;; )
@@ -10413,7 +10411,7 @@
     '("const-void*" "buffer")
     '("gsize" "count")
     '("gboolean" "blocking")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10427,7 +10425,7 @@
     '("gsize" "count")
     '("gboolean" "blocking")
     '("gsize*" "bytes_written")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10476,7 +10474,7 @@
   (parameters
     '("GIOStream*" "connection")
     '("GProxyAddress*" "proxy_address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10488,7 +10486,7 @@
   (parameters
     '("GIOStream*" "connection")
     '("GProxyAddress*" "proxy_address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10613,7 +10611,7 @@
   (return-type "gchar**")
   (parameters
     '("const-gchar*" "uri")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10624,7 +10622,7 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "uri")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10699,7 +10697,7 @@
   (return-type "GList*")
   (parameters
     '("const-gchar*" "hostname")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10710,7 +10708,7 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "hostname")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10740,7 +10738,7 @@
   (return-type "gchar*")
   (parameters
     '("GInetAddress*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10751,7 +10749,7 @@
   (return-type "none")
   (parameters
     '("GInetAddress*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10775,7 +10773,7 @@
     '("const-gchar*" "service")
     '("const-gchar*" "protocol")
     '("const-gchar*" "domain")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10788,7 +10786,7 @@
     '("const-gchar*" "service")
     '("const-gchar*" "protocol")
     '("const-gchar*" "domain")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -10812,7 +10810,7 @@
   (parameters
     '("const-gchar*" "rrname")
     '("GResolverRecordType" "record_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -10825,7 +10823,7 @@
   (parameters
     '("const-gchar*" "rrname")
     '("GResolverRecordType" "record_type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -11067,7 +11065,7 @@
   (parameters
     '("goffset" "offset")
     '("GSeekType" "type")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -11084,7 +11082,7 @@
   (return-type "gboolean")
   (parameters
     '("goffset" "offset")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -11963,7 +11961,7 @@
   (available "GLIB_AVAILABLE_IN_2_32")
   (return-type "none")
   (parameters
-    '("GCancellable*" "check_cancellable")
+    '("GCancellable*" "check_cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -12001,7 +11999,7 @@
   (parameters
     '("GSimpleAsyncThreadFunc" "func")
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -12455,7 +12453,7 @@
   (return-type "gboolean")
   (parameters
     '("GIOCondition" "condition")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12468,7 +12466,7 @@
   (parameters
     '("GIOCondition" "condition")
     '("gint64" "timeout")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12478,7 +12476,7 @@
   (c-name "g_socket_accept")
   (return-type "GSocket*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12499,7 +12497,7 @@
   (parameters
     '("gchar*" "buffer")
     '("gsize" "size")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12512,7 +12510,7 @@
     '("GSocketAddress**" "address")
     '("gchar*" "buffer")
     '("gsize" "size")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12524,7 +12522,7 @@
   (parameters
     '("const-gchar*" "buffer")
     '("gsize" "size")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12537,7 +12535,7 @@
     '("GSocketAddress*" "address")
     '("const-gchar*" "buffer")
     '("gsize" "size")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12553,7 +12551,7 @@
     '("GSocketControlMessage***" "messages")
     '("gint*" "num_messages")
     '("gint*" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12569,7 +12567,7 @@
     '("GSocketControlMessage**" "messages")
     '("gint" "num_messages")
     '("gint" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12606,7 +12604,7 @@
   (return-type "GSource*")
   (parameters
     '("GIOCondition" "condition")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
   )
 )
 
@@ -12633,7 +12631,7 @@
     '("gchar*" "buffer")
     '("gsize" "size")
     '("gboolean" "blocking")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12646,7 +12644,7 @@
     '("const-gchar*" "buffer")
     '("gsize" "size")
     '("gboolean" "blocking")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12733,7 +12731,7 @@
   (c-name "g_socket_address_enumerator_next")
   (return-type "GSocketAddress*")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12743,7 +12741,7 @@
   (c-name "g_socket_address_enumerator_next_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -12921,7 +12919,7 @@
   (return-type "GSocketConnection*")
   (parameters
     '("GSocketConnectable*" "connectable")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12933,7 +12931,7 @@
   (parameters
     '("const-gchar*" "host_and_port")
     '("guint16" "default_port")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12945,7 +12943,7 @@
   (parameters
     '("const-gchar*" "domain")
     '("const-gchar*" "service")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12958,7 +12956,7 @@
   (parameters
     '("const-gchar*" "uri")
     '("guint16" "default_port")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -12969,7 +12967,7 @@
   (return-type "none")
   (parameters
     '("GSocketConnectable*" "connectable")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -12992,7 +12990,7 @@
   (parameters
     '("const-gchar*" "host_and_port")
     '("guint16" "default_port")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13015,7 +13013,7 @@
   (parameters
     '("const-gchar*" "domain")
     '("const-gchar*" "service")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13038,7 +13036,7 @@
   (parameters
     '("const-gchar*" "uri")
     '("guint16" "default_port")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13107,7 +13105,7 @@
   (return-type "gboolean")
   (parameters
     '("GSocketAddress*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -13119,7 +13117,7 @@
   (return-type "none")
   (parameters
     '("GSocketAddress*" "address")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13310,7 +13308,7 @@
   (return-type "GSocket*")
   (parameters
     '("GObject**" "source_object")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -13320,7 +13318,7 @@
   (c-name "g_socket_listener_accept_socket_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13343,7 +13341,7 @@
   (return-type "GSocketConnection*")
   (parameters
     '("GObject**" "source_object")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -13353,7 +13351,7 @@
   (c-name "g_socket_listener_accept_async")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13556,7 +13554,7 @@
   (available "GLIB_AVAILABLE_IN_2_40")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -13567,7 +13565,7 @@
   (available "GLIB_AVAILABLE_IN_2_40")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13590,7 +13588,7 @@
   (available "GLIB_AVAILABLE_IN_2_40")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -13601,7 +13599,7 @@
   (available "GLIB_AVAILABLE_IN_2_40")
   (return-type "none")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13667,7 +13665,7 @@
   (return-type "gboolean")
   (parameters
     '("GBytes*" "stdin_buf")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GBytes**" "stdout_buf")
     '("GBytes**" "stderr_buf")
     '("GError**" "error")
@@ -13681,7 +13679,7 @@
   (return-type "none")
   (parameters
     '("GBytes*" "stdin_buf")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13707,7 +13705,7 @@
   (return-type "gboolean")
   (parameters
     '("const-char*" "stdin_buf")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("char**" "stdout_buf")
     '("char**" "stderr_buf")
     '("GError**" "error")
@@ -13721,7 +13719,7 @@
   (return-type "none")
   (parameters
     '("const-char*" "stdin_buf")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -13941,7 +13939,7 @@
   (return-type "GTask*")
   (parameters
     '("gpointer" "source_object")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "callback_data")
   )
@@ -14047,7 +14045,7 @@
   (of-object "GTask")
   (c-name "g_task_get_cancellable")
   (available "GLIB_AVAILABLE_IN_2_36")
-  (return-type "GCancellable*")
+  (return-type "GCancellable*" )
 )
 
 (define-method get_check_cancellable
@@ -14728,7 +14726,7 @@
   (c-name "g_tls_connection_handshake")
   (return-type "gboolean")
   (parameters
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14739,7 +14737,7 @@
   (return-type "none")
   (parameters
     '("int" "io_priority")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -14789,7 +14787,7 @@
     '("GSocketConnectable*" "identity")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseVerifyFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14804,7 +14802,7 @@
     '("GSocketConnectable*" "identity")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseVerifyFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -14837,7 +14835,7 @@
     '("const-gchar*" "handle")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14850,7 +14848,7 @@
     '("const-gchar*" "handle")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -14874,7 +14872,7 @@
     '("GTlsCertificate*" "certificate")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14887,7 +14885,7 @@
     '("GTlsCertificate*" "certificate")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -14911,7 +14909,7 @@
     '("GByteArray*" "issuer_raw_dn")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14924,7 +14922,7 @@
     '("GByteArray*" "issuer_raw_dn")
     '("GTlsInteraction*" "interaction")
     '("GTlsDatabaseLookupFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -14974,7 +14972,7 @@
   (return-type "GTlsInteractionResult")
   (parameters
     '("GTlsPassword*" "password")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14985,7 +14983,7 @@
   (return-type "GTlsInteractionResult")
   (parameters
     '("GTlsPassword*" "password")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -14996,7 +14994,7 @@
   (return-type "none")
   (parameters
     '("GTlsPassword*" "password")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -15020,7 +15018,7 @@
   (parameters
     '("GTlsConnection*" "connection")
     '("GTlsCertificateRequestFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -15033,7 +15031,7 @@
   (parameters
     '("GTlsConnection*" "connection")
     '("GTlsCertificateRequestFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GError**" "error")
   )
 )
@@ -15046,7 +15044,7 @@
   (parameters
     '("GTlsConnection*" "connection")
     '("GTlsCertificateRequestFlags" "flags")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -15299,7 +15297,7 @@
   (parameters
     '("GMountMountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )
@@ -15343,7 +15341,7 @@
   (parameters
     '("GMountUnmountFlags" "flags")
     '("GMountOperation*" "mount_operation")
-    '("GCancellable*" "cancellable")
+    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
     '("GAsyncReadyCallback" "callback")
     '("gpointer" "user_data")
   )

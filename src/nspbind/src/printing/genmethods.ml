@@ -92,6 +92,16 @@ let constructor_call_tmpl_std =
   "  if ((ret = $(cname)($(arglist)))== NULL) return RET_BUG;\n"
 ;;
 
+(* We have three possible function here, we return 
+ *  - an object of type  nsp_type_$(typename_dc) if using 
+ *       nsp_ret = (NspObject * ) gobject_create(NVOID,ret,(NspTypeBase * ) nsp_type_$(typename_dc) );
+ *  - an object of most specialized gtype (if associated nsp_type if registered) or a GObject if using 
+ *       nsp_ret = (NspObject * ) nspgobject_new(NVOID,(GObject * )ret);
+ *  - an object of most specialized gtype (if associated nsp_type if registered) or a  nsp_type_$(typename_dc) if using 
+ *       nsp_ret = (NspObject * ) nspgobject_new_with_possible_type(NVOID,(GObject * ) ret,nsp_type_$(typename_dc))
+ *  we choose the third solution here 
+ *)
+
 let constructor_tmpl_std_gtkclass =
   "static int\n" ^
   "_wrap_$(cname) (Stack stack, int rhs, int opt, int lhs)\n" ^
@@ -103,10 +113,7 @@ let constructor_tmpl_std_gtkclass =
   "$(codecallf)" ^
   "$(codeafter)\n" ^
   "  nsp_type_$(typename_dc) = new_type_$(typename_dc)(T_BASE);\n" ^
-  "  /* prefer most specialized class than the one specified indef file\n" ^
-  "   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_$(typename_dc) );\n " ^
-  "   */\n" ^
-  "  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);\n" ^
+  "  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_$(typename_dc));\n" ^
   "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
   "  MoveObj(stack,1,nsp_ret);\n" ^
   "  return 1;\n" ^

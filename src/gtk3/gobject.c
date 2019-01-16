@@ -357,7 +357,6 @@ NspGObject  *GetGObject(Stack stack, int i)
   return M;
 }
 
-
 /*
  * constructor for gobject or derived classes
  */
@@ -1277,7 +1276,9 @@ int nspgobject_check(void *value, void *type)
  * creates a new nsp object which belong to a class derived from #NspGObject.
  * The nsp_type to use is extracted from the GType of the given GObject,
  * this is only possible if the associated nsp type was registered using
- * register_nsp_type_in_gtype().
+ * register_nsp_type_in_gtype(). If the associated nsp type is not registered 
+ * then parent type is tried. If the parent type is not registered then a 
+ *  GObject is created
  *
  * Returns: a new #NspGObject
  **/
@@ -1306,6 +1307,35 @@ NspGObject *nspgobject_new(const char *name, GObject *obj)
 	  Sciprintf("\ta GObject is created\n");
 	}
     }
+  return gobject_create(name,obj,type);
+}
+
+/**
+ * nspgobject_new_with_possible_type:
+ * @name: a string
+ * @obj: a #GObject
+ *
+ * creates a new nsp object which belong to a class derived from #NspGObject.
+ * The nsp_type to use is extracted from the GType of the given GObject,
+ * this is only possible if the associated nsp type was registered using
+ * register_nsp_type_in_gtype(). If the associated nsp type is not registered 
+ * then given type is used.
+ *
+ * Returns: a new #NspGObject
+ **/
+
+NspGObject *nspgobject_new_with_possible_type(const char *name, GObject *obj, NspTypeBase *possible_type)
+{
+  GType gtype; 
+  NspTypeBase *type;
+  if ( obj == NULL)
+    {
+      /* Sciprintf("Error: no gobject available in gobject_create, returning None\n"); */
+      return (NspGObject *) nsp_none_create(NVOID,NULL);
+    }
+  gtype = G_OBJECT_TYPE(G_OBJECT(obj));
+  type = nsp_type_from_gtype(gtype);
+  if ( type == NULL) type = possible_type;
   return gobject_create(name,obj,type);
 }
 

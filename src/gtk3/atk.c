@@ -796,7 +796,7 @@ static int _wrap_atk_component_ref_accessible_at_point(NspAtkComponent *self,Sta
       return RET_BUG;
     ret =atk_component_ref_accessible_at_point(ATK_COMPONENT(self->obj),x,y,coord_type);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -1772,7 +1772,7 @@ static int _wrap_atk_hypertext_get_link(NspAtkHypertext *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&link_index) == FAIL) return RET_BUG;
     ret =atk_hypertext_get_link(ATK_HYPERTEXT(self->obj),link_index);
   nsp_type_atkhyperlink = new_type_atkhyperlink(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkhyperlink))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2478,7 +2478,7 @@ static int _wrap_atk_selection_ref_selection(NspAtkSelection *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
     ret =atk_selection_ref_selection(ATK_SELECTION(self->obj),i);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2965,7 +2965,7 @@ static int _wrap_atk_table_ref_at(NspAtkTable *self,Stack stack,int rhs,int opt,
   if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
     ret =atk_table_ref_at(ATK_TABLE(self->obj),row,column);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3015,7 +3015,7 @@ static int _wrap_atk_table_get_caption(NspAtkTable *self,Stack stack,int rhs,int
   CheckRhs(0,0);
     ret =atk_table_get_caption(ATK_TABLE(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3040,7 +3040,7 @@ static int _wrap_atk_table_get_column_header(NspAtkTable *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
     ret =atk_table_get_column_header(ATK_TABLE(self->obj),column);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3065,7 +3065,7 @@ static int _wrap_atk_table_get_row_header(NspAtkTable *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
     ret =atk_table_get_row_header(ATK_TABLE(self->obj),row);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3077,7 +3077,7 @@ static int _wrap_atk_table_get_summary(NspAtkTable *self,Stack stack,int rhs,int
   CheckRhs(0,0);
     ret =atk_table_get_summary(ATK_TABLE(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4001,7 +4001,7 @@ static int _wrap_atk_hyperlink_get_object(NspAtkHyperlink *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
     ret =atk_hyperlink_get_object(ATK_HYPERLINK(self->obj),i);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4276,7 +4276,7 @@ static int _wrap_atk_object_get_parent(NspAtkObject *self,Stack stack,int rhs,in
   CheckRhs(0,0);
     ret =atk_object_get_parent(ATK_OBJECT(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4299,7 +4299,7 @@ static int _wrap_atk_object_ref_accessible_child(NspAtkObject *self,Stack stack,
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
     ret =atk_object_ref_accessible_child(ATK_OBJECT(self->obj),i);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4311,7 +4311,7 @@ static int _wrap_atk_object_ref_relation_set(NspAtkObject *self,Stack stack,int 
   CheckRhs(0,0);
     ret =atk_object_ref_relation_set(ATK_OBJECT(self->obj));
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelationset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4332,7 +4332,7 @@ static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs
   CheckRhs(0,0);
     ret =atk_object_ref_state_set(ATK_OBJECT(self->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4611,10 +4611,7 @@ _wrap_atk_no_op_object_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)atk_no_op_object_new(G_OBJECT(obj->obj)))== NULL) return RET_BUG;
 
   nsp_type_atknoopobject = new_type_atknoopobject(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobject );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atknoopobject);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -4828,7 +4825,7 @@ static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
     ret =atk_object_factory_create_accessible(ATK_OBJECT_FACTORY(self->obj),G_OBJECT(obj->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5053,10 +5050,7 @@ _wrap_atk_no_op_object_factory_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)atk_no_op_object_factory_new())== NULL) return RET_BUG;
 
   nsp_type_atknoopobjectfactory = new_type_atknoopobjectfactory(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobjectfactory );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atknoopobjectfactory);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -5298,7 +5292,7 @@ static int _wrap_atk_registry_get_factory(NspAtkRegistry *self,Stack stack,int r
       return RET_BUG;
     ret =atk_registry_get_factory(ATK_REGISTRY(self->obj),type);
   nsp_type_atkobjectfactory = new_type_atkobjectfactory(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobjectfactory))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5551,7 +5545,7 @@ _wrap_atk_relation_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 5555 "atk.c"
+#line 5549 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -5775,10 +5769,7 @@ _wrap_atk_relation_set_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)atk_relation_set_new())== NULL) return RET_BUG;
 
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atkrelationset );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelationset);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -5834,7 +5825,7 @@ static int _wrap_atk_relation_set_get_relation(NspAtkRelationSet *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
     ret =atk_relation_set_get_relation(ATK_RELATION_SET(self->obj),i);
   nsp_type_atkrelation = new_type_atkrelation(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelation))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5850,7 +5841,7 @@ static int _wrap_atk_relation_set_get_relation_by_type(NspAtkRelationSet *self,S
       return RET_BUG;
     ret =atk_relation_set_get_relation_by_type(ATK_RELATION_SET(self->obj),relationship);
   nsp_type_atkrelation = new_type_atkrelation(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelation))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6131,7 +6122,7 @@ static int _wrap_atk_state_set_and_sets(NspAtkStateSet *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
     ret =atk_state_set_and_sets(ATK_STATE_SET(self->obj),ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6145,7 +6136,7 @@ static int _wrap_atk_state_set_or_sets(NspAtkStateSet *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
     ret =atk_state_set_or_sets(ATK_STATE_SET(self->obj),ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6159,7 +6150,7 @@ static int _wrap_atk_state_set_xor_sets(NspAtkStateSet *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
     ret =atk_state_set_xor_sets(ATK_STATE_SET(self->obj),ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6392,7 +6383,7 @@ int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs) /* ge
   CheckRhs(0,0);
     ret =atk_get_default_registry();
   nsp_type_atkregistry = new_type_atkregistry(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkregistry))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6484,7 +6475,7 @@ int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs) /* get_root */
   CheckRhs(0,0);
     ret =atk_get_root();
   nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6611,4 +6602,4 @@ void nsp_initialize_atk_types(void)
   new_type_atkutil(T_BASE);
 }
 
-#line 6615 "atk.c"
+#line 6606 "atk.c"

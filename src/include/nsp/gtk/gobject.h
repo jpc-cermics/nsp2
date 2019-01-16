@@ -86,6 +86,7 @@ extern NspGObject *GetGObject (Stack stack, int i);
 extern void nspg_destroy_notify(gpointer user_data);
 
 extern NspGObject *nspgobject_new(const char *,GObject *go);
+extern NspGObject *nspgobject_new_with_possible_type(const char *name, GObject *obj, NspTypeBase *possible_type);
 extern int nspgobject_check(void *value, void *type); 
 #define nspgobject_get(x) ((NspGObject *) x)->obj
 

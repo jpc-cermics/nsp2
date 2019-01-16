@@ -572,7 +572,7 @@ static int _wrap_g_dbus_interface_get_object(NspGDBusInterface *self,Stack stack
   CheckRhs(0,0);
     ret =g_dbus_interface_get_object(G_DBUS_INTERFACE(self->obj));
   nsp_type_gdbusobject = new_type_gdbusobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -594,7 +594,7 @@ static int _wrap_g_dbus_interface_dup_object(NspGDBusInterface *self,Stack stack
   CheckRhs(0,0);
     ret =g_dbus_interface_dup_object(G_DBUS_INTERFACE(self->obj));
   nsp_type_gdbusobject = new_type_gdbusobject(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusobject))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -840,7 +840,7 @@ static int _wrap_g_dbus_object_get_interface(NspGDBusObject *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&interface_name) == FAIL) return RET_BUG;
     ret =g_dbus_object_get_interface(G_DBUS_OBJECT(self->obj),interface_name);
   nsp_type_gdbusinterface = new_type_gdbusinterface(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdbusinterface))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2098,7 +2098,7 @@ static int _wrap_g_app_info_dup(NspGAppInfo *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_app_info_dup(G_APP_INFO(self->obj));
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2175,7 +2175,7 @@ static int _wrap_g_app_info_get_icon(NspGAppInfo *self,Stack stack,int rhs,int o
   CheckRhs(0,0);
     ret =g_app_info_get_icon(G_APP_INFO(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2587,10 +2587,7 @@ _wrap_g_app_launch_context_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_app_launch_context_new())== NULL) return RET_BUG;
 
   nsp_type_gapplaunchcontext = new_type_gapplaunchcontext(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplaunchcontext );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gapplaunchcontext);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -2922,10 +2919,7 @@ _wrap_g_application_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_application_new(application_id,flags))== NULL) return RET_BUG;
 
   nsp_type_gapplication = new_type_gapplication(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gapplication );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gapplication);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -3042,12 +3036,24 @@ static int _wrap_g_application_get_is_remote(NspGApplication *self,Stack stack,i
 
 static int _wrap_g_application_register(NspGApplication *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_application_register(G_APPLICATION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_application_register(G_APPLICATION(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -3419,7 +3425,7 @@ static int _wrap_g_application_command_line_get_stdin(NspGApplicationCommandLine
   CheckRhs(0,0);
     ret =g_application_command_line_get_stdin(G_APPLICATION_COMMAND_LINE(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3502,7 +3508,7 @@ static int _wrap_g_application_command_line_create_file_for_arg(NspGApplicationC
   if ( GetArgs(stack,rhs,opt,T,&arg) == FAIL) return RET_BUG;
     ret =g_application_command_line_create_file_for_arg(G_APPLICATION_COMMAND_LINE(self->obj),arg);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3741,10 +3747,7 @@ _wrap_g_async_initable_new_finish (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gasyncinitable = new_type_gasyncinitable(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gasyncinitable );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gasyncinitable);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -4215,10 +4218,7 @@ _wrap_g_cancellable_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_cancellable_new())== NULL) return RET_BUG;
 
   nsp_type_gcancellable = new_type_gcancellable(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gcancellable );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gcancellable);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -6068,15 +6068,19 @@ static int _wrap_g_dbus_proxy_call_finish(NspGDBusProxy *self,Stack stack,int rh
 
 static int _wrap_g_dbus_proxy_call_sync(NspGDBusProxy *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj,obj,s_int,obj_check, t_end};
+  int_types T[] = {string,obj,obj,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *method_name;
   GVariant *parameters = NULL, *ret;
   NspObject *nsp_parameters = NULL, *nsp_flags = NULL, *nsp_ret;
   GDBusCallFlags flags;
   int timeout_msec;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&method_name, &nsp_parameters, &nsp_flags, &timeout_msec, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&method_name, &nsp_parameters, &nsp_flags, &timeout_msec, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_parameters))
     { parameters = ((NspGVariant *) nsp_parameters)->obj->value;
       if((parameters = nsp_copy_GVariant(parameters))==NULL) return RET_BUG;
@@ -6088,7 +6092,15 @@ static int _wrap_g_dbus_proxy_call_sync(NspGDBusProxy *self,Stack stack,int rhs,
     }
   if (nspg_flags_get_value(G_TYPE_DBUS_CALL_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_dbus_proxy_call_sync(G_DBUS_PROXY(self->obj),method_name,parameters,flags,timeout_msec,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_dbus_proxy_call_sync(G_DBUS_PROXY(self->obj),method_name,parameters,flags,timeout_msec,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -6333,7 +6345,7 @@ static int _wrap_g_drive_get_icon(NspGDrive *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_drive_get_icon(G_DRIVE(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6345,7 +6357,7 @@ static int _wrap_g_drive_get_symbolic_icon(NspGDrive *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =g_drive_get_symbolic_icon(G_DRIVE(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6787,7 +6799,7 @@ static int _wrap_g_emblemed_icon_get_icon(NspGEmblemedIcon *self,Stack stack,int
   CheckRhs(0,0);
     ret =g_emblemed_icon_get_icon(G_EMBLEMED_ICON(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7025,10 +7037,7 @@ _wrap_g_file_new_for_commandline_arg_and_cwd (Stack stack, int rhs, int opt, int
   if ((ret = (GObject *)g_file_new_for_commandline_arg_and_cwd(arg,cwd))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -7044,10 +7053,7 @@ _wrap_g_file_new_for_commandline_arg (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_commandline_arg(arg))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -7063,10 +7069,7 @@ _wrap_g_file_new_for_uri (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_uri(uri))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -7082,10 +7085,7 @@ _wrap_g_file_new_for_path (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_file_new_for_path(path))== NULL) return RET_BUG;
 
   nsp_type_gfile = new_type_gfile(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gfile );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -7098,7 +7098,7 @@ static int _wrap_g_file_dup(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
   CheckRhs(0,0);
     ret =g_file_dup(G_FILE(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7161,7 +7161,7 @@ static int _wrap_g_file_get_parent(NspGFile *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_file_get_parent(G_FILE(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7186,7 +7186,7 @@ static int _wrap_g_file_get_child(NspGFile *self,Stack stack,int rhs,int opt,int
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =g_file_get_child(G_FILE(self->obj),name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7205,7 +7205,7 @@ static int _wrap_g_file_get_child_for_display_name(NspGFile *self,Stack stack,in
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7242,7 +7242,7 @@ static int _wrap_g_file_resolve_relative_path(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&relative_path) == FAIL) return RET_BUG;
     ret =g_file_resolve_relative_path(G_FILE(self->obj),relative_path);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7279,19 +7279,31 @@ static int _wrap_g_file_get_uri_scheme(NspGFile *self,Stack stack,int rhs,int op
 
 static int _wrap_g_file_read(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileInputStream *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_read(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_read(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileinputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7310,75 +7322,111 @@ static int _wrap_g_file_read_finish(NspGFile *self,Stack stack,int rhs,int opt,i
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileinputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_append_to(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileOutputStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_append_to(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_append_to(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_create(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileOutputStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_create(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_create(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_replace(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_bool,obj,obj_check, t_end};
+  int_types T[] = {string,s_bool,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *etag;
   int make_backup;
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileOutputStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&etag, &make_backup, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&etag, &make_backup, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_replace(G_FILE(self->obj),etag,make_backup,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_replace(G_FILE(self->obj),etag,make_backup,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7397,7 +7445,7 @@ static int _wrap_g_file_append_to_finish(NspGFile *self,Stack stack,int rhs,int 
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7416,7 +7464,7 @@ static int _wrap_g_file_create_finish(NspGFile *self,Stack stack,int rhs,int opt
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7435,26 +7483,38 @@ static int _wrap_g_file_replace_finish(NspGFile *self,Stack stack,int rhs,int op
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileoutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_open_readwrite(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileIOStream *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_open_readwrite(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_open_readwrite(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7473,29 +7533,41 @@ static int _wrap_g_file_open_readwrite_finish(NspGFile *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_create_readwrite(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileIOStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_create_readwrite(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_create_readwrite(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7514,31 +7586,43 @@ static int _wrap_g_file_create_readwrite_finish(NspGFile *self,Stack stack,int r
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_replace_readwrite(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_bool,obj,obj_check, t_end};
+  int_types T[] = {string,s_bool,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *etag;
   int make_backup;
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileIOStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&etag, &make_backup, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&etag, &make_backup, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_replace_readwrite(G_FILE(self->obj),etag,make_backup,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_replace_readwrite(G_FILE(self->obj),etag,make_backup,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7557,52 +7641,88 @@ static int _wrap_g_file_replace_readwrite_finish(NspGFile *self,Stack stack,int 
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileiostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_query_exists(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_query_exists(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj));
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_query_exists(G_FILE(self->obj),cancellable);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_g_file_query_file_type(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   gint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_query_file_type(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj));
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_query_file_type(G_FILE(self->obj),flags,cancellable);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_g_file_find_enclosing_mount(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GMount *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_find_enclosing_mount(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_find_enclosing_mount(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7621,30 +7741,42 @@ static int _wrap_g_file_find_enclosing_mount_finish(NspGFile *self,Stack stack,i
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_enumerate_children(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj,obj_check, t_end};
+  int_types T[] = {string,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *attributes;
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileEnumerator *ret;
-  if ( GetArgs(stack,rhs,opt,T,&attributes, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&attributes, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_enumerate_children(G_FILE(self->obj),attributes,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_enumerate_children(G_FILE(self->obj),attributes,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileenumerator))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7663,27 +7795,39 @@ static int _wrap_g_file_enumerate_children_finish(NspGFile *self,Stack stack,int
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfileenumerator))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_set_display_name(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj_check, t_end};
+  int_types T[] = {string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *display_name;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFile *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&display_name, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_set_display_name(G_FILE(self->obj),display_name,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&display_name, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_set_display_name(G_FILE(self->obj),display_name,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -7702,19 +7846,31 @@ static int _wrap_g_file_set_display_name_finish(NspGFile *self,Stack stack,int r
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_delete(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_delete(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_delete(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7749,12 +7905,24 @@ int _wrap_g_file_delete_finish(Stack stack, int rhs, int opt, int lhs) /* delete
 #endif
 static int _wrap_g_file_trash(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_trash(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_trash(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7805,12 +7973,24 @@ static int _wrap_g_file_copy_finish(NspGFile *self,Stack stack,int rhs,int opt,i
 
 static int _wrap_g_file_make_directory(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_make_directory(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_make_directory(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7845,12 +8025,24 @@ int _wrap_g_file_make_directory_finish(Stack stack, int rhs, int opt, int lhs) /
 #endif
 static int _wrap_g_file_make_directory_with_parents(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_make_directory_with_parents(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_make_directory_with_parents(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7861,13 +8053,25 @@ static int _wrap_g_file_make_directory_with_parents(NspGFile *self,Stack stack,i
 
 static int _wrap_g_file_make_symbolic_link(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj_check, t_end};
+  int_types T[] = {string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *symlink_value;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&symlink_value, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_make_symbolic_link(G_FILE(self->obj),symlink_value,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&symlink_value, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_make_symbolic_link(G_FILE(self->obj),symlink_value,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7878,17 +8082,29 @@ static int _wrap_g_file_make_symbolic_link(NspGFile *self,Stack stack,int rhs,in
 
 static int _wrap_g_file_set_attribute_string(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,string,obj,obj_check, t_end};
+  int_types T[] = {string,string,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *attribute, *value;
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_set_attribute_string(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_set_attribute_string(G_FILE(self->obj),attribute,value,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7899,17 +8115,29 @@ static int _wrap_g_file_set_attribute_string(NspGFile *self,Stack stack,int rhs,
 
 static int _wrap_g_file_set_attribute_byte_string(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,string,obj,obj_check, t_end};
+  int_types T[] = {string,string,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *attribute, *value;
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_set_attribute_byte_string(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_set_attribute_byte_string(G_FILE(self->obj),attribute,value,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7920,18 +8148,30 @@ static int _wrap_g_file_set_attribute_byte_string(NspGFile *self,Stack stack,int
 
 static int _wrap_g_file_set_attribute_uint32(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj,obj_check, t_end};
+  int_types T[] = {string,s_int,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *attribute;
   gulong value;
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_set_attribute_uint32(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_set_attribute_uint32(G_FILE(self->obj),attribute,value,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7942,17 +8182,29 @@ static int _wrap_g_file_set_attribute_uint32(NspGFile *self,Stack stack,int rhs,
 
 static int _wrap_g_file_set_attribute_int32(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj,obj_check, t_end};
+  int_types T[] = {string,s_int,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *attribute;
   int value, ret;
   GFileQueryInfoFlags flags;
   NspObject *nsp_flags = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &value, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_QUERY_INFO_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_set_attribute_int32(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_set_attribute_int32(G_FILE(self->obj),attribute,value,flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -7991,7 +8243,7 @@ static int _wrap_g_file_mount_mountable_finish(NspGFile *self,Stack stack,int rh
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8030,16 +8282,28 @@ static int _wrap_g_file_eject_mountable_with_operation_finish(NspGFile *self,Sta
 
 static int _wrap_g_file_copy_attributes(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj,obj_check, t_end};
-  NspGObject *destination, *cancellable;
+  int_types T[] = {obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *destination, *nsp_cancellable = NULL;
   GFileCopyFlags flags;
   NspObject *nsp_flags = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gfile, &destination, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gfile, &destination, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_COPY_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_copy_attributes(G_FILE(self->obj),G_FILE(destination->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_copy_attributes(G_FILE(self->obj),G_FILE(destination->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -8050,66 +8314,102 @@ static int _wrap_g_file_copy_attributes(NspGFile *self,Stack stack,int rhs,int o
 
 static int _wrap_g_file_monitor_directory(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileMonitorFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileMonitor *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_MONITOR_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_monitor_directory(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_monitor_directory(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_monitor_file(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileMonitorFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileMonitor *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_MONITOR_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_monitor_file(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_monitor_file(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_monitor(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GFileMonitorFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GFileMonitor *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_MONITOR_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_file_monitor(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_monitor(G_FILE(self->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfilemonitor))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -8164,34 +8464,50 @@ static int _wrap_g_file_poll_mountable_finish(NspGFile *self,Stack stack,int rhs
 
 static int _wrap_g_file_query_default_handler(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GAppInfo *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_query_default_handler(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_query_default_handler(G_FILE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,string,s_bool,obj,obj,obj_check, t_end};
+  int_types T[] = {string,s_int,string,s_bool,obj,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *contents, *etag;
   int length, make_backup, ret;
   GFileCreateFlags flags;
   NspObject *nsp_flags = NULL, *nsp_new_etag = NULL;
   gchar **new_etag = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&contents, &length, &etag, &make_backup, &nsp_flags, &nsp_new_etag, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&contents, &length, &etag, &make_backup, &nsp_flags, &nsp_new_etag, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
   if ( IsSMat(nsp_new_etag))
@@ -8201,7 +8517,15 @@ static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int 
       Scierror("Error: new_etag should be of type SMat\n");
       return RET_BUG;
     }
-    ret =g_file_replace_contents(G_FILE(self->obj),contents,length,etag,make_backup,flags,new_etag,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_replace_contents(G_FILE(self->obj),contents,length,etag,make_backup,flags,new_etag,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -8515,12 +8839,24 @@ NspGFileEnumerator *gfileenumerator_copy(NspGFileEnumerator *self)
  *-------------------------------------------*/
 static int _wrap_g_file_enumerator_close(NspGFileEnumerator *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_file_enumerator_close(G_FILE_ENUMERATOR(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_file_enumerator_close(G_FILE_ENUMERATOR(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -8596,7 +8932,7 @@ static int _wrap_g_file_enumerator_get_container(NspGFileEnumerator *self,Stack 
   CheckRhs(0,0);
     ret =g_file_enumerator_get_container(G_FILE_ENUMERATOR(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9065,7 +9401,7 @@ static int _wrap_g_io_stream_get_input_stream(NspGIOStream *self,Stack stack,int
   CheckRhs(0,0);
     ret =g_io_stream_get_input_stream(G_IO_STREAM(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9077,19 +9413,31 @@ static int _wrap_g_io_stream_get_output_stream(NspGIOStream *self,Stack stack,in
   CheckRhs(0,0);
     ret =g_io_stream_get_output_stream(G_IO_STREAM(self->obj));
   nsp_type_goutputstream = new_type_goutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_goutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_io_stream_close(NspGIOStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_io_stream_close(G_IO_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_io_stream_close(G_IO_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -9593,10 +9941,7 @@ _wrap_g_icon_new_for_string (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gicon = new_type_gicon(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gicon );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -9864,10 +10209,7 @@ _wrap_g_inet_address_new_any (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_any(family))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -9886,10 +10228,7 @@ _wrap_g_inet_address_new_loopback (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_loopback(family))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -9905,10 +10244,7 @@ _wrap_g_inet_address_new_from_string (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_address_new_from_string(string))== NULL) return RET_BUG;
 
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -10275,10 +10611,7 @@ _wrap_g_inet_address_mask_new_from_string (Stack stack, int rhs, int opt, int lh
   }
 
   nsp_type_ginetaddressmask = new_type_ginetaddressmask(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddressmask);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -10300,10 +10633,7 @@ _wrap_g_inet_address_mask_new (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_ginetaddressmask = new_type_ginetaddressmask(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetaddressmask );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddressmask);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -10352,7 +10682,7 @@ static int _wrap_g_inet_address_mask_get_address(NspGInetAddressMask *self,Stack
   CheckRhs(0,0);
     ret =g_inet_address_mask_get_address(G_INET_ADDRESS_MASK(self->obj));
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -10630,12 +10960,24 @@ NspGInitable *ginitable_copy(NspGInitable *self)
  *-------------------------------------------*/
 static int _wrap_g_initable_init(NspGInitable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_initable_init(G_INITABLE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_initable_init(G_INITABLE(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -10888,17 +11230,29 @@ static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 10892 "gio.c"
+#line 11234 "gio.c"
 
 
 static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int count, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&count, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_input_stream_skip(G_INPUT_STREAM(self->obj),count,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&count, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_input_stream_skip(G_INPUT_STREAM(self->obj),count,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -10909,12 +11263,24 @@ static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,i
 
 static int _wrap_g_input_stream_close(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_input_stream_close(G_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_input_stream_close(G_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11230,7 +11596,7 @@ static int _wrap_g_filter_input_stream_get_base_stream(NspGFilterInputStream *se
   CheckRhs(0,0);
     ret =g_filter_input_stream_get_base_stream(G_FILTER_INPUT_STREAM(self->obj));
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11470,10 +11836,7 @@ _wrap_g_buffered_input_stream_new_sized (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_input_stream_new_sized(G_INPUT_STREAM(base_stream->obj),size))== NULL) return RET_BUG;
 
   nsp_type_gbufferedinputstream = new_type_gbufferedinputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gbufferedinputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -11489,10 +11852,7 @@ _wrap_g_buffered_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_input_stream_new(G_INPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gbufferedinputstream = new_type_gbufferedinputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedinputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gbufferedinputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -11527,12 +11887,24 @@ static int _wrap_g_buffered_input_stream_get_available(NspGBufferedInputStream *
 
 static int _wrap_g_buffered_input_stream_fill(NspGBufferedInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int count, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&count, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_buffered_input_stream_fill(G_BUFFERED_INPUT_STREAM(self->obj),count,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&count, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_buffered_input_stream_fill(G_BUFFERED_INPUT_STREAM(self->obj),count,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11559,12 +11931,24 @@ static int _wrap_g_buffered_input_stream_fill_finish(NspGBufferedInputStream *se
 
 static int _wrap_g_buffered_input_stream_read_byte(NspGBufferedInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_buffered_input_stream_read_byte(G_BUFFERED_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_buffered_input_stream_read_byte(G_BUFFERED_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11792,10 +12176,7 @@ _wrap_g_data_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_data_input_stream_new(G_INPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gdatainputstream = new_type_gdatainputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdatainputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdatainputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -11845,12 +12226,24 @@ static int _wrap_g_data_input_stream_get_newline_type(NspGDataInputStream *self,
 
 static int _wrap_g_data_input_stream_read_byte(NspGDataInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_input_stream_read_byte(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_input_stream_read_byte(G_DATA_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11861,12 +12254,24 @@ static int _wrap_g_data_input_stream_read_byte(NspGDataInputStream *self,Stack s
 
 static int _wrap_g_data_input_stream_read_int16(NspGDataInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_input_stream_read_int16(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_input_stream_read_int16(G_DATA_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11877,12 +12282,24 @@ static int _wrap_g_data_input_stream_read_int16(NspGDataInputStream *self,Stack 
 
 static int _wrap_g_data_input_stream_read_uint16(NspGDataInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_input_stream_read_uint16(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_input_stream_read_uint16(G_DATA_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11893,12 +12310,24 @@ static int _wrap_g_data_input_stream_read_uint16(NspGDataInputStream *self,Stack
 
 static int _wrap_g_data_input_stream_read_int32(NspGDataInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_input_stream_read_int32(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_input_stream_read_int32(G_DATA_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -11909,12 +12338,24 @@ static int _wrap_g_data_input_stream_read_int32(NspGDataInputStream *self,Stack 
 
 static int _wrap_g_data_input_stream_read_uint32(NspGDataInputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   gulong ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_input_stream_read_uint32(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_input_stream_read_uint32(G_DATA_INPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -12145,10 +12586,7 @@ _wrap_g_converter_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_converter_input_stream_new(G_INPUT_STREAM(base_stream->obj),G_CONVERTER(converter->obj)))== NULL) return RET_BUG;
 
   nsp_type_gconverterinputstream = new_type_gconverterinputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverterinputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverterinputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -12161,7 +12599,7 @@ static int _wrap_g_converter_input_stream_get_converter(NspGConverterInputStream
   CheckRhs(0,0);
     ret =g_converter_input_stream_get_converter(G_CONVERTER_INPUT_STREAM(self->obj));
   nsp_type_gconverter = new_type_gconverter(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverter))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12571,14 +13009,18 @@ NspGLoadableIcon *gloadableicon_copy(NspGLoadableIcon *self)
  *-------------------------------------------*/
 static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj,obj_check, t_end};
+  int_types T[] = {s_int,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int size;
   gchar **type = NULL;
   NspObject *nsp_type = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GInputStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&size, &nsp_type, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&size, &nsp_type, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_type))
     { type =  ((NspSMatrix *) nsp_type)->S;}
   else
@@ -12586,13 +13028,21 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
       Scierror("Error: type should be of type SMat\n");
       return RET_BUG;
     }
-    ret =g_loadable_icon_load(G_LOADABLE_ICON(self->obj),size,type,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_loadable_icon_load(G_LOADABLE_ICON(self->obj),size,type,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12619,7 +13069,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -12837,10 +13287,7 @@ _wrap_g_memory_input_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_memory_input_stream_new())== NULL) return RET_BUG;
 
   nsp_type_gmemoryinputstream = new_type_gmemoryinputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryinputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmemoryinputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -13349,7 +13796,7 @@ static int _wrap_g_menu_link_iter_get_value(NspGMenuLinkIter *self,Stack stack,i
   CheckRhs(0,0);
     ret =g_menu_link_iter_get_value(G_MENU_LINK_ITER(self->obj));
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13611,7 +14058,7 @@ static int _wrap_g_menu_model_iterate_item_attributes(NspGMenuModel *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&item_index) == FAIL) return RET_BUG;
     ret =g_menu_model_iterate_item_attributes(G_MENU_MODEL(self->obj),item_index);
   nsp_type_gmenuattributeiter = new_type_gmenuattributeiter(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuattributeiter))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13694,7 +14141,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13698 "gio.c"
+#line 14145 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -13707,7 +14154,7 @@ static int _wrap_g_menu_model_iterate_item_links(NspGMenuModel *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&item_index) == FAIL) return RET_BUG;
     ret =g_menu_model_iterate_item_links(G_MENU_MODEL(self->obj),item_index);
   nsp_type_gmenulinkiter = new_type_gmenulinkiter(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenulinkiter))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -13750,7 +14197,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13754 "gio.c"
+#line 14201 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -13992,10 +14439,7 @@ _wrap_g_menu_item_new_section (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_section(label,G_MENU_MODEL(section->obj)))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuitem);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -14012,10 +14456,7 @@ _wrap_g_menu_item_new_submenu (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_submenu(label,G_MENU_MODEL(submenu->obj)))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuitem);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -14032,10 +14473,7 @@ _wrap_g_menu_item_new_from_model (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new_from_model(G_MENU_MODEL(model->obj),item_index))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuitem);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -14051,10 +14489,7 @@ _wrap_g_menu_item_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_item_new(label,detailed_action))== NULL) return RET_BUG;
 
   nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenuitem);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -14122,7 +14557,7 @@ static int _wrap_g_menu_item_get_link(NspGMenuItem *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&link) == FAIL) return RET_BUG;
     ret =g_menu_item_get_link(G_MENU_ITEM(self->obj),link);
   nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -14551,10 +14986,7 @@ _wrap_g_menu_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_menu_new())== NULL) return RET_BUG;
 
   nsp_type_gmenu = new_type_gmenu(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenu );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenu);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -15046,7 +15478,7 @@ static int _wrap_g_mount_get_root(NspGMount *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_mount_get_root(G_MOUNT(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15058,7 +15490,7 @@ static int _wrap_g_mount_get_default_location(NspGMount *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =g_mount_get_default_location(G_MOUNT(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15080,7 +15512,7 @@ static int _wrap_g_mount_get_icon(NspGMount *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_mount_get_icon(G_MOUNT(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15092,7 +15524,7 @@ static int _wrap_g_mount_get_symbolic_icon(NspGMount *self,Stack stack,int rhs,i
   CheckRhs(0,0);
     ret =g_mount_get_symbolic_icon(G_MOUNT(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15114,7 +15546,7 @@ static int _wrap_g_mount_get_volume(NspGMount *self,Stack stack,int rhs,int opt,
   CheckRhs(0,0);
     ret =g_mount_get_volume(G_MOUNT(self->obj));
   nsp_type_gvolume = new_type_gvolume(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolume))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15126,7 +15558,7 @@ static int _wrap_g_mount_get_drive(NspGMount *self,Stack stack,int rhs,int opt,i
   CheckRhs(0,0);
     ret =g_mount_get_drive(G_MOUNT(self->obj));
   nsp_type_gdrive = new_type_gdrive(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdrive))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -15187,14 +15619,26 @@ static int _wrap_g_mount_guess_content_type_finish(NspGMount *self,Stack stack,i
 
 static int _wrap_g_mount_guess_content_type_sync(NspGMount *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,obj_check, t_end};
+  int_types T[] = {s_bool,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int force_rescan;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   gchar **ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&force_rescan, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_mount_guess_content_type_sync(G_MOUNT(self->obj),force_rescan,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&force_rescan, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_mount_guess_content_type_sync(G_MOUNT(self->obj),force_rescan,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -15500,10 +15944,7 @@ _wrap_g_mount_operation_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_mount_operation_new())== NULL) return RET_BUG;
 
   nsp_type_gmountoperation = new_type_gmountoperation(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmountoperation );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmountoperation);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -15863,10 +16304,7 @@ _wrap_g_network_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_network_address_new(hostname,port))== NULL) return RET_BUG;
 
   nsp_type_gnetworkaddress = new_type_gnetworkaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gnetworkaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -16119,10 +16557,7 @@ _wrap_g_network_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_network_service_new(service,protocol,domain))== NULL) return RET_BUG;
 
   nsp_type_gnetworkservice = new_type_gnetworkservice(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gnetworkservice );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gnetworkservice);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -16415,21 +16850,33 @@ static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rh
   return 1;
 }
 
-#line 16419 "gio.c"
+#line 16854 "gio.c"
 
 
 static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj,obj_check, t_end};
-  NspGObject *source, *cancellable;
+  int_types T[] = {obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *source, *nsp_cancellable = NULL;
   GOutputStreamSpliceFlags flags;
   NspObject *nsp_flags = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginputstream, &source, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginputstream, &source, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_OUTPUT_STREAM_SPLICE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
-    ret =g_output_stream_splice(G_OUTPUT_STREAM(self->obj),G_INPUT_STREAM(source->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_output_stream_splice(G_OUTPUT_STREAM(self->obj),G_INPUT_STREAM(source->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -16440,12 +16887,24 @@ static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int r
 
 static int _wrap_g_output_stream_flush(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_output_stream_flush(G_OUTPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_output_stream_flush(G_OUTPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -16456,12 +16915,24 @@ static int _wrap_g_output_stream_flush(NspGOutputStream *self,Stack stack,int rh
 
 static int _wrap_g_output_stream_close(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_output_stream_close(G_OUTPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_output_stream_close(G_OUTPUT_STREAM(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -16831,10 +17302,7 @@ _wrap_g_memory_output_stream_new_resizable (Stack stack, int rhs, int opt, int l
   if ((ret = (GObject *)g_memory_output_stream_new_resizable())== NULL) return RET_BUG;
 
   nsp_type_gmemoryoutputstream = new_type_gmemoryoutputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmemoryoutputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmemoryoutputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -17070,7 +17538,7 @@ static int _wrap_g_filter_output_stream_get_base_stream(NspGFilterOutputStream *
   CheckRhs(0,0);
     ret =g_filter_output_stream_get_base_stream(G_FILTER_OUTPUT_STREAM(self->obj));
   nsp_type_goutputstream = new_type_goutputstream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_goutputstream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17310,10 +17778,7 @@ _wrap_g_buffered_output_stream_new_sized (Stack stack, int rhs, int opt, int lhs
   if ((ret = (GObject *)g_buffered_output_stream_new_sized(G_OUTPUT_STREAM(base_stream->obj),size))== NULL) return RET_BUG;
 
   nsp_type_gbufferedoutputstream = new_type_gbufferedoutputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gbufferedoutputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -17329,10 +17794,7 @@ _wrap_g_buffered_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_buffered_output_stream_new(G_OUTPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gbufferedoutputstream = new_type_gbufferedoutputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gbufferedoutputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gbufferedoutputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -17591,10 +18053,7 @@ _wrap_g_converter_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_converter_output_stream_new(G_OUTPUT_STREAM(base_stream->obj),G_CONVERTER(converter->obj)))== NULL) return RET_BUG;
 
   nsp_type_gconverteroutputstream = new_type_gconverteroutputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gconverteroutputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverteroutputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -17607,7 +18066,7 @@ static int _wrap_g_converter_output_stream_get_converter(NspGConverterOutputStre
   CheckRhs(0,0);
     ret =g_converter_output_stream_get_converter(G_CONVERTER_OUTPUT_STREAM(self->obj));
   nsp_type_gconverter = new_type_gconverter(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gconverter))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17826,10 +18285,7 @@ _wrap_g_data_output_stream_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_data_output_stream_new(G_OUTPUT_STREAM(base_stream->obj)))== NULL) return RET_BUG;
 
   nsp_type_gdataoutputstream = new_type_gdataoutputstream(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdataoutputstream );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdataoutputstream);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -17858,12 +18314,24 @@ static int _wrap_g_data_output_stream_get_byte_order(NspGDataOutputStream *self,
 
 static int _wrap_g_data_output_stream_put_byte(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int data, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_byte(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&data, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_byte(G_DATA_OUTPUT_STREAM(self->obj),data,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -17874,12 +18342,24 @@ static int _wrap_g_data_output_stream_put_byte(NspGDataOutputStream *self,Stack 
 
 static int _wrap_g_data_output_stream_put_int16(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int data, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_int16(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&data, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_int16(G_DATA_OUTPUT_STREAM(self->obj),data,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -17890,12 +18370,24 @@ static int _wrap_g_data_output_stream_put_int16(NspGDataOutputStream *self,Stack
 
 static int _wrap_g_data_output_stream_put_uint16(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int data, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_uint16(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&data, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_uint16(G_DATA_OUTPUT_STREAM(self->obj),data,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -17906,12 +18398,24 @@ static int _wrap_g_data_output_stream_put_uint16(NspGDataOutputStream *self,Stac
 
 static int _wrap_g_data_output_stream_put_int32(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   int data, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_int32(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&data, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_int32(G_DATA_OUTPUT_STREAM(self->obj),data,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -17922,13 +18426,25 @@ static int _wrap_g_data_output_stream_put_int32(NspGDataOutputStream *self,Stack
 
 static int _wrap_g_data_output_stream_put_uint32(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,obj_check, t_end};
+  int_types T[] = {s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   gulong data;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_uint32(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&data, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_uint32(G_DATA_OUTPUT_STREAM(self->obj),data,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -17939,13 +18455,25 @@ static int _wrap_g_data_output_stream_put_uint32(NspGDataOutputStream *self,Stac
 
 static int _wrap_g_data_output_stream_put_string(NspGDataOutputStream *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj_check, t_end};
+  int_types T[] = {string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *str;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&str, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_data_output_stream_put_string(G_DATA_OUTPUT_STREAM(self->obj),str,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&str, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_data_output_stream_put_string(G_DATA_OUTPUT_STREAM(self->obj),str,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18381,12 +18909,24 @@ NspGPermission *gpermission_copy(NspGPermission *self)
  *-------------------------------------------*/
 static int _wrap_g_permission_acquire(NspGPermission *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_permission_acquire(G_PERMISSION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_permission_acquire(G_PERMISSION(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18413,12 +18953,24 @@ static int _wrap_g_permission_acquire_finish(NspGPermission *self,Stack stack,in
 
 static int _wrap_g_permission_release(NspGPermission *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_permission_release(G_PERMISSION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_permission_release(G_PERMISSION(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18699,14 +19251,26 @@ static int _wrap_g_resolver_set_default(NspGResolver *self,Stack stack,int rhs,i
 
 static int _wrap_g_resolver_lookup_by_name(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj_check, t_end};
+  int_types T[] = {string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *hostname;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GList *ret, *tmp;
   NspList *nsp_list;
-  if ( GetArgs(stack,rhs,opt,T,&hostname, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_resolver_lookup_by_name(G_RESOLVER(self->obj),hostname,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&hostname, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_resolver_lookup_by_name(G_RESOLVER(self->obj),hostname,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18734,12 +19298,24 @@ static int _wrap_g_resolver_lookup_by_name_finish(NspGResolver *self,Stack stack
 
 static int _wrap_g_resolver_lookup_by_address(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *address, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *address, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   gchar *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_resolver_lookup_by_address(G_RESOLVER(self->obj),G_INET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &address, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_resolver_lookup_by_address(G_RESOLVER(self->obj),G_INET_ADDRESS(address->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18768,14 +19344,26 @@ static int _wrap_g_resolver_lookup_by_address_finish(NspGResolver *self,Stack st
 
 static int _wrap_g_resolver_lookup_service(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,string,string,obj_check, t_end};
+  int_types T[] = {string,string,string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *service, *protocol, *domain;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GList *ret, *tmp;
   NspList *nsp_list;
-  if ( GetArgs(stack,rhs,opt,T,&service, &protocol, &domain, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_resolver_lookup_service(G_RESOLVER(self->obj),service,protocol,domain,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&service, &protocol, &domain, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_resolver_lookup_service(G_RESOLVER(self->obj),service,protocol,domain,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -18804,18 +19392,30 @@ static int _wrap_g_resolver_lookup_service_finish(NspGResolver *self,Stack stack
 #if GLIB_CHECK_VERSION(2,34,0)
 static int _wrap_g_resolver_lookup_records(NspGResolver *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj,obj_check, t_end};
+  int_types T[] = {string,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *rrname;
   GResolverRecordType record_type;
   NspObject *nsp_record_type = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GList *ret, *tmp;
   NspList *nsp_list;
-  if ( GetArgs(stack,rhs,opt,T,&rrname, &nsp_record_type, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&rrname, &nsp_record_type, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_RESOLVER_RECORD_TYPE, nsp_record_type, &record_type)== FAIL)
       return RET_BUG;
-    ret =g_resolver_lookup_records(G_RESOLVER(self->obj),rrname,record_type,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_resolver_lookup_records(G_RESOLVER(self->obj),rrname,record_type,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -19301,10 +19901,7 @@ _wrap_g_settings_new_with_path (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_settings_new_with_path(schema_id,path))== NULL) return RET_BUG;
 
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsettings);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -19320,10 +19917,7 @@ _wrap_g_settings_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_settings_new(schema_id))== NULL) return RET_BUG;
 
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsettings );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsettings);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -19666,7 +20260,7 @@ static int _wrap_g_settings_get_child(NspGSettings *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
     ret =g_settings_get_child(G_SETTINGS(self->obj),name);
   nsp_type_gsettings = new_type_gsettings(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsettings))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -19722,7 +20316,7 @@ static int _wrap_g_settings_create_action(NspGSettings *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&key) == FAIL) return RET_BUG;
     ret =g_settings_create_action(G_SETTINGS(self->obj),key);
   nsp_type_gaction = new_type_gaction(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gaction))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20008,10 +20602,7 @@ _wrap_g_simple_action_new_stateful (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_new_stateful(name,parameter_type,state))== NULL) return RET_BUG;
 
   nsp_type_gsimpleaction = new_type_gsimpleaction(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsimpleaction);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20041,10 +20632,7 @@ _wrap_g_simple_action_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_new(name,parameter_type))== NULL) return RET_BUG;
 
   nsp_type_gsimpleaction = new_type_gsimpleaction(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleaction );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsimpleaction);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20306,10 +20894,7 @@ _wrap_g_simple_action_group_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_action_group_new())== NULL) return RET_BUG;
 
   nsp_type_gsimpleactiongroup = new_type_gsimpleactiongroup(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleactiongroup );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsimpleactiongroup);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20533,10 +21118,7 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_simple_proxy_resolver_new(default_proxy,ignore_hosts))== NULL) return RET_BUG;
 
   nsp_type_gsimpleproxyresolver = new_type_gsimpleproxyresolver(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsimpleproxyresolver );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsimpleproxyresolver);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20822,10 +21404,7 @@ _wrap_g_socket_new_from_fd (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20855,10 +21434,7 @@ _wrap_g_socket_new (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocket );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -20912,7 +21488,7 @@ static int _wrap_g_socket_get_local_address(NspGSocket *self,Stack stack,int rhs
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20929,7 +21505,7 @@ static int _wrap_g_socket_get_remote_address(NspGSocket *self,Stack stack,int rh
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21284,16 +21860,28 @@ static int _wrap_g_socket_condition_check(NspGSocket *self,Stack stack,int rhs,i
 
 static int _wrap_g_socket_condition_wait(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GIOCondition condition;
   NspObject *nsp_condition = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
       return RET_BUG;
-    ret =g_socket_condition_wait(G_SOCKET(self->obj),condition,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_condition_wait(G_SOCKET(self->obj),condition,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21305,17 +21893,29 @@ static int _wrap_g_socket_condition_wait(NspGSocket *self,Stack stack,int rhs,in
 #if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_condition_timed_wait(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,s_int,obj_check, t_end};
+  int_types T[] = {obj,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GIOCondition condition;
   NspObject *nsp_condition = NULL;
   gint64 timeout;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &timeout, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &timeout, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
       return RET_BUG;
-    ret =g_socket_condition_timed_wait(G_SOCKET(self->obj),condition,timeout,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_condition_timed_wait(G_SOCKET(self->obj),condition,timeout,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21333,19 +21933,31 @@ int _wrap_g_socket_condition_timed_wait(Stack stack, int rhs, int opt, int lhs) 
 #endif
 static int _wrap_g_socket_accept(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GSocket *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_accept(G_SOCKET(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_accept(G_SOCKET(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -21366,13 +21978,25 @@ static int _wrap_g_socket_listen(NspGSocket *self,Stack stack,int rhs,int opt,in
 
 static int _wrap_g_socket_receive(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj_check, t_end};
+  int_types T[] = {string,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *buffer;
   int size, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_receive(G_SOCKET(self->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_receive(G_SOCKET(self->obj),buffer,size,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21383,13 +22007,25 @@ static int _wrap_g_socket_receive(NspGSocket *self,Stack stack,int rhs,int opt,i
 
 static int _wrap_g_socket_send(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj_check, t_end};
+  int_types T[] = {string,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *buffer;
   int size, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_send(G_SOCKET(self->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_send(G_SOCKET(self->obj),buffer,size,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21400,13 +22036,25 @@ static int _wrap_g_socket_send(NspGSocket *self,Stack stack,int rhs,int opt,int 
 
 static int _wrap_g_socket_send_to(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,string,s_int,obj_check, t_end};
-  NspGObject *address, *cancellable;
+  int_types T[] = {obj_check,string,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *address, *nsp_cancellable = NULL;
   char *buffer;
   int size, ret;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_send_to(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &buffer, &size, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_send_to(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),buffer,size,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21455,15 +22103,27 @@ static int _wrap_g_socket_is_closed(NspGSocket *self,Stack stack,int rhs,int opt
 
 static int _wrap_g_socket_create_source(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GIOCondition condition;
   NspObject *nsp_condition = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GSource *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_condition, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(G_TYPE_IO_CONDITION, nsp_condition, &condition)==FAIL)
       return RET_BUG;
-    ret =g_socket_create_source(G_SOCKET(self->obj),condition,G_CANCELLABLE(cancellable->obj));
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_create_source(G_SOCKET(self->obj),condition,cancellable);
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gsource))== NULL)
     return RET_BUG;
@@ -21482,13 +22142,25 @@ static int _wrap_g_socket_speaks_ipv4(NspGSocket *self,Stack stack,int rhs,int o
 
 static int _wrap_g_socket_receive_with_blocking(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,s_bool,obj_check, t_end};
+  int_types T[] = {string,s_int,s_bool,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *buffer;
   int size, blocking, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_receive_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_receive_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21499,13 +22171,25 @@ static int _wrap_g_socket_receive_with_blocking(NspGSocket *self,Stack stack,int
 
 static int _wrap_g_socket_send_with_blocking(NspGSocket *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,s_bool,obj_check, t_end};
+  int_types T[] = {string,s_int,s_bool,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *buffer;
   int size, blocking, ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_send_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_send_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -21567,7 +22251,7 @@ static int _wrap_g_socket_connection_factory_create_connection(NspGSocket *self,
   CheckRhs(0,0);
     ret =g_socket_connection_factory_create_connection(G_SOCKET(self->obj));
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22064,10 +22748,7 @@ _wrap_g_inet_socket_address_new_from_string (Stack stack, int rhs, int opt, int 
   if ((ret = (GObject *)g_inet_socket_address_new_from_string(address,port))== NULL) return RET_BUG;
 
   nsp_type_ginetsocketaddress = new_type_ginetsocketaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetsocketaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -22084,10 +22765,7 @@ _wrap_g_inet_socket_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_inet_socket_address_new(G_INET_ADDRESS(address->obj),port))== NULL) return RET_BUG;
 
   nsp_type_ginetsocketaddress = new_type_ginetsocketaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_ginetsocketaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetsocketaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -22100,7 +22778,7 @@ static int _wrap_g_inet_socket_address_get_address(NspGInetSocketAddress *self,S
   CheckRhs(0,0);
     ret =g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(self->obj));
   nsp_type_ginetaddress = new_type_ginetaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_ginetaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22371,10 +23049,7 @@ _wrap_g_proxy_address_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_proxy_address_new(G_INET_ADDRESS(inetaddr->obj),port,protocol,dest_hostname,dest_port,username,password))== NULL) return RET_BUG;
 
   nsp_type_gproxyaddress = new_type_gproxyaddress(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gproxyaddress );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gproxyaddress);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -22671,19 +23346,31 @@ NspGSocketAddressEnumerator *gsocketaddressenumerator_copy(NspGSocketAddressEnum
  *-------------------------------------------*/
 static int _wrap_g_socket_address_enumerator_next(NspGSocketAddressEnumerator *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GSocketAddress *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_address_enumerator_next(G_SOCKET_ADDRESS_ENUMERATOR(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_address_enumerator_next(G_SOCKET_ADDRESS_ENUMERATOR(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -22702,7 +23389,7 @@ static int _wrap_g_socket_address_enumerator_next_finish(NspGSocketAddressEnumer
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23119,10 +23806,7 @@ _wrap_g_socket_client_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_client_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketclient = new_type_gsocketclient(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketclient );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketclient);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -23198,7 +23882,7 @@ static int _wrap_g_socket_client_get_local_address(NspGSocketClient *self,Stack 
   CheckRhs(0,0);
     ret =g_socket_client_get_local_address(G_SOCKET_CLIENT(self->obj));
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23321,60 +24005,96 @@ int _wrap_g_socket_client_set_tls_validation_flags(Stack stack, int rhs, int opt
 #endif
 static int _wrap_g_socket_client_connect(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *connectable, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *connectable, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   GSocketConnection *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketconnectable, &connectable, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_client_connect(G_SOCKET_CLIENT(self->obj),G_SOCKET_CONNECTABLE(connectable->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketconnectable, &connectable, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_client_connect(G_SOCKET_CLIENT(self->obj),G_SOCKET_CONNECTABLE(connectable->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_socket_client_connect_to_host(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj_check, t_end};
+  int_types T[] = {string,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *host_and_port;
   int default_port;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GSocketConnection *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&host_and_port, &default_port, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_client_connect_to_host(G_SOCKET_CLIENT(self->obj),host_and_port,default_port,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&host_and_port, &default_port, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_client_connect_to_host(G_SOCKET_CLIENT(self->obj),host_and_port,default_port,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_socket_client_connect_to_service(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,string,obj_check, t_end};
+  int_types T[] = {string,string,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *domain, *service;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GSocketConnection *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&domain, &service, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_client_connect_to_service(G_SOCKET_CLIENT(self->obj),domain,service,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&domain, &service, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_client_connect_to_service(G_SOCKET_CLIENT(self->obj),domain,service,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23382,21 +24102,33 @@ static int _wrap_g_socket_client_connect_to_service(NspGSocketClient *self,Stack
 #if GLIB_CHECK_VERSION(2,26,0)
 static int _wrap_g_socket_client_connect_to_uri(NspGSocketClient *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,s_int,obj_check, t_end};
+  int_types T[] = {string,s_int,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *uri;
   int default_port;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GSocketConnection *ret;
   NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&uri, &default_port, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_client_connect_to_uri(G_SOCKET_CLIENT(self->obj),uri,default_port,G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&uri, &default_port, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_client_connect_to_uri(G_SOCKET_CLIENT(self->obj),uri,default_port,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23422,7 +24154,7 @@ static int _wrap_g_socket_client_connect_finish(NspGSocketClient *self,Stack sta
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23441,7 +24173,7 @@ static int _wrap_g_socket_client_connect_to_host_finish(NspGSocketClient *self,S
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23460,7 +24192,7 @@ static int _wrap_g_socket_client_connect_to_service_finish(NspGSocketClient *sel
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23479,7 +24211,7 @@ static int _wrap_g_socket_client_connect_to_uri_finish(NspGSocketClient *self,St
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnection))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23728,7 +24460,7 @@ static int _wrap_g_socket_connectable_enumerate(NspGSocketConnectable *self,Stac
   CheckRhs(0,0);
     ret =g_socket_connectable_enumerate(G_SOCKET_CONNECTABLE(self->obj));
   nsp_type_gsocketaddressenumerator = new_type_gsocketaddressenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddressenumerator))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23740,7 +24472,7 @@ static int _wrap_g_socket_connectable_proxy_enumerate(NspGSocketConnectable *sel
   CheckRhs(0,0);
     ret =g_socket_connectable_proxy_enumerate(G_SOCKET_CONNECTABLE(self->obj));
   nsp_type_gsocketaddressenumerator = new_type_gsocketaddressenumerator(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddressenumerator))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -23970,12 +24702,24 @@ int _wrap_g_socket_connection_is_connected(Stack stack, int rhs, int opt, int lh
 #if GLIB_CHECK_VERSION(2,32,0)
 static int _wrap_g_socket_connection_connect(NspGSocketConnection *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *address, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *address, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_socket_connection_connect(G_SOCKET_CONNECTION(self->obj),G_SOCKET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_socket_connection_connect(G_SOCKET_CONNECTION(self->obj),G_SOCKET_ADDRESS(address->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -24022,7 +24766,7 @@ static int _wrap_g_socket_connection_get_socket(NspGSocketConnection *self,Stack
   CheckRhs(0,0);
     ret =g_socket_connection_get_socket(G_SOCKET_CONNECTION(self->obj));
   nsp_type_gsocket = new_type_gsocket(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocket))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24039,7 +24783,7 @@ static int _wrap_g_socket_connection_get_local_address(NspGSocketConnection *sel
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24056,7 +24800,7 @@ static int _wrap_g_socket_connection_get_remote_address(NspGSocketConnection *se
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketaddress))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -24511,10 +25255,7 @@ _wrap_g_socket_listener_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_listener_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketlistener = new_type_gsocketlistener(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketlistener );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketlistener);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -24800,10 +25541,7 @@ _wrap_g_socket_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_socket_service_new())== NULL) return RET_BUG;
 
   nsp_type_gsocketservice = new_type_gsocketservice(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gsocketservice );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketservice);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25271,10 +26009,7 @@ _wrap_g_tcp_wrapper_connection_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_tcp_wrapper_connection_new(G_IO_STREAM(base_io_stream->obj),G_SOCKET(socket->obj)))== NULL) return RET_BUG;
 
   nsp_type_gtcpwrapperconnection = new_type_gtcpwrapperconnection(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtcpwrapperconnection );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtcpwrapperconnection);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25287,7 +26022,7 @@ static int _wrap_g_tcp_wrapper_connection_get_base_io_stream(NspGTcpWrapperConne
   CheckRhs(0,0);
     ret =g_tcp_wrapper_connection_get_base_io_stream(G_TCP_WRAPPER_CONNECTION(self->obj));
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -25506,10 +26241,7 @@ _wrap_g_threaded_socket_service_new (Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)g_threaded_socket_service_new(max_threads))== NULL) return RET_BUG;
 
   nsp_type_gthreadedsocketservice = new_type_gthreadedsocketservice(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gthreadedsocketservice );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gthreadedsocketservice);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25729,10 +26461,7 @@ _wrap_g_tls_certificate_new_from_files (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25753,10 +26482,7 @@ _wrap_g_tls_certificate_new_from_file (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25778,10 +26504,7 @@ _wrap_g_tls_certificate_new_from_pem (Stack stack, int rhs, int opt, int lhs)
   }
 
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  /* prefer most specialized class than the one specified indef file
-   * nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtlscertificate );
-    */
-  nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
+  nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -25794,7 +26517,7 @@ static int _wrap_g_tls_certificate_get_issuer(NspGTlsCertificate *self,Stack sta
   CheckRhs(0,0);
     ret =g_tls_certificate_get_issuer(G_TLS_CERTIFICATE(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26085,7 +26808,7 @@ static int _wrap_g_tls_connection_get_database(NspGTlsConnection *self,Stack sta
   CheckRhs(0,0);
     ret =g_tls_connection_get_database(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlsdatabase = new_type_gtlsdatabase(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlsdatabase))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26106,7 +26829,7 @@ static int _wrap_g_tls_connection_get_certificate(NspGTlsConnection *self,Stack 
   CheckRhs(0,0);
     ret =g_tls_connection_get_certificate(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26127,7 +26850,7 @@ static int _wrap_g_tls_connection_get_interaction(NspGTlsConnection *self,Stack 
   CheckRhs(0,0);
     ret =g_tls_connection_get_interaction(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlsinteraction = new_type_gtlsinteraction(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlsinteraction))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26139,7 +26862,7 @@ static int _wrap_g_tls_connection_get_peer_certificate(NspGTlsConnection *self,S
   CheckRhs(0,0);
     ret =g_tls_connection_get_peer_certificate(G_TLS_CONNECTION(self->obj));
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26194,12 +26917,24 @@ static int _wrap_g_tls_connection_get_rehandshake_mode(NspGTlsConnection *self,S
 
 static int _wrap_g_tls_connection_handshake(NspGTlsConnection *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, t_end};
-  NspGObject *cancellable;
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_tls_connection_handshake(G_TLS_CONNECTION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_connection_handshake(G_TLS_CONNECTION(self->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -26489,23 +27224,35 @@ static int _wrap_g_tls_database_create_certificate_handle(NspGTlsDatabase *self,
 
 static int _wrap_g_tls_database_lookup_certificate_for_handle(NspGTlsDatabase *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,obj_check,obj,obj_check, t_end};
+  int_types T[] = {string,obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *handle;
-  NspGObject *interaction, *cancellable;
+  NspGObject *interaction, *nsp_cancellable = NULL;
   GTlsDatabaseLookupFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   GTlsCertificate *ret;
-  if ( GetArgs(stack,rhs,opt,T,&handle, &nsp_type_gtlsinteraction, &interaction, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&handle, &nsp_type_gtlsinteraction, &interaction, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_TLS_DATABASE_LOOKUP_FLAGS, nsp_flags, &flags)== FAIL)
       return RET_BUG;
-    ret =g_tls_database_lookup_certificate_for_handle(G_TLS_DATABASE(self->obj),handle,G_TLS_INTERACTION(interaction->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_database_lookup_certificate_for_handle(G_TLS_DATABASE(self->obj),handle,G_TLS_INTERACTION(interaction->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26524,29 +27271,41 @@ static int _wrap_g_tls_database_lookup_certificate_for_handle_finish(NspGTlsData
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_g_tls_database_lookup_certificate_issuer(NspGTlsDatabase *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check,obj,obj_check, t_end};
-  NspGObject *certificate, *interaction, *cancellable;
+  int_types T[] = {obj_check,obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *certificate, *interaction, *nsp_cancellable = NULL;
   GTlsDatabaseLookupFlags flags;
   NspObject *nsp_flags = NULL, *nsp_ret;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   GTlsCertificate *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlscertificate, &certificate, &nsp_type_gtlsinteraction, &interaction, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlscertificate, &certificate, &nsp_type_gtlsinteraction, &interaction, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_TLS_DATABASE_LOOKUP_FLAGS, nsp_flags, &flags)== FAIL)
       return RET_BUG;
-    ret =g_tls_database_lookup_certificate_issuer(G_TLS_DATABASE(self->obj),G_TLS_CERTIFICATE(certificate->obj),G_TLS_INTERACTION(interaction->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_database_lookup_certificate_issuer(G_TLS_DATABASE(self->obj),G_TLS_CERTIFICATE(certificate->obj),G_TLS_INTERACTION(interaction->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26565,7 +27324,7 @@ static int _wrap_g_tls_database_lookup_certificate_issuer_finish(NspGTlsDatabase
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtlscertificate))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -26799,12 +27558,24 @@ NspGTlsInteraction *gtlsinteraction_copy(NspGTlsInteraction *self)
  *-------------------------------------------*/
 static int _wrap_g_tls_interaction_invoke_ask_password(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *password, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *password, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   gint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_tls_interaction_invoke_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_interaction_invoke_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -26815,12 +27586,24 @@ static int _wrap_g_tls_interaction_invoke_ask_password(NspGTlsInteraction *self,
 
 static int _wrap_g_tls_interaction_ask_password(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *password, *cancellable;
+  int_types T[] = {obj_check,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *password, *nsp_cancellable = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   gint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
-    ret =g_tls_interaction_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),G_CANCELLABLE(cancellable->obj),&error);
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_interaction_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -26848,16 +27631,28 @@ static int _wrap_g_tls_interaction_ask_password_finish(NspGTlsInteraction *self,
 #if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_tls_interaction_invoke_request_certificate(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj,obj_check, t_end};
-  NspGObject *connection, *cancellable;
+  int_types T[] = {obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *connection, *nsp_cancellable = NULL;
   GTlsCertificateRequestFlags flags;
   NspObject *nsp_flags = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   gint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlsconnection, &connection, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlsconnection, &connection, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_TLS_CERTIFICATE_REQUEST_FLAGS, nsp_flags, &flags)== FAIL)
       return RET_BUG;
-    ret =g_tls_interaction_invoke_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_interaction_invoke_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -26876,16 +27671,28 @@ int _wrap_g_tls_interaction_invoke_request_certificate(Stack stack, int rhs, int
 #if GLIB_CHECK_VERSION(2,40,0)
 static int _wrap_g_tls_interaction_request_certificate(NspGTlsInteraction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,obj,obj_check, t_end};
-  NspGObject *connection, *cancellable;
+  int_types T[] = {obj_check,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *connection, *nsp_cancellable = NULL;
   GTlsCertificateRequestFlags flags;
   NspObject *nsp_flags = NULL;
+  GCancellable *cancellable = NULL;
   GError *error = NULL;
   gint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlsconnection, &connection, &nsp_flags, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlsconnection, &connection, &nsp_flags, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_TLS_CERTIFICATE_REQUEST_FLAGS, nsp_flags, &flags)== FAIL)
       return RET_BUG;
-    ret =g_tls_interaction_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_tls_interaction_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -27406,7 +28213,7 @@ static int _wrap_g_vfs_get_file_for_path(NspGVfs *self,Stack stack,int rhs,int o
   if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
     ret =g_vfs_get_file_for_path(G_VFS(self->obj),path);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27420,7 +28227,7 @@ static int _wrap_g_vfs_get_file_for_uri(NspGVfs *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
     ret =g_vfs_get_file_for_uri(G_VFS(self->obj),uri);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27434,7 +28241,7 @@ static int _wrap_g_vfs_parse_name(NspGVfs *self,Stack stack,int rhs,int opt,int 
   if ( GetArgs(stack,rhs,opt,T,&parse_name) == FAIL) return RET_BUG;
     ret =g_vfs_parse_name(G_VFS(self->obj),parse_name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27663,7 +28470,7 @@ static int _wrap_g_volume_get_icon(NspGVolume *self,Stack stack,int rhs,int opt,
   CheckRhs(0,0);
     ret =g_volume_get_icon(G_VOLUME(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27675,7 +28482,7 @@ static int _wrap_g_volume_get_symbolic_icon(NspGVolume *self,Stack stack,int rhs
   CheckRhs(0,0);
     ret =g_volume_get_symbolic_icon(G_VOLUME(self->obj));
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27697,7 +28504,7 @@ static int _wrap_g_volume_get_drive(NspGVolume *self,Stack stack,int rhs,int opt
   CheckRhs(0,0);
     ret =g_volume_get_drive(G_VOLUME(self->obj));
   nsp_type_gdrive = new_type_gdrive(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdrive))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27709,7 +28516,7 @@ static int _wrap_g_volume_get_mount(NspGVolume *self,Stack stack,int rhs,int opt
   CheckRhs(0,0);
     ret =g_volume_get_mount(G_VOLUME(self->obj));
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -27789,7 +28596,7 @@ static int _wrap_g_volume_get_activation_root(NspGVolume *self,Stack stack,int r
   CheckRhs(0,0);
     ret =g_volume_get_activation_root(G_VOLUME(self->obj));
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28084,7 +28891,7 @@ static int _wrap_g_volume_monitor_get_volume_for_uuid(NspGVolumeMonitor *self,St
   if ( GetArgs(stack,rhs,opt,T,&uuid) == FAIL) return RET_BUG;
     ret =g_volume_monitor_get_volume_for_uuid(G_VOLUME_MONITOR(self->obj),uuid);
   nsp_type_gvolume = new_type_gvolume(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolume))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28098,7 +28905,7 @@ static int _wrap_g_volume_monitor_get_mount_for_uuid(NspGVolumeMonitor *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&uuid) == FAIL) return RET_BUG;
     ret =g_volume_monitor_get_mount_for_uuid(G_VOLUME_MONITOR(self->obj),uuid);
   nsp_type_gmount = new_type_gmount(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmount))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28372,7 +29179,7 @@ int _wrap_g_app_info_create_from_commandline(Stack stack, int rhs, int opt, int 
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28442,7 +29249,7 @@ int _wrap_g_app_info_get_default_for_type(Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&content_type, &must_support_uris) == FAIL) return RET_BUG;
     ret =g_app_info_get_default_for_type(content_type,must_support_uris);
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28456,7 +29263,7 @@ int _wrap_g_app_info_get_default_for_uri_scheme(Stack stack, int rhs, int opt, i
   if ( GetArgs(stack,rhs,opt,T,&uri_scheme) == FAIL) return RET_BUG;
     ret =g_app_info_get_default_for_uri_scheme(uri_scheme);
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gappinfo))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28504,7 +29311,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 28508 "gio.c"
+#line 29315 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28514,7 +29321,7 @@ int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g
   CheckRhs(0,0);
     ret =g_cancellable_get_current();
   nsp_type_gcancellable = new_type_gcancellable(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gcancellable))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28585,7 +29392,7 @@ int _wrap_g_content_type_get_icon(Stack stack, int rhs, int opt, int lhs) /* g_c
   if ( GetArgs(stack,rhs,opt,T,&type) == FAIL) return RET_BUG;
     ret =g_content_type_get_icon(type);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28599,7 +29406,7 @@ int _wrap_g_content_type_get_symbolic_icon(Stack stack, int rhs, int opt, int lh
   if ( GetArgs(stack,rhs,opt,T,&type) == FAIL) return RET_BUG;
     ret =g_content_type_get_symbolic_icon(type);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28725,21 +29532,25 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs) /* g_dbus_address_get_stream_sync */
 {
-  int_types T[] = {string,obj,obj_check, t_end};
+  int_types T[] = {string,obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   char *address;
   gchar **out_guid = NULL;
   NspObject *nsp_out_guid = NULL, *nsp_ret;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   GIOStream *ret;
-  if ( GetArgs(stack,rhs,opt,T,&address, &nsp_out_guid, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&address, &nsp_out_guid, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_out_guid))
     { out_guid =  ((NspSMatrix *) nsp_out_guid)->S;}
   else
@@ -28747,29 +29558,49 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: out_guid should be of type SMat\n");
       return RET_BUG;
     }
-    ret =g_dbus_address_get_stream_sync(address,out_guid,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_dbus_address_get_stream_sync(address,out_guid,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_giostream))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 int _wrap_g_dbus_address_get_for_bus_sync(Stack stack, int rhs, int opt, int lhs) /* g_dbus_address_get_for_bus_sync */
 {
-  int_types T[] = {obj,obj_check, t_end};
+  int_types T[] = {obj,new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GBusType bus_type;
   NspObject *nsp_bus_type = NULL;
-  NspGObject *cancellable;
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
   GError *error = NULL;
   gchar *ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_bus_type, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_bus_type, opts, &nsp_cancellable) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_BUS_TYPE, nsp_bus_type, &bus_type)== FAIL)
       return RET_BUG;
-    ret =g_dbus_address_get_for_bus_sync(bus_type,G_CANCELLABLE(cancellable->obj),&error);
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_dbus_address_get_for_bus_sync(bus_type,cancellable,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
@@ -28961,7 +29792,7 @@ int _wrap_g_file_parse_name(Stack stack, int rhs, int opt, int lhs) /* g_file_pa
   if ( GetArgs(stack,rhs,opt,T,&parse_name) == FAIL) return RET_BUG;
     ret =g_file_parse_name(parse_name);
   nsp_type_gfile = new_type_gfile(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gfile))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -28984,7 +29815,7 @@ int _wrap_g_icon_deserialize(Stack stack, int rhs, int opt, int lhs) /* g_icon_d
     }
     ret =g_icon_deserialize(value);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29052,7 +29883,7 @@ int _wrap_g_network_address_parse(Stack stack, int rhs, int opt, int lhs) /* g_n
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnectable))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29072,7 +29903,7 @@ int _wrap_g_network_address_parse_uri(Stack stack, int rhs, int opt, int lhs) /*
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gsocketconnectable))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29084,7 +29915,7 @@ int _wrap_g_resolver_get_default(Stack stack, int rhs, int opt, int lhs) /* g_re
   CheckRhs(0,0);
     ret =g_resolver_get_default();
   nsp_type_gresolver = new_type_gresolver(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gresolver))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29143,7 +29974,7 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29147 "gio.c"
+#line 29978 "gio.c"
 
 
 #line 228 "codegen-3.0/gio.override"
@@ -29171,7 +30002,7 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 29175 "gio.c"
+#line 30006 "gio.c"
 
 
 #line 205 "codegen-3.0/gio.override"
@@ -29196,7 +30027,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 29200 "gio.c"
+#line 30031 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -29271,7 +30102,7 @@ int _wrap_g_themed_icon_new(Stack stack, int rhs, int opt, int lhs) /* g_themed_
   if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
     ret =g_themed_icon_new(iconname);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29285,7 +30116,7 @@ int _wrap_g_themed_icon_new_with_default_fallbacks(Stack stack, int rhs, int opt
   if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
     ret =g_themed_icon_new_with_default_fallbacks(iconname);
   nsp_type_gicon = new_type_gicon(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29312,7 +30143,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29316 "gio.c"
+#line 30147 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -29322,7 +30153,7 @@ int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get
   CheckRhs(0,0);
     ret =g_vfs_get_default();
   nsp_type_gvfs = new_type_gvfs(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvfs))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29334,7 +30165,7 @@ int _wrap_g_vfs_get_local(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_l
   CheckRhs(0,0);
     ret =g_vfs_get_local();
   nsp_type_gvfs = new_type_gvfs(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvfs))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29346,7 +30177,7 @@ int _wrap_g_volume_monitor_get(Stack stack, int rhs, int opt, int lhs) /* g_volu
   CheckRhs(0,0);
     ret =g_volume_monitor_get();
   nsp_type_gvolumemonitor = new_type_gvolumemonitor(T_BASE);
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gvolumemonitor))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29703,4 +30534,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 29707 "gio.c"
+#line 30538 "gio.c"

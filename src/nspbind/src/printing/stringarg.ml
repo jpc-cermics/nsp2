@@ -3519,46 +3519,19 @@ let gtk_object_arg_write_return object_data ptype ownsreturn info =
  let varlist = varlist_add  info.varlist  ptype "*ret" in
  let varlist = varlist_add  varlist "NspObject" "*nsp_ret" in
  let name = String.lowercase object_data.od_objname in
+ let unref_code = if ownsreturn then "\n  g_object_unref(ret);" else "" in 									
  let codeafter =
-   (* always prefer nspgobject_new to gobject_create because it creates the most specialized type searching in ret *)
-   if name != "xxxxx" (* = "gtkwidget" *) then
-   (
-   if ownsreturn then
-     (
-      Printf.sprintf
+   (* See genmethods.ml to see the difference between 
+    *   nspgobject_new_with_possible_type 
+    *   nspgobject_new
+    *   gobject_create 
+    * we prefer nspgobject_new_with_possible_type to return the most specialized type if available in nsp 
+    *) 
+    Printf.sprintf
 	"  nsp_type_%s = new_type_%s(T_BASE);\
-        \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;\
-        \n  g_object_unref(ret);\
-        \n  MoveObj(stack,1,nsp_ret);\n  return 1;" name name;
-      )
-   else
-     (
-      Printf.sprintf
-	"  nsp_type_%s = new_type_%s(T_BASE);\
-        \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;\
-        \n  MoveObj(stack,1,nsp_ret);\n  return 1;"
-        name name ;
-     )
-   )
-   else
-   (
-   if ownsreturn then
-     (
-      Printf.sprintf
-	"  nsp_type_%s = new_type_%s(T_BASE);\
-        \n  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_%s))== NULL) return RET_BUG;\
-        \n  g_object_unref(ret);\
-        \n  MoveObj(stack,1,nsp_ret);\n  return 1;" name name name;
-      )
-   else
-     (
-      Printf.sprintf
-	 "  nsp_type_%s = new_type_%s(T_BASE);\
-        \n  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_%s))== NULL) return RET_BUG;\
-        \n  MoveObj(stack,1,nsp_ret);\n  return 1;"
-        name name name;
-     )
-   )
+        \n  if ((nsp_ret = (NspObject *) nspgobject_new_with_possible_type(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_%s))== NULL) return RET_BUG;\
+        %s\
+        \n  MoveObj(stack,1,nsp_ret);\n  return 1;" name name name unref_code;
    in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;

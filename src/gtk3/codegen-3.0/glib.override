@@ -23,6 +23,8 @@ headers
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/gmaincontext.h>
 #include <nsp/gtk/gmainloop.h>
+#include <nsp/gtk/gsource.h>
+
 %%
 include-private GVariant
 
