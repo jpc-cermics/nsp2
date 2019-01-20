@@ -842,16 +842,21 @@ NspGSource *gsource_copy(NspGSource *self)
  *-------------------------------------------*/
 static int _wrap_g_source_attach(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, t_end};
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"context",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
   GMainContext *context = NULL;
   NspObject *nsp_context = NULL;
   int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_context) == FAIL) return RET_BUG;
-  if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_context) == FAIL) return RET_BUG;
+  if ( nsp_context != NULL ) {
+    if (nspg_boxed_check(nsp_context, G_TYPE_MAIN_CONTEXT))
       context = nspg_boxed_get(nsp_context, GMainContext);
-  else {
-      Scierror( "Error: context should be a GMainContext\n");
+    else if (! IsNone(nsp_context)) {
+      Scierror("Error: context should be a GMainContext or None\n");
       return RET_BUG;
+    }
   }
   ret =g_source_attach(NSP_GBOXED_GET(self, GSource),context);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -930,7 +935,7 @@ static int _wrap_g_source_get_context(NspGSource *self,Stack stack,int rhs,int o
  */
 extern int _wrap_g_source_set_callback(NspGSource *self,Stack stack,int rhs,int opt,int lhs);
 
-#line 934 "glib.c"
+#line 939 "glib.c"
 
 
 static int _wrap_g_source_is_destroyed(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
@@ -1288,7 +1293,7 @@ static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1292 "glib.c"
+#line 1297 "glib.c"
 
 
 static NspMethods gerror_methods[] = {
@@ -2658,7 +2663,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 2662 "glib.c"
+#line 2667 "glib.c"
 
 
 static int
@@ -3145,7 +3150,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 3149 "glib.c"
+#line 3154 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -5832,4 +5837,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 5836 "glib.c"
+#line 5841 "glib.c"

@@ -5331,7 +5331,7 @@
   (c-name "g_source_attach")
   (return-type "guint")
   (parameters
-    '("GMainContext*" "context")
+    '("GMainContext*" "context"  (null-ok) (default "NULL"))
   )
 )
 
