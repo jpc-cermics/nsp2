@@ -35,6 +35,7 @@
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gpointer.h>
 #include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gsource.h>
 #include <nsp/gparamspec.h>
 
 #include <nsp/pr-output.h>
@@ -3249,7 +3250,6 @@ static int int_g_source_remove(Stack stack,int rhs,int opt,int lhs)
  * idle
  */
 
-
 guint
 nsp_gtk_idle_add_full (guint priority,NspPList *callback, NspList *extra_args,NspObject *swap_data)
 {
@@ -3289,6 +3289,34 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
   handlerid = nsp_gtk_idle_add_full(priority,callback,extra_args,NULL);
   if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
+}
+
+/* g_source_set_callback
+ * 
+ */
+
+extern int _wrap_g_source_set_callback(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspList *extra_args = NULL;
+  NspPList  *callback;
+  GClosure *closure;
+
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  /* Need a GetFunction here XXXXXX **/
+  if (( callback = GetNspPListCopy(stack,1)) == NULLP_PLIST) return RET_BUG;
+  if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
+  /* extra arguments **/
+  if ( rhs == 2 )
+    {
+      if (( extra_args = GetListCopy(stack,2)) == NULLLIST ) return RET_BUG;
+      if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
+    }
+  closure = nspg_closure_new(callback, extra_args, FALSE );
+  if ( closure == NULL) return RET_BUG;
+  g_source_set_callback(NSP_GBOXED_GET(self, GSource), (GSourceFunc) closure,
+			NULL, nsp_gtk_destroy_closure);
+  return 0;
 }
 
 /*

@@ -923,6 +923,16 @@ static int _wrap_g_source_get_context(NspGSource *self,Stack stack,int rhs,int o
   return 1;
 }
 
+#line 287 "codegen-3.0/glib.override"
+
+/* g_source_set_callback defined in gobject.c 
+ * 
+ */
+extern int _wrap_g_source_set_callback(NspGSource *self,Stack stack,int rhs,int opt,int lhs);
+
+#line 934 "glib.c"
+
+
 static int _wrap_g_source_is_destroyed(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -1034,6 +1044,7 @@ static NspMethods gsource_methods[] = {
   {"get_can_recurse",(nsp_method *) _wrap_g_source_get_can_recurse},
   {"get_id",(nsp_method *) _wrap_g_source_get_id},
   {"get_context",(nsp_method *) _wrap_g_source_get_context},
+  {"set_callback",(nsp_method *) _wrap_g_source_set_callback},
   {"is_destroyed",(nsp_method *) _wrap_g_source_is_destroyed},
   {"set_name",(nsp_method *) _wrap_g_source_set_name},
   {"get_name",(nsp_method *) _wrap_g_source_get_name},
@@ -1277,7 +1288,7 @@ static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1281 "glib.c"
+#line 1292 "glib.c"
 
 
 static NspMethods gerror_methods[] = {
@@ -2647,7 +2658,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 2651 "glib.c"
+#line 2662 "glib.c"
 
 
 static int
@@ -3134,7 +3145,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 3138 "glib.c"
+#line 3149 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -5743,7 +5754,7 @@ void nsp_initialize_glib_types(void)
   new_type_gvariant(T_BASE);
 }
 
-#line 287 "codegen-3.0/glib.override"
+#line 295 "codegen-3.0/glib.override"
 
 static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
@@ -5821,4 +5832,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 5825 "glib.c"
+#line 5836 "glib.c"

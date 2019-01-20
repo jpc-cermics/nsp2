@@ -191,11 +191,20 @@
   (gtype-id "G_TYPE_INITABLE")
 )
 
+;; XXX: all the GInputStream are not supposed to implement GPollableInputStream
+;; but when we create a socket we obtain a GInputStream which is in fact a
+;; GSocketInputStream (which is not defined as a nsp_object). Thus we add that
+;; GInputStream implements GPollableInputStream and we will have to check in
+;; GPollableInputStream methods that the object is valid before calling the method
+
 (define-object GInputStream
   (in-module "Gio")
   (parent "GObject")
   (c-name "GInputStream")
   (gtype-id "G_TYPE_INPUT_STREAM")
+  ;; XXXXX normalement non mais quand c'est un socket on le voudrait
+  ;; c'est donc pas clair 
+  (implements "GPollableInputStream")
 )
 
 (define-object GFilterInputStream
@@ -219,12 +228,21 @@
   (gtype-id "G_TYPE_DATA_INPUT_STREAM")
 )
 
+(define-interface GPollableInputStream
+  (in-module "Gio")
+  (c-name "GPollableInputStream")
+  (vtable "GPollableInputStreamClass")
+  (gtype-id "G_TYPE_POLLABLE_INPUT_STREAM")
+  (prerequisite "GObject")
+)
+
 (define-object GConverterInputStream
   (in-module "Gio")
   (parent "GFilterInputStream")
   (c-name "GConverterInputStream")
   (gtype-id "G_TYPE_CONVERTER_INPUT_STREAM")
-)
+  (implements "GPollableInputStream")
+  )
 
 (define-object GFileInputStream
   (in-module "Gio")
@@ -244,6 +262,7 @@
   (parent "GInputStream")
   (c-name "GMemoryInputStream")
   (gtype-id "G_TYPE_MEMORY_INPUT_STREAM")
+  (implements "GPollableInputStream")
 )
 
 (define-object GMenuAttributeIter
@@ -433,6 +452,8 @@
   (vtable "GActionMapClass")
   (prerequisite "GObject")
   )
+
+
 
 
 (define-object GSimpleProxyResolver

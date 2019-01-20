@@ -10282,9 +10282,10 @@
   )
 )
 
-
-
 ;; From gpollableinputstream.h
+;; XXX these methods should check that we are trying to apply them on a
+;; proper GInputStream since we have added that GInputStream implements this
+;; interface to ease nsp interfacing.
 
 (define-function g_pollable_input_stream_get_type
   (c-name "g_pollable_input_stream_get_type")
@@ -10312,17 +10313,17 @@
   )
 )
 
-(define-method read_nonblocking
-  (of-object "GPollableInputStream")
-  (c-name "g_pollable_input_stream_read_nonblocking")
-  (return-type "gssize")
-  (parameters
-    '("void*" "buffer")
-    '("gsize" "count")
-    '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
-    '("GError**" "error")
-  )
-)
+;; (define-method read_nonblocking
+;;   (of-object "GPollableInputStream")
+;;   (c-name "g_pollable_input_stream_read_nonblocking")
+;;   (return-type "gssize")
+;;   (parameters
+;;     '("void*" "buffer")
+;;     '("gsize" "count")
+;;     '("GCancellable*" "cancellable" (null-ok) (default "NULL"))
+;;     '("GError**" "error")
+;;   )
+;; )
 
 
 
