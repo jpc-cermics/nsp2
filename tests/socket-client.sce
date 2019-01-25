@@ -15,7 +15,6 @@ function str= socket_address_to_string (address)
 endfunction
 
 function ensure_socket_condition (socket,condition,cancellable)
-  pause 
   function y= source_ready (loop)
     // quit the loop 
     loop.quit[];
@@ -24,7 +23,7 @@ function ensure_socket_condition (socket,condition,cancellable)
   // source = g_socket_create_source (socket, condition, cancellable);
   source = socket.create_source[condition]; // cancellable];
   loop=g_main_loop_new();
-  source.set_callback[source_ready,loop];
+  source.set_callback['GSocket',source_ready,loop];
   source.attach[];
   printf("waiting in a gtk_loop for something to read\n")
   loop.run[];
@@ -70,9 +69,11 @@ function [rep,address]=check_connection(connectable)
       error("No more addresses to try");return;
     end
     // g_socket_connect (*socket, *address, cancellable, &err))
-    // ensure_socket_condition (socket,GLIB.IO_IN,cancellable)
     ok = execstr('sc=socket.connect[address, cancellable=cancellable]',errcatch=%t);
-    if ~ok then rep=0; return; end
+    if ~ok then
+      //printf(catenate(lasterror()));
+      rep=0; return;
+    end
     if sc then rep=1; return;end 
     printf("Connection to %s failed: trying next\n", address.to_string[]);
   end

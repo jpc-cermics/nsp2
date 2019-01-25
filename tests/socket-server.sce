@@ -102,7 +102,7 @@ printf ("Listening on %s ... \n", display_addr);
 ensure_socket_condition (socket, GLIB.IO_IN, cancellable);
 
 new_socket = socket.accept[];// [cancellable= cancellable];
-  
+
 if non_blocking then new_socket.set_blocking[%f]; end
 if read_timeout then new_socket.set_timeout[read_timeout]; end
 
