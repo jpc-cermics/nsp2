@@ -3291,31 +3291,102 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-/* g_source_set_callback
- * 
+/* 
+ * g_source_set_callback : associate a callback to a GSource 
+ * this is tricky since the pattern to use for the callback depends on the source type 
  */
+
+/* generic callback transmited to g_source_set_callback */
+
+static gboolean nsp_gtk_invoke_g_source_callback (gpointer data)
+{
+  GClosure *closure = data;
+  gint ret_val = TRUE;
+  GValue ret = {0,};
+  g_value_init(&ret, G_TYPE_BOOLEAN);
+  /* invoke nspg_closure_marshal */
+  closure->marshal(closure,&ret,0,NULL,NULL,NULL);
+  if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN)
+    ret_val =  g_value_get_boolean(&ret);
+  return ret_val;
+}
+
+/**
+ * GSocketSourceFunc:
+ * return %FALSE if the source should be removed.
+ */
+
+static gboolean nsp_gtk_invoke_g_source_callback_for_GSocket (GSocket *socket,GIOCondition condition, gpointer user_data)
+{
+  return nsp_gtk_invoke_g_source_callback (user_data);
+}
+
+/**
+ * GDatagramBasedSourceFunc:
+ * Returns: %G_SOURCE_REMOVE (false) if the source should be removed,
+ *   %G_SOURCE_CONTINUE (true) otherwise
+ */
+
+static gboolean nsp_gtk_invoke_g_source_callback_for_GDatagramBased (GDatagramBased *datagram_based,
+								     GIOCondition    condition,
+								     gpointer        user_data)
+{
+  return nsp_gtk_invoke_g_source_callback (user_data);
+}
+
+/**
+ * GCancellableSourceFunc:
+ * Returns: it should return %FALSE if the source should be removed.
+ */
+static gboolean nsp_gtk_invoke_g_source_callback_for_GCancellable (GCancellable *cancellable,
+								   gpointer      user_data)
+{
+  return nsp_gtk_invoke_g_source_callback (user_data);
+}
+
+/**
+ * GPollableSourceFunc:
+ * Returns: it should return %FALSE if the source should be removed.
+ */
+
+static gboolean nsp_gtk_invoke_g_source_callback_for_GPollable(GObject  *pollable_stream,
+							       gpointer  user_data)
+{
+  return nsp_gtk_invoke_g_source_callback (user_data);
+}
+
+typedef enum { in_gsocket,  in_gdatagrambased , in_gcancellable, in_gpollable} _fun_tag;
 
 extern int _wrap_g_source_set_callback(NspGSource *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspList *extra_args = NULL;
+  static const char *fun_list[] = {"GSocket","GDatagramBased", "GCancellable", "GPollable", NULL};
+  NspObject *extra_args = NULL;
   NspPList  *callback;
   GClosure *closure;
-
-  CheckRhs(1,2);
+  GSourceFunc fun;
+  int rep;
+  CheckRhs(2,3);
   CheckLhs(1,1);
+  if ((rep= GetStringInArray(stack,1, fun_list,1)) == -1) return RET_BUG;
   /* Need a GetFunction here XXXXXX **/
-  if (( callback = GetNspPListCopy(stack,1)) == NULLP_PLIST) return RET_BUG;
+  if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
   /* extra arguments **/
+  switch (rep)
+    {
+    case in_gsocket: fun = (GSourceFunc) nsp_gtk_invoke_g_source_callback_for_GSocket;break;
+    case in_gdatagrambased: fun = (GSourceFunc) nsp_gtk_invoke_g_source_callback_for_GDatagramBased;break;
+    case in_gcancellable: fun = (GSourceFunc) nsp_gtk_invoke_g_source_callback_for_GCancellable ;break;
+    case in_gpollable: fun = (GSourceFunc) nsp_gtk_invoke_g_source_callback_for_GPollable;break;
+    }
+  
   if ( rhs == 2 )
     {
-      if (( extra_args = GetListCopy(stack,2)) == NULLLIST ) return RET_BUG;
-      if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
+      if (( extra_args = nsp_object_copy_and_name("m",nsp_get_object(stack,3)))== NULL) return RET_BUG;
     }
-  closure = nspg_closure_new(callback, extra_args, FALSE );
+  closure = nspg_closure_new(callback, (NspList*) extra_args, NULL );
   if ( closure == NULL) return RET_BUG;
-  g_source_set_callback(NSP_GBOXED_GET(self, GSource), (GSourceFunc) closure,
-			NULL, nsp_gtk_destroy_closure);
+  g_source_set_callback(NSP_GBOXED_GET(self, GSource),(GSourceFunc) fun, closure, nsp_gtk_destroy_closure);
   return 0;
 }
 
