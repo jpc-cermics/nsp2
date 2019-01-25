@@ -53,9 +53,9 @@ function ensure_stream_ok (stream)
   loop=g_main_loop_new();
   source.set_callback['GPollable',source_ready,loop];
   source.attach[];
-  printf("waiting in a gtk_loop for something to read\n")
+  printf("waiting in a gtk_loop for something to read/write\n")
   loop.run[];
-  printf("ready to read\n");
+  printf("ready to read/write\n");
 endfunction
 
 // WIP:
@@ -115,112 +115,30 @@ recv_socket = new_socket;
 connection =recv_socket.connection_factory_create_connection[];
 istream = connection.get_input_stream[]
 ostream = connection.get_output_stream[]
-  
-ensure_stream_ok (istream)
-        
-zz=istream.read[];
-
-// renvoyer un truc au client !
-
-pause zzz;
 
 while %t
-  if (use_udp) then
-    ensure_socket_condition (recv_socket, GLIB.IO_IN, cancellable);
-    size = g_socket_receive_from (recv_socket, &address,
-				  buffer, sizeof buffer,
-				  cancellable, &error);
-    
-  else
-    
-    ensure_connection_condition (connection, GLIB.IO_IN, cancellable);
-    size = g_input_stream_read (istream,
-				buffer, sizeof buffer,
-				cancellable, &error);
-  end
-  if (size < 0)
-    g_printerr ("Error receiving from socket: %s\n",
-		error->message);
-    return 1;
-  end
-  
-  if (size == 0)
+  // wait for somethink to read
+  ensure_stream_ok (istream)
+  str=istream.read[];
+  if str == "" then
+    printf("Error receiving from client, we stop\n");
     break;
-    
-    g_print ("received %" GIO.GSSIZE_FORMAT " bytes of data", size);
-    if (use_udp)
-      g_print (" from %s", socket_address_to_string (address));
-      g_print ("\n");
-      
-      if (verbose)
-	g_print ("-------------------------\n"
-		   "%.*s\n"
-		   "-------------------------\n",
-		 (int)size, buffer);
-
-      to_send = size;
-
-      if (delay)
-	{
-	  if (verbose)
-	    g_print ("delaying %d seconds before response\n", delay);
-	  g_usleep (1000 * 1000 * delay);
-	}
-
-      while (to_send > 0)
-	{
-	  if (use_udp)
-	    {
-	      ensure_socket_condition (recv_socket, GIO.IO_OUT, cancellable);
-	      size = g_socket_send_to (recv_socket, address,
-				       buffer, to_send, cancellable, &error);
-	    }
-	  else
-	    {
-	      ensure_connection_condition (connection, GIO.IO_OUT, cancellable);
-	      size = g_output_stream_write (ostream,
-					    buffer, to_send,
-					    cancellable, &error);
-	    }
-
-	  if (size < 0)
-	    {
-	      if (g_error_matches (error,
-				   GIO.IO_ERROR,
-				   GIO.IO_ERROR_WOULD_BLOCK))
-		{
-		  g_print ("socket send would block, handling\n");
-		  g_error_free (error);
-		  error = NULL;
-		  continue;
-		}
-	      else
-		{
-		  g_printerr ("Error sending to socket: %s\n",
-			      error->message);
-		  return 1;
-		}
-	    }
-
-	  g_print ("sent %" GIO.GSSIZE_FORMAT " bytes of data\n", size);
-
-	  if (size == 0)
-	    {
-	      g_printerr ("Unexpected short write\n");
-	      return 1;
-	    }
-
-	  to_send -= size;
-	}
-    }
-
-  g_print ("connection closed\n");
-
-  if connection then
-    // if (!g_io_stream_close (connection, NULL, &error))
-    connection.close[];
   end
-  // g_socket_close (socket, &error))
-  socket.close[];
-     endfunction
-     
+  printf("received ""%s"" from client\n",str);
+  [ok,H]=execstr(sprintf('%s',str),errcatch=%t);
+  if ~ok then
+    str=sprintf('failed to execute %s',str);
+  else
+    str=catenate(sprint(H,as_read=%t,base64=%t),sep='\n');
+  end
+  ensure_stream_ok(ostream);
+  ostream.write[sprintf('%d',length(str))];
+  ensure_stream_ok (istream)
+  stri=istream.read[];
+  if stri <> "OK" then pause wrong;end
+  ensure_stream_ok(ostream);
+  ostream.write[str];
+end
+
+connection.close[];
+socket.close[];

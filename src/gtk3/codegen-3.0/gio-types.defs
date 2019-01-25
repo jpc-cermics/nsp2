@@ -203,7 +203,7 @@
   (c-name "GInputStream")
   (gtype-id "G_TYPE_INPUT_STREAM")
   ;; XXXXX normalement non mais quand c'est un socket on le voudrait
-  ;; c'est donc pas clair 
+  ;; c'est donc pas clair (voir au dessus)
   (implements "GPollableInputStream")
 )
 
@@ -329,11 +329,18 @@
   (implements "GSocketConnectable")
 )
 
+;; XXX: all the GOutputStream are not supposed to implement GPollableOutputStream
+;; but when we create a socket we obtain a GOutputStream which is in fact a
+;; GSocketOutputStream (which is not defined as a nsp_object). Thus we add that
+;; GOutputStream implements GPollableOutputStream and we will have to check in
+;; GPollableOutputStream methods that the object is valid before calling the method
+
 (define-object GOutputStream
   (in-module "Gio")
   (parent "GObject")
   (c-name "GOutputStream")
   (gtype-id "G_TYPE_OUTPUT_STREAM")
+  (implements "GPollableOutputStream")
 )
 
 (define-object GMemoryOutputStream
@@ -341,6 +348,7 @@
   (parent "GOutputStream")
   (c-name "GMemoryOutputStream")
   (gtype-id "G_TYPE_MEMORY_OUTPUT_STREAM")
+  (implements "GPollableOutputStream")
 )
 
 (define-object GFilterOutputStream
@@ -357,11 +365,20 @@
   (gtype-id "G_TYPE_BUFFERED_OUTPUT_STREAM")
 )
 
+(define-interface GPollableOutputStream
+  (in-module "Gio")
+  (c-name "GPollableOutputStream")
+  (vtable "GPollableOutputStreamClass")
+  (gtype-id "G_TYPE_POLLABLE_OUTPUT_STREAM")
+  (prerequisite "GObject")
+)
+
 (define-object GConverterOutputStream
   (in-module "Gio")
   (parent "GFilterOutputStream")
   (c-name "GConverterOutputStream")
   (gtype-id "G_TYPE_CONVERTER_OUTPUT_STREAM")
+  (implements "GPollableOutputStream")
 )
 
 (define-object GDataOutputStream

@@ -135,6 +135,7 @@
 #include <nsp/gtk/gdbusinterface.h>
 #include <nsp/gtk/gdbusobject.h>
 #include <nsp/gtk/gpollableinputstream.h>
+#include <nsp/gtk/gpollableoutputstream.h>
 #include <nsp/gtk/gaction.h>
 #include <nsp/gtk/gactiongroup.h>
 #include <nsp/gtk/gactionmap.h>
@@ -1112,6 +1113,257 @@ static NspMethods *gpollableinputstream_get_methods(void) { return gpollableinpu
 static AttrTab gpollableinputstream_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
+/* -----------NspGPollableOutputStream ----------- */
+
+
+#define  NspGPollableOutputStream_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gpollableoutputstream.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGPollableOutputStream inherits from GObject 
+ */
+
+int nsp_type_gpollableoutputstream_id=0;
+NspTypeGPollableOutputStream *nsp_type_gpollableoutputstream=NULL;
+
+/*
+ * Type object for NspGPollableOutputStream 
+ * all the instance of NspTypeGPollableOutputStream share the same id. 
+ * nsp_type_gpollableoutputstream: is an instance of NspTypeGPollableOutputStream 
+ *    used for objects of NspGPollableOutputStream type (i.e built with new_gpollableoutputstream) 
+ * other instances are used for derived classes 
+ */
+NspTypeGPollableOutputStream *new_type_gpollableoutputstream(type_mode mode)
+{
+  NspTypeGPollableOutputStream *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gpollableoutputstream != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gpollableoutputstream;
+    }
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gpollableoutputstream_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gpollableoutputstream_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gpollableoutputstream;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gpollableoutputstream */ 
+
+  top->s_type =  (s_type_func *) nsp_gpollableoutputstream_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gpollableoutputstream_type_short_string;
+  /* top->create = (create_func*) int_gpollableoutputstream_create;*/
+
+  /* specific methods for gpollableoutputstream */
+
+  type->init = (init_func *) init_gpollableoutputstream;
+
+  /* 
+   * NspGPollableOutputStream interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gpollableoutputstream_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGPollableOutputStream called nsp_type_gpollableoutputstream
+       */
+      type->id =  nsp_type_gpollableoutputstream_id = nsp_new_type_id();
+      nsp_type_gpollableoutputstream = type;
+      if ( nsp_register_type(nsp_type_gpollableoutputstream) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gpollableoutputstream, G_TYPE_POLLABLE_OUTPUT_STREAM);
+      return ( mode == T_BASE ) ? type : new_type_gpollableoutputstream(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gpollableoutputstream_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGPollableOutputStream instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gpollableoutputstream(NspGPollableOutputStream *Obj,NspTypeGPollableOutputStream *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGPollableOutputStream 
+ */
+
+NspGPollableOutputStream *new_gpollableoutputstream() 
+{
+  NspGPollableOutputStream *loc;
+  /* type must exists */
+  nsp_type_gpollableoutputstream = new_type_gpollableoutputstream(T_BASE);
+  if ( (loc = malloc(sizeof(NspGPollableOutputStream)))== NULLGPOLLABLEOUTPUTSTREAM) return loc;
+  /* initialize object */
+  if ( init_gpollableoutputstream(loc,nsp_type_gpollableoutputstream) == FAIL) return NULLGPOLLABLEOUTPUTSTREAM;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGPollableOutputStream 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gpollableoutputstream_type_name[]="GPollableOutputStream";
+static char gpollableoutputstream_short_type_name[]="GPollableOutputStream";
+
+static char *nsp_gpollableoutputstream_type_as_string(void)
+{
+  return(gpollableoutputstream_type_name);
+}
+
+static char *nsp_gpollableoutputstream_type_short_string(NspObject *v)
+{
+  return(gpollableoutputstream_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGPollableOutputStream objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGPollableOutputStream   *nsp_gpollableoutputstream_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gpollableoutputstream_id)   ) return ((NspGPollableOutputStream *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gpollableoutputstream));
+  return NULL;
+}
+
+int IsGPollableOutputStreamObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i),nsp_type_gpollableoutputstream_id);
+}
+
+int IsGPollableOutputStream(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_gpollableoutputstream_id);
+}
+
+NspGPollableOutputStream  *GetGPollableOutputStreamCopy(Stack stack, int i)
+{
+  if (  GetGPollableOutputStream(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGPollableOutputStream  *GetGPollableOutputStream(Stack stack, int i)
+{
+  NspGPollableOutputStream *M;
+  if (( M = nsp_gpollableoutputstream_object(NthObj(i))) == NULLGPOLLABLEOUTPUTSTREAM)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGPollableOutputStream *gpollableoutputstream_copy(NspGPollableOutputStream *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gpollableoutputstream);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gpollableoutputstream);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GPollableOutputStream
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_g_pollable_output_stream_can_poll(NspGPollableOutputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+    ret =g_pollable_output_stream_can_poll(G_POLLABLE_OUTPUT_STREAM(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_pollable_output_stream_is_writable(NspGPollableOutputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+    ret =g_pollable_output_stream_is_writable(G_POLLABLE_OUTPUT_STREAM(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_pollable_output_stream_create_source(NspGPollableOutputStream *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {new_opts, t_end};
+  nsp_option opts[] = {
+	{"cancellable",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  GCancellable *cancellable = NULL;
+  NspGObject *nsp_cancellable = NULL;
+  GSource *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_cancellable) == FAIL) return RET_BUG;
+  if ( nsp_cancellable != NULL ) {
+    if ( IsGCancellable((NspObject *)nsp_cancellable))
+      cancellable = G_CANCELLABLE(nsp_cancellable->obj);
+    else if (! IsNone((NspObject *)nsp_cancellable)) {
+         Scierror( "Error: cancellable should be a GCancellable or None\n");
+         return RET_BUG;
+    }
+  }
+    ret =g_pollable_output_stream_create_source(G_POLLABLE_OUTPUT_STREAM(self->obj),cancellable);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_SOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gsource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static NspMethods gpollableoutputstream_methods[] = {
+  {"can_poll",(nsp_method *) _wrap_g_pollable_output_stream_can_poll},
+  {"is_writable",(nsp_method *) _wrap_g_pollable_output_stream_is_writable},
+  {"create_source",(nsp_method *) _wrap_g_pollable_output_stream_create_source},
+  { NULL, NULL}
+};
+
+static NspMethods *gpollableoutputstream_get_methods(void) { return gpollableoutputstream_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gpollableoutputstream_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
 /* -----------NspGAction ----------- */
 
 
@@ -2071,7 +2323,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 2075 "gio.c"
+#line 2327 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -2133,7 +2385,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 2137 "gio.c"
+#line 2389 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -11486,7 +11738,7 @@ static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 11490 "gio.c"
+#line 11742 "gio.c"
 
 
 static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -14405,7 +14657,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 14409 "gio.c"
+#line 14661 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -14461,7 +14713,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 14465 "gio.c"
+#line 14717 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -16900,6 +17152,7 @@ static AttrTab gnetworkservice_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGOutputStream inherits from GObject 
+ * and implements GPollableOutputStream
  */
 
 int nsp_type_goutputstream_id=0;
@@ -16914,6 +17167,7 @@ NspTypeGOutputStream *nsp_type_goutputstream=NULL;
  */
 NspTypeGOutputStream *new_type_goutputstream(type_mode mode)
 {
+  NspTypeGPollableOutputStream *t_gpollableoutputstream;
   NspTypeGOutputStream *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_goutputstream != 0 && mode == T_BASE )
@@ -16952,6 +17206,8 @@ NspTypeGOutputStream *new_type_goutputstream(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gpollableoutputstream = new_type_gpollableoutputstream(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gpollableoutputstream;
   if ( nsp_type_goutputstream_id == 0 ) 
     {
       /* 
@@ -17114,7 +17370,7 @@ static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rh
   return 1;
 }
 
-#line 17118 "gio.c"
+#line 17374 "gio.c"
 
 
 static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -17378,6 +17634,7 @@ static AttrTab goutputstream_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGMemoryOutputStream inherits from GOutputStream 
+ * and implements GPollableOutputStream
  */
 
 int nsp_type_gmemoryoutputstream_id=0;
@@ -17392,6 +17649,7 @@ NspTypeGMemoryOutputStream *nsp_type_gmemoryoutputstream=NULL;
  */
 NspTypeGMemoryOutputStream *new_type_gmemoryoutputstream(type_mode mode)
 {
+  NspTypeGPollableOutputStream *t_gpollableoutputstream;
   NspTypeGMemoryOutputStream *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gmemoryoutputstream != 0 && mode == T_BASE )
@@ -17430,6 +17688,8 @@ NspTypeGMemoryOutputStream *new_type_gmemoryoutputstream(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gpollableoutputstream = new_type_gpollableoutputstream(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gpollableoutputstream;
   if ( nsp_type_gmemoryoutputstream_id == 0 ) 
     {
       /* 
@@ -18127,6 +18387,7 @@ static AttrTab gbufferedoutputstream_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /* 
  * NspGConverterOutputStream inherits from GFilterOutputStream 
+ * and implements GPollableOutputStream
  */
 
 int nsp_type_gconverteroutputstream_id=0;
@@ -18141,6 +18402,7 @@ NspTypeGConverterOutputStream *nsp_type_gconverteroutputstream=NULL;
  */
 NspTypeGConverterOutputStream *new_type_gconverteroutputstream(type_mode mode)
 {
+  NspTypeGPollableOutputStream *t_gpollableoutputstream;
   NspTypeGConverterOutputStream *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_gconverteroutputstream != 0 && mode == T_BASE )
@@ -18179,6 +18441,8 @@ NspTypeGConverterOutputStream *new_type_gconverteroutputstream(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  t_gpollableoutputstream = new_type_gpollableoutputstream(T_DERIVED);
+  type->interface = (NspTypeBase * ) t_gpollableoutputstream;
   if ( nsp_type_gconverteroutputstream_id == 0 ) 
     {
       /* 
@@ -29575,7 +29839,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 29579 "gio.c"
+#line 29843 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -30238,7 +30502,7 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30242 "gio.c"
+#line 30506 "gio.c"
 
 
 #line 228 "codegen-3.0/gio.override"
@@ -30266,7 +30530,7 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 30270 "gio.c"
+#line 30534 "gio.c"
 
 
 #line 205 "codegen-3.0/gio.override"
@@ -30291,7 +30555,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 30295 "gio.c"
+#line 30559 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -30407,7 +30671,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30411 "gio.c"
+#line 30675 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -30714,6 +30978,7 @@ void nsp_initialize_gio_types(void)
   new_type_gdbusinterface(T_BASE);
   new_type_gdbusobject(T_BASE);
   new_type_gpollableinputstream(T_BASE);
+  new_type_gpollableoutputstream(T_BASE);
   new_type_gaction(T_BASE);
   new_type_gactiongroup(T_BASE);
   new_type_gactionmap(T_BASE);
@@ -30799,4 +31064,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 30803 "gio.c"
+#line 31068 "gio.c"
