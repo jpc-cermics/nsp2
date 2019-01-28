@@ -66,3 +66,32 @@ up:
 		(cd $$i ; echo "making $@ in $(DIR)$$i"; \
 		cvs up ); \
 	done
+
+# This part is for developpers who have access to nsp2_dev
+# install the source of the toolboxes used in released nsp
+
+TOOLBOXES=scicos-4.4 compilers codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp
+USER=jpc
+
+up_release:
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(TOOLBOXES) ;\
+	do  ( \
+		make $$i/UP; \
+	); \
+	done
+
+%/UP :
+	@if test -d `dirname $@`/CVS; then \
+		echo "`dirname $@`/CVS exists: updating with cvs up"; \
+		cd `dirname $@`; cvs up -d; \
+        else ( \
+		echo -n "checking out $@ " ;\
+		cvs -Q -d :ext:$(USER)@cermics.enpc.fr:/u/cermics/m/stochopt/cvsroot co nsp2_dev/contribs/`dirname $@` ;\
+		mv nsp2_dev/contribs/`dirname $@` . ;\
+		$(RM) -fr nsp2_dev ;\
+		echo "done" \
+	  ); \
+        fi;
+
+
