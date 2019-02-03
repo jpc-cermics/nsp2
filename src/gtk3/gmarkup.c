@@ -24,6 +24,7 @@
 #include <nsp/nsp.h>
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
 #include <nsp/list.h>
 #include <nsp/hash.h>
 #include <nsp/hobj.h>
@@ -740,6 +741,60 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
     }
 }
 
+/* remove empty strings 
+ * in clildren 
+ */
+
+static int g_markup_node_is_empty_str(NspObject *Obj)
+{
+  int i;
+  char *str = ((NspSMatrix *) Obj)->S[0];
+  for ( i = 0 ; i < strlen(str) ; i++)
+    if ( ! isspace(str[i])) return FALSE;
+  return TRUE;
+}
+
+static void g_markup_clean(NspGMarkupNode *node)
+{
+  Cell *Loc = NULL, *Loc1 = NULL; 
+  NspList *L;
+  if ( node == NULL) return ;
+  L= node->children;
+  L->icurrent = 0;
+  L->current = NULLCELL;
+  Loc = L->first;
+  while ( Loc != NULLCELL ) 
+    {
+      int delete = FALSE;
+      Loc1 = Loc;
+      if ( Loc->O != NULLOBJ )
+	{
+	  if  ( IsString(Loc->O) && g_markup_node_is_empty_str(Loc->O) )
+	    {
+	      delete = TRUE;
+	      if ( Loc->prev != NULL) Loc->prev->next = Loc->next; 
+	      if ( Loc->next != NULL) Loc->next->prev = Loc->prev;
+	      if ( L->first == Loc ) L->first = Loc->next;
+	      if ( L->last == Loc )  L->last = Loc->prev;
+	    }
+	  else
+	    {
+	      if ( IsGMarkupNode(Loc->O ))
+		{
+		  g_markup_clean((NspGMarkupNode *) Loc->O );
+		}
+	    }
+	}
+      Loc = Loc->next;
+      if (delete == TRUE)
+	{
+	  nsp_cell_destroy(&Loc1);
+	  L->nel--;
+	}
+    }
+}
+
+
 /**
  * g_markup_dom_new:
  * @file_name: name of a file to parse contents from.
@@ -804,14 +859,19 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name,i
 int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
 {
   int err;
-  char *str,*node_name=NULL;
   NspGMarkupNode *node;
-  CheckStdRhs(1,2);
+  int clean = FALSE;
+  char *fname=NULL,*node_name=NULL;
+  int_types T[] = {string,new_opts, t_end} ;
+  nsp_option opts[] ={{ "clean_strings",s_bool,NULLOBJ,-1},
+		      { "node",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
-  if ((str=GetString(stack,1))== NULL) return RET_BUG;
-  if ( rhs == 2 )
-    if ((node_name=GetString(stack,2))== NULL) return RET_BUG;
-  if ((node = g_markup_dom_new (str,node_name,&err))== NULL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&clean,&node_name) == FAIL)
+    return RET_BUG;
+
+  if ((node = g_markup_dom_new (fname,node_name,&err))== NULL) return RET_BUG;
   if ( err == TRUE ) 
     {
       nsp_gmarkup_node_destroy(node);
@@ -819,6 +879,7 @@ int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
+      if ( clean == TRUE ) g_markup_clean(node);
       MoveObj(stack,1,NSP_OBJECT(node));
     }
   return Max(lhs,1);
