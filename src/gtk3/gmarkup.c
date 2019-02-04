@@ -34,13 +34,15 @@
 #include <nsp/plistc.h>
 #include "gmarkup.h"
 
+static int nsp_g_markup_collect(NspList *L,const char *needle,NspGMarkupNode *node, int recursive);
+
 /* 
-#include <glib/gfileutils.h>
-#include <glib/gmarkup.h>
-#include <glib/gmem.h>
-#include <glib/gmessages.h>
-#include <glib/gstrfuncs.h>
-*/
+ * #include <glib/gfileutils.h>
+ * #include <glib/gmarkup.h>
+ * #include <glib/gmem.h>
+ * #include <glib/gmessages.h>
+ * #include <glib/gstrfuncs.h>
+ */
 
 /* 
  * NspGMarkupNode inherits from NspObject 
@@ -536,13 +538,34 @@ static int int_gmarkup_node_sprintf(NspGMarkupNode *self, Stack stack, int rhs, 
   return 1;
 }
 
+static int int_gmarkup_collect(NspGMarkupNode *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int recursive=FALSE;
+  NspList *L;
+  char *name=NULL;
+  nsp_option opts[] ={{ "recursive",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  int_types T[] = {string, new_opts, t_end} ;
+  CheckStdRhs(1,1);
+  CheckLhs(1,1);
+  if ( GetArgs(stack,rhs,opt,T,&name,opts,&recursive) == FAIL) return RET_BUG;
+  if ( (L= nsp_list_create(NVOID))== NULL) return RET_BUG;
+  if ( nsp_g_markup_collect (L,name,self,recursive) == FAIL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(L));
+  return Max(lhs,1);
+}
+
 static NspMethods gmarkup_node_methods[] = {
   {"get_node_name",(nsp_method *) int_gmarkup_node_meth_get_name},
-  {"sprintf",(nsp_method *) int_gmarkup_node_sprintf},
+  {"sprintf",(nsp_method *) int_gmarkup_node_sprintf },
+  {"collect", (nsp_method *) int_gmarkup_collect },
   { NULL, NULL}
 };
-
+  
+    
 static NspMethods *gmarkup_node_get_methods(void) { return gmarkup_node_methods;};
+
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -673,8 +696,8 @@ static void xml_start_element (GMarkupParseContext *context, const gchar *elemen
 
 
 static void xml_end_element (GMarkupParseContext *context,
-                             const gchar *element_name, gpointer user_data,
-                             GError **error)
+			     const gchar *element_name, gpointer user_data,
+			     GError **error)
 {
   GMarkupDomContext *dom_context = user_data;
   g_return_if_fail (dom_context != NULL);
@@ -706,7 +729,7 @@ static int xml_text_is_spaces(const char *str)
 
 
 static void xml_text (GMarkupParseContext *context, const gchar *text,
-                      gsize text_len, gpointer user_data, GError **error)
+		      gsize text_len, gpointer user_data, GError **error)
 {
   NspObject *Obj;
   GMarkupDomContext *dom_context = user_data;
@@ -745,7 +768,7 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
  * in clildren 
  */
 
-static int g_markup_node_is_empty_str(NspObject *Obj)
+static int nsp_g_markup_node_is_empty_str(NspObject *Obj)
 {
   int i;
   char *str = ((NspSMatrix *) Obj)->S[0];
@@ -754,7 +777,7 @@ static int g_markup_node_is_empty_str(NspObject *Obj)
   return TRUE;
 }
 
-static void g_markup_clean(NspGMarkupNode *node)
+static void nsp_g_markup_clean(NspGMarkupNode *node)
 {
   Cell *Loc = NULL, *Loc1 = NULL; 
   NspList *L;
@@ -769,7 +792,7 @@ static void g_markup_clean(NspGMarkupNode *node)
       Loc1 = Loc;
       if ( Loc->O != NULLOBJ )
 	{
-	  if  ( IsString(Loc->O) && g_markup_node_is_empty_str(Loc->O) )
+	  if  ( IsString(Loc->O) && nsp_g_markup_node_is_empty_str(Loc->O) )
 	    {
 	      delete = TRUE;
 	      if ( Loc->prev != NULL) Loc->prev->next = Loc->next; 
@@ -781,7 +804,7 @@ static void g_markup_clean(NspGMarkupNode *node)
 	    {
 	      if ( IsGMarkupNode(Loc->O ))
 		{
-		  g_markup_clean((NspGMarkupNode *) Loc->O );
+		  nsp_g_markup_clean((NspGMarkupNode *) Loc->O );
 		}
 	    }
 	}
@@ -792,6 +815,31 @@ static void g_markup_clean(NspGMarkupNode *node)
 	  L->nel--;
 	}
     }
+}
+
+static int nsp_g_markup_collect(NspList *L,const char *needle,NspGMarkupNode *node, int recursive)
+{
+  NspObject *Obj;
+  if ( strcmp(node->name,needle)==0)
+    {
+      if ((Obj =  nsp_object_copy_and_name("elt",(NspObject *)node)) == NULL)
+	return FAIL;
+      if ( nsp_list_end_insert(L, Obj) == FAIL) return FAIL;
+    }
+  if ( strcmp(node->name,needle)!= 0 || recursive == TRUE)
+    {
+      Cell *C = node->children->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ && IsGMarkupNode(C->O ) )
+	    {
+	      int rep = nsp_g_markup_collect(L,needle, (NspGMarkupNode *) C->O,recursive);
+	      if (rep == FAIL) return FAIL;
+	    }
+	  C = C->next;
+	}
+    }
+  return OK;
 }
 
 
@@ -879,7 +927,7 @@ int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if ( clean == TRUE ) g_markup_clean(node);
+      if ( clean == TRUE ) nsp_g_markup_clean(node);
       MoveObj(stack,1,NSP_OBJECT(node));
     }
   return Max(lhs,1);
