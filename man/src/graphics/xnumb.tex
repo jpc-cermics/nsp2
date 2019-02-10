@@ -1,0 +1,44 @@
+% -*- mode: latex -*-
+
+\mansection{xnumb}
+\begin{mandesc}
+  \short{xnumb}{draw numbers}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  xnumb(x,y,nums,[box,angle])  
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y,nums}: vectors of same size.\vname{box}: integer value.\vname{angle}: optional vector of same size as \verb!x!\end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xnumb! draws the value of \verb!nums(i)!
+  at position \verb!x(i),y(i)! in the current scale.
+  If \verb!box! is 1, a box is drawn around the numbers. 
+  If \verb!angle! is given, it gives the direction for string drawing.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{mintednsp}{nsp}
+    xsetech(frect=[-100,-100,500,600]);
+    x=0:100:200;
+    xnumb(x,500*ones(size(x)),[10,20,35],1)
+  \end{mintednsp}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{xstring}{xstring} 
+\end{manseealso}
+%-- Author
+
+\begin{authors}
+  J.-Ph. C.  
+\end{authors}
+
