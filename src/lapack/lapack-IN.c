@@ -1638,7 +1638,7 @@ static OpTab Lapack_func[] = {
   {"solve_banded",int_solve_banded},
   {"rank",int_rank},
   {"schur",int_schur},
-  {"qz",int_qz},
+  {"qz",int_qz}, /* schur for two arguments */
   {"solve_m",int_solve},
   {"logm", int_logm},
   {"sqrtm", int_sqrtm},

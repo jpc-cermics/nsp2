@@ -44,23 +44,26 @@ function [K,X]=lqr(P12)
      X=phi12/X12;
      return
     case 'd' then
-     I=eye(A);Z=0*I;
+     I=eye(size(A));Z=0*I;
      Q=C1'*C1;R=D12'*D12;S=D12'*C1;
      bigE=[I,Z,0*B2;Z,A',0*B2;0*B2',-B2',0*B2'*B2];
-
+     
      bigA=[A,Z,B2;-Q,I,-S';S,0*B2',R];
 
      Ri=inv(R);
 
      Left=[I,Z,-B2*Ri;Z,I,S'*Ri;zeros(nu,2*n),Ri];
      LA=Left*bigA;LE=Left*bigE;N=1:2*n;
-     [wsmall,ks1]=schur(LA(N,N),LE(N,N),sort = 'd');
+     // XXXXX schur with two arguments in nsp is qz
+     // [wsmall,ks1]=schur(LA(N,N),LE(N,N),sort = 'd');
+     [wsmall,ks1]= qz(LA(N,N),LE(N,N),sort = 'd');
      if ks1 <> n then error('Error: stable subspace too small!');end
      X12=wsmall(1:n,1:n);phi12=wsmall(n+1:$,1:n);X=phi12/X12;
      K=-pinv(B2'*X*B2+R)*(B2'*X*A+S);
      return
      // Other form ...
-     [w,ks]=schur(bigA,bigE,sort = 'd');
+     // [w,ks]=schur(bigA,bigE,sort = 'd');
+     [w,ks]=qz(bigA,bigE,sort = 'd');
      if ks <> n then error('Error: stable subspace too small!');end
      ws=w(:,1:n);
      X12=ws(1:n,:);

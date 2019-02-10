@@ -17,7 +17,7 @@ function [k,x,err]=leqr(p12,vx)
   dom=p12(7);
   if isempty(dom) then 
     dom='c';
-    printf("Warning: leqr: time domain (p12(7)) is not defined (assumed continuous)\n')
+    printf("Warning: leqr: time domain (p12(7)) is not defined (assumed continuous)\n")
   end
   select dom
     //      continuous
@@ -32,14 +32,15 @@ function [k,x,err]=leqr(p12,vx)
 	  s',b2',r];
 
     [bige,biga,dummy,z]=balanc(bige,biga);
-    [w,k]=schur(biga,bige,sort='c');
-    if k<>n then printf("Warning: leqr: stable subspace too small!\n');...
+    // [w,k]=schur(biga,bige,sort='c');
+    [w,k]=qz(biga,bige,sort='c');
+    if k<>n then printf("Warning: leqr: stable subspace too small!\n");...
 	  k=[];w=[];err=[];return;
     end
 
     ws=z*w(:,1:n);
     x12=ws(1:n,:);
-    if rcond(x12) < 1.d-6 then printf("Warning: leqr: bad conditioning!\n');end
+    if rcond(x12) < 1.d-6 then printf("Warning: leqr: bad conditioning!\n");end
     k=ws(2*n+1:2*n+nu,:)/x12;
     x=ws(n+1:2*n,:)/x12;
     if nargout~=3 then return;end
@@ -57,18 +58,19 @@ function [k,x,err]=leqr(p12,vx)
 	  -q,i, -s;
 	  s', 0*b2', r];
     [bige,biga,dummy,z]=balanc(bige,biga);
-    [w,k]=schur(biga,bige,sort='d');
-    if k<>n then printf("Warning: leqr: stable subspace too small!\n');...
+    // [w,k]=schur(biga,bige,sort='d');
+    [w,k]=qz(biga,bige,sort='d');
+    if k<>n then printf("Warning: leqr: stable subspace too small!\n");...
 	  k=[];w=[];err=[];return;end
       ws=z*w(:,1:n);
       x12=ws(1:n,:);
-      if rcond(x12) <1.d-6 then printf("Warning: leqr: bad conditioning!\n');...
+      if rcond(x12) <1.d-6 then printf("Warning: leqr: bad conditioning!\n");...
             k=[];w=[];return;end
 
 	k=ws(2*n+1:2*n+nu,:)/x12;
 	x=ws(n+1:2*n,:)/x12;
 	if norm(x-x',1)>0.0001 then 
-	  printf("Warning: leqr: x non symmetric!\n');...
+	  printf("Warning: leqr: x non symmetric!\n");...
 	      k=[];w=[];return;
 	end
 
