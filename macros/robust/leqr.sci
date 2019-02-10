@@ -33,7 +33,7 @@ function [k,x,err]=leqr(p12,vx)
 
     [bige,biga,dummy,z]=balanc(bige,biga);
     // [w,k]=schur(biga,bige,sort='c');
-    [w,k]=qz(biga,bige,sort='c');
+    [Asx,Esx,Qx,w,k]=qz(biga,bige,sort='c');
     if k<>n then printf("Warning: leqr: stable subspace too small!\n");...
 	  k=[];w=[];err=[];return;
     end
@@ -59,7 +59,7 @@ function [k,x,err]=leqr(p12,vx)
 	  s', 0*b2', r];
     [bige,biga,dummy,z]=balanc(bige,biga);
     // [w,k]=schur(biga,bige,sort='d');
-    [w,k]=qz(biga,bige,sort='d');
+    [Asx,Esx,Qx,w,k]=qz(biga,bige,sort='d');
     if k<>n then printf("Warning: leqr: stable subspace too small!\n");...
 	  k=[];w=[];err=[];return;end
       ws=z*w(:,1:n);
