@@ -20,18 +20,18 @@
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  \verb!lqg!  computes the linear optimal LQG (H2) controller for the
-  "augmented" plant \verb!P=syslin('c',A,B,C,D)! (continuous time) or
+  \verb!lqg!  computes the linear optimal \verb+LQG+ (H2) controller for the
+  ``augmented'' plant \verb!P=syslin('c',A,B,C,D)! (continuous time) or
   \verb!P=syslin('d',A,B,C,D)! (discrete time).  The function \verb!lqg2stan!
   returns \verb!P! and \verb!r! given the nominal plant, weighting terms and
-  variances of noises.\verb!K! is given by the following ABCD matrices:
+  variances of noises. The matrix \verb!K! is given by the following \verb+ABCD+ matrices:
   \verb![A+B*Kc+Kf*C+Kf*D*Kc,-Kf,Kc,0]! where \verb!Kc=lqr(P12)!  is the
   controller gain and \verb!Kf=lqe(P21)! is the filter gain.  See example in
   \verb!lqg2stan!.
 \end{mandescription}
 %-- see also
 \begin{manseealso}
-  \manlink{lqg2stan}{lqg2stan} \manlink{lqr}{lqr} \manlink{lqe}{lqe} \manlink{h\_inf}{h-inf} \manlink{obscont}{obscont}  
+  \manlink{lqg2stan}{lqg2stan} \manlink{lqr}{lqr} \manlink{lqe}{lqe} \manlink{h\_inf}{h_inf} \manlink{obscont}{obscont}  
 \end{manseealso}
 %-- Author
 \begin{authors}
