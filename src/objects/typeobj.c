@@ -107,7 +107,7 @@ extern void *new_type_graphic(type_mode mode);
 extern void *new_type_ast(type_mode mode);
 extern void *new_type_astv(type_mode mode);
 extern void *new_type_frame(type_mode mode);
-
+extern void *new_type_linearsys(type_mode mode);
 /* 
  * NspType inherits from NspObject
  */
@@ -626,6 +626,7 @@ void primitive_types_register(void)
   new_type_astnode(T_BASE);
   new_type_spmaxpcolmatrix(T_BASE);
   new_type_bvar(T_BASE);
+  new_type_linearsys(T_BASE);
 #ifdef WITH_MONGODB_C 
   /* mongodb types */
   new_type_bson(T_BASE);
@@ -637,7 +638,8 @@ void primitive_types_register(void)
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
-  nsp_last_static_id_ = nsp_type_bvar_id;
+  // nsp_last_static_id_ = nsp_type_bvar_id;
+  nsp_last_static_id_ = nsp_type_linearsys_id;
 #endif 
 
 }
