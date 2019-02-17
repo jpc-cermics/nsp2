@@ -1,0 +1,68 @@
+% -*- mode: latex -*-
+\mansection{contr}
+\begin{mandesc}
+  \short{contr}{controllability, controllable subspace, staircase} \\ % 
+\end{mandesc}
+% \index{contr}\label{contr}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  n=contr(A,B [,tol])   
+  [n,U]=contr(A,B [,tol])   
+  [n,U,ind,V,Ac,Bc]=contr(A,B,[,tol])   
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, B}: real matrices
+    \vname{tol}: tolerance parameter
+    \vname{n}:  dimension of controllable subspace.
+    \vname{U}: orthogonal change of basis which puts \verb!(A,B)! in canonical form.
+    \vname{V}: orthogonal matrix, change of basis in the control space.
+    \vname{Ac}: block Hessenberg matrix \verb!Ac=U'*A*V!
+    \vname{Bc}: is \verb!U'*B*V!.
+    \vname{ind}: p integer vector associated with controllability indices
+    (dimensions of subspaces \verb!B, B+A*B,...=ind(1),ind(1)+ind(2),...!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![n,[U]]=contr(A,B,[tol])! gives the controllable form of an \verb!(A,B)! 
+  pair.(\verb!dx/dt = A x + B u! or \verb!x(n+1) = A x(n) +b u(n)!).
+  The \verb!n! first columns of \verb!U! make a basis for the controllable
+  subspace.
+  If \verb!V=U(:,1:n)!, then \verb!V'*A*V! and  \verb!V'*B! give the controllable part
+  of the \verb!(A,B)! pair.
+  The pair \verb!(Bc, Ac)! is in staircase controllable form.
+\begin{verbatim}
+                     |B |sI-A      *  . . .  *      *       |
+                     | 1|    11       .      .      .       |
+                     |  |  A    sI-A    .    .      .       |
+                     |  |   21      22    .  .      .       |
+                     |  |        .     .     *      *       |
+  [U'BV|sI - U'AU] = |0 |     0    .     .                  |
+                     |  |            A     sI-A     *       |
+                     |  |             p,p-1    pp           |
+                     |  |                                   |
+                     |0 |         0          0   sI-A       |
+                     |  |                            p+1,p+1|
+\end{verbatim}
+\end{mandescription}
+%-- section-Reference
+\paragraph{Reference}
+Slicot library (see ab01od in SCIDIR/routines/slicot).
+%--example 
+\begin{examples}
+  \begin{mintednsp}{nsp}
+    W=ssrand(2,3,5,list('co',3));  //cont. subspace has dim 3.
+    A=W.A; B=W.B;
+    [n,U]=contr(A,B);n
+    A1=U'*A*U;
+    spec(A1(n+1:$,n+1:$))  //uncontrollable modes
+    spec(A+B*rand(3,5))    
+  \end{mintednsp}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{canon}{canon} \manlink{cont\_mat}{cont-mat} \manlink{unobs}{unobs} \manlink{stabil}{stabil} \manlink{st\_ility}{st-ility}  
+\end{manseealso}

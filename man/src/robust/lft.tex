@@ -7,9 +7,9 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  [P1]=LFT(P,K)  
-  [P1]=LFT(P,r,K)  
-  [P1,r1]=LFT(P,r,Ps,rs)  
+  [P1]=lft(P,K)  
+  [P1]=lft(P,r,K)  
+  [P1,r1]=lft(P,r,Ps,rs)  
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -25,11 +25,11 @@
 \begin{mandescription}
   Linear fractional transform between two standard plants
   \verb!P! and \verb!Ps! in state space form or in
-  transfer form (\verb!syslin! lists).\verb!r= size(P22) rs=size(P22s)!\verb!LFT(P,r, K)! is the linear fractional transform
+  transfer form (\verb!syslin! lists).\verb!r= size(P22) rs=size(P22s)!\verb!lft(P,r, K)! is the linear fractional transform
   between \verb!P! and a controller \verb!K!
   (\verb!K! may be a gain or a controller in state space form
-  or in transfer form);\verb!LFT(P,K)! is \verb!LFT(P,r,K)! with
-  \verb!r!=size of \verb!K! transpose;\verb!P1= P11+P12*K* (I-P22*K)^-1 *P21!\verb![P1,r1]=LFT(P,r,Ps,rs)! returns the generalized (2
+  or in transfer form);\verb!lft(P,K)! is \verb!lft(P,r,K)! with
+  \verb!r!=size of \verb!K! transpose;\verb!P1= P11+P12*K* (I-P22*K)^-1 *P21!\verb![P1,r1]=lft(P,r,Ps,rs)! returns the generalized (2
   ports) lft of \verb!P! and \verb!Ps!.\verb!P1! is the pair two-port interconnected plant and the
   partition of \verb!P1! into 4 blocks in given by
   \verb!r1! which is the dimension of the \verb!22!
