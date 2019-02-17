@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 // ode tests (bruno 10/9/2009)
 
 function print_info(num, algo, task, dir, rtol, atol, err, errtol)

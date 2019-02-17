@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // extraction tests for nsp
 // from the delete tests 
 

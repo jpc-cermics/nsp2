@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // small tests for lu (Bruno June 21 2005). Note that 
 // this should be integrated one day in the algebra.tst file...
 

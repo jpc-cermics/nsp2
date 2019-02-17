@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // tests for special functions
 // Bruno Pincon, march 2011
 

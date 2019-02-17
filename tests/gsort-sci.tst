@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // Copyright Inria/ENPC 
 // test de gsort :
 

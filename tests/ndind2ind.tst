@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 // Copyright (C) 2010-2015 B. Pincon Iecn/Esial
 
 // some tests for ndind2ind

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 
 // xinit(cairo=%t);
 

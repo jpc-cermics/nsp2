@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // Copyright (C) 2008-2015 J.P Chancelier Cermics/Enpc
 //
 // This program is free software; you can redistribute it and/or modify

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function [t,ok]= test(A,meth)
   ok=%t;

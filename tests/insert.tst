@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // insertion tests for nsp
 
 A = [1,  2,  3,  4;

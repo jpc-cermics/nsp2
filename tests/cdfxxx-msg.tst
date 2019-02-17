@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function ret=check_msg(code,check)
   ret = %t;

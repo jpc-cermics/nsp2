@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // test serialization of objects 
 
 A=testmatrix('magic',6);

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function p3=pprod(p1,p2)
 // used for testing 

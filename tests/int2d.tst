@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function z=f(x,y);z=cos(x+y);endfunction
 

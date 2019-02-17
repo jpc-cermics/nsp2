@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function v=f(x,y,z);v=cos(x+y+z);endfunction
 [Ia,ea] = int3d([0,1],[0,1],[0,1],f);

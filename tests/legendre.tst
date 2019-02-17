@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // 
 // Copyright (C) 2005-2015 J.P Chancelier Cermics/Enpc
 //

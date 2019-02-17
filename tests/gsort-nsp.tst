@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function [y]=string(x)
   y=m2s(x,"%.0f")

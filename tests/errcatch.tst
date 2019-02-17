@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 str = "x=[5,6]+[5;6]";
 // this first call will produce an error 

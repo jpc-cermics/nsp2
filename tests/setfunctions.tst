@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 // Copyright (C) 2010-2015 B. Pincob Iecn/Esial
 
 // some tests for set functions (to be completed)

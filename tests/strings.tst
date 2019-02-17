@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 // tolower and toupper 
 if tolower('ABC')<>'abc' then pause,end

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // tests for cdfxxx, cdf, icdf and dist_stat functions 
 // Bruno Pincon, sept 2010
 

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')
 if ~a then pause;end

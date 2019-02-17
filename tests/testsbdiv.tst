@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // some tests for A\b (Bruno 21 March 2005)
 
 // Note that currently A\b is not supported with A or b a scalar

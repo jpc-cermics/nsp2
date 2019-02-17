@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // deletion tests for nsp
 // Bruno Pincon (mai 12 2005)
 // to be completed

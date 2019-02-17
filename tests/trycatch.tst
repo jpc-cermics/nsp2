@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 function [y,z]=f(x) 
   try 
     y='try';

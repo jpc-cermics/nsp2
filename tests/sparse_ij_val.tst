@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // Copyright (C) 2008-2015 B.Pincon Iecn/Esial
 //
 // This program is free software; you can redistribute it and/or modify

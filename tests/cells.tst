@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 M=rand(4,4);
 A={8,9,M,"nsp"}; // creation 

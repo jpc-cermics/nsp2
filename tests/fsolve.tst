@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 // tests function for fsolve 
 // the test function use pre-coded C functions.

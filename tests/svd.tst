@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // tests for svd (Bruno July 11 2005). Note that 
 // this should be integrated one day in the algebra.tst file...
 

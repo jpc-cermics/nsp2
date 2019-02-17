@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 // intg_splin tests (bruno 08/01/2011)
 
 function y=f(x), y = (x-1).*(x-0.5).*(x+1); endfunction 

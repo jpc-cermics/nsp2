@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*-
+// -*- Mode: nsp -*-
 // Copyright (C) 2012-2015 Bruno Pinçon ESIAL/IECN
 
 //

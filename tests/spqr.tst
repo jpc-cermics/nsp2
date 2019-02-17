@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // tests for sparse qr (Jean-Philippe Chancelier 2016) 
 // contains the tests for qr (Bruno July 06 2005).
 

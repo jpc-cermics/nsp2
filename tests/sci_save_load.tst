@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 name = file('join',[getenv('NSP_TMPDIR'),'test.bin']);
 
 // matrix 

@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // an object of ClassaRef 
 // this object is by reference 
 

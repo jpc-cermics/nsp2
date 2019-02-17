@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 //
 //  some tests for basic statistic functions (Bruno 16 Jan 2010)
 //  (mean, var, std, median) 

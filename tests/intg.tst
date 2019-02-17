@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 function y=f1(x);y=exp(x);endfunction;
 [I,ea] = intg(0,1,f1);

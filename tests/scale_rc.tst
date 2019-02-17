@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 // test scale_rows and scale_cols methods (full and sparse matrices)
 
 // for full matrices 

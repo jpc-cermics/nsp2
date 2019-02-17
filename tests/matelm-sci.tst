@@ -1,4 +1,4 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: nsp -*- 
 
 deff('[z]=norm(a)','z=maxi(abs(a))');
 %eps=1.e-8
