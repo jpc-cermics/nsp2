@@ -90,7 +90,8 @@ TESTS= \
 	persistent.dia \
 	stochdec.dia \
 	linmeq.dia \
-	qhull.dia
+	qhull.dia \
+	loadmatfile.dia \
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
