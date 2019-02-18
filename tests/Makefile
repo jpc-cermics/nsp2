@@ -92,6 +92,8 @@ TESTS= \
 	linmeq.dia \
 	qhull.dia \
 	loadmatfile.dia \
+	rmatrix.dia \
+	spqr-more.dia \
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
