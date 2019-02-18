@@ -1025,7 +1025,7 @@ static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
 int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 {
   const int name_len=128;
-  char epname[name_len],epname1[name_len];
+  char epname[name_len],epname1[name_len+32];
   const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
   int j;
   Cell *C;

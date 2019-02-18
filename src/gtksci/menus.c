@@ -905,7 +905,7 @@ static void nspg_menu_export(BCG *Xgc, int winid)
 	  int rep;
 	  char* buttons_def[] = { "gtk-close", NULL };
 	  sprintf(Fname,"Untitled%s",extensions[type-1]);
-	  char message[512];
+	  char message[FSIZE+64];
 	  sprintf(message,"Figure exported to file\n%s",Fname);
 	  nsp_message_(message, buttons_def,1,&rep);
 	  break;

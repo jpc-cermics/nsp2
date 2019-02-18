@@ -925,7 +925,7 @@ target_drag_data_received  (GtkWidget          *widget,
 	      gint x1,y1;
 	      GdkModifierType state;
 	      BCG *Xgc;
-	      static char buf[256];
+	      static char buf[512];
 	      const gchar *bname;
 	      gchar name[256];
 	      int ids[2],winnum;

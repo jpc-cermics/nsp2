@@ -29,7 +29,7 @@
 #include "tcl/generic/tclInt.h"
 #endif
 
-static char tmp_dir[FSIZE+1],buf[FSIZE+1],cur_dir[FSIZE+1];
+static char tmp_dir[FSIZE+1],buf[2*FSIZE+100],cur_dir[FSIZE+1];
 
 #define MAXDATA 6
 

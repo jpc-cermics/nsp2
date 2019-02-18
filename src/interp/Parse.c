@@ -345,7 +345,7 @@ int nsp_parse_eval_from_std(int display)
 int nsp_parse_eval_dir(const char *Dir, char *Fname)
 {
   int rep=RET_OK;
-  char F[FSIZE+1], F1[FSIZE+1], F2[FSIZE+1], dirname[FSIZE+1];
+  char F[2*FSIZE+1], F1[2*FSIZE+1], F2[2*FSIZE+1], dirname[FSIZE+1];
   FILE *f, *SciInput = NULL;
   Stack *stack = nsp_get_stack();
   char *file_name = NspFileName1(stack);

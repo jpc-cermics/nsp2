@@ -3363,7 +3363,7 @@ extern int _wrap_g_source_set_callback(NspGSource *self,Stack stack,int rhs,int 
   NspObject *extra_args = NULL;
   NspPList  *callback;
   GClosure *closure;
-  GSourceFunc fun;
+  GSourceFunc fun = NULL;
   int rep;
   CheckRhs(2,3);
   CheckLhs(1,1);
