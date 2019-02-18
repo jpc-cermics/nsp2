@@ -6543,6 +6543,17 @@ static int _wrap_gtk_source_print_compositor_get_n_pages(NspGtkSourcePrintCompos
   return 1;
 }
 
+static int _wrap_gtk_source_print_compositor_paginate(NspGtkSourcePrintCompositor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *context;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkprintcontext, &context) == FAIL) return RET_BUG;
+    ret =gtk_source_print_compositor_paginate(GTK_SOURCE_PRINT_COMPOSITOR(self->obj),GTK_PRINT_CONTEXT(context->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static int _wrap_gtk_source_print_compositor_get_pagination_progress(NspGtkSourcePrintCompositor *self,Stack stack,int rhs,int opt,int lhs)
 {
   double ret;
@@ -6550,6 +6561,16 @@ static int _wrap_gtk_source_print_compositor_get_pagination_progress(NspGtkSourc
     ret =gtk_source_print_compositor_get_pagination_progress(GTK_SOURCE_PRINT_COMPOSITOR(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
+}
+
+static int _wrap_gtk_source_print_compositor_draw_page(NspGtkSourcePrintCompositor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,s_int, t_end};
+  NspGObject *context;
+  int page_nr;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkprintcontext, &context, &page_nr) == FAIL) return RET_BUG;
+    gtk_source_print_compositor_draw_page(GTK_SOURCE_PRINT_COMPOSITOR(self->obj),GTK_PRINT_CONTEXT(context->obj),page_nr);
+  return 0;
 }
 
 static NspMethods gtksourceprintcompositor_methods[] = {
@@ -6575,7 +6596,9 @@ static NspMethods gtksourceprintcompositor_methods[] = {
   {"set_header_format",(nsp_method *) _wrap_gtk_source_print_compositor_set_header_format},
   {"set_footer_format",(nsp_method *) _wrap_gtk_source_print_compositor_set_footer_format},
   {"get_n_pages",(nsp_method *) _wrap_gtk_source_print_compositor_get_n_pages},
+  {"paginate",(nsp_method *) _wrap_gtk_source_print_compositor_paginate},
   {"get_pagination_progress",(nsp_method *) _wrap_gtk_source_print_compositor_get_pagination_progress},
+  {"draw_page",(nsp_method *) _wrap_gtk_source_print_compositor_draw_page},
   { NULL, NULL}
 };
 
@@ -9691,4 +9714,4 @@ void nsp_initialize_gtksourceview_types(void)
   new_type_gtksourcemap(T_BASE);
 }
 
-#line 9695 "gtksourceview.c"
+#line 9718 "gtksourceview.c"

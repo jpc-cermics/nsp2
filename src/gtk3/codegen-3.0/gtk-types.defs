@@ -1115,6 +1115,14 @@
 
 
 ;; GtkPrintContext Encapsulates context for drawing pages
+
+(define-object GtkPrintContext
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkPrintContext")
+  (gtype-id "GTK_TYPE_PRINT_CONTEXT")
+)
+
 ;; GtkPrintSettings Stores print settings
 ;; GtkPageSetup Stores page setup information
 ;; GtkPaperSize Support for named paper sizes
