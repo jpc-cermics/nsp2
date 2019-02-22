@@ -57,6 +57,7 @@
 #include <nsp/classbref.h> 
 #include <nsp/astnode.h> 
 #include <nsp/bvar.h> 
+#include <nsp/linearsys.h> 
 #include <nsp/interf.h>
 
 #ifdef WITH_MONGODB_C 
@@ -107,7 +108,7 @@ extern void *new_type_graphic(type_mode mode);
 extern void *new_type_ast(type_mode mode);
 extern void *new_type_astv(type_mode mode);
 extern void *new_type_frame(type_mode mode);
-extern void *new_type_linearsys(type_mode mode);
+/* extern void *new_type_linearsys(type_mode mode); */
 /* 
  * NspType inherits from NspObject
  */
