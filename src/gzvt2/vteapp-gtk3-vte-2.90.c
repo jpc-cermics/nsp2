@@ -144,7 +144,7 @@ char_size_realized(GtkWidget *widget, gpointer data)
 }
 
 static void
-destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
+destroy_and_quit(VteTerminal *terminal, GtkWidget *window, int tag )
 {
   const char *output_file = g_object_get_data (G_OBJECT (terminal), "output_file");
 
@@ -177,14 +177,18 @@ destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
     g_object_unref (file);
   }
 
-  if (GTK_IS_WIDGET(window)) gtk_widget_destroy (window);
+  if (tag == TRUE && window != NULL && GTK_IS_WIDGET(window)) gtk_widget_destroy (window);
   gtk_main_quit ();
 }
 
 static void
 delete_event(GtkWidget *window, GdkEvent *event, gpointer terminal)
 {
-  destroy_and_quit(VTE_TERMINAL (terminal), window);
+  const int tag =GPOINTER_TO_INT( g_object_get_data (G_OBJECT (terminal), "info"));
+  /* printf("Inside delete_event\n"); */
+  g_object_set_data (G_OBJECT (terminal), "info",GINT_TO_POINTER (FALSE));
+  destroy_and_quit(VTE_TERMINAL (terminal), window, tag);
+  /* printf("quit delete_event\n"); */
 }
 
 /* take care : no int status as second argument */
@@ -192,7 +196,11 @@ delete_event(GtkWidget *window, GdkEvent *event, gpointer terminal)
 static void
 child_exited(GtkWidget *terminal, gpointer window)
 {
-  destroy_and_quit(VTE_TERMINAL (terminal), GTK_WIDGET (window));
+  const int tag =GPOINTER_TO_INT( g_object_get_data (G_OBJECT (terminal), "info"));
+  /* printf("Inside child_exited\n"); */
+  g_object_set_data (G_OBJECT (terminal), "info",GINT_TO_POINTER (FALSE));
+  destroy_and_quit(VTE_TERMINAL (terminal), window, tag);
+  /* printf("quit child_exited\n"); */
 }
 
 static void
@@ -1154,7 +1162,8 @@ main(int argc, char **argv)
   }
 
   g_object_set_data (G_OBJECT (widget), "output_file", (gpointer) output_file);
-	
+  g_object_set_data (G_OBJECT (widget), "info",GINT_TO_POINTER (TRUE));
+
   /* Go for it! */
   g_signal_connect(widget, "child-exited", G_CALLBACK(child_exited), window);
   g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), widget);
