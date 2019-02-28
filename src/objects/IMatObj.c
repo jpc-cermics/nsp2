@@ -1490,6 +1490,12 @@ int_imatrix_ior (Stack stack, int rhs, int opt, int lhs)
 	    }
 	  return 1;
 	}
+      else
+	{
+	  Scierror ("Error: second argument of %s should be an integer matrix\n",
+		    NspFname(stack));
+	  return RET_BUG;
+	}
     }
   else
     {
@@ -1531,6 +1537,12 @@ int_imatrix_iand (Stack stack, int rhs, int opt, int lhs)
 	      return RET_BUG;
 	    }
 	  return 1;
+	}
+      else
+	{
+	  Scierror ("Error: second argument of %s should be an integer matrix\n",
+		    NspFname(stack));
+	  return RET_BUG;
 	}
     }
   else
