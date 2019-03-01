@@ -51,6 +51,48 @@
   Algorithm is adapted from Safonov-Limebeer. Note that \verb!P! is assumed to
   be a continuous-time plant.
 \end{mandescription}
+
+\begin{examples}
+  \begin{mintednsp}{nsp}
+    // Example from the book https 
+    // Multivariable Feedback Control: Analysis and Design
+    // by Sigurd Skogestad (Author), Ian Postlethwaite (Author)
+    // Page 64
+    s=poly(0,'s');
+    Gnum=200;
+    Gden=(10*s+1)*(0.05*s+1)*(0.05*s+1);
+    G=syslin('c',Gnum,Gden);
+
+    G=tf2ss(G);
+    A=1.e-4;M=1.5;wb=10;
+
+    Wp1=syslin('c',s/M+wb,s+wb*A);
+    Wp2=syslin('c',(s/sqrt(M)+wb)^2,(s+wb*sqrt(A))^2);
+    Wu=1;
+
+    [P,r]=augment(G,'SR');
+
+    P1=sysdiag(Wp1,Wu,eye(size(G)))*P;
+    P2=sysdiag(Wp2,Wu,eye(size(G)))*P;
+
+    [K1,mu]=h_inf(P1,r,0,20,10);
+    [K2,mu]=h_inf(P2,r,0,20,10);
+
+    [S1,R1,T1]=sensi(G,K1);
+    [S2,R2,T2]=sensi(G,K2);
+
+    w=logspace(-3,2);
+    Ssv1=svplot(S1,w);
+    Ssv2=svplot(S2,w);
+
+    xclear(0)
+    xselect(0)
+    plot2d(w',20*log([Ssv1;Ssv2]')/log(10),logflag="ln");
+    xgrid()
+    xtitle("Singular values plot","(Rd/sec)", "Db");
+  \end{mintednsp}
+\end{examples}
+
 %-- see also
 \begin{manseealso}
   \manlink{gamitg}{gamitg} \manlink{ccontrg}{ccontrg} \manlink{leqr}{leqr}  

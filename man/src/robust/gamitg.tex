@@ -24,15 +24,58 @@
   \verb!gopt=gamitg(G,r,prec [,options])!
   returns the H-infinity optimal gain \verb!gopt!.\verb!G! contains the state-space matrices \verb![A,B,C,D]! of
   the plant with the usual partitions:
-\begin{verbatim}
-  B = ( B1 , B2 ) ,    C = ( C1 ) ,    D = ( D11  D12)
-                           ( C2 )          ( D21  D22)
-\end{verbatim}
-  These partitions are implicitly given in \verb!r!: \verb!r(1)!
-  and \verb!r(2)! are the dimensions of \verb!D22! (rows x columns)
-  With \verb!option='t'!, \verb!gamitg! traces each bisection step, i.e., 
-  displays the lower and upper bounds and the current test point.
+  \begin{equation*}
+    B= \left( \begin{array}{cc} B_1 & B_2 \end{array} \right), \quad 
+    C= \left( \begin{array}{c} C_1 \\ C_2 \end{array} \right), \quad
+    D= \left( \begin{array}{cc} D_{1,1} & D_{1,2} \\ D_{2,1} & D_{2,2} \end{array} \right)
+  \end{equation*}
+  These partitions are implicitly given in variable \verb!r!: !r(1)! and \verb!r(2)! are the dimensions of the matrix
+  \verb!D22! (rows x columns). When the \verb!option='t'! is given, The function \verb!gamitg! traces each
+  bisection step, \emph{i.e.}, displays the lower and upper bounds and the current test point.
 \end{mandescription}
+
+\begin{examples}
+  \begin{mintednsp}{nsp}
+    // Example from the book https 
+    // Multivariable Feedback Control: Analysis and Design
+    // by Sigurd Skogestad (Author), Ian Postlethwaite (Author)
+    // Page 64
+    s=poly(0,'s');
+    Gnum=200;
+    Gden=(10*s+1)*(0.05*s+1)*(0.05*s+1);
+    G=syslin('c',Gnum,Gden);
+
+    G=tf2ss(G);
+    A=1.e-4; M=1.5; wb=10;
+
+    Wp1=syslin('c',s/M+wb,s+wb*A);
+    Wp2=syslin('c',(s/sqrt(M)+wb)^2,(s+wb*sqrt(A))^2);
+    Wu=1;
+
+    [P,r]=augment(G,'SR');
+    P1=sysdiag(Wp1,Wu,eye(size(G)))*P;
+    P2=sysdiag(Wp2,Wu,eye(size(G)))*P;
+
+    gopt1=gamitg(P1,r);
+    gopt2=gamitg(P2,r);
+
+    K11=ccontrg(P1,r,gopt1);
+    K21=ccontrg(P2,r,gopt2);
+
+    [S1,R1,T1]=sensi(G,K1);
+    [S2,R2,T2]=sensi(G,K2);
+
+    w=logspace(-3,2);
+    Ssv1=svplot(S1,w);
+    Ssv2=svplot(S2,w);
+
+    xclear(0)
+    xselect(0)
+    plot2d(w',20*log([Ssv1;Ssv2]')/log(10),logflag="ln");
+    xgrid()
+    xtitle("Singular values plot","(Rd/sec)", "Db");
+  \end{mintednsp}
+\end{examples}
 % -- see also
 \begin{manseealso}
   \manlink{ccontrg}{ccontrg} \manlink{h\_inf}{h-inf}  
