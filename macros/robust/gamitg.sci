@@ -200,7 +200,7 @@ function [gopt]=gamitg(g,r,PREC,options)
     //----------------------------------------------------------------------
     
     hg=h11-(h12/(gs*h22-d1112s))*h21;
-    
+
     if T_EVALH==1 then
       hev=spec(hg);
       if min(abs(real(hev))) <= RELACCU*max(abs(hev)) then
@@ -248,9 +248,11 @@ function [gopt]=gamitg(g,r,PREC,options)
       //    discarded
       //  * For the remaining entries, if e(i)/f(i) < - RELACC/100 then X is
       //    diagnosed as indefinite. Otherwise X is nonnegative.
+
+      // scicoslab spec with two arguments is called gspec 
       
       if T_POSX==1 then
-	[e,f]=spec(qx,px);
+	[e,f]=gspec(qx,px);
 	i=1;
 	while i<=na,
 	  if min(abs([e(i),f(i)])) >= RELACCU & real(e(i)/f(i)) <= 0 then
@@ -273,7 +275,7 @@ function [gopt]=gamitg(g,r,PREC,options)
       py=uj(1:na,1:na);   qy=uj(na+1:twona,1:na);
       
       if T_POSY==1 then
-	[e,f]=spec(qy,py);
+	[e,f]=gspec(qy,py);
 	i=1;
 	while i<=na,
 	  if min(abs([e(i),f(i)])) >= RELACCU & real(e(i)/f(i)) <= 0 then
@@ -295,7 +297,7 @@ function [gopt]=gamitg(g,r,PREC,options)
     
     if DONE==0 then
       
-      [e,f]=spec(qy'*qx,py'*px);
+      [e,f]=gspec(qy'*qx,py'*px);
       if max(real(e-gs*f)) <= 0 then
 	upper=ga;
 	if str_member('t',options) then

@@ -23,20 +23,18 @@ function [K]=ccontrg(PP,r,Gamma);
   //HAMILTONIAN SETUP
   //------------------
   sh22=m1+m2;
-  h11=[a,0*eye(a);-c1'*c1,-a'];
+  h11=[a,0*eye(size(a));-c1'*c1,-a'];
   h12=[-b1,-b2;c1'*d11,c1'*d12];
   h21=[d11'*c1,b1';d12'*c1,b2'];
   h22=gs*eye(m1,m1); h22(sh22,sh22)=0;
   h22=h22-[d11,d12]'*[d11,d12];
   
   sj22=p1+p2;
-  j11=[a',0*eye(a);-b1*b1',-a];
-  j12=[-c1',-c2';b1*d11',b1*d21']
+  j11=[a',0*eye(size(a));-b1*b1',-a];
+  j12=[-c1',-c2';b1*d11',b1*d21'];
   j21=[d11*b1',c1;d21*b1',c2];
   j22=gs*eye(p1,p1); j22(sj22,sj22)=0;
   j22=j22-[d11;d21]*[d11;d21]';
-  
-  
   
   //computation of Xinf and Yinf
   //-----------------------------
@@ -59,15 +57,16 @@ function [K]=ccontrg(PP,r,Gamma);
   
   
   //computation of M,N
+  //In nsp sz is a vector
   [uz,sz,vz]=svd(qx'*qy/gs-px'*py);
-  sz=sqrt(sz);
+  sz=sqrt(diag(sz));
   
   
   //DETERMINATION OF DK
   //-------------------
   
-  [u,s,v]=svd(d12); r12=max(size(find(diag(s) > 1.0e-10)));
-  [w,p,z]=svd(d21); r21=max(size(find(diag(p) > 1.0e-10)));
+  [u,s,v]=svd(d12);s=diag(s); r12=max(size(find(diag(s) > 1.0e-10)));
+  [w,p,z]=svd(d21);p=diag(p); r21=max(size(find(diag(p) > 1.0e-10)));
   u1=u(:,1:r12); v1=v(:,1:r12); w1=w(:,1:r21); z1=z(:,1:r21);
   s1=s(1:r12,1:r12); ph1=p(1:r21,1:r21);
   d11tr=u'*d11*z;
@@ -160,7 +159,7 @@ function [go,xo]=parrt(a,b,c,rx,cx);
   
   gs=(go**2);
   [u,s,v]=svd(a);
-  
+  s=diag(s);
   //form  gs I - s' * s
   ns=min(ra,ca);
   d=diag(s);
