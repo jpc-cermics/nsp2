@@ -138,9 +138,9 @@ ifeq ($(CROSS),yes)
 all :: $(LIBRARY_NAME).lib
 
 ifeq ($(TARGET_MACHINE),x64)
-LIBEXE=x86_64-w64-mingw32-lib.exe
+LIBEXE=@LIBEXE@
 else
-LIBEXE=i686-w64-mingw32-lib.exe
+LIBEXE=@LIBEXE@
 endif
 
 $(LIBRARY_NAME).lib: $(LIBRARY_NAME).la $(LIBRARY_NAME).def

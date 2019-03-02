@@ -162,6 +162,8 @@ fi
 #
 # change scidir for mingw/cygwin
 
+# AC_MSG_WARN([Value of host = $host ])
+
 case "$host" in
   *-*-cygwin* |   *-*-mingw32*)
     SCIDIR=`echo $SCIDIR | sed -e 's+/cygdrive/\([[a-zA-Z]]*\)/+\1:/+g' `
@@ -661,12 +663,17 @@ esac
 # NSPISS is inserted in the package name built for windows
 # TARGET_MACHINE is the machine option transmited to msvc linker
 
+LIBEXE=
 NSP_ISS=
 TARGET_MACHINE=
 CROSS=no
 CROSS_VERSION=
 CROSS_POPULATE=
 CROSS_COPIER=crosscopy.sh
+SHAREDWIN32=shared-win32
+
+AC_CHECK_FILE("/mingw64/bin/lib.exe",[msys2_x86_64_libexe_exists="yes"], [msys2_x86_64_libexe_exists="no"])
+AC_CHECK_FILE("/mingw32/bin/lib.exe",[msys2_i686_libexe_exists="yes"], [msys2_i686_libexe_exists="no"])
 
 if test "$with_gtk3" == yes; then
   CROSS_COPIER=crosscopy-gtk3.sh
@@ -681,6 +688,14 @@ case "$host" in
     CROSS_VERSION=`x86_64-w64-mingw32-gcc -dumpversion`
     CROSS=yes
     CROSS_POPULATE=cross-populate
+    if test "$msys2_x86_64_libexe_exists" == "yes"; then
+       LIBEXE=/mingw64/bin/lib
+    else
+       LIBEXE=x86_64-w64-mingw32-lib.exe
+    fi
+    # visual linker needed to produce lib files 
+    # from dlls 
+    SHAREDWIN32=shared-win32-and-lib
     ;;
   i686-pc-mingw32 )
     # cross compilation target 32 bits (old name)
@@ -697,6 +712,14 @@ case "$host" in
     CROSS_VERSION=`i686-w64-mingw32-gcc -dumpversion`
     CROSS=yes
     CROSS_POPULATE=cross-populate
+    if test "$msys2_i686_libexe_exists" == "yes"; then
+       LIBEXE=/mingw32/bin/lib
+    else
+       LIBEXE=i686-w64-mingw32-lib.exe
+    fi
+    # visual linker needed to produce lib files 
+    # from dlls 
+    SHAREDWIN32=shared-win32-and-lib
     ;;
 esac
 
@@ -715,21 +738,6 @@ case "$CROSS_VERSION" in
          CROSS_VERSION="5.3-win32"
 	 ;;	 
 esac
-
-
-
-# visual linker needed to produce lib files 
-# from dlls 
-
-SHAREDWIN32=shared-win32
-LIBEXE=
-
-if test "$CROSS" == yes; then
-   AC_CHECK_TOOL(LIBEXE,lib.exe,no) 
-   if test "$LIBEXE" != no; then 
-      SHAREDWIN32=shared-win32-and-lib
-   fi 
-fi
 
 ############################################
 # add -Wall
