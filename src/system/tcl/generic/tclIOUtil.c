@@ -485,7 +485,7 @@ char *nsp_errno_id(void)
 	case ESHUTDOWN: return "ESHUTDOWN";
 #endif
 #ifdef ESOCKTNOSUPPORT
-	case ESOCKTNOSUPPORT: return "ESOCKTNOSUPPORT";
+	  // case ESOCKTNOSUPPORT: return "ESOCKTNOSUPPORT";
 #endif
 #ifdef ESPIPE
 	case ESPIPE: return "ESPIPE";
@@ -933,7 +933,7 @@ char *nsp_error_msg(int err)
 	case ESHUTDOWN: return "can't send afer socket shutdown";
 #endif
 #ifdef ESOCKTNOSUPPORT
-	case ESOCKTNOSUPPORT: return "socket type not supported";
+	  //	case ESOCKTNOSUPPORT: return "socket type not supported";
 #endif
 #ifdef ESPIPE
 	case ESPIPE: return "invalid seek";
