@@ -44,7 +44,7 @@ shared-win32-and-lib:
 		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
 		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) $(WIN32LIBS)
 	@echo "creation of bin/libnsp.lib"
-	@cd bin; @LIBEXE@ /nologo /machine:@TARGET_MACHINE@ /def:libnsp.def /out:libnsp.lib
+	@cd bin; @LIBEXE@ /machine:@TARGET_MACHINE@ /def:libnsp.def /out:libnsp.lib
 
 #unused 
 
