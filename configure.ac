@@ -1469,15 +1469,19 @@ if test "$check_vte" = "yes" ; then
      # for gtk3
      VTE_FILE=vteapp-gtk3-vte-2.91.c
      VTE_FILE=vteapp-gtk3.c
+     VTE_LIB=vte
      PKG_CHECK_MODULES(vte, vte-2.91 , have_vte_291_gtk3=yes, have_vte_291_gtk3=no)
      if test "$have_vte_291_gtk3" = "yes"; then
        VTE_PKG=vte-2.91
        VTE_FILE=vteapp-gtk3-vte-2.91.c
+       VTE_LIB=vte-2.91
      else
        PKG_CHECK_MODULES(vte, vte-2.90 , have_vte_290_gtk3=yes, have_vte_290_gtk3=no)
        if test "$have_vte_290_gtk3" = "yes"; then
          VTE_PKG=vte-2.90
          VTE_FILE=vteapp-gtk3-vte-2.90.c
+	 # XXXXX a vérifier est-ce 2.90
+	 VTE_LIB=vte
        else
          AC_MSG_ERROR([you should install library and devel for VTE gtk+-3.0 (Terminal emulator widget)])
        fi
@@ -1485,7 +1489,7 @@ if test "$check_vte" = "yes" ; then
      ac_save_LIBS="$LIBS"
      LIBS=`$PKG_CONFIG $VTE_PKG --cflags --libs`
      VTE=no
-     AC_CHECK_LIB(vte,vte_terminal_new,[VTE=yes],[VTE=no])
+     AC_CHECK_LIB($VTE_LIB,vte_terminal_new,[VTE=yes],[VTE=no])
      if test "$VTE" = no; then
      	AC_MSG_ERROR([vte_terminal_new not found in $VTE_PKG])
      fi
