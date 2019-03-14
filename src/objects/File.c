@@ -2645,7 +2645,7 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  break;
 	case 'd':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_D;
+	  pf_type = l_flag ? PF_LD : PF_D;
 	  break;
 
 	case 'o':
