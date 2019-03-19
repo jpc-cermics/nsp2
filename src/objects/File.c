@@ -1727,7 +1727,7 @@ int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S)
                   ptrtab[12],ptrtab[13],ptrtab[14],ptrtab[15],ptrtab[16],ptrtab[17],\
 	          ptrtab[18],ptrtab[19]
 
-typedef enum {SF_C,SF_S,SF_LUI,SF_SUI,SF_UI,SF_LI,SF_SI,SF_I,SF_LF,SF_F} sfdir;
+typedef enum {SF_C,SF_S,SF_LLUI, SF_LUI,SF_SUI,SF_UI,SF_LLI, SF_LI,SF_SI,SF_I,SF_LLF, SF_LF,SF_F} sfdir;
 
 typedef int (*PRINTER) (const FILE *,const char *,...);
 
@@ -1751,17 +1751,20 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      int iline, int *nargs,const char *strv, int *retval)
 {
   int n_conversions = 0;
-  double dval;
+  long double dval;
   int i;
   char sformat[MAX_STR];
   char char_buf[MAXSCAN][MAX_STR];
   long unsigned int buf_lui[MAXSCAN];
+  long long unsigned int buf_llui[MAXSCAN];
   short unsigned int buf_sui[MAXSCAN];
   unsigned int buf_ui[MAXSCAN];
   long int buf_li[MAXSCAN];
+  long long int buf_lli[MAXSCAN];
   short int buf_si[MAXSCAN];
   int buf_i[MAXSCAN];
   double buf_lf[MAXSCAN];
+  long double buf_llf[MAXSCAN];
   float buf_f[MAXSCAN];
   void *ptrtab[MAXSCAN];
   int stared; /* %* directives */
@@ -1866,6 +1869,11 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  q++;
 	  h_flag = 1;
 	}
+      if (*q == 'l')
+	{
+	  q++;
+	  l_flag += 1;
+	}
 
       /* directive points to the scan directive  */
       
@@ -1958,8 +1966,16 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  if (stared == FALSE ) {
 	    if ( l_flag ) 
 	      {
-		ptrtab[num_conversion] =  &buf_lui[num_conversion];
-		type[num_conversion] = SF_LUI;
+		if ( l_flag == 2 )
+		  {
+		    ptrtab[num_conversion] =  &buf_llui[num_conversion];
+		    type[num_conversion] = SF_LLUI;
+		  }
+		else
+		  {
+		    ptrtab[num_conversion] =  &buf_lui[num_conversion];
+		    type[num_conversion] = SF_LUI;
+		  }
 	      }
 	    else if ( h_flag) 
 	      {
@@ -1986,8 +2002,16 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  if (stared == FALSE ) {
 	  if ( l_flag ) 
 	    {
-	      ptrtab[num_conversion] =  &buf_li[num_conversion];
-	      type[num_conversion] = SF_LI;
+	      if ( l_flag == 2 )
+		{
+		  ptrtab[num_conversion] = &buf_li[num_conversion];
+		  type[num_conversion] = SF_LI; 
+		}
+	      else
+		{
+		  ptrtab[num_conversion] = &buf_lli[num_conversion] ;
+		  type[num_conversion] = SF_LLI;
+		}
 	    }
 	  else if ( h_flag) 
 	    {
@@ -2015,10 +2039,20 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	    }
 	  else if ( l_flag)  /* We alway scan using a double ! */
 	    {
-	      if (stared == FALSE ) {
-		ptrtab[num_conversion] =  &buf_lf[num_conversion];
-		type[num_conversion] = SF_LF;
-	      }
+	      if ( l_flag == 2 )
+		{
+		  if (stared == FALSE ) {
+		    ptrtab[num_conversion] =  &buf_llf[num_conversion];
+		    type[num_conversion] = SF_LLF;
+		  }
+		}
+	      else
+		{
+		  if (stared == FALSE ) {
+		    ptrtab[num_conversion] =  &buf_lf[num_conversion];
+		    type[num_conversion] = SF_LF;
+		  }
+		}
 	    }
 	  else
 	    {
@@ -2134,6 +2168,13 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 		}
 	    }
 	  break;
+	case SF_LLUI:
+	  dval = *((long long unsigned int*) ptrtab[i-1]);
+	  if ( iline == 0) 
+	    NthObj(i)=nsp_create_object_from_double(NVOID,dval);
+	  else
+	    ((NspMatrix *) NthObj(i))->R[iline]= dval;
+	  break;
 	case SF_LUI:
 	  dval = *((unsigned long int*) ptrtab[i-1]);
 	  if ( iline == 0) 
@@ -2162,6 +2203,13 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  else
 	    ((NspMatrix *) NthObj(i))->R[iline]= dval;
 	  break;
+	case SF_LLI:
+	  dval = *((long long int*) ptrtab[i-1]);
+	  if ( iline == 0) 
+	    NthObj(i)=nsp_create_object_from_double(NVOID,dval);
+	  else
+	    ((NspMatrix *) NthObj(i))->R[iline]= dval;
+	  break;
 	case SF_SI:
 	  dval = *((short int*) ptrtab[i-1]);
 	  if ( iline == 0) 
@@ -2171,6 +2219,13 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  break;
 	case SF_I:
 	  dval = *((int*) ptrtab[i-1]);
+	  if ( iline == 0) 
+	    NthObj(i)=nsp_create_object_from_double(NVOID,dval);
+	  else
+	    ((NspMatrix *) NthObj(i))->R[iline]= dval;
+	  break;
+	case SF_LLF:
+	  dval = *((long double*) ptrtab[i-1]);
 	  if ( iline == 0) 
 	    NthObj(i)=nsp_create_object_from_double(NVOID,dval);
 	  else
@@ -2218,11 +2273,11 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
 /*---------- types and defs for doing printf ------------*/
 
-typedef enum {PF_C,PF_S,PF_D, PF_LD,PF_F, PF_UD, PF_LUD, PF_SS} printf_cv;
+typedef enum {PF_C,PF_S,PF_D, PF_LD, PF_LLD, PF_F, PF_LLF, PF_UD, PF_LUD, PF_LLUD, PF_SS} printf_cv;
 
 /* for switch on number of '*' and type */
 
-#define  AST(num,type)  (8*(num)+(type))
+#define  AST(num,type)  (11*(num)+(type))
 
 /* Buffer for printf **/
 
@@ -2621,7 +2676,12 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  q++;
 	  h_flag = 1;
 	}
-      
+      if (*q == 'l')
+	{
+	  q++;
+	  l_flag += 1;
+	}
+
       /* Set pf_type and load val */
       switch (*q++)
 	{
@@ -2644,37 +2704,38 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  pf_type = PF_C;
 	  break;
 	case 'd':
+
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = l_flag ? PF_LD : PF_D;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLD : PF_LD) : PF_D;
 	  break;
 
 	case 'o':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_UD;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLUD : PF_LUD) : PF_UD;
 	  break;
 
 	case 'x':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_UD;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLUD : PF_LUD) : PF_UD;
 	  break;
 
 	case 'X':
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_UD;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLUD : PF_LUD) : PF_UD;
 	  break;
 
 	case 'i':
 	  /* use strod() here */
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = l_flag ? PF_LD : PF_D;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLD : PF_LD) : PF_D;
 	  break;
 	case 'u':
 	  /* use strod() here */
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = l_flag ? PF_LUD : PF_UD;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLUD : PF_LUD) : PF_UD;
 	  break;
 
-	case 'a':
+        case 'a':
 	case 'A':
 	case 'e':
 	case 'g':
@@ -2688,9 +2749,9 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	    }
 	  /* use strod() here */
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = PF_F;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLF : PF_F) : PF_F;
 	  break;
-
+	  
 	default:
 	  Scierror("Error: printf: bad conversion\n");
 	  return RET_BUG;
@@ -2791,6 +2852,18 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  retval += (*printer) ( target, p, ast[0], ast[1], (long int) dval);
 	  break;
 
+	case AST (0, PF_LLD):
+	  retval += (*printer) ( target, p, (long int) dval);
+	  break;
+
+	case AST (1, PF_LLD):
+	  retval += (*printer) ( target, p, ast[0], (long int) dval);
+	  break;
+
+	case AST (2, PF_LLD):
+	  retval += (*printer) ( target, p, ast[0], ast[1], (long int) dval);
+	  break;
+
 	case AST (0, PF_LUD):
 	  retval += (*printer) ( target, p, (long unsigned int) dval);
 	  break;
@@ -2800,6 +2873,18 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  break;
 
 	case AST (2, PF_LUD):
+	  retval += (*printer) ( target, p, ast[0], ast[1], (long unsigned int) dval);
+	  break;
+
+	case AST (0, PF_LLUD):
+	  retval += (*printer) ( target, p, (long unsigned int) dval);
+	  break;
+
+	case AST (1, PF_LLUD):
+	  retval += (*printer) ( target, p, ast[0], (long unsigned int) dval);
+	  break;
+
+	case AST (2, PF_LLUD):
 	  retval += (*printer) ( target, p, ast[0], ast[1], (long unsigned int) dval);
 	  break;
 
@@ -2813,6 +2898,18 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 
 	case AST (2, PF_F):
 	  retval += (*printer) ( target, p, ast[0], ast[1], dval);
+	  break;
+
+	case AST (0, PF_LLF):
+	  retval += (*printer) ( target, p, (long double) dval);
+	  break;
+
+	case AST (1, PF_LLF):
+	  retval += (*printer) ( target, p, ast[0],(long double) dval);
+	  break;
+
+	case AST (2, PF_LLF):
+	  retval += (*printer) ( target, p, ast[0], ast[1],(long double) dval);
 	  break;
 	}
       if (fp == (FILE *) 0)
