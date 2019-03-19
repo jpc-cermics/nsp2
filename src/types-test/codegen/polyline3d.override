@@ -126,11 +126,14 @@ static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O
   nsp_polyline3d *L = ((NspPolyline3d *) self)->obj;
   NspMatrix *Mcoord = (NspMatrix *) O;
   if ( ! IsMat(O) ) return FAIL;
-  if ( Mcoord->m != L->Mcoord->m || Mcoord->n != L->Mcoord->n ) 
+  if ( L->Mcoord != NULL )
     {
-      Scierror("Error: Mcoord attribute has wrong size expecting %dx%d\n",
-               L->Mcoord->m,L->Mcoord->n);
-      return FAIL;
+      if ( Mcoord->m != L->Mcoord->m || Mcoord->n != L->Mcoord->n ) 
+	{
+	  Scierror("Error: Mcoord attribute has wrong size expecting %dx%d\n",
+		   L->Mcoord->m,L->Mcoord->n);
+	  return FAIL;
+	}
     }
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
     if (((NspPolyline3d *) self)->obj->Mcoord != NULL ) 
