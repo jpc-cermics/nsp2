@@ -996,13 +996,11 @@ main(int argc, char **argv)
   /* Create a gtk_socket to store the menu pluged by nsp */
   {
     char buf[56];
-    GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
-    gtk_box_set_spacing (GTK_BOX (hbox), 2);
-    gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
     socket_button = gtk_socket_new();
     gtk_widget_set_size_request(socket_button,1,10);
-    gtk_box_pack_start(GTK_BOX(hbox), socket_button,FALSE,TRUE,0);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox,FALSE,TRUE,0);
+    // gtk_box_pack_start(GTK_BOX(hbox), socket_button,FALSE,TRUE,0);
+    gtk_container_add(GTK_CONTAINER(vbox), socket_button);
+    // gtk_box_pack_start(GTK_BOX(vbox),socket_button,FALSE,TRUE,0);
     sprintf(buf,"SCIWIN=%#lx",(gulong) gtk_socket_get_id(GTK_SOCKET(socket_button)));
     env_add[0]=buf;
   }
