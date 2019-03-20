@@ -1,4 +1,4 @@
-function [xx,yy,zz]=spaghetti(x,y,z,w,nf)
+function [xx,yy,zz]=spaghetti(x,y,z,w,nf, head=%t)
   //
   // This program is free software; you can redistribute it and/or modify
   // it under the terms of the GNU General Public License as published by
@@ -190,36 +190,33 @@ function [xx,yy,zz]=spaghetti(x,y,z,w,nf)
       zt(:,k)=z(:,j)+(N1(:,3)*fd(1,k)+N2(:,3)*fd(2,k)).*w(:,j)
     end
     // generate the faces of the tube
-    k1=1:nf; k2=[2:nf,1]; np2=1:(np-2); np2f=(np-2)*nf;
-    xx(:,(j-1)*np*nf+(1:(np-2)*nf))=...
+    if head then npp = (np-2) else npp = (np-1);end
+    k1=1:nf; k2=[2:nf,1]; np2=1:(npp); np2f=(npp)*nf;
+    xx(:,(j-1)*np*nf+(1:(npp)*nf))=...
 	[matrix(xt(np2,k1),1,np2f);matrix(xt(np2+1,k1),1,np2f);...
 	 matrix(xt(np2+1,k2),1,np2f);matrix(xt(np2,k2),1,np2f)] 
-    yy(:,(j-1)*np*nf+(1:(np-2)*nf))=...
+    yy(:,(j-1)*np*nf+(1:(npp)*nf))=...
 	[matrix(yt(np2,k1),1,np2f);matrix(yt(np2+1,k1),1,np2f);...
 	 matrix(yt(np2+1,k2),1,np2f);matrix(yt(np2,k2),1,np2f)] 
-    zz(:,(j-1)*np*nf+(1:(np-2)*nf))=...
+    zz(:,(j-1)*np*nf+(1:(npp)*nf))=...
 	[matrix(zt(np2,k1),1,np2f);matrix(zt(np2+1,k1),1,np2f);...
 	 matrix(zt(np2+1,k2),1,np2f);matrix(zt(np2,k2),1,np2f)] 
     // last segment: arrowhead
-    np1=np-1; xc=zeros(1,nf); yc=xc; zc=yc; xp=yc; yp=yc; zp=yc;
-    xc(k1)=-x(np1,j)+2*xt(np1,k1)
-    yc(k1)=-y(np1,j)+2*yt(np1,k1)
-    zc(k1)=-z(np1,j)+2*zt(np1,k1)
-    xp(k1)=x(np,j)
-    yp(k1)=y(np,j)
-    zp(k1)=z(np,j)
-    xx(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=...
-	[xt(np1,k1);xc(k1);xc(k2);xt(np1,k2)] 
-    yy(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=...
-	[yt(np1,k1);yc(k1);yc(k2);yt(np1,k2)] 
-    zz(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=...
-	[zt(np1,k1);zc(k1);zc(k2);zt(np1,k2)] 
-    xx(:,(j-1)*np*nf+((np1*nf+1):np*nf))=...
-	[xc(k2);xc(k1);xp(k1);xp(k2)] 
-    yy(:,(j-1)*np*nf+((np1*nf+1):np*nf))=...
-	[yc(k2);yc(k1);yp(k1);yp(k2)] 
-    zz(:,(j-1)*np*nf+((np1*nf+1):np*nf))=...
-	[zc(k2);zc(k1);zp(k1);zp(k2)] 
+    if head then 
+      np1=np-1; xc=zeros(1,nf); yc=xc; zc=yc; xp=yc; yp=yc; zp=yc;
+      xc(k1)=-x(np1,j)+2*xt(np1,k1)
+      yc(k1)=-y(np1,j)+2*yt(np1,k1)
+      zc(k1)=-z(np1,j)+2*zt(np1,k1)
+      xp(k1)=x(np,j)
+      yp(k1)=y(np,j)
+      zp(k1)=z(np,j)
+      xx(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=  [xt(np1,k1);xc(k1);xc(k2);xt(np1,k2)] 
+      yy(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=  [yt(np1,k1);yc(k1);yc(k2);yt(np1,k2)] 
+      zz(:,(j-1)*np*nf+(((np-2)*nf+1):(np-1)*nf))=  [zt(np1,k1);zc(k1);zc(k2);zt(np1,k2)] 
+      xx(:,(j-1)*np*nf+((np1*nf+1):np*nf))= [xc(k2);xc(k1);xp(k1);xp(k2)] 
+      yy(:,(j-1)*np*nf+((np1*nf+1):np*nf))= [yc(k2);yc(k1);yp(k1);yp(k2)] 
+      zz(:,(j-1)*np*nf+((np1*nf+1):np*nf))= [zc(k2);zc(k1);zp(k1);zp(k2)]
+    end
     //note that only putting equal the 3rd and 4th point, my
     // shadesurf works (trick)     
   end
