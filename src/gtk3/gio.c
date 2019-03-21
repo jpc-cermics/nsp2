@@ -11723,7 +11723,7 @@ static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,i
   }
   if ((S=nsp_smatrix_create_with_length(NVOID, 1,1, count)) == NULL)return RET_BUG;
   ret =g_input_stream_read(G_INPUT_STREAM(self->obj),S->S[0], count,cancellable,&error);
-  Sciprintf("read %d characters\n",ret);
+  /* Sciprintf("read %d characters\n",ret); */
   S->S[0][ret]='\0';
   if ( error != NULL ) {
     Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
