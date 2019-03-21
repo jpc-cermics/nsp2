@@ -58,25 +58,50 @@ static GtkWidget  *main_menu_menubar = NULL;
  * used when the menu is plugged
  */
 
+#if !defined(WITH_GTKOSX) && !defined(WIN32)
+static gboolean
+on_crossing (GtkWidget *plug, GdkEventCrossing *event)
+{
+  GdkCursor *cursor;
+  switch ( event->type )
+    {
+    case GDK_ENTER_NOTIFY:
+      cursor = gdk_cursor_new_for_display (gdk_display_get_default (), GDK_LEFT_PTR);
+      gdk_window_set_cursor (gtk_widget_get_window(plug),cursor);
+      break;
+    default:
+      break;
+    }
+  return FALSE;
+}
+#endif 
+
+
 void create_plugged_main_menu(void)
 {
 #if !defined(WITH_GTKOSX) && !defined(WIN32) 
+  int crossing_mask = GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK;
   static int first = 0;
   static GtkWidget *Plug;
   GtkAccelGroup *accel_group = NULL ;
   const char * plug_info = nsp_getenv("SCIWIN");
   if ( plug_info == NULL) return ;
-  if ( first == 0 ) {
-    guint32 xid = strtol (plug_info, NULL, 0);
-    Plug = gtk_plug_new(xid);
-    gtk_widget_realize(Plug);
-    main_menu_entries = nsp_window_create_initial_menu();
-    if ( main_menu_entries == NULL) return;
-    first = 1;
-  }
+  if ( first == 0 )
+    {
+      guint32 xid = strtol (plug_info, NULL, 0);
+      Plug = gtk_plug_new(xid);
+      gtk_widget_realize(Plug);
+      main_menu_entries = nsp_window_create_initial_menu();
+      if ( main_menu_entries == NULL) return;
+      first = 1;
+    }
   accel_group = gtk_accel_group_new ();
   /* This function generates the menu items from scilab description */
   main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group,FALSE);
+  gtk_widget_add_events (GTK_WIDGET (main_menu_menubar), crossing_mask);
+  g_signal_connect (main_menu_menubar, "enter-notify-event", G_CALLBACK (on_crossing), NULL);
+  g_signal_connect (main_menu_menubar, "leave-notify-event", G_CALLBACK (on_crossing), NULL);
+  
   /* Attach the new accelerator group to the window. */
   /* gtk_window_add_accel_group (GTK_WINDOW (window), accel_group); */
   gtk_container_add(GTK_CONTAINER(Plug),main_menu_menubar);

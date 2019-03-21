@@ -522,7 +522,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 	}
       goto def;
       break;
- case GDK_KEY(Left ):
+    case GDK_KEY(Left ):
       if ( event->state & GDK_SHIFT_MASK ) {
         return FALSE;
       }
@@ -667,6 +667,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
  ctrl_l :
+  /* clear the terminal window */
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
   gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
@@ -703,12 +704,20 @@ void nsp_clc(void)
 {
   GtkTextIter start,end;
   View *view= nsptv_get_view("clc");
-  if ( view == NULL ) return;
-  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-  gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
-  gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
-  /* nsp_textview_insert_logo(view); */
-  nsptv_key_press_return(view,TRUE);
+  if ( view == NULL )
+    {
+      /* send a Ctrl-l to the terminal */
+      printf("\033[2J\033[H");
+      return;
+    }
+  else
+    {
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
+      gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
+      /* nsp_textview_insert_logo(view); */
+      nsptv_key_press_return(view,TRUE);
+    }
 }
 
 /* paste with middle button, redefined  */

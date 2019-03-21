@@ -680,6 +680,16 @@ static int int_exit(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+extern void nsp_clc(void);
+
+static int int_clc(Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  nsp_clc();
+  return 0;
+}
+
 static OpTab System_func[]={
   {"registry", int_nsp_query_registry },
   {"iswow64", int_nsp_iswow64 },
@@ -715,6 +725,7 @@ static OpTab System_func[]={
   {"mktemp", int_mktemp},
 #endif 
   {"exit", int_exit},
+  {"clc", int_clc},
   {(char *) 0, NULL}
 };
 

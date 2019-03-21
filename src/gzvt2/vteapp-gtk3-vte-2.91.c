@@ -677,7 +677,6 @@ static void _dummy(const gchar *log_domain,
   return ;      
 }
 
-
 int
 main(int argc, char **argv)
 {
@@ -1005,28 +1004,26 @@ main(int argc, char **argv)
     env_add[0]=buf;
   }
 
-  if (use_scrolled_window) {
-    scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-				   GTK_POLICY_NEVER, scrollbar_policy);
-    /* gtk_container_add(GTK_CONTAINER(window), scrolled_window); */
-    gtk_box_pack_start(GTK_BOX(vbox), scrolled_window,TRUE,TRUE,0);
-  } else {
-    /* Create a box to hold everything. */
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    /* gtk_container_add(GTK_CONTAINER(window), hbox); */
-    gtk_box_pack_start(GTK_BOX(vbox), hbox,TRUE,TRUE,0);
-  }
-    
+  if (use_scrolled_window)
+    {
+      scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+      gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+				     GTK_POLICY_NEVER, scrollbar_policy);
+      /* gtk_container_add(GTK_CONTAINER(window), scrolled_window); */
+      gtk_box_pack_start(GTK_BOX(vbox), scrolled_window,TRUE,TRUE,0);
+    }
+  else
+    {
+      /* Create a box to hold everything. */
+      hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+      /* gtk_container_add(GTK_CONTAINER(window), hbox); */
+      gtk_box_pack_start(GTK_BOX(vbox), hbox,TRUE,TRUE,0);
+    }
+  
   /* Create the terminal widget and add it to the scrolling shell. */
   widget = vteapp_terminal_new();
   terminal = VTE_TERMINAL (widget);
-
-  /* DEPRECATED:
-  if (!dbuffer) {
-    gtk_widget_set_double_buffered(widget, dbuffer);
-  }
-  */
+  
   if (show_object_notifications)
     g_signal_connect(terminal, "notify", G_CALLBACK(terminal_notify_cb), NULL);
 
@@ -1044,7 +1041,8 @@ main(int argc, char **argv)
     }
   
   /* Connect to the "char_size_changed" signal to set geometry hints
-   * whenever the font used by the terminal is changed. */
+   * whenever the font used by the terminal is changed. 
+   */
   if (use_geometry_hints) {
     char_size_changed(widget, 0, 0, window);
     g_signal_connect(widget, "char-size-changed",
@@ -1054,7 +1052,8 @@ main(int argc, char **argv)
   }
   
   /* Connect to the "window_title_changed" signal to set the main
-   * window's title. */
+   * window's title. 
+   */
   g_signal_connect(widget, "window-title-changed",
 		   G_CALLBACK(window_title_changed), window);
   if (icon_title) {
@@ -1630,6 +1629,14 @@ static void menu_normal_font_size(GtkWidget *widget, gpointer data)
   adjust_font_size(data1->widget,data1->data, def_scale/scale );
 }
 
+static void menu_reset(GtkWidget *widget, gpointer data)
+{
+  fsize_data *data1 = data;
+  VteTerminal *terminal = VTE_TERMINAL(data1->widget);
+  vte_terminal_reset(terminal,TRUE,TRUE);
+  vte_terminal_feed_child(terminal, "\n",-1);
+}
+
 GtkWidget *nsp_create_menu (GtkWidget *wterminal,  gpointer data)
 {
   GtkWidget *menu=NULL;
@@ -1644,7 +1651,6 @@ GtkWidget *nsp_create_menu (GtkWidget *wterminal,  gpointer data)
   popup_menu = menu = gtk_menu_new ();
 
   /* copy */
-  /* menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL); */
   menuitem = gtk_menu_item_new_with_mnemonic("Copy");
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
@@ -1654,7 +1660,6 @@ GtkWidget *nsp_create_menu (GtkWidget *wterminal,  gpointer data)
   gtk_widget_set_sensitive (menuitem,vte_terminal_get_has_selection (terminal) ? TRUE: FALSE);
 
   /* paste */
-  /* menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_PASTE, NULL); */
   menuitem = gtk_menu_item_new_with_mnemonic("_Paste");
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
@@ -1666,24 +1671,30 @@ GtkWidget *nsp_create_menu (GtkWidget *wterminal,  gpointer data)
   data1.widget = wterminal;
 
   /* zoom in */
-  /* menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_IN, NULL); */
   menuitem = gtk_menu_item_new_with_mnemonic("Zoom _In");
 
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
   g_signal_connect(menuitem, "activate", G_CALLBACK(menu_increase_font_size),&data1);
-  /* zoom in */
-  /* menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_OUT, NULL); */
+  
+  /* zoom out */
   menuitem = gtk_menu_item_new_with_mnemonic("Zoom _Out");
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
   g_signal_connect(menuitem, "activate", G_CALLBACK(menu_decrease_font_size),&data1);
+
   /* zoom def */
-  /* menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ZOOM_100, NULL); */
   menuitem = gtk_menu_item_new_with_mnemonic("Normal _Size");
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
   gtk_widget_show (menuitem);
   g_signal_connect(menuitem, "activate", G_CALLBACK(menu_normal_font_size),&data1);
+
+  /* reset */
+  menuitem = gtk_menu_item_new_with_mnemonic("Reset");
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
+  gtk_widget_show (menuitem);
+  g_signal_connect(menuitem, "activate", G_CALLBACK(menu_reset),&data1);
+
   return menu;
 }
 
