@@ -2,19 +2,19 @@ function [frq,rep,splitf]=repfreq_r(r,varargopt)
   if ~varargopt.iskey['dt'] then varargopt.dt=r.dt;end
   if ~varargopt.iskey['dom'] then varargopt.dom=r.dom;end
   [frq,rep,splitf]=repfreq_common(r,varargopt(:));
-  if nargout==1 then frq=rep,end
+  if nargout <= 1 then frq=rep,end
 endfunction
 
 function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
   [frq,rep,splitf]=repfreq_common(list(hnum,hden),varargopt(:));
-  if nargout==1 then frq=rep,end
+  if nargout <=1 then frq=rep,end
 endfunction
 
 function [frq,rep,splitf]=repfreq_linearsys(sl,varargopt)
   if ~varargopt.iskey['dt'] then varargopt.dt=sl.dt;end
   if ~varargopt.iskey['dom'] then varargopt.dom=sl.dom;end
   [frq,rep,splitf]=repfreq_common(sl,varargopt(:))
-  if nargout==1 then frq=rep,end
+  if nargout <=1 then frq=rep,end
 endfunction
 
 function [frq,rep,splitf]=repfreq_common(s_arg,varargopt)
@@ -115,6 +115,6 @@ function [frq,rep,splitf]=repfreq_common(s_arg,varargopt)
       end
   end
   // returned values 
-  if nargout==1 then frq=rep,end
+  if nargout <= 1 then frq=rep,end
 endfunction
 

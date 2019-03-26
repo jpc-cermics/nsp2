@@ -1,8 +1,7 @@
 function sl=syslin(domain,a,b,c,d,x0)
   // Copyright INRIA
-  //
-  // check domain 
   dt=-1;
+  // check domain 
   select type(domain,'short')
     case 'm' then
      //sampled system
@@ -22,7 +21,7 @@ function sl=syslin(domain,a,b,c,d,x0)
      select domain
        case 'c' then
         z='s'
-       case 'd' then
+       case {'d','s'} then
         z='z'
        else
          error(domain+': unknown time domain')
@@ -36,6 +35,8 @@ function sl=syslin(domain,a,b,c,d,x0)
     if type(a,'short')=='r' then
       sl=a;
       sl.set_dom[domain];
+      sl.set_dt[dt];
+      sl.set_var[z];
     elseif type(a,'short')=='linearsys' then
       sl=a;
       sl.dom=domain;

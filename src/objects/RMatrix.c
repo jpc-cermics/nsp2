@@ -481,8 +481,8 @@ NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cva
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
   Loc->S = NULL;
-  Loc->dom = 'u'; /* undefined domain */
-  Loc->dt = 1;
+  Loc->dom = dom;
+  Loc->dt = sample;
   
   if ( varname != NULL)
     {

@@ -1,14 +1,18 @@
-function [frq,bnds,splitf]=calfrq_p(hnum,hden, fmin,fmax,dom = 'c',dt = 1)
-  [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = h.dom,dt = h.dt);
+function [frq,bnds,splitf]=calfrq_p(hnum,hden, fmin,fmax,varargopt)
+  [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,varargopt(:));
 endfunction
 
-function [frq,bnds,splitf]=calfrq_r(h,fmin,fmax,dom = 'c',dt = 1)
-  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
+function [frq,bnds,splitf]=calfrq_r(h,fmin,fmax,varargopt)
+  if ~varargopt.iskey['dt'] then varargopt.dt=r.dt;end
+  if ~varargopt.iskey['dom'] then varargopt.dom=r.dom;end
+  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,varargopt(:));
 endfunction
 
-function [frq,bnds,splitf]=calfrq_linearsys(sl,fmin,fmax)
+function [frq,bnds,splitf]=calfrq_linearsys(sl,fmin,fmax,varargopt)
+  if ~varargopt.iskey['dt'] then varargopt.dt=sl.dt;end
+  if ~varargopt.iskey['dom'] then varargopt.dom=sl.dom;end
   h=ss2tf(sl);
-  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
+  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,varargopt(:));
 endfunction
 
 function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
@@ -27,7 +31,7 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
       f=f(find((f > fmin-tol) & (f < fmax+tol)));
     end
   endfunction
-
+  
   function f=disc_sel(r,fmin,fmax,dom,tol)
     f=[];
     if size(r,'*')==0 then return,end
@@ -40,7 +44,8 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
     end
   endfunction
 
-  function y=freq(hnum,hden,x)
+  function y=freq_zzz(hnum,hden,x)
+    // unused : we use the C-interfaced function
     ce_n=horner(hnum,x,vdim = %t);
     ce_d=horner(hden,x,vdim = %t);
     y=[];
@@ -54,9 +59,12 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
   epss=0.002;// minimum frequency distance with a singularity
   nptmax=5000;//maximum number of discretisation points
   tol=0.01;// Tolerance for testing pure imaginary numbers
-
+  
   [m,n]=size(hnum);
 
+  // undefined is considered as c 
+  if dom == 'u' then dom = 'c';end 
+    
   if or(dom==['d','s','u']) then
     nyq_frq=1/2/dt;
     if fmax > nyq_frq then
@@ -71,7 +79,7 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
   // Use symmetry to reduce the range
   // --------------------------------
   if fmin < 0 & fmax >= 0 then
-    [frq,bnds,splitf]=calfrq_p(hnum,hden,eps,-fmin,dom = dom,dt = dt)
+    [frq,bnds,splitf]=calfrq_common(hnum,hden,eps,-fmin,dom = dom,dt = dt)
     ns1=size(splitf,'*')-1;
     nsp=size(frq,'*');
     bnds=[bnds(1),bnds(2),-bnds(4),-bnds(3)];
@@ -83,7 +91,7 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
         bnds=[bnds(1),bnds(2),min(bnds(3),-bnds(3)),max(bnds(4),-bnds(4))];
         frq=[-frq($:-1:1),frq]
       else
-        [frq2,bnds2,splitf2]=calfrq_p(hnum,hden,eps,fmax,dom = dom,dt = dt);
+        [frq2,bnds2,splitf2]=calfrq_common(hnum,hden,eps,fmax,dom = dom,dt = dt);
         ns2=size(splitf2,'*')-1
         splitf=[1,(nsp+2)*ones(1,ns1)-splitf(1,$:-1:2), ...
                 nsp*ones(size(ns2))+splitf2(1,2:$)];
@@ -100,7 +108,7 @@ function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
       return;
     end
   elseif fmin < 0 & fmax <= 0 then
-    [frq,bnds,splitf]=calfrq_p(hnum,hden,-fmax,-fmin,dom = dom,dt = dt)
+    [frq,bnds,splitf]=calfrq_common(hnum,hden,-fmax,-fmin,dom = dom,dt = dt)
     ns1=size(splitf,'*')-1;
     frq=-frq($:-1:1);
     nsp=size(frq,'*');
