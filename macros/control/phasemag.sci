@@ -7,7 +7,7 @@ function [phi,db]=phasemag(z,mod)
   if nargout==2 then
     db=20*log(abs(z))/log(10),
   end
-  if nargin <> 2 then
+  if nargin <= 1 then
     mod=mod_def
   end
   //compute first phase value in  (-pi, pi]

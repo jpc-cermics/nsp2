@@ -25,9 +25,15 @@ function black(varargin,varargopt)
     return;
   end
 
+  def_dom= "c";
+  def_dt=1;
+  select type(varargin(1),"short")
+    case 'linearsys' then def_dom = varargin(1).dom; def_dt = varargin(1).dt
+    case 'r' then def_dom = varargin(1).get_dom[]; def_dt = varargin(1).get_dt[];
+  end
   // compute default values
   //-----------------------
-  dom = varargopt.find['dom',def='c'];
+  dom = varargopt.find['dom',def=def_dom];
   if ~or(dom==['c','d','s','u']) then 
     error("dom should be ''c'' or ''d'' or ''u''");
     return
@@ -37,7 +43,7 @@ function black(varargin,varargopt)
     error("Error: when dom is equal to ''s'' dt must be given");
     return;
   end
-  dt = varargopt.find['dt',def=1];
+  dt = varargopt.find['dt',def=def_dt];
   step =  varargopt.find['step',def='auto'];
   if dom.equal['c'] then fmax=1.d3; else fmax=1/(2*dt),end
   fmax= varargopt.find['fmax',def=fmax];
@@ -109,7 +115,40 @@ function black(varargin,varargopt)
     // compute phase and magnitude
     [phi,d]=phasemag(repf);
   end
+
+  if type(varargin(1),'short')== 'linearsys' then 
+    // a linear system 
+    if length(varargin) <> 1 then
+      error("Error: expecting only one non optional arguments for linear system case ");
+      return;
+    end
+    sl=varargin(1);
+    // frq
+    frq=  varargopt.find['frq',def=[]];
+    if isempty(frq) then
+      // compute frq
+      [frq,repf,splitf]=repfreq(sl,dom=dom,dt=dt,fmin=fmin,fmax=fmax,step=step);
+    end
+    // compute phase and magnitude
+    [phi,d]=phasemag(repf);
+  end
   
+  if type(varargin(1),'short')== 'r' then 
+    // a linear system 
+    if length(varargin) <> 1 then 
+      error("Error: expecting only one non optional arguments for rational case ");
+      return;
+    end
+    H=varargin(1);
+    frq=  varargopt.find['frq',def=[]];
+    if isempty(frq) then
+      // compute frq
+      [frq,repf,splitf]=repfreq(H,dom=dom,dt=dt,fmin=fmin,fmax=fmax,step=step);
+    end
+    // compute phase and magnitude
+    [phi,d]=phasemag(repf);
+  end
+
   // compute frq repf splitf from fmin fmax step
   //---------------------------------------------
   // check frequencies
@@ -176,15 +215,3 @@ function black(varargin,varargopt)
   //xset("mark",xgeti(1),xgeti(2));
 endfunction
 
-function black_r(r,varargopt)
-  if ~varargopt.iskey['dt'] then varargopt.dt= r.dt;end 
-  if ~varargopt.iskey['dom'] then varargopt.dom= r.dom;end 
-  black(r.num,r.den, varargopt(:));
-endfunction
-
-function black_linearsys(sl,varargopt)
-  h=ss2tf(sl);
-  if ~varargopt.iskey['dt'] then varargopt.dt= sl.dt;end 
-  if ~varargopt.iskey['dom'] then varargopt.dom= sl.dom;end 
-  black(h.num,h.den,varargopt(:))
-endfunction
