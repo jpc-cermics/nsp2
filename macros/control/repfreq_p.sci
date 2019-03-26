@@ -1,15 +1,25 @@
+function [frq,rep,splitf]=repfreq_r(r,varargopt)
+  if ~varargopt.iskey['dt'] then varargopt.dt=r.dt;end
+  if ~varargopt.iskey['dom'] then varargopt.dom=r.dom;end
+  [frq,rep,splitf]=repfreq_common(r,varargopt(:));
+  if nargout==1 then frq=rep,end
+endfunction
+
 function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
+  [frq,rep,splitf]=repfreq_common(list(hnum,hden),varargopt(:));
+  if nargout==1 then frq=rep,end
+endfunction
+
+function [frq,rep,splitf]=repfreq_linearsys(sl,varargopt)
+  if ~varargopt.iskey['dt'] then varargopt.dt=sl.dt;end
+  if ~varargopt.iskey['dom'] then varargopt.dom=sl.dom;end
+  [frq,rep,splitf]=repfreq_common(sl,varargopt(:))
+  if nargout==1 then frq=rep,end
+endfunction
+
+function [frq,rep,splitf]=repfreq_common(s_arg,varargopt)
   // varargopt: frq fmin fmax step dom='c'
   // Copyright CECILL INRIA (from scilab)
-
-  function y=freq(hnum,hden,x)
-    ce_n=horner(hnum,x,vdim = %t);
-    ce_d=horner(hden,x,vdim = %t);
-    y=[];
-    for i=1:size(ce_n,'*') do
-      y.concatr[ce_n{i} ./ce_d{i}];
-    end
-  endfunction
 
   // compute default values 
   l10=log(10);
@@ -40,8 +50,12 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
   if isempty(frq) then
     // we must compute frq 
     if step.equal['auto'] then
-      // compute the frequencies frq using auto mode 
-      [frq,bnds,splitf]=calfrq_p(hnum,hden,fmin,fmax,dom = dom,dt = dt);
+      // compute the frequencies frq using auto mode
+      if type(s_arg,'short')== 'l' then
+	[frq,bnds,splitf]=calfrq_common(s_arg(1),s_arg(2),fmin,fmax,dom = dom,dt = dt);
+      else
+	[frq,bnds,splitf]=calfrq(s_arg,fmin,fmax,dom = dom,dt = dt);
+      end
     else
       // compute the frequencies frq using step 
       splitf=1
@@ -66,28 +80,41 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
     end
   end
 
-  // compute the responses to freq 
-  // 
-  if dom.equal['c'] then
-    rep=freq(hnum,hden,2*%pi*%i*frq);
-  else
-    rep=freq(hnum,hden,exp(2*%pi*%i*dt*frq));
+  // compute the responses to frq 
+  function y=freq_zz(hnum,hden,x)
+    // function freq is C-coded
+    ce_n=horner(hnum,x,vdim = %t);
+    ce_d=horner(hden,x,vdim = %t);
+    y=[];
+    for i=1:size(ce_n,'*') do
+      y.concatr[ce_n{i} ./ce_d{i}];
+    end
+  endfunction
+
+  select  type(s_arg,'short')
+    case 'r' then
+      if dom.equal['c'] then
+	rep=freq(s_arg.num,s_arg.den,2*%pi*%i*frq);
+      else
+	rep=freq(s_arg.num,s_arg.den,exp(2*%pi*%i*dt*frq));
+      end
+    case 'l' then
+      if dom.equal['c'] then
+	rep=freq(s_arg(1),s_arg(2),2*%pi*%i*frq);
+      else
+	rep=freq(s_arg(1),s_arg(2),exp(2*%pi*%i*dt*frq));
+      end
+    case 'linearsys' then
+      [a,b,c,d]=abcd(s_arg);
+      //[mn,nn]=size(b)
+      // if nn <> 1 then error("Error: argument should be a simo"),end
+      if dom=='c' then
+	rep=freq(a,b,c,d,2*%pi*%i*frq)
+      else
+	rep=freq(a,b,c,d,exp(2*%pi*%i*dt*frq))
+      end
   end
   // returned values 
   if nargout==1 then frq=rep,end
 endfunction
 
-function [frq,rep,splitf]=repfreq_r(r,varargopt)
-  if ~varargopt.iskey['dt'] then varargopt.dt=r.dt;end
-  if ~varargopt.iskey['dom'] then varargopt.dom=r.dom;end
-  [frq,rep,splitf]=repfreq(r.num,r.den,varargopt(:));
-  if nargout==1 then frq=rep,end
-endfunction
-
-function [frq,rep,splitf]=repfreq_linearsys(sl,varargopt)
-  h=ss2tf(sl);
-  if ~varargopt.iskey['dt'] then varargopt.dt=sl.dt;end
-  if ~varargopt.iskey['dom'] then varargopt.dom=sl.dom;end
-  [frq,rep,splitf]=repfreq_r(h,varargopt(:))
-  if nargout==1 then frq=rep,end
-endfunction

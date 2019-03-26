@@ -1,4 +1,17 @@
-function [frq,bnds,splitf]=calfrq_p(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
+function [frq,bnds,splitf]=calfrq_p(hnum,hden, fmin,fmax,dom = 'c',dt = 1)
+  [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = h.dom,dt = h.dt);
+endfunction
+
+function [frq,bnds,splitf]=calfrq_r(h,fmin,fmax,dom = 'c',dt = 1)
+  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
+endfunction
+
+function [frq,bnds,splitf]=calfrq_linearsys(sl,fmin,fmax)
+  h=ss2tf(sl);
+  [frq,bnds,splitf]=calfrq_common(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
+endfunction
+
+function [frq,bnds,splitf]=calfrq_common(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
   // frequency response discretization
   // when system is given by two polynomial matrices
   // utility function used by repfreq
@@ -266,11 +279,3 @@ function [frq,bnds,splitf]=calfrq_p(hnum,hden,fmin,fmax,dom = 'c',dt = 1)
   frq=frq/c;
 endfunction
 
-function [frq,bnds,splitf]=calfrq_r(h,fmin,fmax,dom = 'c',dt = 1)
-  [frq,bnds,splitf]=calfrq_p(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
-endfunction
-
-function [frq,bnds,splitf]=calfrq_linearsys(sl,fmin,fmax)
-  h=ss2tf(sl);
-  [frq,bnds,splitf]=calfrq_p(h.num,h.den,fmin,fmax,dom = h.dom,dt = h.dt);
-endfunction

@@ -2,7 +2,7 @@ function [frq,rep,splitf]=repfreq_new(h,varargopt)
   // varargopt: frq fmin fmax step dom='c'
   // Copyright CECILL INRIA (from scilab)
 
-  function y=freq(hnum,hden,x)
+  function y=freq_zz(hnum,hden,x)
     ce_n=horner(hnum,x,vdim = %t);
     ce_d=horner(hden,x,vdim = %t);
     y=[];

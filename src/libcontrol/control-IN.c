@@ -776,7 +776,6 @@ static int int_freq_state(Stack stack, int rhs, int opt, int lhs)
   CheckSquare(NspFname(stack),1,A);
   if ((B = GetRealMatCopy (stack,2)) == NULLMAT)   return RET_BUG;
   if ((C = GetRealMatCopy (stack,3)) == NULLMAT)   return RET_BUG;
-
   
   if ( rhs == 5 )
     {
@@ -816,7 +815,7 @@ static int int_freq_state(Stack stack, int rhs, int opt, int lhs)
 
   /* need a complex matrix here */
   
-  if (( Wgr = nsp_matrix_create(NVOID,'c', 1, B->n * F->mn * C->m))  == NULL) goto err;
+  if (( Wgr = nsp_matrix_create(NVOID,'c', C->m, B->n * F->mn ))  == NULL) goto err;
   for ( i= 0 ; i < Wgr->mn ; i++) {Wgr->C[i].r=0;Wgr->C[i].i=0;}
   
   double *Fp = F->R;
@@ -838,7 +837,7 @@ static int int_freq_state(Stack stack, int rhs, int opt, int lhs)
         }
       Fp++;
     }
-
+  
   nsp_double2complex(Wgr->R, Wgr->mn);
   nsp_matrix_destroy( W);
   nsp_matrix_destroy( W1);
@@ -932,7 +931,7 @@ static int int_freq_tf(Stack stack, int rhs, int opt, int lhs)
 
 int int_freq(Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(3,5);
+  CheckStdRhs(3,5);
   CheckLhs(0,1);
   return (rhs == 3) ? int_freq_tf(stack,rhs,opt,lhs)
     :  int_freq_state(stack,rhs,opt,lhs);
