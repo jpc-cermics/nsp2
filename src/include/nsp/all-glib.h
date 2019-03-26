@@ -40,7 +40,7 @@
 #include <nsp/gtk/gfileoutputstream.h>
 #include <nsp/gtk/gfilterinputstream.h>
 #include <nsp/gtk/gfilteroutputstream.h>
-#include <nsp/gtk/gibaseinfo.h>
+// #include <nsp/gtk/gibaseinfo.h>
 #include <nsp/gtk/gicon.h>
 #include <nsp/gtk/ginetaddress.h>
 #include <nsp/gtk/ginetaddressmask.h>

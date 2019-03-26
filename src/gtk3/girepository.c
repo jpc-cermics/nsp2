@@ -25,17 +25,256 @@
 
 
 #line 5 "codegen-3.0/girepository.override"
+#include <girepository.h>
 #include <nsp/nsp.h>
+#include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
-#include <girepository.h>
+#include <nsp/gtk/girepository.h>
+#define NspGIBaseInfo_Private
+#include <nsp/gtk/gibaseinfo.h>
 
-#line 34 "girepository.c"
+#line 38 "girepository.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
+#include <nsp/gtk/gibaseinfo.h>
 #include <nsp/gtk/girepository.h>
-#include <nsp/gibaseinfo.h>
+
+
+/* -----------NspGIBaseInfo ----------- */
+
+
+#define  NspGIBaseInfo_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gibaseinfo.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGIBaseInfo inherits from GBoxed 
+ */
+
+int nsp_type_gibaseinfo_id=0;
+NspTypeGIBaseInfo *nsp_type_gibaseinfo=NULL;
+
+/*
+ * Type object for NspGIBaseInfo 
+ * all the instance of NspTypeGIBaseInfo share the same id. 
+ * nsp_type_gibaseinfo: is an instance of NspTypeGIBaseInfo 
+ *    used for objects of NspGIBaseInfo type (i.e built with new_gibaseinfo) 
+ * other instances are used for derived classes 
+ */
+NspTypeGIBaseInfo *new_type_gibaseinfo(type_mode mode)
+{
+  NspTypeGIBaseInfo *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gibaseinfo != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gibaseinfo;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gibaseinfo_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gibaseinfo_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gibaseinfo;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gibaseinfo */ 
+
+  top->s_type =  (s_type_func *) nsp_gibaseinfo_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gibaseinfo_type_short_string;
+  /* top->create = (create_func*) int_gibaseinfo_create;*/
+
+  /* specific methods for gibaseinfo */
+
+  type->init = (init_func *) init_gibaseinfo;
+
+  /* 
+   * NspGIBaseInfo interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gibaseinfo_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGIBaseInfo called nsp_type_gibaseinfo
+       */
+      type->id =  nsp_type_gibaseinfo_id = nsp_new_type_id();
+      nsp_type_gibaseinfo = type;
+      if ( nsp_register_type(nsp_type_gibaseinfo) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gibaseinfo, GI_TYPE_BASE_INFO);
+      return ( mode == T_BASE ) ? type : new_type_gibaseinfo(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gibaseinfo_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGIBaseInfo instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gibaseinfo(NspGIBaseInfo *Obj,NspTypeGIBaseInfo *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGIBaseInfo 
+ */
+
+NspGIBaseInfo *new_gibaseinfo() 
+{
+  NspGIBaseInfo *loc;
+  /* type must exists */
+  nsp_type_gibaseinfo = new_type_gibaseinfo(T_BASE);
+  if ( (loc = malloc(sizeof(NspGIBaseInfo)))== NULLGIBASEINFO) return loc;
+  /* initialize object */
+  if ( init_gibaseinfo(loc,nsp_type_gibaseinfo) == FAIL) return NULLGIBASEINFO;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGIBaseInfo 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gibaseinfo_type_name[]="GIBaseInfo";
+static char gibaseinfo_short_type_name[]="GIBaseInfo";
+
+static char *nsp_gibaseinfo_type_as_string(void)
+{
+  return(gibaseinfo_type_name);
+}
+
+static char *nsp_gibaseinfo_type_short_string(NspObject *v)
+{
+  return(gibaseinfo_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGIBaseInfo objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGIBaseInfo   *nsp_gibaseinfo_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gibaseinfo_id)  == TRUE  ) return ((NspGIBaseInfo *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gibaseinfo));
+  return NULL;
+}
+
+int IsGIBaseInfoObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gibaseinfo_id);
+}
+
+int IsGIBaseInfo(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gibaseinfo_id);
+}
+
+NspGIBaseInfo  *GetGIBaseInfoCopy(Stack stack, int i)
+{
+  if (  GetGIBaseInfo(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGIBaseInfo  *GetGIBaseInfo(Stack stack, int i)
+{
+  NspGIBaseInfo *M;
+  if (( M = nsp_gibaseinfo_object(NthObj(i))) == NULLGIBASEINFO)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGIBaseInfo *gibaseinfo_copy(NspGIBaseInfo *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gibaseinfo);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GIBaseInfo
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_g_base_info_get_attribute(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *name;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  ret =g_base_info_get_attribute(NSP_GBOXED_GET(self, GIBaseInfo),name);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+#line 139 "codegen-3.0/girepository.override"
+
+
+static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GIAttributeIter iter = { 0, };
+  char *name;
+  char *value;
+  CheckRhs(0,0);
+  while (g_base_info_iterate_attributes (NSP_GBOXED_GET(self, GIBaseInfo), &iter, &name, &value))
+    {
+      Sciprintf("attribute name: %s value: %s\n", name, value);
+    }
+  return 0;
+}
+
+#line 264 "girepository.c"
+
+
+static NspMethods gibaseinfo_methods[] = {
+  {"get_attribute",(nsp_method *) _wrap_g_base_info_get_attribute},
+  {"get_attributes",(nsp_method *) _wrap_g_base_info_get_attributes},
+  { NULL, NULL}
+};
+
+static NspMethods *gibaseinfo_get_methods(void) { return gibaseinfo_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gibaseinfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* -----------NspGIRepository ----------- */
@@ -229,7 +468,7 @@ NspGIRepository *girepository_copy(NspGIRepository *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 20 "codegen-3.0/girepository.override"
+#line 26 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_enumerate_versions
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -243,34 +482,25 @@ static int _wrap_g_irepository_enumerate_versions
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
-#line 247 "girepository.c"
+#line 486 "girepository.c"
 
 
-#line 35 "codegen-3.0/girepository.override"
-
-static int _wrap_g_irepository_find_by_name
-(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+static int _wrap_g_irepository_find_by_name(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,string,t_end};
+  int_types T[] = {string,string, t_end};
   char *namespace, *name;
-  GIBaseInfo *info;
-  if ( GetArgs(stack,rhs,opt,T,&namespace,&name) == FAIL) return RET_BUG;
-  info = g_irepository_find_by_name (G_IREPOSITORY(self->obj), namespace, name);
-  if (info == NULL)
-    {
-      Sciprintf("Cannot fing %s\n",name);
-    }
-  /*
-  py_info = _pygi_info_new (info);
-  g_base_info_unref (info);
-  return py_info; */
-  return 0;
+  GIBaseInfo *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace, &name) == FAIL) return RET_BUG;
+    ret =g_irepository_find_by_name(G_IREPOSITORY(self->obj),namespace,name);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
 }
 
-#line 271 "girepository.c"
-
-
-#line 57 "codegen-3.0/girepository.override"
+#line 41 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_get_loaded_namespaces
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -284,10 +514,10 @@ static int _wrap_g_irepository_get_loaded_namespaces
   return 1;
 }
 
-#line 288 "girepository.c"
+#line 518 "girepository.c"
 
 
-#line 86 "codegen-3.0/girepository.override"
+#line 70 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_require
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -309,12 +539,12 @@ static int _wrap_g_irepository_require
   return 0;
 }
 
-#line 313 "girepository.c"
+#line 543 "girepository.c"
 
 
-#line 109 "codegen-3.0/girepository.override"
+#line 93 "codegen-3.0/girepository.override"
 
-void nsp_gi_info_new (GIBaseInfo *info);
+static void nsp_gi_info_new (GIBaseInfo *info);
 
 static int _wrap_g_irepository_get_n_infos
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -357,7 +587,7 @@ static int _wrap_g_irepository_get_n_infos
  * g_base_info_get_namespace(self->info);
  */
 
-#line 361 "girepository.c"
+#line 591 "girepository.c"
 
 
 static NspMethods girepository_methods[] = {
@@ -375,482 +605,6 @@ static NspMethods *girepository_get_methods(void) { return girepository_methods;
  *-------------------------------------------*/
 
 static AttrTab girepository_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
-
-
-/* -----------NspGIBaseInfo ----------- */
-
-
-#define  NspGIBaseInfo_Private 
-#include <nsp/objects.h>
-#include <nsp/gibaseinfo.h>
-#include <nsp/interf.h>
-
-/* 
- * NspGIBaseInfo inherits from Object 
- */
-
-int nsp_type_gibaseinfo_id=0;
-NspTypeGIBaseInfo *nsp_type_gibaseinfo=NULL;
-
-/*
- * Type object for NspGIBaseInfo 
- * all the instance of NspTypeGIBaseInfo share the same id. 
- * nsp_type_gibaseinfo: is an instance of NspTypeGIBaseInfo 
- *    used for objects of NspGIBaseInfo type (i.e built with new_gibaseinfo) 
- * other instances are used for derived classes 
- */
-NspTypeGIBaseInfo *new_type_gibaseinfo(type_mode mode)
-{
-  NspTypeGIBaseInfo *type= NULL;
-  NspTypeObject *top;
-  if (  nsp_type_gibaseinfo != 0 && mode == T_BASE )
-    {
-      /* initialization performed and T_BASE requested */
-      return nsp_type_gibaseinfo;
-    }
-  if (( type =  malloc(sizeof(NspTypeGIBaseInfo))) == NULL) return NULL;
-  type->interface = NULL;
-  type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
-  if ( type->surtype == NULL) return NULL;
-  type->attrs = gibaseinfo_attrs;
-  type->get_attrs = (attrs_func *) int_get_attribute;
-  type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = gibaseinfo_get_methods;
-  type->gtk_methods = FALSE;
-  type->new = (new_func *) new_gibaseinfo;
-
-
-  top = NSP_TYPE_OBJECT(type->surtype);
-  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-
-  /* object methods redefined for gibaseinfo */ 
-
-  top->pr = (print_func *) nsp_gibaseinfo_print;
-  top->dealloc = (dealloc_func *) nsp_gibaseinfo_destroy;
-  top->copy  =  (copy_func *) nsp_gibaseinfo_copy;
-  top->size  = (size_func *) nsp_gibaseinfo_size;
-  top->s_type =  (s_type_func *) nsp_gibaseinfo_type_as_string;
-  top->sh_type = (sh_type_func *) nsp_gibaseinfo_type_short_string;
-  top->info = (info_func *) nsp_gibaseinfo_info;
-  /* top->is_true = (is_true_func  *) nsp_gibaseinfo_is_true; */
-  /* top->loop =(loop_func *) nsp_gibaseinfo_loop;*/
-  top->path_extract = (path_func *)  object_path_extract;
-  top->get_from_obj = (get_from_obj_func *) nsp_gibaseinfo_object;
-  top->eq  = (eq_func *) nsp_gibaseinfo_eq;
-  top->neq  = (eq_func *) nsp_gibaseinfo_neq;
-  top->save  = (save_func *) nsp_gibaseinfo_xdr_save;
-  top->load  = (load_func *) nsp_gibaseinfo_xdr_load;
-  top->create = (create_func*) int_gibaseinfo_create;
-  top->latex = (print_func *) nsp_gibaseinfo_latex;
-  top->full_copy = (copy_func *) nsp_gibaseinfo_full_copy;
-
-  /* specific methods for gibaseinfo */
-
-  type->init = (init_func *) init_gibaseinfo;
-
-  /* 
-   * NspGIBaseInfo interfaces can be added here 
-   * type->interface = (NspTypeBase *) new_type_b();
-   * type->interface->interface = (NspTypeBase *) new_type_C()
-   * ....
-   */
-  if ( nsp_type_gibaseinfo_id == 0 ) 
-    {
-      /* 
-       * the first time we get here we initialize the type id and
-       * an instance of NspTypeGIBaseInfo called nsp_type_gibaseinfo
-       */
-      type->id =  nsp_type_gibaseinfo_id = nsp_new_type_id();
-      nsp_type_gibaseinfo = type;
-      if ( nsp_register_type(nsp_type_gibaseinfo) == FALSE) return NULL;
-      return ( mode == T_BASE ) ? type : new_type_gibaseinfo(mode);
-    }
-  else 
-    {
-      type->id = nsp_type_gibaseinfo_id;
-      return type;
-    }
-}
-
-/*
- * initialize NspGIBaseInfo instances 
- * locally and by calling initializer on parent class 
- */
-
-static int init_gibaseinfo(NspGIBaseInfo *Obj,NspTypeGIBaseInfo *type)
-{
-  /* initialize the surtype */ 
-  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type;
-  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
-  /* specific */
-  Obj->obj = NULL;
- return OK;
-}
-
-/*
- * new instance of NspGIBaseInfo 
- */
-
-NspGIBaseInfo *new_gibaseinfo() 
-{
-  NspGIBaseInfo *loc;
-  /* type must exists */
-  nsp_type_gibaseinfo = new_type_gibaseinfo(T_BASE);
-  if ( (loc = malloc(sizeof(NspGIBaseInfo)))== NULLGIBASEINFO) return loc;
-  /* initialize object */
-  if ( init_gibaseinfo(loc,nsp_type_gibaseinfo) == FAIL) return NULLGIBASEINFO;
-  return loc;
-}
-
-/*----------------------------------------------
- * Object method redefined for NspGIBaseInfo 
- *-----------------------------------------------*/
-/*
- * size 
- */
-
-static int nsp_gibaseinfo_size(NspGIBaseInfo *Mat, int flag)
-{
-  return 1;
-}
-
-/*
- * type as string 
- */
-
-static char gibaseinfo_type_name[]="GIBaseInfo";
-static char gibaseinfo_short_type_name[]="gibaseinfo";
-
-static char *nsp_gibaseinfo_type_as_string(void)
-{
-  return(gibaseinfo_type_name);
-}
-
-static char *nsp_gibaseinfo_type_short_string(NspObject *v)
-{
-  return(gibaseinfo_short_type_name);
-}
-
-/*
- * A == B 
- */
-
-static int nsp_gibaseinfo_eq(NspGIBaseInfo *A, NspObject *B)
-{
-  NspGIBaseInfo *loc = (NspGIBaseInfo *) B;
-  if ( check_cast(B,nsp_type_gibaseinfo_id) == FALSE) return FALSE ;
-  if ( A->obj == loc->obj ) return TRUE;
-  if ( A->obj->info != loc->obj->info) return FALSE;
-   return TRUE;
-}
-
-/*
- * A != B 
- */
-
-static int nsp_gibaseinfo_neq(NspGIBaseInfo *A, NspObject *B)
-{
-  return ( nsp_gibaseinfo_eq(A,B) == TRUE ) ? FALSE : TRUE;
-}
-
-/*
- * save 
- */
-
-int nsp_gibaseinfo_xdr_save(XDR *xdrs, NspGIBaseInfo *M)
-{
-  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_gibaseinfo)) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  return OK;
-}
-
-/*
- * load 
- */
-
-NspGIBaseInfo  *nsp_gibaseinfo_xdr_load_partial(XDR *xdrs, NspGIBaseInfo *M)
-{
-  M->obj->ref_count=1;
- return M;
-}
-
-static NspGIBaseInfo  *nsp_gibaseinfo_xdr_load(XDR *xdrs)
-{
-  NspGIBaseInfo *H = NULL;
-  char name[NAME_MAXL];
-  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGIBASEINFO;
-  if ((H  = nsp_gibaseinfo_create_void(name,(NspTypeBase *) nsp_type_gibaseinfo))== NULLGIBASEINFO) return H;
-  if ( nsp_gibaseinfo_create_partial(H) == FAIL) return NULLGIBASEINFO;
-  if ((H  = nsp_gibaseinfo_xdr_load_partial(xdrs,H))== NULLGIBASEINFO) return H;
-  if ( nsp_gibaseinfo_check_values(H) == FAIL) return NULLGIBASEINFO;
-  return H;
-}
-
-/*
- * delete 
- */
-
-void nsp_gibaseinfo_destroy_partial(NspGIBaseInfo *H)
-{
-   H->obj->ref_count--;
-  if ( H->obj->ref_count == 0 )
-   {
-    FREE(H->obj);
-   }
-}
-
-void nsp_gibaseinfo_destroy(NspGIBaseInfo *H)
-{
-  nsp_object_destroy_name(NSP_OBJECT(H));
-  nsp_gibaseinfo_destroy_partial(H);
-  FREE(H);
-}
-
-/*
- * info 
- */
-
-int nsp_gibaseinfo_info(NspGIBaseInfo *M,int indent,const char *name,int rec_level)
-{
-  const char *pname;
-  if ( M == NULLGIBASEINFO) 
-    {
-      Sciprintf("Null Pointer NspGIBaseInfo \n");
-      return TRUE;
-    }
-  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
-             nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)));
-  return TRUE;
-}
-
-/*
- * print 
- */
-
-int nsp_gibaseinfo_print(NspGIBaseInfo *M, int indent,const char *name, int rec_level)
-{
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLGIBASEINFO) 
-    {
-      Sciprintf("Null Pointer NspGIBaseInfo \n");
-      return TRUE;
-    }
-  if (user_pref.pr_as_read_syntax) 
-    { 
-      Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
-    } 
-  else 
-    { 
-      if ( user_pref.pr_depth  <= rec_level -1 ) 
-        {
-          nsp_gibaseinfo_info(M,indent,pname,rec_level);
-          return TRUE;
-        }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
-      Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"info=0x%x\n", M->obj->info);
-    Sciprintf1(indent+1,"}\n");
-    }
-  return TRUE;
-}
-
-/*
- * latex print 
- */
-
-int nsp_gibaseinfo_latex(NspGIBaseInfo *M, int use_math,const char *name, int rec_level)
-{
-  int indent=2;
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  if ( use_math ) Sciprintf("\\begin{equation*}\n");
-
-  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
-    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
-
-  else 
-    Sciprintf("\\left\{\n");
-
-  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gibaseinfo_type_short_string(NSP_OBJECT(M)));
-  Sciprintf("\\begin{array}{l}");
-
-  Sciprintf1(indent+2,"\\verb|info|= \\verb@0x%x@\n",M->obj->info);
-  Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+1,"\n");
-  Sciprintf("\\end{array}\n");
-
-  Sciprintf("\\right.\n");
-
-  if ( use_math ) Sciprintf("\\end{equation*}\n");
-
-  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-  return TRUE;
-}
-/*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGIBaseInfo objects 
- * Note that some of these functions could become MACROS
- *-----------------------------------------------------*/
-
-NspGIBaseInfo   *nsp_gibaseinfo_object(NspObject *O)
-{
-  /* Follow pointer */
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /* Check type */
-  if ( check_cast (O,nsp_type_gibaseinfo_id)  == TRUE  ) return ((NspGIBaseInfo *) O);
-  else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gibaseinfo));
-  return NULL;
-}
-
-int IsGIBaseInfoObj(Stack stack, int i)
-{
-  return nsp_object_type(NthObj(i),nsp_type_gibaseinfo_id);
-}
-
-int IsGIBaseInfo(NspObject *O)
-{
-  return nsp_object_type(O,nsp_type_gibaseinfo_id);
-}
-
-NspGIBaseInfo  *GetGIBaseInfoCopy(Stack stack, int i)
-{
-  if (  GetGIBaseInfo(stack,i) == NULL ) return NULL;
-  return MaybeObjCopy(&NthObj(i));
-}
-
-NspGIBaseInfo  *GetGIBaseInfo(Stack stack, int i)
-{
-  NspGIBaseInfo *M;
-  if (( M = nsp_gibaseinfo_object(NthObj(i))) == NULLGIBASEINFO)
-     ArgMessage(stack,i);
-  return M;
-}
-
-/*-----------------------------------------------------
- * constructor 
- * if type is non NULL it is a subtype which can be used to 
- * create a NspGIBaseInfo instance 
- *-----------------------------------------------------*/
-
-static NspGIBaseInfo *nsp_gibaseinfo_create_void(const char *name,NspTypeBase *type)
-{
- NspGIBaseInfo *H  = (type == NULL) ? new_gibaseinfo() : type->new();
- if ( H ==  NULLGIBASEINFO)
-  {
-   Sciprintf("No more memory\n");
-   return NULLGIBASEINFO;
-  }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLGIBASEINFO;
- NSP_OBJECT(H)->ret_pos = -1 ;
- return H;
-}
-
-int nsp_gibaseinfo_create_partial(NspGIBaseInfo *H)
-{
-  if((H->obj = calloc(1,sizeof(nsp_gibaseinfo)))== NULL ) return FAIL;
-  H->obj->ref_count=1;
-  H->obj->info = NULL;
-  return OK;
-}
-
-int nsp_gibaseinfo_check_values(NspGIBaseInfo *H)
-{
-  return OK;
-}
-
-NspGIBaseInfo *nsp_gibaseinfo_create(const char *name,void* info,NspTypeBase *type)
-{
-  NspGIBaseInfo *H  = nsp_gibaseinfo_create_void(name,type);
-  if ( H ==  NULLGIBASEINFO) return NULLGIBASEINFO;
-  if ( nsp_gibaseinfo_create_partial(H) == FAIL) return NULLGIBASEINFO;
-  H->obj->info = info;
-  if ( nsp_gibaseinfo_check_values(H) == FAIL) return NULLGIBASEINFO;
-  return H;
-}
-
-
-NspGIBaseInfo *nsp_gibaseinfo_create_default(const char *name)
-{
- NspGIBaseInfo *H  = nsp_gibaseinfo_create_void(name,NULL);
- if ( H ==  NULLGIBASEINFO) return NULLGIBASEINFO;
-  if ( nsp_gibaseinfo_create_partial(H) == FAIL) return NULLGIBASEINFO;
-  if ( nsp_gibaseinfo_check_values(H) == FAIL) return NULLGIBASEINFO;
- return H;
-}
-
-/*
- * copy for gobject derived class  
- */
-
-NspGIBaseInfo *nsp_gibaseinfo_copy_partial(NspGIBaseInfo *H,NspGIBaseInfo *self)
-{
-  H->obj = self->obj; self->obj->ref_count++;
-  return H;
-}
-
-NspGIBaseInfo *nsp_gibaseinfo_copy(NspGIBaseInfo *self)
-{
-  NspGIBaseInfo *H  =nsp_gibaseinfo_create_void(NVOID,(NspTypeBase *) nsp_type_gibaseinfo);
-  if ( H ==  NULLGIBASEINFO) return NULLGIBASEINFO;
-  if ( nsp_gibaseinfo_copy_partial(H,self)== NULL) return NULLGIBASEINFO;
-
-  return H;
-}
-/*
- * full copy for gobject derived class
- */
-
-NspGIBaseInfo *nsp_gibaseinfo_full_copy_partial(NspGIBaseInfo *H,NspGIBaseInfo *self)
-{
-  if ((H->obj = calloc(1,sizeof(nsp_gibaseinfo))) == NULL) return NULLGIBASEINFO;
-  H->obj->ref_count=1;
-  H->obj->info = self->obj->info;
-  return H;
-}
-
-NspGIBaseInfo *nsp_gibaseinfo_full_copy(NspGIBaseInfo *self)
-{
-  NspGIBaseInfo *H  =nsp_gibaseinfo_create_void(NVOID,(NspTypeBase *) nsp_type_gibaseinfo);
-  if ( H ==  NULLGIBASEINFO) return NULLGIBASEINFO;
-  if ( nsp_gibaseinfo_full_copy_partial(H,self)== NULL) return NULLGIBASEINFO;
-  return H;
-}
-
-/*-------------------------------------------------------------------
- * wrappers for the NspGIBaseInfo
- * i.e functions at Nsp level 
- *-------------------------------------------------------------------*/
-
-int int_gibaseinfo_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGIBaseInfo *H;
-  CheckStdRhs(0,0);
-  /* want to be sure that type gibaseinfo is initialized */
-  nsp_type_gibaseinfo = new_type_gibaseinfo(T_BASE);
-  if(( H = nsp_gibaseinfo_create_void(NVOID,(NspTypeBase *) nsp_type_gibaseinfo)) == NULLGIBASEINFO) return RET_BUG;
-  /* then we use optional arguments to fill attributes */
-    if ( nsp_gibaseinfo_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
- if ( nsp_gibaseinfo_check_values(H) == FAIL) return RET_BUG;
-    MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-
-/*-------------------------------------------
- * Methods
- *-------------------------------------------*/
-static NspMethods *gibaseinfo_get_methods(void) { return NULL;};
-/*-------------------------------------------
- * Attributes
- *-------------------------------------------*/
-
-static AttrTab gibaseinfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -899,13 +653,13 @@ void girepository_Interf_Info(int i, char **fname, function ( **f))
 }
 void nsp_initialize_girepository_types(void)
 {
-  new_type_girepository(T_BASE);
   new_type_gibaseinfo(T_BASE);
+  new_type_girepository(T_BASE);
 }
 
-#line 155 "codegen-3.0/girepository.override"
+#line 156 "codegen-3.0/girepository.override"
 
-void nsp_gi_info_new (GIBaseInfo *info)
+static void nsp_gi_info_new (GIBaseInfo *info)
 {
   GIInfoType info_type;
   info_type = g_base_info_get_type (info);
@@ -973,27 +727,5 @@ void nsp_gi_info_new (GIBaseInfo *info)
 }
 
 
-/* static NspObject * */
-/* _wrap_g_irepository_get_typelib_path (NspGIRepository *self, */
-/*                                       NspObject       *args, */
-/*                                       NspObject       *kwargs) */
-/* { */
-/*     static char *kwlist[] = { "namespace", NULL }; */
-/*     const char *namespace_; */
-/*     const gchar *typelib_path; */
 
-/*     if (!NspArg_ParseTupleAndKeywords (args, kwargs, */
-/*                                       "s:Repository.get_typelib_path", kwlist, &namespace_)) { */
-/*         return NULL; */
-/*     } */
-
-/*     typelib_path = g_irepository_get_typelib_path (self->repository, namespace_); */
-/*     if (typelib_path == NULL) { */
-/*         NspErr_Format (NspExc_RuntimeError, "Namespace '%s' not loaded", namespace_); */
-/*         return NULL; */
-/*     } */
-
-/*     return PYGLIB_NspBytes_FromString (typelib_path); */
-/* } */
-
-#line 1000 "girepository.c"
+#line 732 "girepository.c"

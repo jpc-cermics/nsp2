@@ -8,7 +8,7 @@ DIFF=$(patsubst %.c,%.diff,$(ALL))
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
-	cd ../; make gio.o
+	cd ../; make girepository-1.o
 
 pipo:
 	cd ../; make -j

@@ -2,15 +2,21 @@
 
 %%
 headers
+#include <girepository.h>
 #include <nsp/nsp.h>
+#include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
-#include <girepository.h>
+#include <nsp/gtk/girepository.h>
+#define NspGIBaseInfo_Private
+#include <nsp/gtk/gibaseinfo.h>
 
 %%
 modulename atk
+
 %%
 import gobject.GObject as GObject
+
 %%
 ignore-glob
   *_get_type
@@ -28,28 +34,6 @@ static int _wrap_g_irepository_enumerate_versions
   if ( GetArgs(stack,rhs,opt,T,&namespace) == FAIL) return RET_BUG;
   ret = g_irepository_enumerate_versions(G_IREPOSITORY(self->obj), namespace);
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
-}
-
-%%
-override GIRepository.g_irepository_find_by_name
-
-static int _wrap_g_irepository_find_by_name
-(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string,string,t_end};
-  char *namespace, *name;
-  GIBaseInfo *info;
-  if ( GetArgs(stack,rhs,opt,T,&namespace,&name) == FAIL) return RET_BUG;
-  info = g_irepository_find_by_name (G_IREPOSITORY(self->obj), namespace, name);
-  if (info == NULL)
-    {
-      Sciprintf("Cannot fing %s\n",name);
-    }
-  /*
-  py_info = _pygi_info_new (info);
-  g_base_info_unref (info);
-  return py_info; */
-  return 0;
 }
 
 %%
@@ -107,7 +91,7 @@ static int _wrap_g_irepository_require
 %%
 override GIRepository.g_irepository_get_n_infos
 
-void nsp_gi_info_new (GIBaseInfo *info);
+static void nsp_gi_info_new (GIBaseInfo *info);
 
 static int _wrap_g_irepository_get_n_infos
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -151,9 +135,26 @@ static int _wrap_g_irepository_get_n_infos
  */
 
 %%
+override g_base_info_get_attributes
+
+
+static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GIAttributeIter iter = { 0, };
+  char *name;
+  char *value;
+  CheckRhs(0,0);
+  while (g_base_info_iterate_attributes (NSP_GBOXED_GET(self, GIBaseInfo), &iter, &name, &value))
+    {
+      Sciprintf("attribute name: %s value: %s\n", name, value);
+    }
+  return 0;
+}
+
+%%
 last
 
-void nsp_gi_info_new (GIBaseInfo *info)
+static void nsp_gi_info_new (GIBaseInfo *info)
 {
   GIInfoType info_type;
   info_type = g_base_info_get_type (info);
@@ -221,25 +222,3 @@ void nsp_gi_info_new (GIBaseInfo *info)
 }
 
 
-/* static NspObject * */
-/* _wrap_g_irepository_get_typelib_path (NspGIRepository *self, */
-/*                                       NspObject       *args, */
-/*                                       NspObject       *kwargs) */
-/* { */
-/*     static char *kwlist[] = { "namespace", NULL }; */
-/*     const char *namespace_; */
-/*     const gchar *typelib_path; */
-
-/*     if (!NspArg_ParseTupleAndKeywords (args, kwargs, */
-/*                                       "s:Repository.get_typelib_path", kwlist, &namespace_)) { */
-/*         return NULL; */
-/*     } */
-
-/*     typelib_path = g_irepository_get_typelib_path (self->repository, namespace_); */
-/*     if (typelib_path == NULL) { */
-/*         NspErr_Format (NspExc_RuntimeError, "Namespace '%s' not loaded", namespace_); */
-/*         return NULL; */
-/*     } */
-
-/*     return PYGLIB_NspBytes_FromString (typelib_path); */
-/* } */

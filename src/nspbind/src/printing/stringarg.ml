@@ -208,7 +208,8 @@ let check_gtk_class objinfo =
   objinfo.or_module = "WebKit" ||
   objinfo.or_module = "Gio" ||
   objinfo.or_module = "G_TYPE" ||
-  objinfo.or_module = "Cairo"
+  objinfo.or_module = "Cairo" ||
+  objinfo.or_module = "GI" 
 ;;
 
 (* a function or a method *)

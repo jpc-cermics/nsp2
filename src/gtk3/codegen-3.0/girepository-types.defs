@@ -8,14 +8,13 @@
   (gtype-id "G_TYPE_IREPOSITORY")
 )
 
-(define-objectref GIBaseInfo
+(define-boxed GIBaseInfo
   (in-module "GI")
-  (parent "Object")
-  (c-name "NspGIBaseInfo")
-  (fields
-   '("void*" "info" "hidden" "NULL")) ;; GIBaseInfo
-  (gtype-id "unused")
-)
+  (c-name "GIBaseInfo")
+  (gtype-id "GI_TYPE_BASE_INFO")
+  ;;(copy-func "gtk_text_iter_copy")
+  ;;(release-func "gtk_text_iter_free")
+  )
 
 
 

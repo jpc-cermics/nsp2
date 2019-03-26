@@ -22,4 +22,7 @@ CFLAGS = $(CC_OPTIONS) -DGTK_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED -D
 
 CFLAGS = $(CC_OPTIONS) -DGSEAL_ENABLE
 
+
+girepository-1.o : girepository-1.c girepository.c
+
 include ../Make.lib

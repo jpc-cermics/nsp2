@@ -25,7 +25,7 @@
    '("const-gchar*" "namespace")
    '("const-gchar*" "name")
    )
-  (return-type "none")
+  (return-type "GIBaseInfo*")
 )
 
 (define-method get_loaded_namespaces
@@ -53,5 +53,23 @@
    '("const-gchar*" "namespace")
    )
   (return-type "none")
+)
+
+(define-method get_attribute
+  (of-object "GIBaseInfo")
+  (c-name "g_base_info_get_attribute")
+  (parameters
+   '("const-gchar*" "name")
+   )
+  (return-type "const-gchar*")
+)
+
+;; added
+(define-method get_attributes
+  (of-object "GIBaseInfo")
+  (c-name "g_base_info_get_attributes")
+  (parameters
+   )
+  (return-type "const-gchar*")
 )
 
