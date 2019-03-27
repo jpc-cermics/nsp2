@@ -52,8 +52,8 @@ function [h,num,den]=ss2tf(sl,rmax)
      else
        [a,x,bs]=bdiag(a,rmax)
      end
-     k=1;m=[];v=ones(1,n1);den=1;
-     for n=bs' do
+     k=1;m=[];v=ones(1,n1)+0*s;den=1+0*s;
+     for n=bs do
        k1=k:k-1+n;
        // leverrier
        h=z*eye(n,n)-a(k1,k1)
@@ -61,7 +61,7 @@ function [h,num,den]=ss2tf(sl,rmax)
        for kl=1:n-1 do
          b=h*f,
          d=-sum(diag(b))/kl,
-         f=b+eye()*d,
+         f=b+eye(size(b))*d,
        end
        d=sum(diag(h*f))/n
        //
@@ -74,7 +74,11 @@ function [h,num,den]=ss2tf(sl,rmax)
      if nargout==3 then h=sl(5),num=sl(4)*m*diag(v)*(x\sl(3));return;end
      m=sl(4)*m*diag(v)*(x\sl(3))+sl(5)*den;
      [m1,n1]=size(m);[m,den]=simp(m,den*ones(m1,n1))
-     h=p2r(m,den,dom = sl.dom,dt = sl.dt);
+     h=p2r(m,den);
+     h=syslin('c',h);
+     h.set_dom[sl.dom]
+     h.set_dt[sl.dt];
+
     case 'p' then
      Den=poly(sl(2),var)
      na=Den.degree[];
