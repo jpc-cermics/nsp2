@@ -11,6 +11,8 @@ headers
 #define NspGIBaseInfo_Private
 #include <nsp/gtk/gibaseinfo.h>
 
+static char *nsp_gi_info_new (GIBaseInfo *info);
+
 %%
 modulename atk
 
@@ -52,20 +54,6 @@ static int _wrap_g_irepository_get_loaded_namespaces
 }
 
 %%
-override GIRepository.g_irepository_get_version
-
-static int _wrap_g_irepository_get_version
-(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string,t_end};
-  char *namespace;
-  if ( GetArgs(stack,rhs,opt,T,&namespace) == FAIL) return RET_BUG;
-  ret = g_irepository_get_version(G_IREPOSITORY(self->obj), namespace);
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  return 1;
-}
-
-%%
 override g_irepository_require
 
 static int _wrap_g_irepository_require
@@ -90,8 +78,6 @@ static int _wrap_g_irepository_require
 
 %%
 override GIRepository.g_irepository_get_n_infos
-
-static void nsp_gi_info_new (GIBaseInfo *info);
 
 static int _wrap_g_irepository_get_n_infos
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -122,7 +108,7 @@ static int _wrap_g_irepository_get_n_infos
 	    Sciprintf("  container is %s\n", g_base_info_get_name (container));
 	  else
 	    Sciprintf("  no container for %s\n", g_base_info_get_name (info));
-	  nsp_gi_info_new (info);
+	  Sciprintf("%s\n",nsp_gi_info_new (info));
 	}
     }
   return 0;
@@ -144,81 +130,54 @@ static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int 
   char *name;
   char *value;
   CheckRhs(0,0);
+  Sciprintf("attributes start \n");
+  
+  GIBaseInfo *info = NSP_GBOXED_GET(self, GIBaseInfo);
+  if (info != NULL)
+    {
+      Sciprintf("for object %s of type %s\n",g_base_info_get_name (info),nsp_gi_info_new (info));
+    }
   while (g_base_info_iterate_attributes (NSP_GBOXED_GET(self, GIBaseInfo), &iter, &name, &value))
     {
       Sciprintf("attribute name: %s value: %s\n", name, value);
     }
+  Sciprintf("attributes end \n");
   return 0;
 }
 
 %%
 last
 
-static void nsp_gi_info_new (GIBaseInfo *info)
+static char *nsp_gi_info_new (GIBaseInfo *info)
 {
   GIInfoType info_type;
   info_type = g_base_info_get_type (info);
   switch (info_type)
     {
-    case GI_INFO_TYPE_INVALID:
-      Scierror("Invalid info type\n");
-      break;
-    case GI_INFO_TYPE_FUNCTION:
-      Sciprintf("  type = &PyGIFunctionInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_CALLBACK:
-      Sciprintf("  type = &PyGICallbackInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_STRUCT:
-      Sciprintf("  type = &PyGIStructInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_BOXED:
-      Sciprintf("  type = &PyGIBoxedInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_ENUM:
-    case GI_INFO_TYPE_FLAGS:
-      Sciprintf("  type = &PyGIEnumInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_OBJECT:
-      Sciprintf("  type = &PyGIObjectInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_INTERFACE:
-      Sciprintf("  type = &PyGIInterfaceInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_CONSTANT:
-      Sciprintf("  type = &PyGIConstantInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_UNION:
-      Sciprintf("  type = &PyGIUnionInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_VALUE:
-      Sciprintf("  type = &PyGIValueInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_SIGNAL:
-      Sciprintf("  type = &PyGISignalInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_VFUNC:
-      Sciprintf("  type = &PyGIVFuncInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_PROPERTY:
-      Sciprintf("  type = &PyGIPropertyInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_FIELD:
-      Sciprintf("  type = &PyGIFieldInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_ARG:
-      Sciprintf("  type = &PyGIArgInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_TYPE:
-      Sciprintf("  type = &PyGITypeInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_UNRESOLVED:
-      Sciprintf("  type = &PyGIUnresolvedInfo_Type;\n");
-      break;
+    case GI_INFO_TYPE_INVALID: return "INVALID";break;
+    case GI_INFO_TYPE_FUNCTION: return "FUNCTION";break;
+    case GI_INFO_TYPE_CALLBACK: return "CALLBACK";break;
+    case GI_INFO_TYPE_STRUCT: return "STRUCT";break;
+    case GI_INFO_TYPE_BOXED: return "BOXED";break;
+    case GI_INFO_TYPE_ENUM: return "ENUM";break;
+    case GI_INFO_TYPE_FLAGS: return "FLAGS";break;
+    case GI_INFO_TYPE_OBJECT: return "OBJECT";break;
+    case GI_INFO_TYPE_INTERFACE: return "INTERFACE";break;
+    case GI_INFO_TYPE_CONSTANT: return "CONSTANT";break;
+    case GI_INFO_TYPE_UNION: return "UNION";break;
+    case GI_INFO_TYPE_VALUE: return "VALUE";break;
+    case GI_INFO_TYPE_SIGNAL: return "SIGNAL";break;
+    case GI_INFO_TYPE_VFUNC: return "VFUNC";break;
+    case GI_INFO_TYPE_PROPERTY: return "PROPERTY";break;
+    case GI_INFO_TYPE_FIELD: return "FIELD";break;
+    case GI_INFO_TYPE_ARG: return "ARG";break;
+    case GI_INFO_TYPE_TYPE: return "TYPE";break;
+    case GI_INFO_TYPE_UNRESOLVED: return "UNRESOLVED";break;
     default:
       g_assert_not_reached();
       break;
     }
+  return "INVALID";
 }
 
 

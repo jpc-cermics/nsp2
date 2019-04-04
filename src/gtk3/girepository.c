@@ -34,7 +34,9 @@
 #define NspGIBaseInfo_Private
 #include <nsp/gtk/gibaseinfo.h>
 
-#line 38 "girepository.c"
+static char *nsp_gi_info_new (GIBaseInfo *info);
+
+#line 40 "girepository.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
@@ -233,18 +235,7 @@ NspGIBaseInfo *gibaseinfo_copy(NspGIBaseInfo *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_g_base_info_get_attribute(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string, t_end};
-  char *name;
-  const gchar *ret;
-  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-  ret =g_base_info_get_attribute(NSP_GBOXED_GET(self, GIBaseInfo),name);
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  return 1;
-}
-
-#line 139 "codegen-3.0/girepository.override"
+#line 125 "codegen-3.0/girepository.override"
 
 
 static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
@@ -253,19 +244,36 @@ static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int 
   char *name;
   char *value;
   CheckRhs(0,0);
+  Sciprintf("attributes start \n");
+  
+  GIBaseInfo *info = NSP_GBOXED_GET(self, GIBaseInfo);
+  if (info != NULL)
+    {
+      Sciprintf("for object %s of type %s\n",g_base_info_get_name (info),nsp_gi_info_new (info));
+    }
   while (g_base_info_iterate_attributes (NSP_GBOXED_GET(self, GIBaseInfo), &iter, &name, &value))
     {
       Sciprintf("attribute name: %s value: %s\n", name, value);
     }
+  Sciprintf("attributes end \n");
   return 0;
 }
 
-#line 264 "girepository.c"
+#line 263 "girepository.c"
 
+
+static int _wrap_g_function_info_get_symbol(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+  CheckRhs(0,0);
+ if ( g_base_info_get_type (NSP_GBOXED_GET(self, GIBaseInfo)) !=  GI_INFO_TYPE_FUNCTION) return RET_BUG; ret =g_function_info_get_symbol(NSP_GBOXED_GET(self, GIBaseInfo));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
 
 static NspMethods gibaseinfo_methods[] = {
-  {"get_attribute",(nsp_method *) _wrap_g_base_info_get_attribute},
   {"get_attributes",(nsp_method *) _wrap_g_base_info_get_attributes},
+  {"get_symbol",(nsp_method *) _wrap_g_function_info_get_symbol},
   { NULL, NULL}
 };
 
@@ -468,7 +476,33 @@ NspGIRepository *girepository_copy(NspGIRepository *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 26 "codegen-3.0/girepository.override"
+static int _wrap_g_irepository_is_registered(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *namespace_, *version;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_, &version) == FAIL) return RET_BUG;
+    ret =g_irepository_is_registered(G_IREPOSITORY(self->obj),namespace_,version);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_irepository_find_by_name(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *namespace_, *name;
+  GIBaseInfo *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_, &name) == FAIL) return RET_BUG;
+    ret =g_irepository_find_by_name(G_IREPOSITORY(self->obj),namespace_,name);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 28 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_enumerate_versions
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -482,42 +516,10 @@ static int _wrap_g_irepository_enumerate_versions
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
-#line 486 "girepository.c"
+#line 520 "girepository.c"
 
 
-static int _wrap_g_irepository_find_by_name(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string,string, t_end};
-  char *namespace, *name;
-  GIBaseInfo *ret;
-  NspObject *nsp_ret;
-  if ( GetArgs(stack,rhs,opt,T,&namespace, &name) == FAIL) return RET_BUG;
-    ret =g_irepository_find_by_name(G_IREPOSITORY(self->obj),namespace,name);
-  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
-                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
-    return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-}
-
-#line 41 "codegen-3.0/girepository.override"
-
-static int _wrap_g_irepository_get_loaded_namespaces
-(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
-{
-  char **namespaces;
-  /* GIBaseInfo *info; */
-  CheckRhs(0,0);
-  namespaces = g_irepository_get_loaded_namespaces (G_IREPOSITORY(self->obj));
-  NspSMatrix*Res= nsp_smatrix_create_from_table(namespaces);
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  return 1;
-}
-
-#line 518 "girepository.c"
-
-
-#line 70 "codegen-3.0/girepository.override"
+#line 58 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_require
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -539,12 +541,82 @@ static int _wrap_g_irepository_require
   return 0;
 }
 
-#line 543 "girepository.c"
+#line 545 "girepository.c"
 
 
-#line 93 "codegen-3.0/girepository.override"
+#if GTK_CHECK_VERSION(1,44,0)
+static int _wrap_g_irepository_get_immediate_dependencies(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  gchar **ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_immediate_dependencies(G_IREPOSITORY(self->obj),namespace_);
+  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
+  if ( nsp_ret == NULL) return RET_BUG;
+  g_strfreev(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 
-static void nsp_gi_info_new (GIBaseInfo *info);
+#else
+int _wrap_g_irepository_get_immediate_dependencies(Stack stack, int rhs, int opt, int lhs) /* get_immediate_dependencies */
+{
+  Scierror("Error: function g_irepository_get_immediate_dependencies not available\n");
+  return RET_BUG;
+}
+#endif
+static int _wrap_g_irepository_get_dependencies(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  gchar **ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_dependencies(G_IREPOSITORY(self->obj),namespace_);
+  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
+  if ( nsp_ret == NULL) return RET_BUG;
+  g_strfreev(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 43 "codegen-3.0/girepository.override"
+
+static int _wrap_g_irepository_get_loaded_namespaces
+(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  char **namespaces;
+  /* GIBaseInfo *info; */
+  CheckRhs(0,0);
+  namespaces = g_irepository_get_loaded_namespaces (G_IREPOSITORY(self->obj));
+  NspSMatrix*Res= nsp_smatrix_create_from_table(namespaces);
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
+#line 600 "girepository.c"
+
+
+static int _wrap_g_irepository_find_by_gtype(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GType gtype;
+  NspObject *nsp_gtype = NULL, *nsp_ret;
+  GIBaseInfo *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_gtype) == FAIL) return RET_BUG;
+  if ((gtype = nspg_type_from_object(nsp_gtype)) == FAIL)
+      return RET_BUG;
+    ret =g_irepository_find_by_gtype(G_IREPOSITORY(self->obj),gtype);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 81 "codegen-3.0/girepository.override"
 
 static int _wrap_g_irepository_get_n_infos
 (NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -575,7 +647,7 @@ static int _wrap_g_irepository_get_n_infos
 	    Sciprintf("  container is %s\n", g_base_info_get_name (container));
 	  else
 	    Sciprintf("  no container for %s\n", g_base_info_get_name (info));
-	  nsp_gi_info_new (info);
+	  Sciprintf("%s\n",nsp_gi_info_new (info));
 	}
     }
   return 0;
@@ -587,15 +659,84 @@ static int _wrap_g_irepository_get_n_infos
  * g_base_info_get_namespace(self->info);
  */
 
-#line 591 "girepository.c"
+#line 663 "girepository.c"
 
+
+static int _wrap_g_irepository_get_info(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,s_int, t_end};
+  char *namespace_;
+  int index;
+  GIBaseInfo *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_, &index) == FAIL) return RET_BUG;
+    ret =g_irepository_get_info(G_IREPOSITORY(self->obj),namespace_,index);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_irepository_get_typelib_path(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_typelib_path(G_IREPOSITORY(self->obj),namespace_);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_irepository_get_shared_library(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_shared_library(G_IREPOSITORY(self->obj),namespace_);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_irepository_get_c_prefix(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_c_prefix(G_IREPOSITORY(self->obj),namespace_);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_irepository_get_version(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *namespace_;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&namespace_) == FAIL) return RET_BUG;
+    ret =g_irepository_get_version(G_IREPOSITORY(self->obj),namespace_);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
 
 static NspMethods girepository_methods[] = {
-  {"enumerate_versions",(nsp_method *) _wrap_g_irepository_enumerate_versions},
+  {"is_registered",(nsp_method *) _wrap_g_irepository_is_registered},
   {"find_by_name",(nsp_method *) _wrap_g_irepository_find_by_name},
-  {"get_loaded_namespaces",(nsp_method *) _wrap_g_irepository_get_loaded_namespaces},
+  {"enumerate_versions",(nsp_method *) _wrap_g_irepository_enumerate_versions},
   {"require",(nsp_method *) _wrap_g_irepository_require},
+  {"get_immediate_dependencies",(nsp_method *) _wrap_g_irepository_get_immediate_dependencies},
+  {"get_dependencies",(nsp_method *) _wrap_g_irepository_get_dependencies},
+  {"get_loaded_namespaces",(nsp_method *) _wrap_g_irepository_get_loaded_namespaces},
+  {"find_by_gtype",(nsp_method *) _wrap_g_irepository_find_by_gtype},
   {"get_n_infos",(nsp_method *) _wrap_g_irepository_get_n_infos},
+  {"get_info",(nsp_method *) _wrap_g_irepository_get_info},
+  {"get_typelib_path",(nsp_method *) _wrap_g_irepository_get_typelib_path},
+  {"get_shared_library",(nsp_method *) _wrap_g_irepository_get_shared_library},
+  {"get_c_prefix",(nsp_method *) _wrap_g_irepository_get_c_prefix},
+  {"get_version",(nsp_method *) _wrap_g_irepository_get_version},
   { NULL, NULL}
 };
 
@@ -609,6 +750,159 @@ static AttrTab girepository_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
+int _wrap_g_base_info_ref(Stack stack, int rhs, int opt, int lhs) /* g_base_info_ref */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL, *ret;
+  NspObject *nsp_info = NULL, *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_ref(info);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_g_base_info_unref(Stack stack, int rhs, int opt, int lhs) /* g_base_info_unref */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL;
+  NspObject *nsp_info = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    g_base_info_unref(info);
+  return 0;
+}
+
+int _wrap_g_base_info_get_name(Stack stack, int rhs, int opt, int lhs) /* g_base_info_get_name */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL;
+  NspObject *nsp_info = NULL;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_get_name(info);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_base_info_get_namespace(Stack stack, int rhs, int opt, int lhs) /* g_base_info_get_namespace */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL;
+  NspObject *nsp_info = NULL;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_get_namespace(info);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_base_info_is_deprecated(Stack stack, int rhs, int opt, int lhs) /* g_base_info_is_deprecated */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL;
+  NspObject *nsp_info = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_is_deprecated(info);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_base_info_get_attribute(Stack stack, int rhs, int opt, int lhs) /* g_base_info_get_attribute */
+{
+  int_types T[] = {obj,string, t_end};
+  GIBaseInfo *info = NULL;
+  NspObject *nsp_info = NULL;
+  char *name;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info, &name) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_get_attribute(info,name);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_base_info_get_container(Stack stack, int rhs, int opt, int lhs) /* g_base_info_get_container */
+{
+  int_types T[] = {obj, t_end};
+  GIBaseInfo *info = NULL, *ret;
+  NspObject *nsp_info = NULL, *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
+      info = nspg_boxed_get(nsp_info, GIBaseInfo);
+  else {
+      Scierror( "Error: info should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_get_container(info);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GI_TYPE_BASE_INFO, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gibaseinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_g_base_info_equal(Stack stack, int rhs, int opt, int lhs) /* g_base_info_equal */
+{
+  int_types T[] = {obj,obj, t_end};
+  GIBaseInfo *info1 = NULL, *info2 = NULL;
+  NspObject *nsp_info1 = NULL, *nsp_info2 = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_info1, &nsp_info2) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_info1, GI_TYPE_BASE_INFO))
+      info1 = nspg_boxed_get(nsp_info1, GIBaseInfo);
+  else {
+      Scierror( "Error: info1 should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_info2, GI_TYPE_BASE_INFO))
+      info2 = nspg_boxed_get(nsp_info2, GIBaseInfo);
+  else {
+      Scierror( "Error: info2 should be a GIBaseInfo\n");
+      return RET_BUG;
+  }
+    ret =g_base_info_equal(info1,info2);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 int _wrap_g_irepository_get_default(Stack stack, int rhs, int opt, int lhs) /* g_irepository_get_default */
 {
   GIRepository *ret;
@@ -621,13 +915,99 @@ int _wrap_g_irepository_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
+int _wrap_g_irepository_prepend_search_path(Stack stack, int rhs, int opt, int lhs) /* g_irepository_prepend_search_path */
+{
+  int_types T[] = {string, t_end};
+  char *directory;
+  if ( GetArgs(stack,rhs,opt,T,&directory) == FAIL) return RET_BUG;
+    g_irepository_prepend_search_path(directory);
+  return 0;
+}
+
+int _wrap_g_irepository_prepend_library_path(Stack stack, int rhs, int opt, int lhs) /* g_irepository_prepend_library_path */
+{
+  int_types T[] = {string, t_end};
+  char *directory;
+  if ( GetArgs(stack,rhs,opt,T,&directory) == FAIL) return RET_BUG;
+    g_irepository_prepend_library_path(directory);
+  return 0;
+}
+
+int _wrap_g_irepository_get_search_path(Stack stack, int rhs, int opt, int lhs) /* g_irepository_get_search_path */
+{
+  GSList *ret, *tmp;
+  NspList *nsp_list;
+  CheckRhs(0,0);
+    ret =g_irepository_get_search_path();
+  NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+
+}
+
+int _wrap_g_irepository_dump(Stack stack, int rhs, int opt, int lhs) /* g_irepository_dump */
+{
+  int_types T[] = {string, t_end};
+  char *arg;
+  GError *error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&arg) == FAIL) return RET_BUG;
+    ret =g_irepository_dump(arg,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_type_tag_to_string(Stack stack, int rhs, int opt, int lhs) /* g_type_tag_to_string */
+{
+  int_types T[] = {obj, t_end};
+  GITypeTag type;
+  NspObject *nsp_type = NULL;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
+      return RET_BUG;
+    ret =g_type_tag_to_string(type);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_info_type_to_string(Stack stack, int rhs, int opt, int lhs) /* g_info_type_to_string */
+{
+  int_types T[] = {obj, t_end};
+  GIInfoType type;
+  NspObject *nsp_type = NULL;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
+      return RET_BUG;
+    ret =g_info_type_to_string(type);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
 static OpTab girepository_func[]={
+  { "g_base_info_ref", _wrap_g_base_info_ref},
+  { "g_base_info_unref", _wrap_g_base_info_unref},
+  { "g_base_info_get_name", _wrap_g_base_info_get_name},
+  { "g_base_info_get_namespace", _wrap_g_base_info_get_namespace},
+  { "g_base_info_is_deprecated", _wrap_g_base_info_is_deprecated},
+  { "g_base_info_get_attribute", _wrap_g_base_info_get_attribute},
+  { "g_base_info_get_container", _wrap_g_base_info_get_container},
+  { "g_base_info_equal", _wrap_g_base_info_equal},
   { "g_irepository_get_default", _wrap_g_irepository_get_default},
+  { "g_irepository_prepend_search_path", _wrap_g_irepository_prepend_search_path},
+  { "g_irepository_prepend_library_path", _wrap_g_irepository_prepend_library_path},
+  { "g_irepository_get_search_path", _wrap_g_irepository_get_search_path},
+  { "g_irepository_dump", _wrap_g_irepository_dump},
+  { "g_type_tag_to_string", _wrap_g_type_tag_to_string},
+  { "g_info_type_to_string", _wrap_g_info_type_to_string},
   { NULL, NULL}
 };
 
@@ -651,81 +1031,66 @@ void girepository_Interf_Info(int i, char **fname, function ( **f))
   *fname = girepository_func[i].name;
   *f = girepository_func[i].fonc;
 }
+
+/* ----------- enums and flags ----------- */
+
+void
+girepository_add_constants(NspObject *module, const gchar *strip_prefix)
+{
+/* enum or flags without typecode: GInvokeError */
+/* enum or flags without typecode: GIRepositoryLoadFlags */
+/* enum or flags without typecode: GIRepositoryError */
+/* enum or flags without typecode: GIInfoType */
+/* enum or flags without typecode: GITransfer */
+/* enum or flags without typecode: GIDirection */
+/* enum or flags without typecode: GIScopeType */
+/* enum or flags without typecode: GITypeTag */
+/* enum or flags without typecode: GIArrayType */
+/* enum or flags without typecode: GIFieldInfoFlags */
+/* enum or flags without typecode: GIVFuncInfoFlags */
+/* enum or flags without typecode: GIFunctionInfoFlags */
+}
+
 void nsp_initialize_girepository_types(void)
 {
   new_type_gibaseinfo(T_BASE);
   new_type_girepository(T_BASE);
 }
 
-#line 156 "codegen-3.0/girepository.override"
+#line 150 "codegen-3.0/girepository.override"
 
-static void nsp_gi_info_new (GIBaseInfo *info)
+static char *nsp_gi_info_new (GIBaseInfo *info)
 {
   GIInfoType info_type;
   info_type = g_base_info_get_type (info);
   switch (info_type)
     {
-    case GI_INFO_TYPE_INVALID:
-      Scierror("Invalid info type\n");
-      break;
-    case GI_INFO_TYPE_FUNCTION:
-      Sciprintf("  type = &PyGIFunctionInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_CALLBACK:
-      Sciprintf("  type = &PyGICallbackInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_STRUCT:
-      Sciprintf("  type = &PyGIStructInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_BOXED:
-      Sciprintf("  type = &PyGIBoxedInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_ENUM:
-    case GI_INFO_TYPE_FLAGS:
-      Sciprintf("  type = &PyGIEnumInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_OBJECT:
-      Sciprintf("  type = &PyGIObjectInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_INTERFACE:
-      Sciprintf("  type = &PyGIInterfaceInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_CONSTANT:
-      Sciprintf("  type = &PyGIConstantInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_UNION:
-      Sciprintf("  type = &PyGIUnionInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_VALUE:
-      Sciprintf("  type = &PyGIValueInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_SIGNAL:
-      Sciprintf("  type = &PyGISignalInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_VFUNC:
-      Sciprintf("  type = &PyGIVFuncInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_PROPERTY:
-      Sciprintf("  type = &PyGIPropertyInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_FIELD:
-      Sciprintf("  type = &PyGIFieldInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_ARG:
-      Sciprintf("  type = &PyGIArgInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_TYPE:
-      Sciprintf("  type = &PyGITypeInfo_Type;\n");
-      break;
-    case GI_INFO_TYPE_UNRESOLVED:
-      Sciprintf("  type = &PyGIUnresolvedInfo_Type;\n");
-      break;
+    case GI_INFO_TYPE_INVALID: return "INVALID";break;
+    case GI_INFO_TYPE_FUNCTION: return "FUNCTION";break;
+    case GI_INFO_TYPE_CALLBACK: return "CALLBACK";break;
+    case GI_INFO_TYPE_STRUCT: return "STRUCT";break;
+    case GI_INFO_TYPE_BOXED: return "BOXED";break;
+    case GI_INFO_TYPE_ENUM: return "ENUM";break;
+    case GI_INFO_TYPE_FLAGS: return "FLAGS";break;
+    case GI_INFO_TYPE_OBJECT: return "OBJECT";break;
+    case GI_INFO_TYPE_INTERFACE: return "INTERFACE";break;
+    case GI_INFO_TYPE_CONSTANT: return "CONSTANT";break;
+    case GI_INFO_TYPE_UNION: return "UNION";break;
+    case GI_INFO_TYPE_VALUE: return "VALUE";break;
+    case GI_INFO_TYPE_SIGNAL: return "SIGNAL";break;
+    case GI_INFO_TYPE_VFUNC: return "VFUNC";break;
+    case GI_INFO_TYPE_PROPERTY: return "PROPERTY";break;
+    case GI_INFO_TYPE_FIELD: return "FIELD";break;
+    case GI_INFO_TYPE_ARG: return "ARG";break;
+    case GI_INFO_TYPE_TYPE: return "TYPE";break;
+    case GI_INFO_TYPE_UNRESOLVED: return "UNRESOLVED";break;
     default:
       g_assert_not_reached();
       break;
     }
+  return "INVALID";
 }
 
 
 
-#line 732 "girepository.c"
+#line 1097 "girepository.c"

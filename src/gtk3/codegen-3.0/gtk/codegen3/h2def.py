@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- Mode: Python; py-indent-offset: 4 -*-
 # GPL'ed
 # Toby D. Reeves <toby@max.rl.plh.af.mil>
@@ -86,34 +86,35 @@ def to_upper_str(name):
     name = _upperstr_pat1.sub(r'\1_\2', name)
     name = _upperstr_pat2.sub(r'\1_\2', name)
     name = _upperstr_pat3.sub(r'\1_\2', name, count=1)
-    return string.upper(name)
+    return str.upper(name)
 
 def typecode(typename, namespace=None):
     """create a typecode (eg. GTK_TYPE_WIDGET) from a typename"""
     if namespace:
-      return string.replace(string.upper(namespace) + "_" + to_upper_str(typename[len(namespace):]), '_', '_TYPE_', 1)
+      return str.replace(str.upper(namespace) + "_" + to_upper_str(typename[len(namespace):]), '_', '_TYPE_', 1)
 
-    return string.replace(to_upper_str(typename), '_', '_TYPE_', 1)
+    return str.replace(to_upper_str(typename), '_', '_TYPE_', 1)
 
 
 # ------------------ Find object definitions -----------------
 # Strips the comments from buffer
 def strip_comments(buf):
-    parts = []
+    parts = ''
     lastpos = 0
     while 1:
-        pos = string.find(buf, '/*', lastpos)
+        pos = str.find(buf, '/*', lastpos)
         if pos >= 0:
-            parts.append(buf[lastpos:pos])
-            pos = string.find(buf, '*/', pos)
+            parts += buf[lastpos:pos]
+            pos = str.find(buf, '*/', pos)
             if pos >= 0:
                 lastpos = pos + 2
             else:
                 break
         else:
-            parts.append(buf[lastpos:])
+            parts += buf[lastpos:]
             break
-    return string.join(parts, '')
+    return parts;
+# string.join(parts, '')
 
 # Strips the dll API from buffer, for example WEBKIT_API
 def strip_dll_api(buf):
@@ -260,11 +261,11 @@ def find_enum_defs(buf, enums=[]):
 
         name = m.group(2)
         vals = m.group(1)
-        isflags = string.find(vals, '<<') >= 0
+        isflags = str.find(vals, '<<') >= 0
         entries = []
         for val in splitter.split(vals):
-            if not string.strip(val): continue
-            entries.append(string.split(val)[0])
+            if not str.strip(val): continue
+            entries.append(str.split(val)[0])
         if name != 'GdkCursorType':
             enums.append((name, isflags, entries))
 
@@ -323,8 +324,8 @@ def clean_func(buf):
 
     # make return types that are const work.
     buf = re.sub(r'\s*\*\s*G_CONST_RETURN\s*\*\s*', '** ', buf)
-    buf = string.replace(buf, 'G_CONST_RETURN ', 'const-')
-    buf = string.replace(buf, 'const ', 'const-')
+    buf = str.replace(buf, 'G_CONST_RETURN ', 'const-')
+    buf = str.replace(buf, 'const ', 'const-')
 
     #strip GSEAL macros from the middle of function declarations:
     pat = re.compile(r"""GSEAL""", re.VERBOSE)
@@ -392,8 +393,8 @@ class DefsWriter:
             fp = self.fp
 
         fp.write(';; Enumerations and flags ...\n\n')
-        trans = string.maketrans(string.uppercase + '_',
-                                 string.lowercase + '-')
+        trans = str.maketrans(string.ascii_uppercase + '_',
+                                 string.ascii_lowercase + '-')
         filter = self._enums
         for cname, isflags, entries in enums:
             if filter:
@@ -429,7 +430,7 @@ class DefsWriter:
             fp.write('  (values\n')
             for ent in entries:
                 fp.write('    \'("%s" "%s")\n' %
-                         (string.translate(ent[prefix_len:], trans), ent))
+                         (str.translate(ent[prefix_len:], trans), ent))
             fp.write('  )\n')
             fp.write(')\n\n')
 
@@ -469,7 +470,7 @@ class DefsWriter:
 
     def _define_func(self, buf):
         buf = clean_func(buf)
-        buf = string.split(buf,'\n')
+        buf = str.split(buf,'\n')
         filter = self._functions
         for p in buf:
             if not p:
@@ -499,9 +500,9 @@ class DefsWriter:
             args = m.group('args')
             args = arg_split_pat.split(args)
             for i in range(len(args)):
-                spaces = string.count(args[i], ' ')
+                spaces = str.count(args[i], ' ')
                 if spaces > 1:
-                    args[i] = string.replace(args[i], ' ', '-', spaces - 1)
+                    args[i] = str.replace(args[i], ' ', '-', spaces - 1)
 
             self._write_func(func, ret, args, available)
 
@@ -566,7 +567,7 @@ class DefsWriter:
         self._write_arguments(args)
 
     def _write_method(self, obj, name, ret, args, available):
-        regex = string.join(map(lambda x: x+'_?', string.lower(obj)),'')
+        regex = ''.join(map(lambda x: x+'_?', str.lower(obj)))
         mname = re.sub(regex, '', name, 1)
         if self.prefix:
             l = len(self.prefix) + 1
@@ -598,7 +599,7 @@ class DefsWriter:
             self.fp.write('  (parameters\n')
             for arg in args:
                 if arg != '...':
-                    tupleArg = tuple(string.split(arg))
+                    tupleArg = tuple(str.split(arg))
                     if len(tupleArg) == 2:
                         self.fp.write('    \'("%s" "%s")\n' % tupleArg)
             self.fp.write('  )\n')
@@ -637,7 +638,7 @@ def main(args):
             defsfilter = v
 
     if not args[0:1]:
-        print 'Must specify at least one input file name'
+        print("Must specify at least one input file name")
         return -1
 
     # read all the object definitions in
@@ -650,18 +651,18 @@ def main(args):
     objdefs = sort_obj_defs(objdefs)
 
     if separate:
-        methods = file(separate + '.defs', 'w')
-        types = file(separate + '-types.defs', 'w')
+        methods = open(separate + '.defs', 'w')
+        types = open(separate + '-types.defs', 'w')
 
         dw = DefsWriter(methods, prefix=modulename, ns=namespace,
                         verbose=verbose, defsfilter=defsfilter)
         dw.write_obj_defs(objdefs, types)
         dw.write_enum_defs(enums, types)
-        print "Wrote %s-types.defs" % separate
+        print("Wrote %s-types.defs" % separate)
 
         for filename in args:
             dw.write_def(filename)
-        print "Wrote %s.defs" % separate
+        print( "Wrote %s.defs" % separate)
     else:
         dw = DefsWriter(prefix=modulename, ns=namespace,
                         verbose=verbose, defsfilter=defsfilter)

@@ -251,7 +251,7 @@
   (c-name "gtk_about_dialog_set_logo_icon_name")
   (return-type "none")
   (parameters
-    '("const-gchar*" "icon_name")
+    '("const-gchar*" "icon_name" (null-ok) (default "NULL"))
   )
 )
 

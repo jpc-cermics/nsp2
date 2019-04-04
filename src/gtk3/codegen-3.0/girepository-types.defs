@@ -8,6 +8,8 @@
   (gtype-id "G_TYPE_IREPOSITORY")
 )
 
+;; rajout a la main de GIBaseInfo
+
 (define-boxed GIBaseInfo
   (in-module "GI")
   (c-name "GIBaseInfo")
@@ -16,6 +18,179 @@
   ;;(release-func "gtk_text_iter_free")
   )
 
+; Enumerations and flags ...
+
+(define-enum GInvokeError
+  (in-module "GI")
+  (c-name "GInvokeError")
+  ;;(gtype-id "G_TYPE_INVOKE_ERROR")
+  (values
+    '("failed" "G_INVOKE_ERROR_FAILED")
+    '("symbol-not-found" "G_INVOKE_ERROR_SYMBOL_NOT_FOUND")
+    '("argument-mismatch" "G_INVOKE_ERROR_ARGUMENT_MISMATCH")
+  )
+)
+
+(define-flags GIRepositoryLoadFlags
+  (in-module "GI")
+  (c-name "GIRepositoryLoadFlags")
+  ;; (gtype-id "G_TYPE_I_REPOSITORY_LOAD_FLAGS")
+  (values
+    '("lazy" "G_IREPOSITORY_LOAD_FLAG_LAZY")
+  )
+)
+
+(define-enum GIRepositoryError
+  (in-module "GI")
+  (c-name "GIRepositoryError")
+  ;;(gtype-id "G_TYPE_I_REPOSITORY_ERROR")
+  (values
+    '("typelib-not-found" "G_IREPOSITORY_ERROR_TYPELIB_NOT_FOUND")
+    '("namespace-mismatch" "G_IREPOSITORY_ERROR_NAMESPACE_MISMATCH")
+    '("namespace-version-conflict" "G_IREPOSITORY_ERROR_NAMESPACE_VERSION_CONFLICT")
+    '("library-not-found" "G_IREPOSITORY_ERROR_LIBRARY_NOT_FOUND")
+  )
+)
+
+(define-enum GIInfoType
+  (in-module "GI")
+  (c-name "GIInfoType")
+  ;;(gtype-id "G_TYPE_I_INFO_TYPE")
+  (values
+    '("invalid" "GI_INFO_TYPE_INVALID")
+    '("function" "GI_INFO_TYPE_FUNCTION")
+    '("callback" "GI_INFO_TYPE_CALLBACK")
+    '("struct" "GI_INFO_TYPE_STRUCT")
+    '("boxed" "GI_INFO_TYPE_BOXED")
+    '("enum" "GI_INFO_TYPE_ENUM")
+    '("flags" "GI_INFO_TYPE_FLAGS")
+    '("object" "GI_INFO_TYPE_OBJECT")
+    '("interface" "GI_INFO_TYPE_INTERFACE")
+    '("constant" "GI_INFO_TYPE_CONSTANT")
+    '("invalid-0" "GI_INFO_TYPE_INVALID_0")
+    '("union" "GI_INFO_TYPE_UNION")
+    '("value" "GI_INFO_TYPE_VALUE")
+    '("signal" "GI_INFO_TYPE_SIGNAL")
+    '("vfunc" "GI_INFO_TYPE_VFUNC")
+    '("property" "GI_INFO_TYPE_PROPERTY")
+    '("field" "GI_INFO_TYPE_FIELD")
+    '("arg" "GI_INFO_TYPE_ARG")
+    '("type" "GI_INFO_TYPE_TYPE")
+    '("unresolved" "GI_INFO_TYPE_UNRESOLVED")
+  )
+)
+
+(define-enum GITransfer
+  (in-module "GI")
+  (c-name "GITransfer")
+  ;;(gtype-id "G_TYPE_I_TRANSFER")
+  (values
+    '("nothing" "GI_TRANSFER_NOTHING")
+    '("container" "GI_TRANSFER_CONTAINER")
+    '("everything" "GI_TRANSFER_EVERYTHING")
+  )
+)
+
+(define-enum GIDirection
+  (in-module "GI")
+  (c-name "GIDirection")
+  ;;(gtype-id "G_TYPE_I_DIRECTION")
+  (values
+    '("in" "GI_DIRECTION_IN")
+    '("out" "GI_DIRECTION_OUT")
+    '("inout" "GI_DIRECTION_INOUT")
+  )
+)
+
+(define-enum GIScopeType
+  (in-module "GI")
+  (c-name "GIScopeType")
+  ;;(gtype-id "G_TYPE_I_SCOPE_TYPE")
+  (values
+    '("invalid" "GI_SCOPE_TYPE_INVALID")
+    '("call" "GI_SCOPE_TYPE_CALL")
+    '("async" "GI_SCOPE_TYPE_ASYNC")
+    '("notified" "GI_SCOPE_TYPE_NOTIFIED")
+  )
+)
+
+(define-enum GITypeTag
+  (in-module "GI")
+  (c-name "GITypeTag")
+  ;;(gtype-id "G_TYPE_I_TYPE_TAG")
+  (values
+    '("void" "GI_TYPE_TAG_VOID")
+    '("boolean" "GI_TYPE_TAG_BOOLEAN")
+    '("int8" "GI_TYPE_TAG_INT8")
+    '("uint8" "GI_TYPE_TAG_UINT8")
+    '("int16" "GI_TYPE_TAG_INT16")
+    '("uint16" "GI_TYPE_TAG_UINT16")
+    '("int32" "GI_TYPE_TAG_INT32")
+    '("uint32" "GI_TYPE_TAG_UINT32")
+    '("int64" "GI_TYPE_TAG_INT64")
+    '("uint64" "GI_TYPE_TAG_UINT64")
+    '("float" "GI_TYPE_TAG_FLOAT")
+    '("double" "GI_TYPE_TAG_DOUBLE")
+    '("gtype" "GI_TYPE_TAG_GTYPE")
+    '("utf8" "GI_TYPE_TAG_UTF8")
+    '("filename" "GI_TYPE_TAG_FILENAME")
+    '("array" "GI_TYPE_TAG_ARRAY")
+    '("interface" "GI_TYPE_TAG_INTERFACE")
+    '("glist" "GI_TYPE_TAG_GLIST")
+    '("gslist" "GI_TYPE_TAG_GSLIST")
+    '("ghash" "GI_TYPE_TAG_GHASH")
+    '("error" "GI_TYPE_TAG_ERROR")
+    '("unichar" "GI_TYPE_TAG_UNICHAR")
+  )
+)
+
+(define-enum GIArrayType
+  (in-module "GI")
+  (c-name "GIArrayType")
+  ;;(gtype-id "G_TYPE_I_ARRAY_TYPE")
+  (values
+    '("c" "GI_ARRAY_TYPE_C")
+    '("array" "GI_ARRAY_TYPE_ARRAY")
+    '("ptr-array" "GI_ARRAY_TYPE_PTR_ARRAY")
+    '("byte-array" "GI_ARRAY_TYPE_BYTE_ARRAY")
+  )
+)
+
+(define-flags GIFieldInfoFlags
+  (in-module "GI")
+  (c-name "GIFieldInfoFlags")
+  ;;(gtype-id "G_TYPE_I_FIELD_INFO_FLAGS")
+  (values
+    '("readable" "GI_FIELD_IS_READABLE")
+    '("writable" "GI_FIELD_IS_WRITABLE")
+  )
+)
+
+(define-flags GIVFuncInfoFlags
+  (in-module "GI")
+  (c-name "GIVFuncInfoFlags")
+  ;;(gtype-id "G_TYPE_IV_FUNC_INFO_FLAGS")
+  (values
+    '("must-chain-up" "GI_VFUNC_MUST_CHAIN_UP")
+    '("must-override" "GI_VFUNC_MUST_OVERRIDE")
+    '("must-not-override" "GI_VFUNC_MUST_NOT_OVERRIDE")
+    '("throws" "GI_VFUNC_THROWS")
+  )
+)
+
+(define-flags GIFunctionInfoFlags
+  (in-module "GI")
+  (c-name "GIFunctionInfoFlags")
+  ;;(gtype-id "G_TYPE_I_FUNCTION_INFO_FLAGS")
+  (values
+    '("is-method" "GI_FUNCTION_IS_METHOD")
+    '("is-constructor" "GI_FUNCTION_IS_CONSTRUCTOR")
+    '("is-getter" "GI_FUNCTION_IS_GETTER")
+    '("is-setter" "GI_FUNCTION_IS_SETTER")
+    '("wraps-vfunc" "GI_FUNCTION_WRAPS_VFUNC")
+    '("throws" "GI_FUNCTION_THROWS")
+  )
+)
 
 
 

@@ -4,6 +4,7 @@
 (register "glib-types.defs")
 
 ;; From gaction.h
+;; GAction is implemented by GPropertyAction and GSimpleAction.
 
 (define-function g_action_get_type
   (c-name "g_action_get_type")
@@ -94,9 +95,8 @@
   )
 )
 
-
-
 ;; From gactiongroup.h
+;; interface 
 
 (define-function g_action_group_get_type
   (c-name "g_action_group_get_type")
@@ -264,9 +264,8 @@
   )
 )
 
-
-
 ;; From gactionmap.h
+;; GActionMap - Interface for action containers
 
 (define-function g_action_map_get_type
   (c-name "g_action_map_get_type")
@@ -315,9 +314,8 @@
   )
 )
 
-
-
 ;; From gappinfo.h
+;; GAppInfo - Interface Application information and launch contexts
 
 (define-function g_app_info_get_type
   (c-name "g_app_info_get_type")
@@ -984,8 +982,6 @@
   )
 )
 
-
-
 ;; From gasyncinitable.h
 
 (define-function g_async_initable_get_type
@@ -1109,9 +1105,8 @@
   )
 )
 
-
-
 ;; From gbufferedinputstream.h
+;; 
 
 (define-function g_buffered_input_stream_get_type
   (c-name "g_buffered_input_stream_get_type")

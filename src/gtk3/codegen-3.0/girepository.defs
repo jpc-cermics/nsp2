@@ -2,69 +2,29 @@
 
 (include "girepository-types.defs")
 
-(define-function g_irepository_get_default
-  (c-name "g_irepository_get_default")
-  (return-type "GIRepository*")
-  (parameters
-  )
-)
+;; GIRepository functions and methods
 
-(define-method enumerate_versions
-  (of-object "GIRepository")
-  (c-name "g_irepository_enumerate_versions")
-  (parameters
-   '("const-gchar*" "namespace")
-   )
-  (return-type "GList*")
-)
+;; (define-method require
+;;   (of-object "GIRepository")
+;;   (c-name "g_irepository_require")
+;;   (parameters
+;;    '("const-gchar*" "namespace")
+;;    '("const-gchar*" "version")
+;;    )
+;;   (return-type "none")
+;; )
 
-(define-method find_by_name 
-  (of-object "GIRepository")
-  (c-name "g_irepository_find_by_name")
-  (parameters
-   '("const-gchar*" "namespace")
-   '("const-gchar*" "name")
-   )
-  (return-type "GIBaseInfo*")
-)
-
-(define-method get_loaded_namespaces
-  (of-object "GIRepository")
-  (c-name "g_irepository_get_loaded_namespaces")
-  (parameters
-   )
-  (return-type "NspSMatrix*")
-)
-
-(define-method require
-  (of-object "GIRepository")
-  (c-name "g_irepository_require")
-  (parameters
-   '("const-gchar*" "namespace")
-   '("const-gchar*" "version")
-   )
-  (return-type "none")
-)
-
-(define-method get_n_infos
-  (of-object "GIRepository")
-  (c-name "g_irepository_get_n_infos")
-  (parameters
-   '("const-gchar*" "namespace")
-   )
-  (return-type "none")
-)
-
-(define-method get_attribute
-  (of-object "GIBaseInfo")
-  (c-name "g_base_info_get_attribute")
-  (parameters
-   '("const-gchar*" "name")
-   )
-  (return-type "const-gchar*")
-)
+;; (define-method get_attribute
+;;   (of-object "GIBaseInfo")
+;;   (c-name "g_base_info_get_attribute")
+;;   (parameters
+;;    '("const-gchar*" "name")
+;;    )
+;;   (return-type "const-gchar*")
+;; )
 
 ;; added
+
 (define-method get_attributes
   (of-object "GIBaseInfo")
   (c-name "g_base_info_get_attributes")
@@ -72,4 +32,1772 @@
    )
   (return-type "const-gchar*")
 )
+
+
+;; From giarginfo.h
+
+(define-function g_arg_info_get_direction
+  (c-name "g_arg_info_get_direction")
+  (return-type "GIDirection")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_is_return_value
+  (c-name "g_arg_info_is_return_value")
+  (return-type "gboolean")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_is_optional
+  (c-name "g_arg_info_is_optional")
+  (return-type "gboolean")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_is_caller_allocates
+  (c-name "g_arg_info_is_caller_allocates")
+  (return-type "gboolean")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_may_be_null
+  (c-name "g_arg_info_may_be_null")
+  (return-type "gboolean")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_is_skip
+  (c-name "g_arg_info_is_skip")
+  (return-type "gboolean")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_get_ownership_transfer
+  (c-name "g_arg_info_get_ownership_transfer")
+  (return-type "GITransfer")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_get_scope
+  (c-name "g_arg_info_get_scope")
+  (return-type "GIScopeType")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_get_closure
+  (c-name "g_arg_info_get_closure")
+  (return-type "gint")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_get_destroy
+  (c-name "g_arg_info_get_destroy")
+  (return-type "gint")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_get_type
+  (c-name "g_arg_info_get_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GIArgInfo*" "info")
+  )
+)
+
+(define-function g_arg_info_load_type
+  (c-name "g_arg_info_load_type")
+  (return-type "none")
+  (parameters
+    '("GIArgInfo*" "info")
+    '("GITypeInfo*" "type")
+  )
+)
+
+
+
+;; From gibaseinfo.h
+
+(define-function g_base_info_gtype_get_type
+  (c-name "g_base_info_gtype_get_type")
+  (return-type "GType")
+)
+
+(define-function g_base_info_ref
+  (c-name "g_base_info_ref")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_unref
+  (c-name "g_base_info_unref")
+  (return-type "none")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_get_type
+  (c-name "g_base_info_get_type")
+  (return-type "GIInfoType")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_get_name
+  (c-name "g_base_info_get_name")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_get_namespace
+  (c-name "g_base_info_get_namespace")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_is_deprecated
+  (c-name "g_base_info_is_deprecated")
+  (return-type "gboolean")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_get_attribute
+  (c-name "g_base_info_get_attribute")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIBaseInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_base_info_iterate_attributes
+  (c-name "g_base_info_iterate_attributes")
+  (return-type "gboolean")
+  (parameters
+    '("GIBaseInfo*" "info")
+    '("GIAttributeIter*" "iterator")
+    '("char**" "name")
+    '("char**" "value")
+  )
+)
+
+(define-function g_base_info_get_container
+  (c-name "g_base_info_get_container")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_get_typelib
+  (c-name "g_base_info_get_typelib")
+  (return-type "GITypelib*")
+  (parameters
+    '("GIBaseInfo*" "info")
+  )
+)
+
+(define-function g_base_info_equal
+  (c-name "g_base_info_equal")
+  (return-type "gboolean")
+  (parameters
+    '("GIBaseInfo*" "info1")
+    '("GIBaseInfo*" "info2")
+  )
+)
+
+(define-function g_info_new
+  (c-name "g_info_new")
+  (is-constructor-of "GInfo")
+  (return-type "GInfo*")
+  (parameters
+    '("GIInfoType" "type")
+    '("GIBaseInfo*" "container")
+    '("GITypelib*" "typelib")
+    '("guint32" "offset")
+  )
+)
+
+;; From gicallableinfo.h
+
+(define-function g_callable_info_is_method
+  (c-name "g_callable_info_is_method")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_can_throw_gerror
+  (c-name "g_callable_info_can_throw_gerror")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_get_return_type
+  (c-name "g_callable_info_get_return_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_load_return_type
+  (c-name "g_callable_info_load_return_type")
+  (return-type "none")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("GITypeInfo*" "type")
+  )
+)
+
+(define-function g_callable_info_get_return_attribute
+  (c-name "g_callable_info_get_return_attribute")
+  (return-type "const-gchar*")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_callable_info_iterate_return_attributes
+  (c-name "g_callable_info_iterate_return_attributes")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("GIAttributeIter*" "iterator")
+    '("char**" "name")
+    '("char**" "value")
+  )
+)
+
+(define-function g_callable_info_get_caller_owns
+  (c-name "g_callable_info_get_caller_owns")
+  (return-type "GITransfer")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_may_return_null
+  (c-name "g_callable_info_may_return_null")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_skip_return
+  (c-name "g_callable_info_skip_return")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_get_n_args
+  (c-name "g_callable_info_get_n_args")
+  (return-type "gint")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+(define-function g_callable_info_get_arg
+  (c-name "g_callable_info_get_arg")
+  (return-type "GIArgInfo*")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_callable_info_load_arg
+  (c-name "g_callable_info_load_arg")
+  (return-type "none")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("gint" "n")
+    '("GIArgInfo*" "arg")
+  )
+)
+
+(define-function g_callable_info_invoke
+  (c-name "g_callable_info_invoke")
+  (return-type "gboolean")
+  (parameters
+    '("GICallableInfo*" "info")
+    '("gpointer" "function")
+    '("const-GIArgument*" "in_args")
+    '("int" "n_in_args")
+    '("const-GIArgument*" "out_args")
+    '("int" "n_out_args")
+    '("GIArgument*" "return_value")
+    '("gboolean" "is_method")
+    '("gboolean" "throws")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_callable_info_get_instance_ownership_transfer
+  (c-name "g_callable_info_get_instance_ownership_transfer")
+  (return-type "GITransfer")
+  (parameters
+    '("GICallableInfo*" "info")
+  )
+)
+
+
+
+;; From giconstantinfo.h
+
+(define-function g_constant_info_get_type
+  (c-name "g_constant_info_get_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GIConstantInfo*" "info")
+  )
+)
+
+(define-function g_constant_info_free_value
+  (c-name "g_constant_info_free_value")
+  (return-type "none")
+  (parameters
+    '("GIConstantInfo*" "info")
+    '("GIArgument*" "value")
+  )
+)
+
+(define-function g_constant_info_get_value
+  (c-name "g_constant_info_get_value")
+  (return-type "gint")
+  (parameters
+    '("GIConstantInfo*" "info")
+    '("GIArgument*" "value")
+  )
+)
+
+;; From gienuminfo.h
+
+(define-function g_enum_info_get_n_values
+  (c-name "g_enum_info_get_n_values")
+  (return-type "gint")
+  (parameters
+    '("GIEnumInfo*" "info")
+  )
+)
+
+(define-function g_enum_info_get_value
+  (c-name "g_enum_info_get_value")
+  (return-type "GIValueInfo*")
+  (parameters
+    '("GIEnumInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_enum_info_get_n_methods
+  (c-name "g_enum_info_get_n_methods")
+  (return-type "gint")
+  (parameters
+    '("GIEnumInfo*" "info")
+  )
+)
+
+(define-function g_enum_info_get_method
+  (c-name "g_enum_info_get_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIEnumInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_enum_info_get_storage_type
+  (c-name "g_enum_info_get_storage_type")
+  (return-type "GITypeTag")
+  (parameters
+    '("GIEnumInfo*" "info")
+  )
+)
+
+(define-function g_enum_info_get_error_domain
+  (c-name "g_enum_info_get_error_domain")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIEnumInfo*" "info")
+  )
+)
+
+(define-function g_value_info_get_value
+  (c-name "g_value_info_get_value")
+  (return-type "gint64")
+  (parameters
+    '("GIValueInfo*" "info")
+  )
+)
+
+
+
+;; From gifieldinfo.h
+
+(define-function g_field_info_get_flags
+  (c-name "g_field_info_get_flags")
+  (return-type "GIFieldInfoFlags")
+  (parameters
+    '("GIFieldInfo*" "info")
+  )
+)
+
+(define-function g_field_info_get_size
+  (c-name "g_field_info_get_size")
+  (return-type "gint")
+  (parameters
+    '("GIFieldInfo*" "info")
+  )
+)
+
+(define-function g_field_info_get_offset
+  (c-name "g_field_info_get_offset")
+  (return-type "gint")
+  (parameters
+    '("GIFieldInfo*" "info")
+  )
+)
+
+(define-function g_field_info_get_type
+  (c-name "g_field_info_get_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GIFieldInfo*" "info")
+  )
+)
+
+(define-function g_field_info_get_field
+  (c-name "g_field_info_get_field")
+  (return-type "gboolean")
+  (parameters
+    '("GIFieldInfo*" "field_info")
+    '("gpointer" "mem")
+    '("GIArgument*" "value")
+  )
+)
+
+(define-function g_field_info_set_field
+  (c-name "g_field_info_set_field")
+  (return-type "gboolean")
+  (parameters
+    '("GIFieldInfo*" "field_info")
+    '("gpointer" "mem")
+    '("const-GIArgument*" "value")
+  )
+)
+
+;; From gifunctioninfo.h
+;; A GIFunctionInfo is a specific case of GIBaseInfo
+;; we thus add all the methods to GIBaseInfo and check coercion
+;; before calling methods
+
+(define-method get_symbol ;; g_function_info_get_symbol
+  (of-object "GIBaseInfo")
+  (c-name "g_function_info_get_symbol")
+  (return-type "const-gchar*")
+  (parameters
+   ;; '("GIFunctionInfo*" "info")
+   )
+  (call " if ( g_base_info_get_type (NSP_GBOXED_GET(self, GIBaseInfo)) !=  GI_INFO_TYPE_FUNCTION) return RET_BUG; ret =g_function_info_get_symbol(NSP_GBOXED_GET(self, GIBaseInfo));" )
+  )
+
+(define-function g_function_info_get_flags
+  (c-name "g_function_info_get_flags")
+  (return-type "GIFunctionInfoFlags")
+  (parameters
+    '("GIFunctionInfo*" "info")
+  )
+)
+
+(define-function g_function_info_get_property
+  (c-name "g_function_info_get_property")
+  (return-type "GIPropertyInfo*")
+  (parameters
+    '("GIFunctionInfo*" "info")
+  )
+)
+
+(define-function g_function_info_get_vfunc
+  (c-name "g_function_info_get_vfunc")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIFunctionInfo*" "info")
+  )
+)
+
+(define-function g_invoke_error_quark
+  (c-name "g_invoke_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function g_function_info_invoke
+  (c-name "g_function_info_invoke")
+  (return-type "gboolean")
+  (parameters
+    '("GIFunctionInfo*" "info")
+    '("const-GIArgument*" "in_args")
+    '("int" "n_in_args")
+    '("const-GIArgument*" "out_args")
+    '("int" "n_out_args")
+    '("GIArgument*" "return_value")
+    '("GError**" "error")
+  )
+)
+
+
+
+;; From giinterfaceinfo.h
+
+(define-function g_interface_info_get_n_prerequisites
+  (c-name "g_interface_info_get_n_prerequisites")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_prerequisite
+  (c-name "g_interface_info_get_prerequisite")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_get_n_properties
+  (c-name "g_interface_info_get_n_properties")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_property
+  (c-name "g_interface_info_get_property")
+  (return-type "GIPropertyInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_get_n_methods
+  (c-name "g_interface_info_get_n_methods")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_method
+  (c-name "g_interface_info_get_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_find_method
+  (c-name "g_interface_info_find_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_interface_info_get_n_signals
+  (c-name "g_interface_info_get_n_signals")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_signal
+  (c-name "g_interface_info_get_signal")
+  (return-type "GISignalInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_find_signal
+  (c-name "g_interface_info_find_signal")
+  (return-type "GISignalInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_interface_info_get_n_vfuncs
+  (c-name "g_interface_info_get_n_vfuncs")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_vfunc
+  (c-name "g_interface_info_get_vfunc")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_find_vfunc
+  (c-name "g_interface_info_find_vfunc")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_interface_info_get_n_constants
+  (c-name "g_interface_info_get_n_constants")
+  (return-type "gint")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+(define-function g_interface_info_get_constant
+  (c-name "g_interface_info_get_constant")
+  (return-type "GIConstantInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_interface_info_get_iface_struct
+  (c-name "g_interface_info_get_iface_struct")
+  (return-type "GIStructInfo*")
+  (parameters
+    '("GIInterfaceInfo*" "info")
+  )
+)
+
+
+
+;; From giobjectinfo.h
+
+(define-function g_object_info_get_type_name
+  (c-name "g_object_info_get_type_name")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_type_init
+  (c-name "g_object_info_get_type_init")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_abstract
+  (c-name "g_object_info_get_abstract")
+  (return-type "gboolean")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_fundamental
+  (c-name "g_object_info_get_fundamental")
+  (return-type "gboolean")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_parent
+  (c-name "g_object_info_get_parent")
+  (return-type "GIObjectInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_n_interfaces
+  (c-name "g_object_info_get_n_interfaces")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_interface
+  (c-name "g_object_info_get_interface")
+  (return-type "GIInterfaceInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_get_n_fields
+  (c-name "g_object_info_get_n_fields")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_field
+  (c-name "g_object_info_get_field")
+  (return-type "GIFieldInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_get_n_properties
+  (c-name "g_object_info_get_n_properties")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_property
+  (c-name "g_object_info_get_property")
+  (return-type "GIPropertyInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_get_n_methods
+  (c-name "g_object_info_get_n_methods")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_method
+  (c-name "g_object_info_get_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_find_method
+  (c-name "g_object_info_find_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_object_info_find_method_using_interfaces
+  (c-name "g_object_info_find_method_using_interfaces")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("const-gchar*" "name")
+    '("GIObjectInfo**" "implementor")
+  )
+)
+
+(define-function g_object_info_get_n_signals
+  (c-name "g_object_info_get_n_signals")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_signal
+  (c-name "g_object_info_get_signal")
+  (return-type "GISignalInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_find_signal
+  (c-name "g_object_info_find_signal")
+  (return-type "GISignalInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_object_info_get_n_vfuncs
+  (c-name "g_object_info_get_n_vfuncs")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_vfunc
+  (c-name "g_object_info_get_vfunc")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_find_vfunc
+  (c-name "g_object_info_find_vfunc")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_object_info_find_vfunc_using_interfaces
+  (c-name "g_object_info_find_vfunc_using_interfaces")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("const-gchar*" "name")
+    '("GIObjectInfo**" "implementor")
+  )
+)
+
+(define-function g_object_info_get_n_constants
+  (c-name "g_object_info_get_n_constants")
+  (return-type "gint")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_constant
+  (c-name "g_object_info_get_constant")
+  (return-type "GIConstantInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_object_info_get_class_struct
+  (c-name "g_object_info_get_class_struct")
+  (return-type "GIStructInfo*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_ref_function
+  (c-name "g_object_info_get_ref_function")
+  (return-type "const-char*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_ref_function_pointer
+  (c-name "g_object_info_get_ref_function_pointer")
+  (return-type "GIObjectInfoRefFunction")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_unref_function
+  (c-name "g_object_info_get_unref_function")
+  (return-type "const-char*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_unref_function_pointer
+  (c-name "g_object_info_get_unref_function_pointer")
+  (return-type "GIObjectInfoUnrefFunction")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_set_value_function
+  (c-name "g_object_info_get_set_value_function")
+  (return-type "const-char*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_set_value_function_pointer
+  (c-name "g_object_info_get_set_value_function_pointer")
+  (return-type "GIObjectInfoSetValueFunction")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_get_value_function
+  (c-name "g_object_info_get_get_value_function")
+  (return-type "const-char*")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+(define-function g_object_info_get_get_value_function_pointer
+  (c-name "g_object_info_get_get_value_function_pointer")
+  (return-type "GIObjectInfoGetValueFunction")
+  (parameters
+    '("GIObjectInfo*" "info")
+  )
+)
+
+
+
+;; From gipropertyinfo.h
+
+(define-function g_property_info_get_flags
+  (c-name "g_property_info_get_flags")
+  (return-type "GParamFlags")
+  (parameters
+    '("GIPropertyInfo*" "info")
+  )
+)
+
+(define-function g_property_info_get_type
+  (c-name "g_property_info_get_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GIPropertyInfo*" "info")
+  )
+)
+
+(define-function g_property_info_get_ownership_transfer
+  (c-name "g_property_info_get_ownership_transfer")
+  (return-type "GITransfer")
+  (parameters
+    '("GIPropertyInfo*" "info")
+  )
+)
+
+
+
+;; From giregisteredtypeinfo.h
+
+(define-function g_registered_type_info_get_type_name
+  (c-name "g_registered_type_info_get_type_name")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIRegisteredTypeInfo*" "info")
+  )
+)
+
+(define-function g_registered_type_info_get_type_init
+  (c-name "g_registered_type_info_get_type_init")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIRegisteredTypeInfo*" "info")
+  )
+)
+
+(define-function g_registered_type_info_get_g_type
+  (c-name "g_registered_type_info_get_g_type")
+  (return-type "GType")
+  (parameters
+    '("GIRegisteredTypeInfo*" "info")
+  )
+)
+
+
+
+;; From girepository.h
+
+(define-function g_irepository_get_type
+  (c-name "g_irepository_get_type")
+  (return-type "GType")
+)
+
+(define-function g_irepository_get_default
+  (c-name "g_irepository_get_default")
+  (return-type "GIRepository*")
+)
+
+(define-function g_irepository_prepend_search_path
+  (c-name "g_irepository_prepend_search_path")
+  (return-type "none")
+  (parameters
+    '("const-char*" "directory")
+  )
+)
+
+(define-function g_irepository_prepend_library_path
+  (c-name "g_irepository_prepend_library_path")
+  (return-type "none")
+  (parameters
+    '("const-char*" "directory")
+  )
+)
+
+(define-function g_irepository_get_search_path
+  (c-name "g_irepository_get_search_path")
+  (return-type "GSList*")
+)
+
+(define-method load_typelib
+  (of-object "GIRepository")
+  (c-name "g_irepository_load_typelib")
+  (return-type "const-char*")
+  (parameters
+    '("GITypelib*" "typelib")
+    '("GIRepositoryLoadFlags" "flags")
+    '("GError**" "error")
+  )
+)
+
+(define-method is_registered
+  (of-object "GIRepository")
+  (c-name "g_irepository_is_registered")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "namespace_")
+    '("const-gchar*" "version")
+  )
+)
+
+(define-method find_by_name
+  (of-object "GIRepository")
+  (c-name "g_irepository_find_by_name")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("const-gchar*" "namespace_")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method enumerate_versions
+  (of-object "GIRepository")
+  (c-name "g_irepository_enumerate_versions")
+  (return-type "GList*")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method require
+  (of-object "GIRepository")
+  (c-name "g_irepository_require")
+  (return-type "GITypelib*")
+  (parameters
+    '("const-gchar*" "namespace_")
+    '("const-gchar*" "version")
+    '("GIRepositoryLoadFlags" "flags")
+    '("GError**" "error")
+  )
+)
+
+(define-method require_private
+  (of-object "GIRepository")
+  (c-name "g_irepository_require_private")
+  (return-type "GITypelib*")
+  (parameters
+    '("const-gchar*" "typelib_dir")
+    '("const-gchar*" "namespace_")
+    '("const-gchar*" "version")
+    '("GIRepositoryLoadFlags" "flags")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_immediate_dependencies
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_immediate_dependencies")
+  (available "GI_AVAILABLE_IN_1_44")
+  (return-type "gchar**")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_dependencies
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_dependencies")
+  (return-type "gchar**")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_loaded_namespaces
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_loaded_namespaces")
+  (return-type "gchar**")
+)
+
+(define-method find_by_gtype
+  (of-object "GIRepository")
+  (c-name "g_irepository_find_by_gtype")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("GType" "gtype")
+  )
+)
+
+(define-method get_n_infos
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_n_infos")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_info
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_info")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("const-gchar*" "namespace_")
+    '("gint" "index")
+  )
+)
+
+(define-method find_by_error_domain
+  (of-object "GIRepository")
+  (c-name "g_irepository_find_by_error_domain")
+  (return-type "GIEnumInfo*")
+  (parameters
+    '("GQuark" "domain")
+  )
+)
+
+(define-method get_typelib_path
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_typelib_path")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_shared_library
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_shared_library")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_c_prefix
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_c_prefix")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-method get_version
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_version")
+  (return-type "const-gchar*")
+  (parameters
+    '("const-gchar*" "namespace_")
+  )
+)
+
+(define-function g_irepository_get_option_group
+  (c-name "g_irepository_get_option_group")
+  (return-type "GOptionGroup*")
+)
+
+(define-function g_irepository_dump
+  (c-name "g_irepository_dump")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "arg")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_irepository_error_quark
+  (c-name "g_irepository_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function gi_cclosure_marshal_generic
+  (c-name "gi_cclosure_marshal_generic")
+  (return-type "none")
+  (parameters
+    '("GClosure*" "closure")
+    '("GValue*" "return_gvalue")
+    '("guint" "n_param_values")
+    '("const-GValue*" "param_values")
+    '("gpointer" "invocation_hint")
+    '("gpointer" "marshal_data")
+  )
+)
+
+
+
+;; From girffi.h
+
+(define-method get_ffi_type
+  (of-object "GITypeTag")
+  (c-name "gi_type_tag_get_ffi_type")
+  (return-type "ffi_type*")
+  (parameters
+    '("gboolean" "is_pointer")
+  )
+)
+
+(define-function g_type_info_get_ffi_type
+  (c-name "g_type_info_get_ffi_type")
+  (return-type "ffi_type*")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-method extract_ffi_return_value
+  (of-object "GITypeInfo")
+  (c-name "gi_type_info_extract_ffi_return_value")
+  (available "GI_AVAILABLE_IN_1_32")
+  (return-type "none")
+  (parameters
+    '("GIFFIReturnValue*" "ffi_value")
+    '("GIArgument*" "arg")
+  )
+)
+
+(define-function g_function_info_prep_invoker
+  (c-name "g_function_info_prep_invoker")
+  (return-type "gboolean")
+  (parameters
+    '("GIFunctionInfo*" "info")
+    '("GIFunctionInvoker*" "invoker")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_function_invoker_new_for_address
+  (c-name "g_function_invoker_new_for_address")
+  (return-type "gboolean")
+  (parameters
+    '("gpointer" "addr")
+    '("GICallableInfo*" "info")
+    '("GIFunctionInvoker*" "invoker")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_function_invoker_destroy
+  (c-name "g_function_invoker_destroy")
+  (return-type "none")
+  (parameters
+    '("GIFunctionInvoker*" "invoker")
+  )
+)
+
+(define-function g_callable_info_prepare_closure
+  (c-name "g_callable_info_prepare_closure")
+  (return-type "ffi_closure*")
+  (parameters
+    '("GICallableInfo*" "callable_info")
+    '("ffi_cif*" "cif")
+    '("GIFFIClosureCallback" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-function g_callable_info_free_closure
+  (c-name "g_callable_info_free_closure")
+  (return-type "none")
+  (parameters
+    '("GICallableInfo*" "callable_info")
+    '("ffi_closure*" "closure")
+  )
+)
+
+
+
+;; From gisignalinfo.h
+
+(define-function g_signal_info_get_flags
+  (c-name "g_signal_info_get_flags")
+  (return-type "GSignalFlags")
+  (parameters
+    '("GISignalInfo*" "info")
+  )
+)
+
+(define-function g_signal_info_get_class_closure
+  (c-name "g_signal_info_get_class_closure")
+  (return-type "GIVFuncInfo*")
+  (parameters
+    '("GISignalInfo*" "info")
+  )
+)
+
+(define-function g_signal_info_true_stops_emit
+  (c-name "g_signal_info_true_stops_emit")
+  (return-type "gboolean")
+  (parameters
+    '("GISignalInfo*" "info")
+  )
+)
+
+
+
+;; From gistructinfo.h
+
+(define-function g_struct_info_get_n_fields
+  (c-name "g_struct_info_get_n_fields")
+  (return-type "gint")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+(define-function g_struct_info_get_field
+  (c-name "g_struct_info_get_field")
+  (return-type "GIFieldInfo*")
+  (parameters
+    '("GIStructInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_struct_info_find_field
+  (c-name "g_struct_info_find_field")
+  (return-type "GIFieldInfo*")
+  (parameters
+    '("GIStructInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_struct_info_get_n_methods
+  (c-name "g_struct_info_get_n_methods")
+  (return-type "gint")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+(define-function g_struct_info_get_method
+  (c-name "g_struct_info_get_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIStructInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_struct_info_find_method
+  (c-name "g_struct_info_find_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIStructInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_struct_info_get_size
+  (c-name "g_struct_info_get_size")
+  (return-type "gsize")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+(define-function g_struct_info_get_alignment
+  (c-name "g_struct_info_get_alignment")
+  (return-type "gsize")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+(define-function g_struct_info_is_gtype_struct
+  (c-name "g_struct_info_is_gtype_struct")
+  (return-type "gboolean")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+(define-function g_struct_info_is_foreign
+  (c-name "g_struct_info_is_foreign")
+  (return-type "gboolean")
+  (parameters
+    '("GIStructInfo*" "info")
+  )
+)
+
+
+
+;; From gitypeinfo.h
+
+(define-function g_type_tag_to_string
+  (c-name "g_type_tag_to_string")
+  (return-type "const-gchar*")
+  (parameters
+    '("GITypeTag" "type")
+  )
+)
+
+(define-function g_info_type_to_string
+  (c-name "g_info_type_to_string")
+  (return-type "const-gchar*")
+  (parameters
+    '("GIInfoType" "type")
+  )
+)
+
+(define-function g_type_info_is_pointer
+  (c-name "g_type_info_is_pointer")
+  (return-type "gboolean")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_get_tag
+  (c-name "g_type_info_get_tag")
+  (return-type "GITypeTag")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_get_param_type
+  (c-name "g_type_info_get_param_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GITypeInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_type_info_get_interface
+  (c-name "g_type_info_get_interface")
+  (return-type "GIBaseInfo*")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_get_array_length
+  (c-name "g_type_info_get_array_length")
+  (return-type "gint")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_get_array_fixed_size
+  (c-name "g_type_info_get_array_fixed_size")
+  (return-type "gint")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_is_zero_terminated
+  (c-name "g_type_info_is_zero_terminated")
+  (return-type "gboolean")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+(define-function g_type_info_get_array_type
+  (c-name "g_type_info_get_array_type")
+  (return-type "GIArrayType")
+  (parameters
+    '("GITypeInfo*" "info")
+  )
+)
+
+
+
+;; From gitypelib.h
+
+(define-function g_typelib_new_from_memory
+  (c-name "g_typelib_new_from_memory")
+  (is-constructor-of "GTypelib")
+  (return-type "GTypelib*")
+  (parameters
+    '("guint8*" "memory")
+    '("gsize" "len")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_typelib_new_from_const_memory
+  (c-name "g_typelib_new_from_const_memory")
+  (is-constructor-of "GTypelib")
+  (return-type "GTypelib*")
+  (parameters
+    '("const-guint8*" "memory")
+    '("gsize" "len")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_typelib_new_from_mapped_file
+  (c-name "g_typelib_new_from_mapped_file")
+  (is-constructor-of "GTypelib")
+  (return-type "GTypelib*")
+  (parameters
+    '("GMappedFile*" "mfile")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_typelib_free
+  (c-name "g_typelib_free")
+  (return-type "none")
+  (parameters
+    '("GITypelib*" "typelib")
+  )
+)
+
+(define-function g_typelib_symbol
+  (c-name "g_typelib_symbol")
+  (return-type "gboolean")
+  (parameters
+    '("GITypelib*" "typelib")
+    '("const-gchar*" "symbol_name")
+    '("gpointer*" "symbol")
+  )
+)
+
+(define-function g_typelib_get_namespace
+  (c-name "g_typelib_get_namespace")
+  (return-type "const-gchar*")
+  (parameters
+    '("GITypelib*" "typelib")
+  )
+)
+
+
+
+;; From gitypes.h
+
+
+
+;; From giunioninfo.h
+
+(define-function g_union_info_get_n_fields
+  (c-name "g_union_info_get_n_fields")
+  (return-type "gint")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_field
+  (c-name "g_union_info_get_field")
+  (return-type "GIFieldInfo*")
+  (parameters
+    '("GIUnionInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_union_info_get_n_methods
+  (c-name "g_union_info_get_n_methods")
+  (return-type "gint")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_method
+  (c-name "g_union_info_get_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIUnionInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_union_info_is_discriminated
+  (c-name "g_union_info_is_discriminated")
+  (return-type "gboolean")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_discriminator_offset
+  (c-name "g_union_info_get_discriminator_offset")
+  (return-type "gint")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_discriminator_type
+  (c-name "g_union_info_get_discriminator_type")
+  (return-type "GITypeInfo*")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_discriminator
+  (c-name "g_union_info_get_discriminator")
+  (return-type "GIConstantInfo*")
+  (parameters
+    '("GIUnionInfo*" "info")
+    '("gint" "n")
+  )
+)
+
+(define-function g_union_info_find_method
+  (c-name "g_union_info_find_method")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIUnionInfo*" "info")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function g_union_info_get_size
+  (c-name "g_union_info_get_size")
+  (return-type "gsize")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+(define-function g_union_info_get_alignment
+  (c-name "g_union_info_get_alignment")
+  (return-type "gsize")
+  (parameters
+    '("GIUnionInfo*" "info")
+  )
+)
+
+
+
+;; From giversionmacros.h
+
+
+
+;; From givfuncinfo.h
+
+(define-function g_vfunc_info_get_flags
+  (c-name "g_vfunc_info_get_flags")
+  (return-type "GIVFuncInfoFlags")
+  (parameters
+    '("GIVFuncInfo*" "info")
+  )
+)
+
+(define-function g_vfunc_info_get_offset
+  (c-name "g_vfunc_info_get_offset")
+  (return-type "gint")
+  (parameters
+    '("GIVFuncInfo*" "info")
+  )
+)
+
+(define-function g_vfunc_info_get_signal
+  (c-name "g_vfunc_info_get_signal")
+  (return-type "GISignalInfo*")
+  (parameters
+    '("GIVFuncInfo*" "info")
+  )
+)
+
+(define-function g_vfunc_info_get_invoker
+  (c-name "g_vfunc_info_get_invoker")
+  (return-type "GIFunctionInfo*")
+  (parameters
+    '("GIVFuncInfo*" "info")
+  )
+)
+
+(define-function g_vfunc_info_get_address
+  (c-name "g_vfunc_info_get_address")
+  (return-type "gpointer")
+  (parameters
+    '("GIVFuncInfo*" "info")
+    '("GType" "implementor_gtype")
+    '("GError**" "error")
+  )
+)
+
+(define-function g_vfunc_info_invoke
+  (c-name "g_vfunc_info_invoke")
+  (return-type "gboolean")
+  (parameters
+    '("GIVFuncInfo*" "info")
+    '("GType" "implementor")
+    '("const-GIArgument*" "in_args")
+    '("int" "n_in_args")
+    '("const-GIArgument*" "out_args")
+    '("int" "n_out_args")
+    '("GIArgument*" "return_value")
+    '("GError**" "error")
+  )
+)
+
 
