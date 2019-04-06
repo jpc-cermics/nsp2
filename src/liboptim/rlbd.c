@@ -146,7 +146,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   double d__1, d__2;
 
   /* Local variables */
-  char var2[3];
+  char var2[4];
   double difhp, a1, extra, eps1;
   double epst, text, topt, hpta1, a, b, e;
   double extrp, t1=0, t2, ttsup, fa, f11, di;
@@ -176,7 +176,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   extrp = 100.;
   extra = 10.;
   cofder = 100.;
-  strncpy (var2, "   ",  3);
+  strcpy (var2, "   ");
   /* 
    */
   ta1 = 0.;
@@ -293,7 +293,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
       imax = 1;
       icoi = 0;
       icos = 0;
-      strncpy (var2, "dd ",  3);
+      strcpy (var2, "dd ");
       goto L800;
     }
   if (indic == 0)
@@ -398,7 +398,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
 	  goto L1010;
 	}
       *t /= 10.;
-      strncpy (var2, "d  ",  3);
+      strcpy (var2, "d  ");
       goto L800;
     }
   icos = ico_1;
@@ -519,7 +519,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   extrp = 10.;
   if (*tproj > ta1)
     {
-      strncpy (var2, "id ",  3);
+      strcpy (var2, "id ");
       goto L800;
     }
   ttmin = *t * .7;
@@ -528,11 +528,11 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   iproj = 0;
   optim_satur (n, &x[1], &binf[1], &bsup[1], &d__[1], &ttmin, &ttsup, &topt,
 	       &tg, &td, &tmi, &icoi, &icos, &iproj);
-  strncpy (var2, "id ",  3);
+  strcpy (var2, "id ");
   if (topt != 0.)
     {
       *t = topt;
-      strncpy (var2, "ids",  3);
+      strcpy (var2, "ids");
     }
   goto L800;
   /* 
@@ -558,10 +558,10 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
       goto L600;
     }
   *t = topt;
-  strncpy (var2, "s  ",  3);
+  strcpy (var2, "s  ");
   if (*t == ttsup || *t == ttmin)
     {
-      strncpy (var2, "sb ",  3);
+      strcpy (var2, "sb ");
     }
   goto L800;
   /* 
@@ -604,16 +604,16 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
    *     sauvegarde de convergence 
    */
   e = epst * (td - tg);
-  strncpy (var2, "ic ",  3);
+  strcpy (var2, "ic ");
   if (topt > td - e)
     {
       topt = td - e;
-      strncpy (var2, "icb",  3);
+      strcpy (var2, "icb");
     }
   if (topt < tg + e)
     {
       topt = tg + e;
-      strncpy (var2, "icb",  3);
+      strcpy (var2, "icb");
     }
   ta1 = *t;
   fa1 = fn;
@@ -623,7 +623,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   ta1 = *t;
   fa1 = fn;
   *t = (tg + td) * .5;
-  strncpy (var2, "d  ",  3);
+  strcpy (var2, "d  ");
   goto L800;
   /* 
    *     extrapolation 
@@ -680,7 +680,7 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
 	  icoi = icop;
 	  icos = 0;
 	}
-      strncpy (var2, "es ",  3);
+      strcpy (var2, "es ");
       goto L800;
     }
   /*Computing MIN 
@@ -700,12 +700,12 @@ int optim_rlbd (int *indrl, int *n, opt_simul simul, double *x, double *binf,
   if (topt > 0.)
     {
       *t = topt;
-      strncpy (var2, "es ",  3);
+      strcpy (var2, "es ");
       goto L800;
     }
  L785:
   *t = text;
-  strncpy (var2, "e  ",  3 );
+  strcpy (var2, "e  ");
  L800:
   f11 = fn - *f;
   if (*imp >= 3 && indic > 0)
