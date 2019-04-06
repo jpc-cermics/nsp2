@@ -2105,10 +2105,14 @@ if test "$with_qhull" != "no"; then
    AC_CHECK_HEADERS([qhull/libqhull.h],[HAVE_QHULL_LIBHULL="yes"],[HAVE_QHULL_LIBHULL="no"])
    if test "$HAVE_QHULL_LIBHULL" = "yes"; then
       AC_CHECK_LIB([qhull],[qh_new_qhull], [HAVE_QHULL="yes"], [HAVE_QHULL="no"])
+      AC_CHECK_HEADERS([qhull/io.h],[HAVE_QHULL_IO="yes"],[HAVE_QHULL_IO="no"])
+      AC_CHECK_HEADERS([qhull/qh-io.h],[HAVE_QHULL_QH_IO="yes"],[HAVE_QHULL_QH_IO="no"])
    else
       AC_CHECK_HEADERS([libqhull/libqhull.h],[HAVE_LIBQHULL_LIBHULL="yes"],[HAVE_LIBQHULL_LIBHULL="no"])
       if test "$HAVE_LIBQHULL_LIBHULL" = "yes"; then
          AC_CHECK_LIB([qhull],[qh_new_qhull], [HAVE_QHULL="yes"], [HAVE_QHULL="no"])
+         AC_CHECK_HEADERS([libqhull/io.h],[HAVE_LIBQHULL_IO="yes"],[HAVE_LIBQHULL_IO="no"])
+         AC_CHECK_HEADERS([libqhull/qh-io.h],[HAVE_LIBQHULL_QH_IO="yes"],[HAVE_LIBQHULL_QH_IO="no"])
       fi
    fi
 fi
