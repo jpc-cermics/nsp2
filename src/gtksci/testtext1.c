@@ -1922,7 +1922,8 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
   if ( line == NULL)
     {
       *len_line= 1;
-      strncpy(buffer,"\n",1);
+      /* strncpy(buffer,"\n",1); */
+      buffer[0]='\n';
       *eof = FALSE;
     }
   else

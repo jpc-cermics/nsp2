@@ -1738,7 +1738,7 @@ nsp_string nsp_smatrix_elts_concat(const NspSMatrix *A,nsp_const_string rstr, in
 	    {
 	      k = i+(A->m)*j;
 	      len = strlen(A->S[k]);
-	      strncpy(p, A->S[k], len); p += len;
+	      strcpy(p, A->S[k]); p += len;
 	      if ( cflag == 1 && j != A->n-1 ) { strncpy(p,cstr,lsc); p += lsc; }
 	    }
 	  if ( rflag == 1 && i != A->m-1 )  { strncpy(p,rstr,lsr); p += lsr; }
@@ -2642,7 +2642,10 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
 	  {
 	    kb = p_str - str;
 	    p_str_to_build = strncpy(p_str_to_build, &(str[k]), kb-k) + kb-k;
-	    p_str_to_build = strncpy(p_str_to_build, replace, len_replace) + len_replace;
+	    // prefer strcpy to avoid warnings 
+	    // p_str_to_build = strncpy(p_str_to_build, replace, len_replace) + len_replace;
+	    strcpy(p_str_to_build, replace);
+	    p_str_to_build += len_replace;
 	    k = kb + len_needle;
 	  };
       p_str_to_build = strncpy(p_str_to_build, &(str[k]), len_str-k) + len_str-k;

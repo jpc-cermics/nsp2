@@ -225,7 +225,8 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
   if ( line == NULL) 
     {
       *len_line= 1;
-      strncpy(buffer,"\n",1);
+      /* strncpy(buffer,"\n",1); */
+      buffer[0]= '\n';
       *eof = FALSE;
     }
   else 

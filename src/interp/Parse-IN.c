@@ -136,7 +136,7 @@ void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *filename_ex
 void nsp_reset_exec_dir(Stack *stack,char *old)
 {
 #ifdef UPDATE_EXEC_DIR
-  strncpy(stack->val->current_exec_dir,old,FSIZE);
+  strncpy(stack->val->current_exec_dir,old,FSIZE+1);
 #endif
 }
 
