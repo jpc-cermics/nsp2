@@ -59,6 +59,7 @@ int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name)
   if ( dir_name != NULL ) 
     {
       strncpy(str,dir_name, FSIZE+1);
+      str[FSIZE] = '\0';
     }
   else 
     {
@@ -66,6 +67,7 @@ int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name)
       if ((home = nsp_getenv ("HOME")) == (char *) 0)
 	return FAIL;
       strncpy(str,home, FSIZE+1);
+      str[FSIZE] = '\0';
     }
   
   nsp_expand_dir_and_update_exec_dir(stack,old,str,str_expanded);

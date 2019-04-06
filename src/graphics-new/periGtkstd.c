@@ -1536,6 +1536,7 @@ static char *xget_fpf(BCG *Xgc)
 static void xset_fpf(BCG *Xgc,char *fmt)
 {
   strncpy(Xgc->fp_format,fmt,32);
+  Xgc->fp_format[31]='\0';
 }
 
 /**

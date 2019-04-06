@@ -822,7 +822,9 @@ static char *xget_fpf(BCG *Xgc)
 static void xset_fpf(BCG *Xgc,char *fmt)
 {
   strncpy(Xgc->fp_format,fmt,32);
+  Xgc->fp_format[31]='\0';
 }
+
 
 static void xset_fpf_def(BCG *Xgc)
 {
@@ -1331,7 +1333,8 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,
 
   if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
-
+  string1[255]='\0';
+  
   file=fopen(string1,"w");
   if (file == 0)
     {
