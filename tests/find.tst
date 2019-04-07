@@ -25,7 +25,7 @@ if ~IJ1.equal[IJ] then pause;end
 
 //-------------- find sparse -------------------
 
-[I1,J1]=find(As)
+[I1,J1]=find(As);
 if ~I1.equal[I] then pause;end 
 if ~J1.equal[J] then pause;end 
 IJ1=find(As);
