@@ -316,6 +316,34 @@ int nsp_read_history(void)
  * Returns: 
  **/
 
+#ifdef WIN32
+int nsp_write_history(void)
+{
+  int rep;
+  char history[FSIZE+1];
+  char *history_native = NULL;
+  nsp_tcldstring buffer;
+  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
+  /* take care that dirname_native is an adress 
+   * in buffer. buffer must be freed when dirname_native 
+   * is no more used.
+   * Note also that changing to dirname seams not to 
+   * work when using wine 1.1 !
+   */
+  history_native = nsp_translate_file_name(history,&buffer);
+  if ( dirname_native == NULL )
+    {
+      return FAIL;
+    }
+  if ((rep= write_history (history_native)) != 0) 
+    {
+      Sciprintf("Error: unable to write history file %s\n",
+		"$HOME/.nsp_history");
+    }
+  nsp_tcldstring_free(&buffer);
+  return rep;
+}
+#else
 int nsp_write_history(void)
 {
   int rep;
@@ -328,6 +356,14 @@ int nsp_write_history(void)
     }
   return rep;
 }
+#endif
+
+
+
+
+
+
+
 
 /**
  * nsp_clear_history:
