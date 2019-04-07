@@ -53,6 +53,7 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libfreetype-6.dll bin/
     cp -f $usrdist/bin/libfribidi-0.dll bin/
     cp -f $usrdist/bin/libgailutil-3-0.dll bin/
+    cp -f $usrdist/bin/libgif-7.dll bin/
     cp -f $usrdist/bin/libgcc_s_seh-1.dll bin/
     cp -f $usrdist/bin/libgdk_pixbuf-2.0-0.dll bin/
     cp -f $usrdist/bin/libgdk-3-0.dll bin/
@@ -77,18 +78,10 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libgsttag-1.0-0.dll bin/
     cp -f $usrdist/bin/libgstvideo-1.0-0.dll bin/
     cp -f $usrdist/bin/libgtk-3-0.dll bin/
-    cp -f $usrdist/bin/libgtkglext-win32-1.0-0.dll bin/
     cp -f $usrdist/bin/libgtksourceview-3.0-1.dll bin/
     cp -f $usrdist/bin/libgtk-win32-2.0-0.dll bin/
     cp -f $usrdist/bin/libgvc-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_core-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_dot_layout-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_gdk-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_gtk-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_neato_layout-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_pango-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_poppler-6.dll bin/
-    cp -f $usrdist/bin/libgvplugin_rsvg-6.dll bin/
+    cp -f $usrdist/bin/libgvplugin_*.dll bin/
     cp -f $usrdist/bin/libharfbuzz-0.dll bin/
     cp -f $usrdist/bin/libharfbuzz-icu-0.dll bin/
     cp -f $usrdist/bin/libiconv-2.dll bin/
@@ -114,7 +107,6 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libltdl-7.dll bin/
     cp -f $usrdist/bin/liblzma-5.dll bin/
     cp -f $usrdist/bin/libmetis.dll bin/
-    cp -f $usrdist/bin/libnsp.dll bin/
     cp -f $usrdist/bin/libogg-0.dll bin/
     cp -f $usrdist/bin/libopenblas.dll bin/
     cp -f $usrdist/bin/liborc-0.4-0.dll bin/
@@ -132,7 +124,7 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libpsl-5.dll bin/
     cp -f $usrdist/bin/libqhull.dll bin/
     cp -f $usrdist/bin/libquadmath-0.dll bin/
-    cp -f $usrdist/bin/libreadline7.dll bin/
+    cp -f $usrdist/bin/libreadline8.dll bin/
     cp -f $usrdist/bin/librsvg-2-2.dll bin/
     cp -f $usrdist/bin/libsndfile-1.dll bin/
     cp -f $usrdist/bin/libsoup-2.4-1.dll bin/
@@ -156,6 +148,24 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libxml2-2.dll bin/
     cp -f $usrdist/bin/libxslt-1.dll bin/
     cp -f $usrdist/bin/zlib1.dll bin/
+    cp -f $usrdist/bin/libxdot-4.dll bin/
+    cp -f $usrdist/bin/libpoppler-85.dll bin/
+    cp -f $usrdist/bin/libzstd.dll bin/
+    cp -f $usrdist/bin/libproxy-1.dll bin/
+    cp -f $usrdist/bin/libgailutil-18.dll bin/
+    cp -f $usrdist/bin/libgd.dll bin/
+    cp -f $usrdist/bin/libIL.dll bin/
+    cp -f $usrdist/bin/libILU.dll bin/
+    cp -f $usrdist/bin/libXpm-noX4.dll bin/
+    cp -f $usrdist/bin/libHalf-2_3.dll bin/
+    cp -f $usrdist/bin/libIlmImf-2_3.dll bin/
+    cp -f $usrdist/bin/libsquish.dll bin/
+    cp -f $usrdist/bin/libIex-2_3.dll bin/
+    cp -f $usrdist/bin/libIlmThread-2_3.dll bin/
+    cp -f $usrdist/bin/libImath-2_3.dll bin/
+    cp -f $usrdist/bin/libgts-0-7-5.dll bin/
+    # copy and change the name 
+    cp -f $usrdist/bin/libgdiplus-0.dll bin/gdiplus.dll
     subdirs="lib/gtk-3.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
     echo populate directories: $subdirs
     for i in $subdirs ;
