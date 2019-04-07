@@ -133,14 +133,13 @@ $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
 # produce also a lib file
 
 CROSS=@CROSS@
+LIBEXE=@LIBEXE@
+LIB_TARGET=@LIB_TARGET@
 
 ifeq ($(CROSS),yes)
-all :: $(LIBRARY_NAME).lib
 
-ifeq ($(TARGET_MACHINE),x64)
-LIBEXE=@LIBEXE@
-else
-LIBEXE=@LIBEXE@
+ifeq ($(LIB_TARGET),yes)
+all :: $(LIBRARY_NAME).lib
 endif
 
 $(LIBRARY_NAME).lib: $(LIBRARY_NAME).la $(LIBRARY_NAME).def

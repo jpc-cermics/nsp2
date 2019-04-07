@@ -671,9 +671,14 @@ CROSS_VERSION=
 CROSS_POPULATE=
 CROSS_COPIER=crosscopy.sh
 SHAREDWIN32=shared-win32
+# can we produce .lib 
+LIB_TARGET=no
 
+#  visual linker needed to produce lib files
 AC_CHECK_FILE("/mingw64/bin/lib.exe",[msys2_x86_64_libexe_exists="yes"], [msys2_x86_64_libexe_exists="no"])
+AC_CHECK_FILE("/mingw64/bin/lib",[mingw64_libexe_exists="yes"], [mingw64_libexe_exists="no"])
 AC_CHECK_FILE("/mingw32/bin/lib.exe",[msys2_i686_libexe_exists="yes"], [msys2_i686_libexe_exists="no"])
+AC_CHECK_FILE("/mingw32/bin/lib",[mingw32_libexe_exists="yes"], [mingw32_libexe_exists="no"])
 
 if test "$with_gtk3" == yes; then
   CROSS_COPIER=crosscopy-gtk3.sh
@@ -688,14 +693,20 @@ case "$host" in
     CROSS_VERSION=`x86_64-w64-mingw32-gcc -dumpversion`
     CROSS=yes
     CROSS_POPULATE=cross-populate
-    if test "$msys2_x86_64_libexe_exists" == "yes"; then
-       LIBEXE=/mingw64/bin/lib
-    else
-       LIBEXE=x86_64-w64-mingw32-lib.exe
-    fi
     # visual linker needed to produce lib files 
     # from dlls 
-    SHAREDWIN32=shared-win32-and-lib
+    if test "$msys2_x86_64_libexe_exists" == "yes"; then
+       # msys2 x86_64 
+       LIBEXE=x86_64-w64-mingw32-lib.exe
+       SHAREDWIN32=shared-win32-and-lib
+       LIB_TARGET=yes
+    fi
+    if test "$mingw64_libexe_exists" == "yes"; then
+       # mingw64 on linux 
+       LIBEXE=/mingw64/bin/lib
+       SHAREDWIN32=shared-win32-and-lib
+       LIB_TARGET=yes
+    fi
     ;;
   i686-pc-mingw32 )
     # cross compilation target 32 bits (old name)
@@ -712,14 +723,20 @@ case "$host" in
     CROSS_VERSION=`i686-w64-mingw32-gcc -dumpversion`
     CROSS=yes
     CROSS_POPULATE=cross-populate
-    if test "$msys2_i686_libexe_exists" == "yes"; then
-       LIBEXE=/mingw32/bin/lib
-    else
-       LIBEXE=i686-w64-mingw32-lib.exe
-    fi
     # visual linker needed to produce lib files 
     # from dlls 
-    SHAREDWIN32=shared-win32-and-lib
+    if test "$msys2_i686_libexe_exists" == "yes"; then
+       # msys2 i686
+       LIBEXE=i686-w64-mingw32-lib.exe
+       SHAREDWIN32=shared-win32-and-lib
+       LIB_TARGET=yes
+    fi
+    if test "$mingw32_libexe_exists" == "yes"; then
+       # mingw32 on linux 
+       LIBEXE=/mingw32/bin/lib
+       SHAREDWIN32=shared-win32-and-lib
+       LIB_TARGET=yes
+    fi
     ;;
 esac
 
@@ -2279,6 +2296,7 @@ AC_SUBST(TOOLBOXES)
 
 AC_SUBST(SHAREDWIN32)
 AC_SUBST(LIBEXE)
+AC_SUBST(LIB_TARGET)
 AC_SUBST(SHREXT_NAME)
 AC_SUBST(RM)
 AC_SUBST(AR)
