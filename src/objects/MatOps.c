@@ -4713,11 +4713,11 @@ NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
   if ( Loc == NULLBMAT)  return(NULLBMAT);
   if ( A->rc_type == 'r') 
     {
-      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= isnan(A->R[i]);
+      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= (isnan(A->R[i]) != 0) ;
     }
   else 
     {
-      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= isnan(A->C[i].r) | isnan(A->C[i].i);
+      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= (isnan(A->C[i].r) != 0) | ( isnan(A->C[i].i) != 0);
     }
   return(Loc);
 }
