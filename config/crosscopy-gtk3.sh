@@ -165,22 +165,36 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libImath-2_3.dll bin/
     cp -f $usrdist/bin/libgts-0-7-5.dll bin/
     cp -f $usrdist/bin/libnspr4.dll bin/
+    cp -f $usrdist/bin/libhogweed-4.dll bin/
+    cp -f $usrdist/bin/libnettle-6.dll bin/
+    cp -f $usrdist/bin/libcurl-4.dll bin/
+    cp -f $usrdist/bin/libopenjp2-7.dll bin/
+    cp -f $usrdist/bin/nss3.dll bin/
+    cp -f $usrdist/bin/smime3.dll bin/
+    cp -f $usrdist/bin/libplc4.dll  bin/
+    cp -f $usrdist/bin/libplds4.dll bin/
+    cp -f $usrdist/bin/nssutil3.dll bin/
+    cp -f $usrdist/bin/libbrotlidec.dll bin/
+    cp -f $usrdist/bin/libcrypto-1_1-x64.dll bin/
+    cp -f $usrdist/bin/libnghttp2-14.dll bin/
+    cp -f $usrdist/bin/libssl-1_1-x64.dll bin/
+    cp -f $usrdist/bin/libbrotlicommon.dll bin/
     # copy and change the name 
     cp -f $usrdist/bin/libgdiplus-0.dll bin/gdiplus.dll
     subdirs="lib/gtk-3.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"
     echo populate directories: $subdirs
-    for i in $subdirs ;
-    do 
-	\rm -fr $i
-	\cp -R $usrdist/$i lib/
-    done
+    # for i in $subdirs ;
+    # do 
+    # 	\rm -fr $i
+    # 	\cp -R $usrdist/$i lib/
+    # done
     subdirs="etc share" 
     echo populate directories: $subdirs
-    for i in $subdirs ;
-    do 
-	\rm -fr $i
-	\cp -R $usrdist/$i $i
-    done
+    # for i in $subdirs ;
+    # do 
+    # 	\rm -fr $i
+    # 	\cp -R $usrdist/$i $i
+    # done
     # clean unused stuffs 
     subdirs="bash-completion cmake common-lisp doc GConf gdb graphite2 gtk-2.0 gtk-doc info inkscape man midori"
     for i in $subdirs ;
