@@ -40,6 +40,7 @@ but one package also need the dll's from the icu-61 version
 upgrade to icu-62 and copy back the dll's for version 61).
 
 Remains to be done :
+------------------
 
 Il manque la librairie libspqr.dll sparse QR factorization library
 qui est dans suitesparse mais pas detectée correctement par le configure
@@ -47,5 +48,6 @@ de msys2
 
 Il faut que le compilation marche si on a pas visual
 
+Il faut voir les tests qui ne marchent pas
 
 
