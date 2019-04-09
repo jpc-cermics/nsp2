@@ -1,0 +1,51 @@
+This file contains information for compiling nsp with msys2
+msys2 must be started in mingw64 mode to compile nsp
+
+pacman -S base-devel --needed
+
+use pacman or pacboy to install the following packages
+
+pacman -S mingw64/mingw-w64-x86_64-gcc
+or
+pacboy -S gcc:x
+
+should do the same
+
+needed packages installed with their dependencies 
+
+mingw64/mingw-w64-x86_64-fftw
+mingw64/mingw-w64-x86_64-gcc 
+mingw64/mingw-w64-x86_64-gcc-fortran
+mingw64/mingw-w64-x86_64-glpk
+mingw64/mingw-w64-x86_64-graphviz
+mingw64/mingw-w64-x86_64-gtk3
+mingw64/mingw-w64-x86_64-gtksourceview3
+mingw64/mingw-w64-x86_64-gts
+mingw64/mingw-w64-x86_64-lapack
+mingw64/mingw-w64-x86_64-libgdiplus
+mingw64/mingw-w64-x86_64-libsndfile
+mingw64/mingw-w64-x86_64-libzip
+mingw64/mingw-w64-x86_64-nspr
+mingw64/mingw-w64-x86_64-ocaml
+mingw64/mingw-w64-x86_64-openblas
+mingw64/mingw-w64-x86_64-pkg-config
+mingw64/mingw-w64-x86_64-portaudio 
+mingw64/mingw-w64-x86_64-qhull-git
+mingw64/mingw-w64-x86_64-suitesparse
+mingw64/mingw-w64-x86_64-webkitgtk3
+
+For the icu package there's a pb the installed version icu-62 is needed
+but one package also need the dll's from the icu-61 version
+(Thus, install the icu-61 version, copy the dll libicu*.dll somewhere
+upgrade to icu-62 and copy back the dll's for version 61).
+
+Remains to be done :
+
+Il manque la librairie libspqr.dll sparse QR factorization library
+qui est dans suitesparse mais pas detectée correctement par le configure
+de msys2
+
+Il faut que le compilation marche si on a pas visual
+
+
+
