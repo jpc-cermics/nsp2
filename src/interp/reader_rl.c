@@ -41,7 +41,7 @@
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h" 
 #include <nsp/system.h> /* FSIZE */
-
+#include <nsp/nsptcl.h> /* FSIZE */
 
 #ifdef WIN32
 #define sigsetjmp(x,y) setjmp(x)
@@ -302,10 +302,12 @@ void nsp_read_clean_after_ctrc(void) {}
  * Returns: 
  **/
 
+#define NSP_HISTORY "$HOME/.nsp_history"
+
 int nsp_read_history(void)
 {
   char history[FSIZE+1];
-  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
+  nsp_path_expand(NSP_HISTORY,history,FSIZE);
   return read_history (history);
 }
 
@@ -317,30 +319,20 @@ int nsp_read_history(void)
  **/
 
 #ifdef WIN32
+
 int nsp_write_history(void)
 {
   int rep;
+  char *S[]={NULL,NULL};
   char history[FSIZE+1];
-  char *history_native = NULL;
-  nsp_tcldstring buffer;
-  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
-  /* take care that dirname_native is an adress 
-   * in buffer. buffer must be freed when dirname_native 
-   * is no more used.
-   * Note also that changing to dirname seams not to 
-   * work when using wine 1.1 !
-   */
-  history_native = nsp_translate_file_name(history,&buffer);
-  if ( dirname_native == NULL )
+  nsp_path_expand(NSP_HISTORY,history,FSIZE);
+  S[0]=history;
+  nsp_file_delete_cmd(1,S,1);
+  if ((rep= write_history (history)) != 0) 
     {
-      return FAIL;
+      Sciprintf("Error: unable to write history file %s\n",NSP_HISTORY);
+      /* Sciprintf("      expanded in %s\n",history_native); */
     }
-  if ((rep= write_history (history_native)) != 0) 
-    {
-      Sciprintf("Error: unable to write history file %s\n",
-		"$HOME/.nsp_history");
-    }
-  nsp_tcldstring_free(&buffer);
   return rep;
 }
 #else
@@ -348,22 +340,14 @@ int nsp_write_history(void)
 {
   int rep;
   char history[FSIZE+1];
-  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
+  nsp_path_expand(NSP_HISTORY,history,FSIZE);
   if ((rep= write_history (history)) != 0) 
     {
-      Sciprintf("Error: unable to write history file %s\n",
-		"$HOME/.nsp_history");
+      Sciprintf("Error: unable to write history file %s\n",NSP_HISTORY);
     }
   return rep;
 }
 #endif
-
-
-
-
-
-
-
 
 /**
  * nsp_clear_history:
