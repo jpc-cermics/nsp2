@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <locale.h>
 #include <glib.h> /* for g_xx functions below */
+#include <readline/history.h>
 
 #include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
@@ -690,6 +691,25 @@ static int int_clc(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+#if 0
+static int int_write_history(Stack stack,int rhs,int opt,int lhs) 
+{
+  NspObject *OM;
+  int rep;
+  char *history;
+  char *S[]={NULL,NULL};
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((history = GetString(stack,1)) == (char*)0) return RET_BUG;
+  S[0]=history;
+  nsp_file_delete_cmd(1,S,1);
+  rep = write_history(history);
+  if ( (OM=nsp_create_object_from_double(NVOID,rep)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1, OM);
+  return 1;
+}
+#endif
+
 static OpTab System_func[]={
   {"registry", int_nsp_query_registry },
   {"iswow64", int_nsp_iswow64 },
@@ -726,6 +746,9 @@ static OpTab System_func[]={
 #endif 
   {"exit", int_exit},
   {"clc", int_clc},
+#if 0
+  {"write_history",int_write_history},
+#endif
   {(char *) 0, NULL}
 };
 
