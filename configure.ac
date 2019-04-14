@@ -1807,8 +1807,6 @@ if test "$with_suitesparse" != no; then
     fi
   fi
   
-  if test "xx$spqr_libs" != "xx"    ; then HAVE_SPQR="yes"; else HAVE_SPQR="no"; fi
-  
   # try a link of both libraries and suitesparseconfig
   
   builtin(include,config/ac_check_suitesparse.m4)
@@ -1832,11 +1830,27 @@ if test "$with_suitesparse" != no; then
        AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
        CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
       fi
+      AC_CHECK_SPQR()
+      if test "xx$spqr_libs" != "xx"  -a "x${spqr_includedir}" != "xNO" ; then
+        AC_DEFINE(WITH_SPQR,[],[spqr library])
+        AC_MSG_RESULT([using "$spqr_libs" for spqr libraries])
+        SPQR_LIBS=$spqr_libs
+        if test "x${spqr_includedir}" != "x${cholmod_includedir}"; then
+          AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+          CC_OPTIONS="${CC_OPTIONS} -I${spqr_includedir} "
+        else
+          AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+          CC_OPTIONS="${CC_OPTIONS}"
+        fi
+      fi
     else
       HAVE_UMFPACK="no";
       HAVE_CHOLMOD="no"
     fi
   fi
+
+  if test "xx$spqr_libs" != "xx"    ; then HAVE_SPQR="yes"; else HAVE_SPQR="no"; fi
+
 else
   HAVE_UMFPACK="no";
   HAVE_CHOLMOD="no"
@@ -2500,6 +2514,7 @@ echo "Glpk support...........:" $HAVE_GLPK
 echo "Clp support............:" $HAVE_CLP
 echo "Cholmod support........:" $HAVE_CHOLMOD
 echo "Umfpack support........:" $HAVE_UMFPACK
+echo "Spqr support...........:" $HAVE_SPQR
 echo "GtkSourceView support..:" $have_gtksourceview
 echo "gobject-introspection..:" $HAVE_GI
 echo "epoxy support..........:" $HAVE_EPOXY
