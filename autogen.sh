@@ -168,7 +168,7 @@ do
       fi
       echo "Running automake --gnu $am_opt ..."
       if test -f Makefile.am ; then
-	  automake --add-missing --gnu $am_opt
+	  automake --add-missing -c --gnu $am_opt
       fi
       echo "Running autoconf ..."
       autoconf
