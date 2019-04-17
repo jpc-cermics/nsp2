@@ -536,7 +536,8 @@
   (parameters
    ;; '("GIFunctionInfo*" "info")
    )
-  (call " if ( g_base_info_get_type (NSP_GBOXED_GET(self, GIBaseInfo)) !=  GI_INFO_TYPE_FUNCTION) return RET_BUG; ret =g_function_info_get_symbol(NSP_GBOXED_GET(self, GIBaseInfo));" )
+  (call " if ( nsp_gi_info_check(NSP_GBOXED_GET(self, GIBaseInfo), GI_INFO_TYPE_FUNCTION) == FAIL) return RET_BUG;
+          ret =g_function_info_get_symbol(NSP_GBOXED_GET(self, GIBaseInfo));" )
   )
 
 (define-function g_function_info_get_flags

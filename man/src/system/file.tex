@@ -9,6 +9,7 @@
 \begin{calling_sequence}
   \begin{verbatim}
     file(operation,S);
+    file("attributes",file-name [,attrname, attrset]); 
   \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -29,9 +30,12 @@
     file("atime","doc.txt") ;
     // file("attributes",file [,attrname, attrset]);
     file("attributes","doc.txt");
-    //file("copy",["src","dst"])	    dst is a file 
+    file("attributes","doc.txt","-owner");
+    // file("attributes","doc.txt","-owner","new-owner");
+    // use file("attributes","doc.txt","-xxx") to obtain the list of possible attributes
+    // file("copy",["src","dst"])	    dst is a file 
     //or 
-    //file("copy",["src1","src2","dst"])  dst is a directory 
+    // file("copy",["src1","src2","dst"])  dst is a directory 
     file("mkdir","poo");
     file("copy",["doc.txt","doc1.txt"]) 
     file("copy",["doc.txt","poo"]) 

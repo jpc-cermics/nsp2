@@ -11,7 +11,8 @@ headers
 #define NspGIBaseInfo_Private
 #include <nsp/gtk/gibaseinfo.h>
 
-static char *nsp_gi_info_new (GIBaseInfo *info);
+static const char *nsp_gi_info_str (GIBaseInfo *info);
+static int nsp_gi_info_check(GIBaseInfo *info, GIInfoType info_type_check);
 
 %%
 modulename atk
@@ -108,7 +109,7 @@ static int _wrap_g_irepository_get_n_infos
 	    Sciprintf("  container is %s\n", g_base_info_get_name (container));
 	  else
 	    Sciprintf("  no container for %s\n", g_base_info_get_name (info));
-	  Sciprintf("%s\n",nsp_gi_info_new (info));
+	  Sciprintf("%s\n",nsp_gi_info_str (info));
 	}
     }
   return 0;
@@ -135,7 +136,7 @@ static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int 
   GIBaseInfo *info = NSP_GBOXED_GET(self, GIBaseInfo);
   if (info != NULL)
     {
-      Sciprintf("for object %s of type %s\n",g_base_info_get_name (info),nsp_gi_info_new (info));
+      Sciprintf("for object %s of type %s\n",g_base_info_get_name (info),nsp_gi_info_str (info));
     }
   while (g_base_info_iterate_attributes (NSP_GBOXED_GET(self, GIBaseInfo), &iter, &name, &value))
     {
@@ -148,36 +149,21 @@ static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int 
 %%
 last
 
-static char *nsp_gi_info_new (GIBaseInfo *info)
+static const char *nsp_gi_info_str (GIBaseInfo *info)
 {
   GIInfoType info_type;
   info_type = g_base_info_get_type (info);
-  switch (info_type)
-    {
-    case GI_INFO_TYPE_INVALID: return "INVALID";break;
-    case GI_INFO_TYPE_FUNCTION: return "FUNCTION";break;
-    case GI_INFO_TYPE_CALLBACK: return "CALLBACK";break;
-    case GI_INFO_TYPE_STRUCT: return "STRUCT";break;
-    case GI_INFO_TYPE_BOXED: return "BOXED";break;
-    case GI_INFO_TYPE_ENUM: return "ENUM";break;
-    case GI_INFO_TYPE_FLAGS: return "FLAGS";break;
-    case GI_INFO_TYPE_OBJECT: return "OBJECT";break;
-    case GI_INFO_TYPE_INTERFACE: return "INTERFACE";break;
-    case GI_INFO_TYPE_CONSTANT: return "CONSTANT";break;
-    case GI_INFO_TYPE_UNION: return "UNION";break;
-    case GI_INFO_TYPE_VALUE: return "VALUE";break;
-    case GI_INFO_TYPE_SIGNAL: return "SIGNAL";break;
-    case GI_INFO_TYPE_VFUNC: return "VFUNC";break;
-    case GI_INFO_TYPE_PROPERTY: return "PROPERTY";break;
-    case GI_INFO_TYPE_FIELD: return "FIELD";break;
-    case GI_INFO_TYPE_ARG: return "ARG";break;
-    case GI_INFO_TYPE_TYPE: return "TYPE";break;
-    case GI_INFO_TYPE_UNRESOLVED: return "UNRESOLVED";break;
-    default:
-      g_assert_not_reached();
-      break;
-    }
-  return "INVALID";
+  return g_info_type_to_string (info_type);
 }
 
+static int nsp_gi_info_check(GIBaseInfo *info, GIInfoType info_type_check)
+{
+  GIInfoType info_type = g_base_info_get_type (info);
+  if ( info_type != info_type_check )
+    {
+      Scierror("Error: expecting info type to be %s\n", g_info_type_to_string (info_type));
+      return FAIL;
+    }
+  return OK;
+}
 
