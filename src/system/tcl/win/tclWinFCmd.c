@@ -1396,7 +1396,7 @@ int  nsp_list_volumes(Stack stack,int n)
     if (GetVolumeInformation(buf, NULL, 0, NULL, NULL, NULL, NULL, 0)  
 	|| (GetLastError() == ERROR_NOT_READY)) {
       if (nsp_row_smatrix_append_string(S, buf )== FAIL) 
-	return RET_BUG:
+	return RET_BUG;
     }
   }
   MoveObj(stack,n,(NspObject*) S);
