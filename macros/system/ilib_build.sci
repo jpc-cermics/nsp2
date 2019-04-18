@@ -254,8 +254,13 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway, ...
   fprintf(fd,"# ------------------------------------------------------\n");
   // get nsp path 
   NSP = getenv('NSP');
-  // do not use a win32 path when cross compiling
-  if %win32 && part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
+  if %win32 then
+      // since we are on gen_Make_unix and %win32 is true means that
+      // we are compiling with a linux env on windows
+      // with msys2 we should keep the volume name
+      // if we use msys2 we keep the volume name 
+      // part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
+  end	       
   fprintf(fd,"SCIDIR = %s\n",NSP);
   fprintf(fd,"OBJS = ")
   for x=files(:)' do
@@ -576,7 +581,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       // assume that we are cross compiling or using cygwin 
       lib_name_make=lib_name+%shext ;
       lib_name = lib_name+'.la'; 
-      make_command = ['/usr/bin/make','-f'];
+      make_command = ['make','-f'];
       if ~isempty(files)  then 
 	files = files + '.lo';
       end
@@ -606,11 +611,22 @@ function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
   ok=%t
   msok = msvc_configure();
   if msok=='unknown' then
-    // for cross compilation prefer  w32mode=%f
-    // ok=spawn_sync(str, w32mode=%f);
-    [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str, w32mode=%f);
-    xpause(0,%t);
-    return;
+    // we are on windows without compiler or we are cross compiling
+    use_msys2 = getenv('MSYSTEM',def='unknown')=='MINGW64';
+    if use_msys2 then
+       // back convert to unix pathes to send it to the sheel for compilation
+       setenv('PKG_CONFIG_PATH','/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig');
+       [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str);
+       xpause(0,%t);
+       return;
+    else
+       // compilation on unix machine ?
+       // for cross compilation prefer  w32mode=%f
+       // ok=spawn_sync(str, w32mode=%f);
+       [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str, w32mode=%f);
+       xpause(0,%t);
+       return;
+    end
   end
   // a modified version of spawn_sync 
   // for win32 version i.e with msvc 

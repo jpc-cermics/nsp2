@@ -104,8 +104,13 @@ function ilib_link_gen_Make_unix(names,files,libs,Makename,libname, ...
   fprintf(fd,"# ------------------------------------------------------\n");
   // get nsp path 
   NSP = getenv('NSP');
-  // do not use a win32 path when cross compiling
-  if %win32 && part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
+  if %win32 then
+      // since we are on gen_Make_unix and %win32 is true means that
+      // we are compiling with a linux env on windows
+      // with msys2 we should keep the volume name
+      // if we use msys2 we keep the volume name 
+      // part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
+  end	       
   fprintf(fd,"SCIDIR = %s\n",NSP);
   fprintf(fd,"OBJS = ")
   for x=files(:)' do fprintf(fd," %s",x);end
