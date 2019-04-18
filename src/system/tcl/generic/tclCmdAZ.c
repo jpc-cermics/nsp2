@@ -799,7 +799,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
   int result = RET_BUG;
   char *fileName;
   int  index;
-  NspObject *elementObjPtr;
+  NspObject *elementObjPtr = NULL;
   nsp_tcldstring buffer;
   if ((rhs > 3 ) && ((rhs % 2) !=  0)) {
     Scierror("Error: wrong # args: must be file(attributes,name,[option,value,option,value])\n");
@@ -830,11 +830,22 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
 	  char *loc ;
 	  if (( loc =new_nsp_string(tclpFileAttrStrings[index])) == (nsp_string) 0)  goto done;
 	  S->S[index] = loc ;
+	  elementObjPtr = NULL;
 	  if ((*tclpFileAttrProcs[index].getProc)( index, fileName,&elementObjPtr) != TCL_OK) {
 	    goto done;
 	  }
-	  if (( loc =new_nsp_string(((NspSMatrix *) elementObjPtr)->S[0])) == (nsp_string) 0)  
-	    goto done;
+	  if ( IsSMat( elementObjPtr) )
+	    {
+	      if (( loc =new_nsp_string(((NspSMatrix *) elementObjPtr)->S[0])) == (nsp_string) 0)  
+		goto done;
+	    }
+	  else
+	    {
+	      int val = ((NspBMatrix *) elementObjPtr)->B[0];
+	      if (( loc =new_nsp_string( val == 0 ? "true": "false")) == (nsp_string) 0)  
+		goto done;
+	    }
+	  nsp_object_destroy(&elementObjPtr);
 	  S->S[index+count] = loc ;
 	}
       MoveObj(stack,1,(NspObject*) S);
