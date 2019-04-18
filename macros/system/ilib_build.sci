@@ -12,17 +12,19 @@ function ilib_build(ilib_name,table,files,libs,...
   if verbose then printf('   generate a Makefile: %s\n',makename);end
   if isempty(table) then with_gateway=%f ; else with_gateway=%t ;end 
   ilib_gen_Make(ilib_name,table,files,libs,makename,with_gateway,ldflags,cflags,fflags);
-  if verbose then printf('   running the makefile\n');end
   // a little trick here: all the previous functions generate files
   // using the current_exec_dir which is not the case for ilib_compile
   // thus we change the path of makefile to compile in the proper
   // directory.
+  makename_k = makename;
   if file('pathtype',makename)=='relative' then 
     makename = file('join',[file('split',get_current_exec_dir(absolute=%t));makename]);
   end
   if compile then 
     if verbose then printf('   running the makefile: %s\n',makename);end
     ilib_compile(ilib_name,makename,files,verbose=verbose);
+  else
+    if verbose then printf('   you need to manually run the makefile: %s\n',makename_k);end
   end
 endfunction
 

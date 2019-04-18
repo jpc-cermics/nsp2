@@ -20,6 +20,7 @@ function [libn,ok]=ilib_for_link(names,files,libs,flag,makename='Makelib',verbos
     if libname=="" then libname = names(1);end
     [libn,ok]=ilib_compile('lib'+libname,makename,files,verbose=verbose);
   else
+    if verbose then printf('   you need to manually run the makefile: %s\n',makename);end
     libn=0;ok=%t;
   end
 endfunction
