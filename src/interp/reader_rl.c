@@ -331,7 +331,6 @@ int nsp_write_history(void)
   if ((rep= write_history (history)) != 0) 
     {
       Sciprintf("Error: unable to write history file %s\n",NSP_HISTORY);
-      /* Sciprintf("      expanded in %s\n",history_native); */
     }
   return rep;
 }

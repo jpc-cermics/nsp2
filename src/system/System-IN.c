@@ -691,19 +691,29 @@ static int int_clc(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#if 0
+#if 1
+
+extern int nsp_write_history(void);
+
 static int int_write_history(Stack stack,int rhs,int opt,int lhs) 
 {
   NspObject *OM;
   int rep;
   char *history;
   char *S[]={NULL,NULL};
-  CheckRhs(1,1);
+  CheckStdRhs(0,1);
   CheckLhs(0,1);
-  if ((history = GetString(stack,1)) == (char*)0) return RET_BUG;
-  S[0]=history;
-  nsp_file_delete_cmd(1,S,1);
-  rep = write_history(history);
+  if ( rhs == 1 )
+    {
+      if ((history = GetString(stack,1)) == (char*)0) return RET_BUG;
+      S[0]=history;
+      nsp_file_delete_cmd(1,S,1);
+      rep = write_history(history);
+    }
+  else
+    {
+      rep = nsp_write_history();
+    }
   if ( (OM=nsp_create_object_from_double(NVOID,rep)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1, OM);
   return 1;
@@ -746,7 +756,7 @@ static OpTab System_func[]={
 #endif 
   {"exit", int_exit},
   {"clc", int_clc},
-#if 0
+#if 1
   {"write_history",int_write_history},
 #endif
   {(char *) 0, NULL}

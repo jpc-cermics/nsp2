@@ -170,7 +170,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
     
   if ( index == FILE_VOLUMES) {
     if ( rhs != 1 ) {
-      Scierror("Error: function %s, wrong number of arguments for volume option\n",
+      Scierror("Error: function %s, wrong number of arguments for volumes option (rhs should be one)\n",
 	       NspFname(stack));
       return RET_BUG;
     }

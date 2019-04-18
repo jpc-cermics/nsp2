@@ -1389,16 +1389,16 @@ int  nsp_list_volumes(Stack stack,int n)
    * GetLogicalDrives() returns incorrect information.
    */
   if ((S=nsp_smatrix_create("",0,0,".",0))== NULLSMAT) 
-    return TCL_ERROR;
+    return RET_BUG;
 
   for (i = 0; i < 26; i++) {
     buf[0] = (char) ('a' + i);
     if (GetVolumeInformation(buf, NULL, 0, NULL, NULL, NULL, NULL, 0)  
 	|| (GetLastError() == ERROR_NOT_READY)) {
       if (nsp_row_smatrix_append_string(S, buf )== FAIL) 
-	return TCL_ERROR;
+	return RET_BUG:
     }
   }
   MoveObj(stack,n,(NspObject*) S);
-  return TCL_OK;	
+  return 1;	
 }
