@@ -615,7 +615,11 @@ function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
     use_msys2 = getenv('MSYSTEM',def='unknown')=='MINGW64';
     if use_msys2 then
        // back convert to unix pathes to send it to the sheel for compilation
-       setenv('PKG_CONFIG_PATH','/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig');
+       if %win64 then 
+          setenv('PKG_CONFIG_PATH','/mingw64/lib/pkgconfig:/mingw64/share/pkgconfig');
+       else
+          setenv('PKG_CONFIG_PATH','/mingw32/lib/pkgconfig:/mingw32/share/pkgconfig');
+       end
        [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str);
        xpause(0,%t);
        return;
