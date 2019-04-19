@@ -10,8 +10,9 @@ function ilib_path_incl(relative=%t)
     // remove the volume: part 
     // get nsp path 
     nsp = getenv('NSP');
-    // do not use a win32 path when cross compiling
-    if %win32 && part(nsp,2)==":" then nsp=part(nsp,3:length(nsp));end
+    // use_msys2 = or ( getenv('MSYSTEM', 'unknown') == ['MINGW64','MINGW32']);
+    // do not use a win32 path when cross compiling (removed when using msys2)
+    // if %win32 && part(nsp,2)==":" then nsp=part(nsp,3:length(nsp));end
   end
   if relative then 
     nsp_s = file('split',nsp);

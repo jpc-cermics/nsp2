@@ -612,7 +612,7 @@ function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
   msok = msvc_configure();
   if msok=='unknown' then
     // we are on windows without compiler or we are cross compiling
-    use_msys2 = getenv('MSYSTEM',def='unknown')=='MINGW64';
+    use_msys2 = or ( getenv('MSYSTEM', 'unknown') == ['MINGW64','MINGW32']);	
     if use_msys2 then
        // back convert to unix pathes to send it to the sheel for compilation
        if %win64 then 
