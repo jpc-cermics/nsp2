@@ -179,6 +179,7 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libnghttp2-14.dll bin/
     cp -f $usrdist/bin/libssl-1_1-x64.dll bin/
     cp -f $usrdist/bin/libbrotlicommon.dll bin/
+    cp -f $usrdist/bin/libspqr.dll bin/
     # copy and change the name 
     cp -f $usrdist/bin/libgdiplus-0.dll bin/gdiplus.dll
     subdirs="lib/gtk-3.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"

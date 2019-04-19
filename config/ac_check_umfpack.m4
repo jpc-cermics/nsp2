@@ -37,11 +37,13 @@ AC_DEFUN([AC_SUITESPARSE_PATH],
      # cross-compiling for windows 32bits 
      ac_amd_includedirs="/usr/i686-w64-mingw32/include/suitesparse /mingw32/include"
      ac_amd_libdirs="/usr/i686-w64-mingw32/lib /mingw32/lib"
+     ac_ssparse_includedirs="/usr/i686-w64-mingw32/include/suitesparse /mingw32/include $ac_ssparse_includedirs"
      ;;
     x86_64-w64-mingw32)
      # cross-compiling for windows 64bits
      ac_amd_includedirs="/usr/x86_64-w64-mingw32/include/suitesparse /mingw64/include"
      ac_amd_libdirs="/usr/x86_64-w64-mingw32/lib /mingw64/lib"
+     ac_ssparse_includedirs="/usr/x86_64-w64-mingw32/include/suitesparse /mingw64/include $ac_ssparse_includedirs"
      ;;
     *-*-darwin*)
      if test $with_macports = yes; then
