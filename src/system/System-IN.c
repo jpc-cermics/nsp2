@@ -178,8 +178,13 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
   CheckStdRhs(1,2);
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ( rhs - opt == 2 ) 
-    if ((def = GetString(stack,2)) == (char*)0) return RET_BUG;
+  /* we accept a second argument which can be a string or name = string 
+   * and we do not check for the name name.
+   */
+  if ( rhs == 2 )
+    {
+      if ((def = GetString(stack,2)) == (char*)0) return RET_BUG;
+    }
   env = nsp_getenv(envname);
   if ( env != NULL ) 
     {
@@ -190,9 +195,9 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      if ( rhs - opt == 2) 
+      if ( rhs == 2  ) 
 	{
-	  NthObj(2)->ret_pos = 1;
+	  if ( nsp_move_string(stack,1, def,-1)== FAIL) return RET_BUG;
 	  return 1;
 	}
       else
