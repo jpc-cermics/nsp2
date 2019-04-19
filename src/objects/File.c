@@ -1784,15 +1784,27 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   *nargs =1;
   if (fp == (FILE *) 0)		
     {
-      /* doing sscanf */
+      /* doing sscanf  
+       * WARNING: we use mingw version on windows since %a is not supported by the default sscanf 
+       * function 
+       */
+            
       target = strv;
+#ifdef WIN32
+      printer = (PRINTER) __mingw_sscanf;
+#else
       printer = (PRINTER) sscanf;
+#endif 
     }
   else
     {
       /* doing fscanf */
       target =  fp;
+#ifdef WIN32
+      printer = (PRINTER) __mingw_fscanf;
+#else
       printer = (PRINTER) fscanf;
+#endif
     }
 
   /* Traverse format string, doing scanf(). */
