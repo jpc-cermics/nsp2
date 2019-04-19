@@ -1,3 +1,2 @@
 #!/bin/sh
-
-find . -name *.dll -exec ./detect-missing-dlls {} \; | grep ">" | egrep -v "libmodnum.dll|libscicos.dll"
+find . -name *.dll -exec config/detect-missing-dlls {} \;

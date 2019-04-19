@@ -1,11 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 # 
 echo ">>> $*"
-objdump -x $* | grep "DLL Name:"  | sed -e 's/DLL Name://' |  \
+objdump -x $* | grep "DLL Name:"  | sed -e 's/DLL Name://' -e $'s/^\t*[ ]*//g' |  \
 egrep -v "ADVAPI32.dll|COMCTL32.dll|comdlg32.dll|CRYPT32.dll|DNSAPI.dll|dwmapi.dll|GDI32.dll|GLU32.dll|IMM32.dll|IPHLPAPI.DLL|KERNEL32.dll|MSIMG32.dll|msvcrt.dll|ole32.dll|OPENGL32.dll|SETUPAPI.dll|SHELL32.dll|SHLWAPI.dll|USER32.dll|USP10.dll|VERSION.dll|WINMM.dll|WINSPOOL.DRV|WS2_32.dll|WSOCK32.dll|MSWSOCK.dll|DWrite.dll|RPCRT4.dll|WLDAP32.dll" \
 | sort -u > /tmp/list-check$$
 cd bin; ls *.dll | sort -u > /tmp/list-avail$$ ; cd ../
-diff -riw /tmp/list-avail$$ /tmp/list-check$$
-rm -f /tmp/list-avail$$ /tmp/list-check$$
-
+diff -riw /tmp/list-avail$$ /tmp/list-check$$ | grep ">" | egrep -v "libmodnum.dll|libscicos.dll"
+#rm -f /tmp/list-avail$$ /tmp/list-check$$
 
