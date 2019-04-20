@@ -85,18 +85,12 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libharfbuzz-0.dll bin/
     cp -f $usrdist/bin/libharfbuzz-icu-0.dll bin/
     cp -f $usrdist/bin/libiconv-2.dll bin/
-    cp -f $usrdist/bin/libicudt61.dll bin/
-    cp -f $usrdist/bin/libicudt62.dll bin/
-    cp -f $usrdist/bin/libicuin61.dll bin/
-    cp -f $usrdist/bin/libicuin62.dll bin/
-    cp -f $usrdist/bin/libicuio61.dll bin/
-    cp -f $usrdist/bin/libicuio62.dll bin/
-    cp -f $usrdist/bin/libicutest61.dll bin/
-    cp -f $usrdist/bin/libicutest62.dll bin/
-    cp -f $usrdist/bin/libicutu61.dll bin/
-    cp -f $usrdist/bin/libicutu62.dll bin/
-    cp -f $usrdist/bin/libicuuc61.dll bin/
-    cp -f $usrdist/bin/libicuuc62.dll bin/
+    cp -f $usrdist/bin/libicudt6*.dll bin/
+    cp -f $usrdist/bin/libicuin6*.dll bin/
+    cp -f $usrdist/bin/libicuio6*.dll bin/
+    cp -f $usrdist/bin/libicutest6*.dll bin/
+    cp -f $usrdist/bin/libicutu6*.dll bin/
+    cp -f $usrdist/bin/libicuuc6*.dll bin/
     cp -f $usrdist/bin/libidn2-0.dll bin/
     cp -f $usrdist/bin/libintl-8.dll bin/
     cp -f $usrdist/bin/libjasper-4.dll bin/
@@ -149,7 +143,7 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libxslt-1.dll bin/
     cp -f $usrdist/bin/zlib1.dll bin/
     cp -f $usrdist/bin/libxdot-4.dll bin/
-    cp -f $usrdist/bin/libpoppler-85.dll bin/
+    cp -f $usrdist/bin/libpoppler-8*.dll bin/
     cp -f $usrdist/bin/libzstd.dll bin/
     cp -f $usrdist/bin/libproxy-1.dll bin/
     cp -f $usrdist/bin/libgailutil-18.dll bin/

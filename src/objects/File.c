@@ -2474,7 +2474,11 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
     {
       /* doing sprintf */
       target = s_target =  sprintf_buff;
+#ifdef WIN32
+      printer = (PRINTER) __mingw_sprintf;
+#else
       printer = (PRINTER) sprintf;
+#endif 
     }
   else if ( fp == stdout ) 
     {
@@ -2485,7 +2489,11 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
     {
       /* doing printf */
       target =  fp;	/* will never change */
+#ifdef WIN32
+      printer = (PRINTER) __mingw_fprintf;
+#else
       printer = (PRINTER) fprintf;
+#endif 
     }
 
   /* Traverse format string, doing printf(). */
