@@ -70,7 +70,8 @@ up:
 # This part is for developpers who have access to nsp2_dev
 # install the source of the toolboxes used in released nsp
 
-TOOLBOXES=scicos-4.4 compilers codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp
+TOOLBOXES=scicos-4.4 compilers codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp coselica-0.7
+
 USER=jpc
 
 up_release:

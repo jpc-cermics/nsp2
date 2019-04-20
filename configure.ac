@@ -2298,6 +2298,9 @@ AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 # add coselica if found
 TOOLBOX=coselica-0.4.8-nsp;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
+# add coselica if found
+TOOLBOX=coselica-0.7
+AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
 # add distmesh if found
 TOOLBOX=distmesh;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
