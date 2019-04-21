@@ -174,6 +174,12 @@ if [ -d "$usrdist" ]; then
     cp -f $usrdist/bin/libssl-1_1-x64.dll bin/
     cp -f $usrdist/bin/libbrotlicommon.dll bin/
     cp -f $usrdist/bin/libspqr.dll bin/
+    if [ -f "$usrdist/bin/libbson-1.0.dll" ]; then 
+	cp -f $usrdist/bin/libbson-1.0.dll bin/
+    fi
+    if [ -f "$usrdist/bin/libmongoc-1.0.dll" ]; then 
+	cp -f $usrdist/bin/libmongoc-1.0.dll bin/
+    fi
     # copy and change the name 
     cp -f $usrdist/bin/libgdiplus-0.dll bin/gdiplus.dll
     subdirs="lib/gtk-3.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 lib/p11-kit"

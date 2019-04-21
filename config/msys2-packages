@@ -39,6 +39,13 @@ but one package also need the dll's from the icu-61 version
 (Thus, install the icu-61 version, copy the dll libicu*.dll somewhere
 upgrade to icu-62 and copy back the dll's for version 61).
 
+If you want to have mongodb (the mongo c driver must be compiled) and
+you will need the following packages
+mingw64/mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake
+mingw64/mingw-w64-x86_64-gcc mingw-w64-x86_64-extra-cmake modules
+mingw64/mingw-w64-x86_64-cyrus-sasl
+
+
 
 
 

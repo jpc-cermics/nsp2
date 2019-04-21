@@ -25,6 +25,15 @@
 
 
 #line 28 "codegen/bson.override"
+
+#if WIN32
+/* be sure that this one is included before windows.h */
+#include <winsock2.h>
+/* requested by mongo */
+#undef __USE_MINGW_ANSI_STDIO
+#define __USE_MINGW_ANSI_STDIO 1
+#endif 
+
 #include <nsp/objects.h>
 #include <nsp/gtk/gdatetime.h>
 #include <nsp/plist.h> 
