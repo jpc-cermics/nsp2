@@ -2769,7 +2769,7 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	    }
 	  /* use strod() here */
 	  if (P_GetScalarDouble(stack,first_arg,nargs,arg_cnt,line,&dval) == FAIL) return RET_BUG;
-	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLF : PF_F) : PF_F;
+	  pf_type = (l_flag >= 1) ? ( (l_flag == 2 ) ? PF_LLF : PF_LLF) : PF_F;
 	  break;
 	  
 	default:
@@ -2873,15 +2873,15 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  break;
 
 	case AST (0, PF_LLD):
-	  retval += (*printer) ( target, p, (long int) dval);
+	  retval += (*printer) ( target, p, (long long int) dval);
 	  break;
 
 	case AST (1, PF_LLD):
-	  retval += (*printer) ( target, p, ast[0], (long int) dval);
+	  retval += (*printer) ( target, p, ast[0], (long long int) dval);
 	  break;
 
 	case AST (2, PF_LLD):
-	  retval += (*printer) ( target, p, ast[0], ast[1], (long int) dval);
+	  retval += (*printer) ( target, p, ast[0], ast[1], (long long int) dval);
 	  break;
 
 	case AST (0, PF_LUD):
@@ -2897,15 +2897,15 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  break;
 
 	case AST (0, PF_LLUD):
-	  retval += (*printer) ( target, p, (long unsigned int) dval);
+	  retval += (*printer) ( target, p, (long long unsigned int) dval);
 	  break;
 
 	case AST (1, PF_LLUD):
-	  retval += (*printer) ( target, p, ast[0], (long unsigned int) dval);
+	  retval += (*printer) ( target, p, ast[0], (long long unsigned int) dval);
 	  break;
 
 	case AST (2, PF_LLUD):
-	  retval += (*printer) ( target, p, ast[0], ast[1], (long unsigned int) dval);
+	  retval += (*printer) ( target, p, ast[0], ast[1], (long long unsigned int) dval);
 	  break;
 
 	case AST (0, PF_F):
