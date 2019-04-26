@@ -23,7 +23,7 @@ install::
 	do ( \
 	  $(TOP)/config/install-sh  $(opt_SCRIPT) $$i $(DESTDIR)/config/$$i ); \
 	done
-	@for i in Make* *.desktop *.png ;\
+	@for i in Make* *.desktop *.png *.svg summary.txt ;\
 	do ( \
 	  $(TOP)/config/install-sh  $(opt_DATA) $$i $(DESTDIR)/config/$$i ); \
 	done

@@ -15,9 +15,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
-// basic test for %a 
+// basic test for %a to print floating-point numbers in hexadecimal form.
+// See https://www.exploringbinary.com/hexadecimal-floating-point-constants/
+// 2, 2^8 et 2^-6
 
-// 2, 2^8 et 2^-6 
 M=[2; 256; 0.015625; 2^8 ; 2^-6 ];
 S=sprintf("%a",M);
 if or(S<>["0x1p+1";"0x1p+8";"0x1p-6";"0x1p+8";"0x1p-6"]) then pause;end 
