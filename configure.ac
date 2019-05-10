@@ -2254,8 +2254,11 @@ fi
 builtin(include,config/ocaml.m4)
 
 AC_CHECK_FILE_ALWAYS("toolboxes/compilers/Makefile.incl.in",[scicos_scicosc="yes"], [scicos_scicosc="no"])
+AC_CHECK_FILE_ALWAYS("toolboxes/simport/Make.ocaml.in",[scicos_simport="yes"], [scicos_simport="no"])
 CAML_OUTPUTS=
 TOOLBOX_COMPILERS=
+TOOLBOX_SIMPORT=
+COMPILERS_IN_FILE=
 
 # if toolboxes/compilers is present then we need ocaml to compile the toolbox 
 if test "$scicos_scicosc" = "yes"; then
@@ -2274,18 +2277,41 @@ if test "$scicos_scicosc" = "yes"; then
      AC_SUBST(CAML_BYT_COMP_FLAGS)
      AC_SUBST(CAML_BIN_COMP_FLAGS)
    fi			
-   # toolboxes/compilers will copy executables in bin/
+   # compilers will copy executables in bin/
    COMPILERS_SRC_INSTALL_DIR=../..
    AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
-
+   
    CAML_OUTPUTS="toolboxes/compilers/Makefile.incl"
+fi 
+
+if test "$scicos_simport" = "yes"; then
+   AC_PROG_OCAML
+   AC_PROG_OCAMLYACC
+   AC_PROG_OCAMLLEX
+   AC_PROG_HTMLC
+   AC_PROG_OCAMLPRINTC
+
+   if test "$OCAMLC" = "no"; then
+     AC_MSG_WARN([Ocaml compiler is not found, toolboxes/simport will not be compiled])
+   else 
+     TOOLBOX_SIMPORT=simport
+     CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error Ae -annot -g"
+     CAML_BIN_COMP_FLAGS="-strict-sequence -w Ae -unsafe -noassert -inline 10000"
+     AC_SUBST(CAML_BYT_COMP_FLAGS)
+     AC_SUBST(CAML_BIN_COMP_FLAGS)
+   fi			
+   # simport will copy executables in bin/
+   COMPILERS_SRC_INSTALL_DIR=../..
+   AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
+   
+   CAML_OUTPUTS="$CAML_OUTPUTS toolboxes/simport/Make.ocaml"
 fi 
 
 #########################
 ## List of default toolboxes 
 #########################
 
-TOOLBOXES=$TOOLBOX_COMPILERS	
+TOOLBOXES="$TOOLBOX_COMPILERS $TOOLBOX_SIMPORT"
 # add scicos if found
 TOOLBOX=scicos-4.4;
 AC_CHECK_FILE_ALWAYS("toolboxes/$TOOLBOX",[TOOLBOXES="$TOOLBOXES $TOOLBOX"])
@@ -2495,7 +2521,7 @@ AC_SUBST(CROSS_POPULATE)
 AC_SUBST(TARGET_MACHINE)
 AC_SUBST(CROSS_COPIER)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml)
 
 # should be executable
 chmod +x pvm3/lib/pvmarch
