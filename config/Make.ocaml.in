@@ -1,0 +1,54 @@
+#/* -*- Mode: Makefile -*- */
+# generated with configure
+
+OCAMLC="@OCAMLC@"
+OCAMLOPT="@OCAMLOPT@"
+CAML_BYT_COMP_FLAGS=@CAML_BYT_COMP_FLAGS@
+CAML_BIN_COMP_FLAGS=@CAML_BIN_COMP_FLAGS@
+OCAMLLIB="@OCAMLLIB@"
+OCAMLLEX="@OCAMLLEX@"
+OCAMLYACC="@OCAMLYACC@"
+OCAMLDEP="@OCAMLDEP@"
+OCAMLDEP_FLAGS=@OCAMLDEP_FLAGS@
+
+OCAMLPRINTC="@OCAMLPRINTC@"
+OCAMLPRINTC_FLAGS=@OCAMLPRINTC_FLAGS@
+
+HTMLC_CONF_INCLUDES=@HTMLC_CONF_INCLUDES@
+HTMLC_CONF_ENV=@HTMLC_CONF_ENV@
+HTMLC_FLAGS=@HTMLC_FLAGS@
+HTMLC_COMMAND="@HTMLC_COMMAND@"
+
+OCAMLVERSION="@OCAMLVERSION@"
+OCAML_VERSION_MAJOR="@OCAML_VERSION_MAJOR@"
+OCAML_VERSION_MINOR="@OCAML_VERSION_MINOR@"
+
+# Executable program file extension
+EXE_EXT=""
+
+# C compiled file extension
+OBJ_EXT="o"
+# C statically linked library file extension
+LIB_EXT="a"
+# C dynamically linked library file extension
+DLL_EXT="so"
+
+# C compiler names and definitions
+#   compile $(CC) $(CC_OPTIONS) -c file.c 
+#   link    $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
+#
+CC = @CC@
+CC_OPTIONS = @CC_OPTIONS@ 
+CC_LDFLAGS = @CC_LDFLAGS@ 
+CC_PICFLAGS = @CC_PICFLAGS@
+
+# Zlib directories
+# The option to link the C Zlib library. Usually -lz
+ZLIB_LIB=@ZLIB_LIBS@
+
+# The directory containing the C Zlib library (libz.a or libz.so)
+ZLIB_LIB_DIR="/usr/lib"
+
+# The directory containing the C Zlib header file (zlib.h)
+ZLIB_INCLUDE="/usr/lib"
+
