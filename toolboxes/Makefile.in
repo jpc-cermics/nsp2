@@ -53,11 +53,13 @@ clean distclean ::
 
 DESTDIR=$(prefix)/lib/nsp
 
+# we do not install simport since executable and libs are installed in main directory
+
 install::
 	@echo "installing toolboxes"
 	@$(TOP)/config/install-sh -d $(DESTDIR)/toolboxes
 	@tar   cf - --exclude CVS --exclude '*.c' --exclude '*.o' --exclude '*.lo' \
-		--exclude '*.f' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
+		--exclude '*.f' --exclude 'simport' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
 up:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
