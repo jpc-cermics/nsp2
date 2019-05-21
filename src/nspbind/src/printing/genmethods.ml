@@ -219,7 +219,7 @@ let write_method objinfo is_gtk_class  meth template template_call handle_return
 	   let substdict=  Hashtbl.create 256 in
 	   Hashtbl.add substdict "typename"  objinfo.or_c_name;
 	   Hashtbl.add substdict "typename_nn"  objinfo.or_name;
-	   Hashtbl.add substdict "typename_dc" (String.lowercase objinfo.or_name);
+	   Hashtbl.add substdict "typename_dc" (String.lowercase_ascii objinfo.or_name);
 	   Hashtbl.add substdict "typecode" objinfo.or_typecode;
 
 	   let cast =
@@ -279,7 +279,7 @@ let write_methods objinfo is_gtk_class =
 	let xval, flag = (write_method objinfo is_gtk_class x (method_tmpl objinfo) (method_call_tmpl objinfo) true true) in
         if flag then value else xval :: value )
       methods [] in
-  let lower_name = (String.lowercase objinfo.or_name) in
+  let lower_name = (String.lowercase_ascii objinfo.or_name) in
   if List.length methods > 0 then
     let methoddefs = Printf.sprintf "%s_methods"  lower_name in
     let methods = List.rev ("  { NULL, NULL}\n" :: methods) in

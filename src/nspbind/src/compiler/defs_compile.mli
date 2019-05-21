@@ -15,7 +15,7 @@
 (* $Id$ *)
 
 val compile : Path.file_name -> unit;;
-(** From simport compatible input file to (target language) compiled file. *)
+(* From simport compatible input file to (target language) compiled file. *)
 
 (*
  Local Variables:

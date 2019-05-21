@@ -24,7 +24,7 @@ let do_phase phase treat_file ppf fname =
   with
   | Configuration.Error err ->
     Configuration.report_error Format.err_formatter err
-  | Override_lexer.Error (e, pos_begin, pos_end) ->
+  | Override_lexer.Lexer_error (e, pos_begin, pos_end) ->
     let loc = Override_location.mk_loc pos_begin pos_end in
     Format.fprintf Format.err_formatter
       "Lexical error: %a@.%a@."

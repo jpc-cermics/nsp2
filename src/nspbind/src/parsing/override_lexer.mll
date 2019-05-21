@@ -34,10 +34,10 @@ type error =
 
 (** The various errors when lexing. *)
 
-exception Error of error * Lexing.position * Lexing.position;;
+exception Lexer_error of error * Lexing.position * Lexing.position;;
 
 let error (reason, start_p, curr_p) =
-  raise (Error (reason, start_p, curr_p))
+  raise (Lexer_error (reason, start_p, curr_p))
 ;;
 
 (** {6 Explaining lexing errors} *)
@@ -53,7 +53,7 @@ let report_error ppf = function
 ;;
 
 let report_lexical_error ppf = function
-  | Error (r, sp, ep) ->
+  | Lexer_error (r, sp, ep) ->
     let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."
@@ -166,7 +166,7 @@ let show_location str lexbuf =
 
 (* To buffer string literals *)
 
-let initial_string_buffer = String.create 128000;;
+let initial_string_buffer = Bytes.create 128000;;
 let string_buff = ref initial_string_buffer;;
 let string_index = ref 0;;
 
@@ -179,11 +179,11 @@ let store_string_char c =
   if !string_index >= String.length (!string_buff) then begin
     if true then  prerr_endline 
       (Printf.sprintf "Buffer size increased");
-    let new_buff = String.create (String.length (!string_buff) * 2) in
+    let new_buff = Bytes.create (String.length (!string_buff) * 2) in
       String.blit (!string_buff) 0 new_buff 0 (String.length (!string_buff));
       string_buff := new_buff
   end;
-  String.unsafe_set (!string_buff) (!string_index) c;
+  Bytes.unsafe_set (!string_buff) (!string_index) c;
   incr string_index
 ;;
 

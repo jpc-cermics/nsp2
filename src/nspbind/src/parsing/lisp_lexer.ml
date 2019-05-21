@@ -18,10 +18,10 @@ type error =
 
 (** The various errors when lexing. *)
 
-exception Error of error * Lexing.position * Lexing.position;;
+exception Lisp_error of error * Lexing.position * Lexing.position;;
 
 let error (reason, start_p, curr_p) =
-  raise (Error (reason, start_p, curr_p))
+  raise (Lisp_error (reason, start_p, curr_p))
 ;;
 
 (** {6 Explaining lexing errors} *)
@@ -37,7 +37,7 @@ let report_error ppf = function
 ;;
 
 let report_lexical_error ppf = function
-  | Error (r, sp, ep) ->
+  | Lisp_error (r, sp, ep) ->
     let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."
@@ -49,16 +49,16 @@ let report_lexical_error ppf = function
 
 # 51 "src/parsing/lisp_lexer.ml"
 let __ocaml_lex_tables = {
-  Lexing.lex_base = 
+  Lexing.lex_base =
    "\000\000\246\255\021\000\002\000\090\000\001\000\252\255\003\000\
     \254\255\255\255\253\255\249\255\247\255\248\255";
-  Lexing.lex_backtrk = 
+  Lexing.lex_backtrk =
    "\255\255\255\255\255\255\255\255\005\000\004\000\255\255\255\255\
     \255\255\255\255\255\255\255\255\255\255\255\255";
-  Lexing.lex_default = 
+  Lexing.lex_default =
    "\255\255\000\000\255\255\003\000\255\255\005\000\000\000\255\255\
     \000\000\000\000\000\000\000\000\000\000\000\000";
-  Lexing.lex_trans = 
+  Lexing.lex_trans =
    "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
     \000\000\009\000\009\000\255\255\000\000\000\000\000\000\000\000\
     \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
@@ -103,7 +103,7 @@ let __ocaml_lex_tables = {
     \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
     \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
     \000\000\000\000\000\000";
-  Lexing.lex_check = 
+  Lexing.lex_check =
    "\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
     \255\255\000\000\000\000\005\000\255\255\255\255\255\255\255\255\
     \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
@@ -148,22 +148,22 @@ let __ocaml_lex_tables = {
     \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
     \255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
     \255\255\255\255\255\255";
-  Lexing.lex_base_code = 
+  Lexing.lex_base_code =
    "";
-  Lexing.lex_backtrk_code = 
+  Lexing.lex_backtrk_code =
    "";
-  Lexing.lex_default_code = 
+  Lexing.lex_default_code =
    "";
-  Lexing.lex_trans_code = 
+  Lexing.lex_trans_code =
    "";
-  Lexing.lex_check_code = 
+  Lexing.lex_check_code =
    "";
-  Lexing.lex_code = 
+  Lexing.lex_code =
    "";
 }
 
 let rec token lexbuf =
-    __ocaml_lex_token_rec lexbuf 0
+   __ocaml_lex_token_rec lexbuf 0
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
@@ -221,7 +221,7 @@ let
         ( EOF )
 # 223 "src/parsing/lisp_lexer.ml"
 
-  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
+  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
 
 ;;

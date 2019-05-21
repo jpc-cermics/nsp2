@@ -172,7 +172,7 @@ let set_prefix str =
 
 let default_prefix () =
   match conf.source_file_basename with
-  | Some fname -> Some (String.capitalize fname)
+  | Some fname -> Some (String.capitalize_ascii fname)
   | None -> None
 ;;
 

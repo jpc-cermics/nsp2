@@ -233,7 +233,7 @@ let insert_type typename objinfo is_gtk_class substdict =
   File.write_substitute_pattern (type_tmpl_1 implements)  substdict;
   (* insert declaration for implemented interfaces  *)
   List.iter
-    (fun x -> File.write_string (Printf.sprintf "  NspType%s *t_%s;\n" x (String.lowercase x)))
+    (fun x -> File.write_string (Printf.sprintf "  NspType%s *t_%s;\n" x (String.lowercase_ascii x)))
     (List.rev objinfo.or_implements);
   let tag = if is_gtk_class then "TRUE" else "FALSE" in
 
@@ -919,7 +919,7 @@ let hash_check_slot objinfo  is_gtk_class hash slot =
      let slotname = Printf.sprintf "%s.%s" name slot in
      let name =
        if is_gtk_class then
-	 (String.lowercase
+	 (String.lowercase_ascii
 	    (Str.global_replace (Str.regexp "_TYPE_") "_" objinfo.or_typecode))
        else
 	 name in
@@ -1060,8 +1060,8 @@ let write_class objinfo failed_tbl =
   Hashtbl.replace substdict "typecode"  objinfo.or_typecode;
   Hashtbl.replace substdict "typename_nn"  objinfo.or_c_name;
   Hashtbl.replace substdict "typename"  objinfo.or_name;
-  Hashtbl.replace substdict "typename_dc"  (String.lowercase objinfo.or_name);
-  Hashtbl.replace substdict "typename_uc"  (String.uppercase objinfo.or_name);
+  Hashtbl.replace substdict "typename_dc"  (String.lowercase_ascii objinfo.or_name);
+  Hashtbl.replace substdict "typename_uc"  (String.uppercase_ascii objinfo.or_name);
 
   (* interface can have no parents *)
   let parent = if is_gtk_class && objinfo.or_parent = "" then
@@ -1069,7 +1069,7 @@ let write_class objinfo failed_tbl =
   else objinfo.or_parent in
 
   Hashtbl.replace substdict "parent"  parent;
-  Hashtbl.replace substdict "parent_dc"  (String.lowercase parent);
+  Hashtbl.replace substdict "parent_dc"  (String.lowercase_ascii parent);
   Hashtbl.replace substdict "tp_getattr_def" "int_get_attribute";
   Hashtbl.replace substdict "tp_setattr_def" "int_set_attribute";
 
@@ -1263,7 +1263,7 @@ let write_source fp parser prefix =
        (fun name ->
 	 File.write_string
 	   (Printf.sprintf "#include <nsp/gtk/%s.h>\n"
-	      (String.lowercase name)))
+	      (String.lowercase_ascii name)))
        (List.rev (Overrides.get_imports ()));
     )
   else
@@ -1275,11 +1275,11 @@ let write_source fp parser prefix =
 	if (check_gtk_class obj ) then
 	  File.write_string
 	    (Printf.sprintf "#include <nsp/gtk/%s.h>\n"
-	       (String.lowercase obj.or_c_name))
+	       (String.lowercase_ascii obj.or_c_name))
 	else
 	  File.write_string
 	    (Printf.sprintf "#include <nsp/%s.h>\n"
-	       (String.lowercase obj.or_name))
+	       (String.lowercase_ascii obj.or_name))
       ) l in
 
   if is_gtk_class then
@@ -1337,7 +1337,7 @@ let write_source fp parser prefix =
        (
         if not (check_in_classes f.is_constructor_of classes) then
           (
-           Hashtbl.replace failed_tbl ((String.lowercase f.is_constructor_of) ^ "_new" ) "_"
+           Hashtbl.replace failed_tbl ((String.lowercase_ascii f.is_constructor_of) ^ "_new" ) "_"
           )
        ) in
 
@@ -1375,13 +1375,13 @@ let write_source fp parser prefix =
 	   available_start cl;
 	   File.write_string
 	     (Printf.sprintf "  new_type_%s(T_BASE);\n"
-		(String.lowercase cl.or_name));
+		(String.lowercase_ascii cl.or_name));
 	   available_end cl)
 	else
 	  (
 	   File.write_string
 	     (Printf.sprintf "  new_type_%s(T_BASE);\n"
-		(String.lowercase cl.or_name));
+		(String.lowercase_ascii cl.or_name));
 	  );
 	initialize_types classes in
 

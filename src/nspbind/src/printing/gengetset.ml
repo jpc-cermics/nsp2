@@ -192,10 +192,10 @@ let write_getset objinfo is_gtk_class getterprefix setterprefix x arg =
 ;;
 
 let write_getsets objinfo is_gtk_class  =
-  let lower_name = (String.lowercase objinfo.or_name) in 
+  let lower_name = (String.lowercase_ascii objinfo.or_name) in 
   let lower_name1 =
     if is_gtk_class then 
-      (String.lowercase 
+      (String.lowercase_ascii 
 	 (Str.global_replace (Str.regexp "_TYPE_") "_" objinfo.or_typecode)) ^ "_" 
     else
       lower_name in 

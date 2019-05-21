@@ -17,21 +17,22 @@
 open Format;;
 
 (* BEGIN: From the 4.01 Format module *)
+(*
 type formatter_out_functions = {
-  f_out_string : string -> int -> int -> unit;
-  f_out_flush : unit -> unit;
-  f_out_newline : unit -> unit;
-  f_out_spaces : int -> unit;
+  out_string : string -> int -> int -> unit;
+  out_flush : unit -> unit;
+  out_newline : unit -> unit;
+  out_spaces : int -> unit;
 }
 ;;
 
 let pp_set_formatter_out_functions ppf out_funs =
   match out_funs with
   | {
-      f_out_string = pp_out_string;
-      f_out_flush = pp_out_flush;
-      f_out_newline = pp_out_newline;
-      f_out_spaces = pp_out_spaces;
+      out_string = pp_out_string;
+      out_flush = pp_out_flush;
+      out_newline = pp_out_newline;
+      out_spaces = pp_out_spaces;
     } ->
     Format.pp_set_all_formatter_output_functions ppf
       ~out:pp_out_string ~flush:pp_out_flush
@@ -43,12 +44,13 @@ let pp_get_formatter_out_functions ppf () =
        pp_out_newline, pp_out_spaces) =
     Format.pp_get_all_formatter_output_functions ppf () in
   {
-    f_out_string = pp_out_string;
-    f_out_flush = pp_out_flush;
-    f_out_newline = pp_out_newline;
-    f_out_spaces = pp_out_spaces;
+    out_string = pp_out_string;
+    out_flush = pp_out_flush;
+    out_newline = pp_out_newline;
+    out_spaces = pp_out_spaces;
   }
 ;;
+*)
 (* END: From the 4.01 Format module *)
 
 type tag_new_line_markers = {
@@ -102,11 +104,11 @@ let make_tag_ppf tnlm ppf =
   let ppf_tag_handler = get_tag_handler ppf in
 
   let m_tag_out_newline () =
-    ppf_tag_handler.out_funs.f_out_string
+    ppf_tag_handler.out_funs.out_string
       tnlm.m_tag_new_line 0 (String.length tnlm.m_tag_new_line) in
 
   let n_tag_out_newline () =
-    ppf_tag_handler.out_funs.f_out_string
+    ppf_tag_handler.out_funs.out_string
       tnlm.n_tag_new_line 0 (String.length tnlm.m_tag_new_line) in
 
   let rec m_tag_mark_open_tag = function
@@ -145,7 +147,7 @@ let make_tag_ppf tnlm ppf =
     };
     out_funs = {
       ppf_tag_handler.out_funs with
-      f_out_newline = m_tag_out_newline;
+      out_newline = m_tag_out_newline;
     };
     mark_tags = true;
   }
@@ -158,7 +160,7 @@ let make_tag_ppf tnlm ppf =
     };
     out_funs = {
       ppf_tag_handler.out_funs with
-      f_out_newline = n_tag_out_newline;
+      out_newline = n_tag_out_newline;
     };
     mark_tags = true;
   } in

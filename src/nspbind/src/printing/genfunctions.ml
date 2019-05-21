@@ -361,7 +361,7 @@ let buffer_add_function_entries constructions is_gtk_class failed_tbl =
          else accu) [] constructions in
 
   let buffer_add_construction_entry f =
-    let entry =  ((String.lowercase f.is_constructor_of) ^ "_new" ) in
+    let entry =  ((String.lowercase_ascii f.is_constructor_of) ^ "_new" ) in
     let str = f.f_c_name in
     let l = String.length str in
     let new_ended = str.[l-1] = 'w' &&  str.[l-2] = 'e' &&  str.[l-3] = 'n' &&  str.[l-4] = '_' in
@@ -404,9 +404,9 @@ let buffer_add_function_entries constructions is_gtk_class failed_tbl =
 
 let buffer_add_create_entries prefix =
   let get_create_entry obj =
-    let name = String.lowercase obj.or_name in
+    let name = String.lowercase_ascii obj.or_name in
     Printf.sprintf "  { \"%s_create\", int_%s_create},\n"
-      (String.lowercase prefix) name  in
+      (String.lowercase_ascii prefix) name  in
   if List.length Stringarg.parser.objects <> 0 then
     List.iter
       (fun x -> Buffer.add_string b (get_create_entry x))

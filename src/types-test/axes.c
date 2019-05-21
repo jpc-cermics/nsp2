@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -523,11 +523,11 @@ int nsp_axes_latex(NspAxes *M, int use_math,const char *name, int rec_level)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),FALSE,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|title|=\\verb@\"%s\"@\n",M->obj->title);
+  Sciprintf1(indent+2,"\\verb|title|=\\verb@\"%s\"@\n",(M->obj->title==NULL) ? "NULL": M->obj->title);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|x|=\\verb@\"%s\"@\n",M->obj->x);
+  Sciprintf1(indent+2,"\\verb|x|=\\verb@\"%s\"@\n",(M->obj->x==NULL) ? "NULL": M->obj->x);
   Sciprintf1(2,"\\\\\n");
-  Sciprintf1(indent+2,"\\verb|y|=\\verb@\"%s\"@\n",M->obj->y);
+  Sciprintf1(indent+2,"\\verb|y|=\\verb@\"%s\"@\n",(M->obj->y==NULL) ? "NULL": M->obj->y);
   Sciprintf1(2,"\\\\\n");
   if ( M->obj->children != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),FALSE,"children", rec_level+1)== FALSE ) return FALSE ;

@@ -2165,7 +2165,7 @@ let init_nsp_generic_data fullname name shortname nsp_arg_type =
    ng_name = name;
    ng_fullname = fullname;
    ng_shortname = shortname;
-   ng_shortname_uc = (String.uppercase shortname);
+   ng_shortname_uc = (String.uppercase_ascii shortname);
    ng_nsp_arg_type = nsp_arg_type;
  }
 ;;
@@ -2186,11 +2186,11 @@ let nsp_generic_arg_write_param nsp_generic_data oname params info byref=
       if byref then
 	( (Printf.sprintf "  if (((%s *) self)->obj->%s != NULL ) \n" oname params.pname)  ^
 	  (Printf.sprintf "    nsp_%s_destroy(((%s *) self)->obj->%s);\n"
-	     ( String.lowercase nsp_generic_data.ng_name) oname params.pname))
+	     ( String.lowercase_ascii nsp_generic_data.ng_name) oname params.pname))
     else
 	( (Printf.sprintf "  if (((%s *) self)->%s != NULL ) \n"  oname params.pname)
 	  ^ (Printf.sprintf  "  nsp_%s_destroy(((%s *) self)->%s);\n"
-	       (String.lowercase nsp_generic_data.ng_name) oname params.pname))) in
+	       (String.lowercase_ascii nsp_generic_data.ng_name) oname params.pname))) in
   let codebefore = "" in
     (*
       ^ (Printf.sprintf "/*  %s << size %s*/\n" params.pname psize)
@@ -2272,7 +2272,7 @@ let nsp_generic_arg_attr_free_fields nsp_generic_data  _ptype pname varname byre
   let ind = if byref then  "  " else "" in
   ind ^ (Printf.sprintf "  if ( %s->%s != NULL ) \n"  varname pname )
   ^ ind ^ (Printf.sprintf "    nsp_%s_destroy(%s->%s);\n"
-	     (String.lowercase nsp_generic_data.ng_name) varname pname)
+	     (String.lowercase_ascii nsp_generic_data.ng_name) varname pname)
 ;;
 
 let nsp_generic_arg_attr_equal_fields _nsp_generic_data objinfo _varname params=
@@ -3144,7 +3144,7 @@ let void_pointer_arg_attr_write_load _varname params _byref=
 
 let void_pointer_arg_attr_write_copy objinfo params left_varname right_varname _f_copy_name =
   let slotname = (Printf.sprintf "%s.%s" objinfo.or_name  params.pname ) in
-  let cname = (String.lowercase objinfo.or_name); in
+  let cname = (String.lowercase_ascii objinfo.or_name); in
   if Overrides.is "override-field-void-pointer-copy" slotname then
     (* # user will have to provide a copy field function  *)
     let copy_fun = (Printf.sprintf "nsp_%s_%s_copy" cname  params.pname) in
@@ -3227,7 +3227,7 @@ let init_object_data objname name parent typecode =
    od_parent = parent;
    od_nsp_arg_type = typecode;
    od_shortname = name;
-   od_shortname_uc = (String.uppercase name);
+   od_shortname_uc = (String.uppercase_ascii name);
  }
 *)
 
@@ -3305,7 +3305,7 @@ let object_arg_write_param object_data _oname params info _byref=
       codebefore = code :: info.codebefore ;
     }
   else (* # remove nsp prefix in object_data.od_objname *)
-    let tn = String.lowercase object_data.od_objname in
+    let tn = String.lowercase_ascii object_data.od_objname in
     let tn = if (String.sub tn 0 3) = "nsp" then String.sub tn 3 ((String.length tn) -3) else tn in
     let ( varlist, code, info, pname ) =
       match params.pdflt with
@@ -3355,11 +3355,11 @@ let object_arg_attr_write_set object_data oname params info byref=
 	 (Printf.sprintf	"  if (((%s *) self)->obj->%s != NULL ) \n"
 	    oname params.pname)
 	 ^ (Printf.sprintf "    nsp_%s_destroy(((%s *) self)->obj->%s);\n"
-	      (String.lowercase object_data.od_name) oname params.pname)
+	      (String.lowercase_ascii object_data.od_name) oname params.pname)
        else
 	 (Printf.sprintf  "  if (((%s *) _self)->%s != NULL ) \n" oname params.pname)
 	 ^(Printf.sprintf"    nsp_%s_destroy(((%s *) self)->%s);\n"
-	     (String.lowercase object_data.od_name) oname params.pname)
+	     (String.lowercase_ascii object_data.od_name) oname params.pname)
       )
     ^ ((* #pos gives the position of the argument *)
       if params.psize <> "" then
@@ -3420,7 +3420,7 @@ let object_arg_attr_write_defval object_data _objinfo varname params =
   (Printf.sprintf "  if ( %s->%s == NULL) \n    {\n"  varname params.pname )
   ^ (Printf.sprintf
        "     if (( %s->%s = nsp_%s_create_default(\"%s\")) == NULL)\n       return FAIL;\n    }\n"
-       varname params.pname (String.lowercase object_data.od_name) params.pname)
+       varname params.pname (String.lowercase_ascii object_data.od_name) params.pname)
 ;;
 
 let object_arg_attr_write_copy   object_data _objinfo params left_varname right_varname _f_copy_name =
@@ -3491,7 +3491,7 @@ let gtk_object_arg_write_param object_data _oname params info _byref=
       codebefore = code :: info.codebefore ;
     }
   else (* # remove nsp prefix in object_data.od_objname *)
-    let tn = String.lowercase object_data.od_objname in
+    let tn = String.lowercase_ascii object_data.od_objname in
     let tn = if (String.sub tn 0 3) = "nsp" then String.sub tn 3 ((String.length tn) -3) else tn in
     let ( varlist, code, info, pname ) =
       match params.pdflt with
@@ -3519,7 +3519,7 @@ let gtk_object_arg_write_return object_data ptype ownsreturn info =
  let (_flag, ptype) = strip_type ptype in
  let varlist = varlist_add  info.varlist  ptype "*ret" in
  let varlist = varlist_add  varlist "NspObject" "*nsp_ret" in
- let name = String.lowercase object_data.od_objname in
+ let name = String.lowercase_ascii object_data.od_objname in
  let unref_code = if ownsreturn then "\n  g_object_unref(ret);" else "" in 									
  let codeafter =
    (* See genmethods.ml to see the difference between 
@@ -3550,7 +3550,7 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
      (
      if ownsreturn then
       (
-       let name = String.lowercase object_data.od_objname in
+       let name = String.lowercase_ascii object_data.od_objname in
        Printf.sprintf
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
 	 \n  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_%s))== NULL) return NULL;\
@@ -3559,7 +3559,7 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
       )
     else
       (
-       let name = String.lowercase object_data.od_objname in
+       let name = String.lowercase_ascii object_data.od_objname in
        Printf.sprintf
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
 	 \n  return (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_%s);"   name name name;
@@ -3569,7 +3569,7 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
      (
      if ownsreturn then
       (
-       let name = String.lowercase object_data.od_objname in
+       let name = String.lowercase_ascii object_data.od_objname in
        Printf.sprintf
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
 	 \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return NULL;\
@@ -3578,7 +3578,7 @@ let gtk_object_arg_attr_write_return object_data _objinfo ownsreturn params info
       )
     else
       (
-       let name = String.lowercase object_data.od_objname in
+       let name = String.lowercase_ascii object_data.od_objname in
        Printf.sprintf
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
 	 \n  return (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return NULL;" name name;
@@ -3625,14 +3625,14 @@ let nsp_object_arg_write_param nsp_generic_data oname params info byref=
 	(
 	 (Printf.sprintf "  if (((%s *) self)->obj->%s != NULL ) \n" oname params.pname)
 	 ^ (Printf.sprintf "    nsp_%s_destroy(&((%s *) self)->obj->%s);\n"
-	      (String.lowercase nsp_generic_data.ng_name) oname params.pname)
+	      (String.lowercase_ascii nsp_generic_data.ng_name) oname params.pname)
 	)
       else
 	(
 	 (Printf.sprintf "  if (((%s *) self)->%s != NULL ) \n" oname params.pname)
 	 ^  (Printf.sprintf
 	       "    nsp_%s_destroy(&((%s *) self)->%s);\n"
-	     (String.lowercase nsp_generic_data.ng_name) oname params.pname)
+	     (String.lowercase_ascii nsp_generic_data.ng_name) oname params.pname)
 	)
      )
     ^ (
@@ -4109,7 +4109,7 @@ let boxed_arg_write_return boxed_data ptype ownsreturn info =
      \n    return RET_BUG;\
      \n  MoveObj(stack,1,nsp_ret);\
      \n  return 1;"
-     boxed_data.bd_typecode ret tag ("nsp_type_" ^ (String.lowercase boxed_data.bd_typename)) in
+     boxed_data.bd_typecode ret tag ("nsp_type_" ^ (String.lowercase_ascii boxed_data.bd_typename)) in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
@@ -4126,7 +4126,7 @@ let boxed_arg_attr_write_return boxed_data _objinfo ownsreturn params info=
       "  /* nspg_boxed_new handles NULL checking */\
      \n  return (NspObject *) gboxed_create(NVOID,%s, %s, %s, TRUE,(NspTypeBase *) %s);"
   boxed_data.bd_typecode ret tag
-  ("nsp_type_" ^  (String.lowercase boxed_data.bd_typename)) in
+  ("nsp_type_" ^  (String.lowercase_ascii boxed_data.bd_typename)) in
   { info with varlist = varlist; attrcodeafter = attrcodeafter :: info.attrcodeafter ;}
 ;;
 
@@ -5136,7 +5136,7 @@ let register_object object_rec =
      od_parent = object_rec.or_parent;
      od_nsp_arg_type =  object_rec.or_typecode;
      od_shortname = object_rec.or_name;
-     od_shortname_uc = (String.uppercase object_rec.or_name);
+     od_shortname_uc = (String.uppercase_ascii object_rec.or_name);
    } in
   let arg =
     (* if od.od_parent = "GObject" then  *)

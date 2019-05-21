@@ -33,10 +33,10 @@ type error =
 
 (** The various errors when lexing. *)
 
-exception Error of error * Lexing.position * Lexing.position;;
+exception Lisp_error of error * Lexing.position * Lexing.position;;
 
 let error (reason, start_p, curr_p) =
-  raise (Error (reason, start_p, curr_p))
+  raise (Lisp_error (reason, start_p, curr_p))
 ;;
 
 (** {6 Explaining lexing errors} *)
@@ -52,7 +52,7 @@ let report_error ppf = function
 ;;
 
 let report_lexical_error ppf = function
-  | Error (r, sp, ep) ->
+  | Lisp_error (r, sp, ep) ->
     let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."

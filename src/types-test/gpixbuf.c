@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -369,7 +369,7 @@ int nsp_gpixbuf_print(NspGPixbuf *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"width=%f\n", M->obj->width);
   Sciprintf1(indent+2,"height=%f\n", M->obj->height);
   Sciprintf1(indent+2,"pixbuf=0x%x\n", M->obj->pixbuf);
-  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+  nsp_graphic_print((NspGraphic * ) M, indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -379,21 +379,44 @@ int nsp_gpixbuf_print(NspGPixbuf *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_gpixbuf_latex(NspGPixbuf *M, int indent,const char *name, int rec_level)
+int nsp_gpixbuf_latex(NspGPixbuf *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gpixbuf_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"src_x=%d\n", M->obj->src_x);
-  Sciprintf1(indent+2,"src_y=%d\n", M->obj->src_y);
-  Sciprintf1(indent+2,"dest_x=%f\n", M->obj->dest_x);
-  Sciprintf1(indent+2,"dest_y=%f\n", M->obj->dest_y);
-  Sciprintf1(indent+2,"width=%f\n", M->obj->width);
-  Sciprintf1(indent+2,"height=%f\n", M->obj->height);
-  Sciprintf1(indent+2,"pixbuf=0x%x\n", M->obj->pixbuf);
-  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
-  Sciprintf1(indent+1,"}\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gpixbuf_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
+  Sciprintf1(indent+2,"\\verb|src_x|= \\numprint{%d}\n",M->obj->src_x);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|src_y|= \\numprint{%d}\n",M->obj->src_y);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|dest_x| = \\numprint{%f}\n", M->obj->dest_x);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|dest_y| = \\numprint{%f}\n", M->obj->dest_y);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|width| = \\numprint{%f}\n", M->obj->width);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|height| = \\numprint{%f}\n", M->obj->height);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|pixbuf|= \\verb@0x%x@\n",M->obj->pixbuf);
+  Sciprintf1(2,"\\\\\n");
+  nsp_graphic_latex((NspGraphic * ) M, FALSE,NULL,rec_level);
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -778,4 +801,4 @@ static int nsp_getbounds_gpixbuf (NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 782 "gpixbuf.c"
+#line 805 "gpixbuf.c"

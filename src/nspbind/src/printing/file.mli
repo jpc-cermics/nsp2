@@ -4,7 +4,7 @@
 (*                                                                     *)
 (*          J.Ph Chancelier, Enpc/Cermics                              *)
 (*                                                                     *)
-(*  Copyright 2012-2015,                                               *)
+(*  Copyright 2012-2019,                                               *)
 (*  Ecole Nationale des ponts et chaussees                             *)
 (*  All rights reserved.                                               *)
 (*                                                                     *)
@@ -25,7 +25,7 @@ type file_output = {
 
 val file_output : file_output
 val set_ppf : Format.formatter -> unit
-val set_filenames : string -> string -> string -> unit (**)
+val set_filenames : string -> string -> string -> unit 
 val setline : int -> string -> unit
 val setline_override : int -> unit
 val resetline : unit -> unit

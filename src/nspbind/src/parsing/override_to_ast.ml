@@ -22,9 +22,9 @@ let parse lexbuf =
     Parsing.clear_parser();
     ast
   with
-  | Override_lexer.Error(Override_lexer.Unterminated_comment, _, _) as err -> raise err
-  | Override_lexer.Error(Override_lexer.Unterminated_string, _, _) as err -> raise err
-  | Override_lexer.Error(_, _, _) as err -> raise err
+  | Override_lexer.Lexer_error(Override_lexer.Unterminated_comment, _, _) as err -> raise err
+  | Override_lexer.Lexer_error(Override_lexer.Unterminated_string, _, _) as err -> raise err
+  | Override_lexer.Lexer_error(_, _, _) as err -> raise err
   | Override_syntaxerr.Error _ as err -> raise err
   | Parsing.Parse_error ->
       let loc1 =

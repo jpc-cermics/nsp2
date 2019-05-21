@@ -4,7 +4,7 @@
 (*                                                                     *)
 (*          J.Ph Chancelier, Enpc/Cermics                              *)
 (*                                                                     *)
-(*  Copyright 2012-2015,                                               *)
+(*  Copyright 2012-2019,                                               *)
 (*  Ecole Nationale des ponts et chaussees                             *)
 (*  All rights reserved.                                               *)
 (*                                                                     *)
@@ -23,13 +23,13 @@ type tag_new_line_markers = {
 val make_tag_printer : tag_new_line_markers ->
   'a Format_printer.printer -> 'a Format_printer.printer
 ;;
-(** A printer transformer: turn a printer (a function with type
+(* A printer transformer: turn a printer (a function with type
   [Format.formatter -> 'a -> unit]) into a printer with two semantic tags 
     defined m and n *) 
 
 val matlab_printer : 'a Format_printer.printer -> 'a Format_printer.printer
 ;;
-(** A printer transformer: turn a printer (a function with type
+(* A printer transformer: turn a printer (a function with type
   [Format.formatter -> 'a -> unit]) into a matlab end of line aware printer.
 
   The resulting printer uses semantic tags to handle end of lines: tag [m]

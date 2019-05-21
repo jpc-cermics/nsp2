@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -324,16 +324,35 @@ int nsp_epoints_print(NspEpoints *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_epoints_latex(NspEpoints *M, int indent,const char *name, int rec_level)
+int nsp_epoints_latex(NspEpoints *M, int use_math,const char *name, int rec_level)
 {
+  int indent=2;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)));
-  Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"ename=%s\n",M->obj->ename);
-  Sciprintf1(indent+2,"func=0x%x\n", M->obj->func);
-  Sciprintf1(indent+2,"shid=%d\n", M->obj->shid);
-  Sciprintf1(indent+1,"}\n");
+  if ( use_math ) Sciprintf("\\begin{equation*}\n");
+
+  if ( name != NULL || strcmp(NSP_OBJECT(M)->name,NVOID) != 0)
+    Sciprintf("\\verb|%s| = \\left\\{\n", pname);
+
+  else 
+    Sciprintf("\\left\{\n");
+
+  // Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)));
+  Sciprintf("\\begin{array}{l}");
+
+  Sciprintf1(indent+2,"\\verb|ename|=\\verb@\"%s\"@\n",(M->obj->ename==NULL) ? "NULL": M->obj->ename);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|func|= \\verb@0x%x@\n",M->obj->func);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+2,"\\verb|shid|= \\numprint{%d}\n",M->obj->shid);
+  Sciprintf1(2,"\\\\\n");
+  Sciprintf1(indent+1,"\n");
+  Sciprintf("\\end{array}\n");
+
+  Sciprintf("\\right.\n");
+
+  if ( use_math ) Sciprintf("\\end{equation*}\n");
+
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
@@ -678,4 +697,4 @@ NspSMatrix *nsp_epoints_find_by_shid(int shid)
   return Loc;
 }
 
-#line 682 "epoints.c"
+#line 701 "epoints.c"
