@@ -6,7 +6,7 @@
 (*                                                                     *)
 (*               EPI Pomdapi, INRIA Paris - Rocquencourt               *)
 (*                                                                     *)
-(*  Copyright (c) 1997-2015 INRIA.                                     *)
+(*  Copyright (c) 1997-2019 INRIA.                                     *)
 (*  Institut National de Recherche en Informatique et en Automatique.  *)
 (*  All rights reserved. This file is distributed only by permission.  *)
 (*                                                                     *)

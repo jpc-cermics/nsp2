@@ -1,5 +1,5 @@
 /* m1qn3
- * Copyright (C) 1998-2015 Jean Charles Gilbert, INRIA. 
+ * Copyright (C) 1998-2019 Jean Charles Gilbert, INRIA. 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

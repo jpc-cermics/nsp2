@@ -1,6 +1,6 @@
 /* 
  * some interpolation routines for Nsp 
- * Copyright (C) 2006-2015  Bruno Pincon
+ * Copyright (C) 2006-2019  Bruno Pincon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as      

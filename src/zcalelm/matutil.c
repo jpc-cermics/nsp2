@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2008-2015 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2008-2019 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1921,7 +1921,7 @@ void nsp_hilbert_inverse_matrix(double *a,int n)
 
 /*------------------------------------------------------------------------
  * next functions are copyrighted 
- *    Copyright (c) 1997-2015 by Inria Lorraine.  All Rights Reserved 
+ *    Copyright (c) 1997-2019 by Inria Lorraine.  All Rights Reserved 
  *    fleury - Jun 29, 1999: Created. 
  * modified by jpc for Nsp.
  *------------------------------------------------------------------------*/

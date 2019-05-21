@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2015 Bruno Pinçon
+ * Copyright (C) 2006-2019 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

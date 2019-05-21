@@ -4,7 +4,7 @@
 (*                                                                     *)
 (*          J.Ph Chancelier, Enpc/Cermics                              *)
 (*                                                                     *)
-(*  Copyright 2012-2015,                                               *)
+(*  Copyright 2012-2019,                                               *)
 (*  Ecole Nationale des ponts et chaussées                             *)
 (*  All rights reserved.                                               *)
 (*                                                                     *)

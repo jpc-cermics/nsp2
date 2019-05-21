@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -701,7 +701,7 @@ static int agrandir(double *xmin,double *xmax,double *xlow,double *xup)
  *   grads(1:ngrads) = linspace(xl, xu, ngrads)                 
  *   xl <= xminv, xu >= xmaxv;                                  
  *   If xminv<0 and xmaxv>0 one of the ticks is at zero.        
- *   Author/Copyright 1998-2015 François Delebecque.
+ *   Author/Copyright 1998-2019 François Delebecque.
  */
 
 int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads)

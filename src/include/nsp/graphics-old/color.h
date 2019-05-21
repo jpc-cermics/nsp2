@@ -2,7 +2,7 @@
 #define SCI_DEF_COL_OLD
 /*------------------------------------------------------------------------
  *    Graphic library
- *    Copyright (C) 1998-2015 Enpc/Jean-Philippe Chancelier
+ *    Copyright (C) 1998-2019 Enpc/Jean-Philippe Chancelier
  *    jpc@cereve.enpc.fr 
  --------------------------------------------------------------------------*/
 #define GREYNUMBER 17

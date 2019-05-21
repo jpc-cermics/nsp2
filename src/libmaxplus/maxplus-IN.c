@@ -1,6 +1,6 @@
 /* 
  * Maxplus interface 
- * Copyright (C) 2005-2015 Gaubert, Quadrat, Chancelier Inria/Enpc 
+ * Copyright (C) 2005-2019 Gaubert, Quadrat, Chancelier Inria/Enpc 
  *
  *
  * This library is free software; you can redistribute it and/or

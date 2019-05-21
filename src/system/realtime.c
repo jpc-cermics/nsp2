@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2003-2015 Inria Enpc
+ * Copyright (C) 2003-2019 Inria Enpc
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

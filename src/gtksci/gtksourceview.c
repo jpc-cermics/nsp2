@@ -21,7 +21,7 @@
  *  This file is a modified version of the test-widget.c file of gtksourceview
  *  with added functionality for nsp. Some of them inherited from testext.c demo file
  *  from the gtk distribution (see gtktextview.c).
- *  Copyright (C) 2010-2015 Jean-Philippe Chancelier Enpc/Cermics
+ *  Copyright (C) 2010-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  */
 
