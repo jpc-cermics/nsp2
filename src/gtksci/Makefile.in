@@ -16,10 +16,9 @@ WEBKIT2_OBJS= BrowserCellRendererVariant.o \
 	BrowserSettingsDialog.o \
 	BrowserWindow.o \
 
-OBJSC =	command.o  io.o \
-	menus.o  x_main.o \
+OBJSC =	command.o  io.o  menus.o  x_main.o \
 	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
-	testtext1.o edit.o @RC_FILE@ eggfindbar.o threads.o
+	testtext1.o edit.o @RC_FILE@ threads.o
 
 OBJSF  = 
 

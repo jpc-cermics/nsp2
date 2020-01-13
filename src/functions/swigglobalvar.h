@@ -82,7 +82,7 @@ static int nsp_swigglobalvar_eq(NspSwigGlobalVar *A, NspObject *B);
 static int nsp_swigglobalvar_neq(NspSwigGlobalVar *A, NspObject *B);
 static int nsp_swigglobalvar_xdr_save(XDR  *xdrs, NspSwigGlobalVar *M);
 static NspSwigGlobalVar *nsp_swigglobalvar_xdr_load(XDR *xdrs);
-static AttrTab swigglobalvar_attrs[];
+/* static AttrTab swigglobalvar_attrs[]; */
 static NspMethods *swigglobalvar_get_methods(void);
 static int int_swigglobalvar_create(Stack stack, int rhs, int opt, int lhs);
 static NspSwigGlobalVar *swigglobalvar_create_void(const char *name,NspTypeBase *type);

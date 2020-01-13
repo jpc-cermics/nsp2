@@ -360,7 +360,7 @@ static int matrix_neq(NspObject *A,NspObject *B);
 static int matrix_eq(NspObject *A,NspObject *B);
 static int matrix_xdr_save(XDR *xdrs, NspMatrix *M);
 static NspMatrix  *matrix_xdr_load(XDR  *F);
-static AttrTab matrix_attrs[];
+/* static AttrTab matrix_attrs[]; */
 static NspMethods *matrix_get_methods(void); 
 /*static NspObject *matrix_path_extract(NspMatrix *A, NspObject *O); */
 static int matrix_is_true(NspMatrix *M);

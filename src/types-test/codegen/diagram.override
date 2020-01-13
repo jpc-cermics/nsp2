@@ -80,7 +80,7 @@ static char *nsp_diagram_type_short_string(NspObject *v);
 static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
 static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
-static AttrTab nsp_diagram_attrs[];
+static AttrTab diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy_and_name(NspList *L,int hilited_only);
 

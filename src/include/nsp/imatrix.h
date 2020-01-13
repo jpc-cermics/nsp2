@@ -440,7 +440,7 @@ static int imatrix_eq(NspIMatrix *A, NspObject *B);
 static int imatrix_neq(NspIMatrix *A, NspObject *B);
 static int imatrix_xdr_save(XDR  *xdrs, NspIMatrix *M);
 static NspIMatrix  *imatrix_xdr_load(XDR  *F);
-static AttrTab imatrix_attrs[];
+/* static AttrTab imatrix_attrs[]; */
 static NspMethods *imatrix_get_methods(void); 
 /*static NspObject *imatrix_path_extract(NspIMatrix *A, NspObject *O); */
 static int imatrix_is_true(NspIMatrix *M);

@@ -233,7 +233,7 @@ static int mpmatrix_neq(NspObject *A,NspObject *B);
 static int mpmatrix_eq(NspObject *A,NspObject *B);
 static int mpmatrix_xdr_save(XDR  *F, NspMaxpMatrix *M);
 static NspMaxpMatrix  *mpmatrix_xdr_load(XDR  *F);
-static AttrTab mpmatrix_attrs[];
+/* static AttrTab mpmatrix_attrs[]; */
 static NspMethods *mpmatrix_get_methods(void); 
 /*static NspObject *mpmatrix_path_extract(NspMaxpMatrix *A, NspObject *O); */
 static int mpmatrix_is_true(NspMaxpMatrix *M);

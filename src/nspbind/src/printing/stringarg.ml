@@ -2519,7 +2519,7 @@ let nsp_mat_copy_arg =
   }
 ;;
 
-(* nsp_double_array_arg *)
+(* nsp_double_array_arg "double[]" : arguments are expected to be real matrices *)
 
 let nsp_double_array_arg_write_param_gen params info nsp_type _byref =
   let varlist =
@@ -2529,12 +2529,18 @@ let nsp_double_array_arg_write_param_gen params info nsp_type _byref =
     | Some x ->
 	varlist_add info.varlist "zzdouble"  ("*" ^ params.pname ^ " = " ^ x) in
   let info = add_parselist info params.pvarargs nsp_type ["&" ^ params.pname]  [params.pname] in
-  let codebefore =
-    Printf.sprintf "  if ( ! IsMat(O) \n" ^
-    Printf.sprintf "       || ((NspMatrix *) O)->rc_type != 'r' \n" ^
-    Printf.sprintf "       || ((NspMatrix *) O)->mn != %s ) \n" params.psize  ^
-    Printf.sprintf "     return FAIL;\n" ^
-    Printf.sprintf "  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n" params.pname params.psize in
+  (* this is useless since the matrix is obtained with the nsp_type set to "realmat" 
+    let codebefore =
+    Printf.sprintf "  if ( ! IsMat(%s) " params.pname ^
+    Printf.sprintf "  || ((NspMatrix *) %s)->rc_type != 'r' " params.pname ^ 
+    (if params.psize = "" then 
+       ")\n" 
+     else
+       Printf.sprintf " || ((NspMatrix *) %s)->mn != [%s] ) \n" params.pname params.psize) ^
+    Printf.sprintf "     return FAIL;\n" in 
+   *)
+  let codebefore = "" in 
+  (*   Printf.sprintf "  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n" params.pname params.psize in *)
   { info with
     arglist = ( params.pname ^ "->R")  :: info.arglist;
     varlist = varlist ;
@@ -2667,12 +2673,9 @@ let nsp_complex_array_arg_write_param_gen  params info nsp_type _byref =
     | Some x ->
 	varlist_add info.varlist "zzdouble"  ("*" ^ params.pname ^ " = " ^ x ) in
   let info = add_parselist info params.pvarargs nsp_type  ["&" ^ params.pname]  [params.pname] in
+  (* we only need to check that the matrix is comples since the matrix is obtained with the nsp_type set to "mat" *)
   let codebefore =
-    Printf.sprintf "  if ( ! IsMat(O) \n" ^
-    Printf.sprintf "       || ((NspMatrix *) O)->rc_type != \"c\" \n" ^
-    Printf.sprintf "       || ((NspMatrix *) O)->mn != %s ) \n"  params.psize ^
-    Printf.sprintf "     return FAIL;\n" ^
-    Printf.sprintf "  memcpy(%s, ((NspMatrix *) O)->C,%s*sizeof(doubleC));\n" params.pname params.psize in
+    Printf.sprintf "  if ((NspMatrix *) %s)->rc_type != \"c\" ) return FAIL;\n" params.pname  in 
   { info with
     arglist = ( params.pname ^ "->C")  :: info.arglist;
     varlist = varlist ;

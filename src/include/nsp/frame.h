@@ -139,7 +139,7 @@ static int nsp_frame_neq(NspFrame *A, NspObject *B);
 static int nsp_frame_xdr_save(XDR *xdrs, NspFrame *M);
 static NspFrame  *nsp_frame_xdr_load(XDR *xdrs);
 */
-static AttrTab frame_attrs[];
+/* static AttrTab frame_attrs[]; */
 static NspMethods *frame_get_methods(void); 
 /* static int int_frame_create(Stack stack, int rhs, int opt, int lhs); */
 #endif /* Frame_Private */

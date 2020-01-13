@@ -104,7 +104,7 @@ static int nsp_serial_eq(NspSerial *A, NspObject *B);
 static int nsp_serial_neq(NspSerial *A, NspObject *B);
 static int nsp_serial_xdr_save(XDR *xdrs, NspSerial *M);
 static NspSerial  *nsp_serial_xdr_load(XDR *xdrs);
-static AttrTab serial_attrs[];
+/* static AttrTab serial_attrs[]; */
 static NspMethods *serial_get_methods(void); 
 /* static int int_serial_create(Stack stack, int rhs, int opt, int lhs); */
 #endif /* Serial_Private */

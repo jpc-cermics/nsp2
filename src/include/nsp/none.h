@@ -53,7 +53,7 @@ static int nsp_none_eq(NspNone *A, NspObject *B);
 static int nsp_none_neq(NspNone *A, NspObject *B);
 static int nsp_none_xdr_save(XDR  *F, NspNone *M);
 static NspNone  *nsp_none_xdr_load(XDR  *F);
-static AttrTab none_attrs[];
+/* static AttrTab none_attrs[]; */
 static NspMethods *nsp_none_get_methods(void); 
 static NspObject *nsp_none_path_extract(NspNone *A,int n, NspObject **Objs, int *copy);
 #endif /* None_Private */

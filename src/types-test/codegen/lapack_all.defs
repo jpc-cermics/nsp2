@@ -2,6 +2,7 @@
 ; object definitions ...
 ;; Enumerations and flags ...
 
+(include "lapack_all-types.defs")
 
 ;; From lapack-c1.h
 
@@ -4098,7 +4099,7 @@
     '("int*" "ldt")
     '("doubleC[]" "y")
     '("int*" "ldy")
-  )
+    )
 )
 
 (define-function zlaic1

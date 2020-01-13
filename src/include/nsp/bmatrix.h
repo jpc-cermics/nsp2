@@ -154,7 +154,7 @@ static int bmatrix_eq(NspBMatrix *A, NspObject *B);
 static int bmatrix_neq(NspBMatrix *A, NspObject *B);
 static int bmatrix_xdr_save(XDR  *xdrs, NspBMatrix *M);
 static NspBMatrix  *bmatrix_xdr_load(XDR  *F);
-static AttrTab bmatrix_attrs[];
+/* static AttrTab bmatrix_attrs[];*/
 static NspMethods *bmatrix_get_methods(void); 
 /*static NspObject *bmatrix_path_extract(NspBMatrix *A, NspObject *O); */
 static int bmatrix_is_true(NspBMatrix *M);
