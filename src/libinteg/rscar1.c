@@ -3,13 +3,10 @@
 #define lsa001_1 lsa001_._3
 #define lsr001_1 lsr001_._3
 
-struct
+extern struct
 {
   int ieh[2];
-} eh0001_;
-
-#define eh0001_1 eh0001_
-
+} integ_eh0001;
 
 /* 
  *this routine restores from rsav and isav the contents of common 
@@ -52,8 +49,8 @@ int nsp_ode_rscar1 (double *rsav, double *isav)
       lsr001_1.ilsr[i] = (int) isav[l + i];
     }
   l += lenilr;
-  eh0001_1.ieh[0] = (int) isav[l];
-  eh0001_1.ieh[1] = (int) isav[l+1];
+  integ_eh0001.ieh[0] = (int) isav[l];
+  integ_eh0001.ieh[1] = (int) isav[l+1];
   return 0;
 }		
 

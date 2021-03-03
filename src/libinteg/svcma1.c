@@ -3,13 +3,10 @@
 
 #define lsa001_1 lsa001_._3
 
-struct
+extern struct
 {
   int ieh[2];
-} eh0001_;
-
-#define eh0001_1 eh0001_
-
+} integ_eh0001;
 
 /* 
  * this routine stores in rsav and isav the contents of common blocks 
@@ -54,8 +51,8 @@ int nsp_ode_svcma1 (double *rsav, double *isav)
       isav[lenils + i] = (double) lsa001_1.ilsa[i];
     }
 
-  isav[lenils + lenila] = (double) eh0001_1.ieh[0];
-  isav[lenils + lenila + 1] = (double) eh0001_1.ieh[1];
+  isav[lenils + lenila] = (double) integ_eh0001.ieh[0];
+  isav[lenils + lenila + 1] = (double) integ_eh0001.ieh[1];
   return 0;
 }	
 

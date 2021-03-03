@@ -2,12 +2,10 @@
 
 
 
-struct
+extern struct
 {
   int ieh[2];
-} eh0001_;
-
-#define eh0001_1 eh0001_
+} integ_eh0001;
 
 /*
  *this routine stores in rsav and isav the contents of common blocks 
@@ -34,8 +32,8 @@ int nsp_ode_svcom1 (double *rsav, double *isav)
       isav[i] = (double) ls0001_._3.ils[i];
     }
 
-  isav[lenils] = (double) eh0001_1.ieh[0];
-  isav[lenils+1] = (double) eh0001_1.ieh[1];
+  isav[lenils] = (double) integ_eh0001.ieh[0];
+  isav[lenils+1] = (double) integ_eh0001.ieh[1];
   return 0;
 }		
 

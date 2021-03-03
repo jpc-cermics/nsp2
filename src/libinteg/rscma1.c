@@ -6,12 +6,11 @@
  
 #define lsa001_1 lsa001_._3
 
-struct
+extern struct
 {
   int ieh[2];
-} eh0001_;
+} integ_eh0001;
 
-#define eh0001_1 eh0001_
 
 /*
  *this routine restores from rsav and isav the contents of common 
@@ -56,8 +55,8 @@ int nsp_ode_rscma1 (double *rsav, double *isav)
     {
       lsa001_1.ilsa[i] = (int) isav[lenils + i];
     }
-  eh0001_1.ieh[0] = (int) isav[lenils + lenila];
-  eh0001_1.ieh[1] = (int) isav[lenils + lenila + 1];
+  integ_eh0001.ieh[0] = (int) isav[lenils + lenila];
+  integ_eh0001.ieh[1] = (int) isav[lenils + lenila + 1];
   return 0;
 }	
 

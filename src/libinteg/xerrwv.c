@@ -26,9 +26,9 @@
 #include "nsp/interf.h"
 #include "integ.h"
 
-struct {
+extern struct {
     int mesflg, lunit;
-} C2F(eh0001);
+} integ_eh0001;
 
 
 /*----------------------------------------------------------------------- 
@@ -76,7 +76,7 @@ struct {
 int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, int *i2, 
 		int *nr, double *r1, double *r2, unsigned int  msg_len)
 {
-  if (C2F(eh0001).mesflg !=  0) 
+  if (integ_eh0001.mesflg !=  0) 
     {
       int i;
       for (i=0; i < msg_len ; i++) Scierror("%c",msg[i]);
@@ -111,7 +111,7 @@ int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, in
 int C2F(xerrwvb)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, int *i2, 
 		int *nr, double *r1, double *r2, unsigned int  msg_len)
 {
-  if (C2F(eh0001).mesflg !=  0) 
+  if (integ_eh0001.mesflg !=  0) 
     {
       int i;
       for (i=0; i < msg_len ; i++) Sciprintf("%c",msg[i]);
@@ -160,6 +160,6 @@ int C2F(xsetun)(int *lun)
 int C2F(xsetf)(int *mflag)
 {
   /* this routine resets the print control flag mflag */
-  if ( *mflag == 0 || *mflag == 1) C2F(eh0001).mesflg = *mflag;
+  if ( *mflag == 0 || *mflag == 1) integ_eh0001.mesflg = *mflag;
   return 0;
 }

@@ -64,9 +64,9 @@ struct _ode_data
 
 static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0}; 
 
-extern struct {
+struct {
   int mesflg, lunit;
-} C2F(eh0001);
+} integ_eh0001;
 
 /**
  * ode_clean:
@@ -672,7 +672,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
     }
 
   ierode_1.iero = 0;
-  C2F(eh0001).mesflg = warn ;
+  integ_eh0001.mesflg = warn ;
 
   /* loop on time */
   if ( task == 1 )     /* in this case the solver should output the solution at specified times */

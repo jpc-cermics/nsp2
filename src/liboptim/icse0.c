@@ -22,7 +22,7 @@
 
 /* Common Block Declarations */
 
-struct
+extern struct
 {
   double t00, tf0, dti0, dtf0, ermx0;
   int iu0[5], nuc0, nuv0, ilin0, nti0, ntf0, ny0, nea0, itmx0, nex0, nob0,
@@ -31,7 +31,7 @@ struct
 
 #define icsez_1 icsez_
 
-struct
+extern struct
 {
   int nitv0, nrtv0, ndtv0;
 } nird_;
