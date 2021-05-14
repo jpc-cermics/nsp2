@@ -553,7 +553,7 @@ static int int_bet_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
       for ( i=0, ia=0, ib=0 ; i < M->mn ; i++, ia+=inca, ib+=incb) 
 	{
 	  if ( ! (A->R[ia] > 0.0  &&  B->R[ib] > 0.0) ) goto err;
-	  nsp_rand_beta_direct(A->R[ia], B->R[ib]);
+	  M->R[i]=nsp_rand_beta_direct(A->R[ia], B->R[ib]);
 	}
     }
   MoveObj(stack,1,(NspObject *) M);
