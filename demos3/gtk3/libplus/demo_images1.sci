@@ -25,30 +25,30 @@ function demo_images1()
   window.add[  vbox]
 
   function [image,ok]=demo_image_from_file(fname)
-    ok=execstr('image= gtk_image_new('"file'',fname)',errcatch=%t);
+    ok=execstr('image= gtk_image_new(''file'',fname)',errcatch=%t);
   endfunction
 
-  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif";
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with gif file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.png";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.png';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with png file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xpm";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xpm';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with xpm file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.svg";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.svg';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with svg image",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.jpg";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.jpg';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with jpg image",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xxx";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xxx';
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtk_image_new(''file'',.) with unknown extension)",vbox)
 
@@ -70,26 +70,30 @@ function demo_images2()
     image=[];
     ok = execstr('pixbuf= gdk_pixbuf_new_from_file(fname)',errcatch=%t);
     if ~ok then return;end
-    ok = execstr('image = gtk_image_new('"pixbuf"',pixbuf);',errcatch=%t);
+    ok = execstr('image = gtk_image_new(''pixbuf'',pixbuf);',errcatch=%t);
   endfunction
 
-  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif";
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif';
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with gif file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.png";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.png';
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with png file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xpm";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xpm';
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with xpm file",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.svg";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.svg';
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with svg image",vbox)
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xxx";
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.jpg';
+  [image,ok]=demo_image_from_pixbuf(fname)
+  demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with jpg image",vbox)
+
+  fname = getenv('NSP')+'/demos3/gtk3/libplus/nsp.xxx';
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtk_image_new(''pixbuf'',.) with unknown extension)",vbox)
 
