@@ -85,9 +85,9 @@ let push_back lexbuf c =
     if lexbuf.lex_curr_pos = 0 then
       (* The buffer was flushed so we need to really push back `c' in the
          buffer.  *)
-      (lexbuf.lex_buffer <- (String.make 1 c) ^ lexbuf.lex_buffer;
+      (lexbuf.lex_buffer <- Bytes.of_string ((String.make 1 c) ^ (Bytes.to_string  lexbuf.lex_buffer));
        lexbuf.lex_buffer_len <- lexbuf.lex_buffer_len + 1);
-
+       
     (* Now `c' is in the buffer, simply change the current positions.  *)
     (* Perform some sanity checks:
        1. The buffer_len can't be 0 since our `c' must still be in it.
@@ -176,11 +176,11 @@ let reset_string_buffer () =
 ;;
 
 let store_string_char c =
-  if !string_index >= String.length (!string_buff) then begin
+  if !string_index >= Bytes.length (!string_buff) then begin
     if true then  prerr_endline 
       (Printf.sprintf "Buffer size increased");
-    let new_buff = Bytes.create (String.length (!string_buff) * 2) in
-      String.blit (!string_buff) 0 new_buff 0 (String.length (!string_buff));
+    let new_buff = Bytes.create (Bytes.length (!string_buff) * 2) in
+      Bytes.blit (!string_buff) 0 new_buff 0 (Bytes.length (!string_buff));
       string_buff := new_buff
   end;
   Bytes.unsafe_set (!string_buff) (!string_index) c;
@@ -194,7 +194,7 @@ let store_string s =
 ;;
 
 let get_stored_string () =
-  let s = String.sub (!string_buff) 0 (!string_index) in
+  let s = String.sub (Bytes.to_string (!string_buff)) 0 (!string_index) in
   string_buff := initial_string_buffer;
   s
 ;;

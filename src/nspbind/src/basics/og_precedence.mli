@@ -4,9 +4,9 @@
 (*                                                                     *)
 (*                       OCaml module Generator                        *)
 (*                                                                     *)
-(*               EPI Pomdapi, INRIA Paris - Rocquencourt               *)
+(*                       EPI Serena, INRIA Paris                       *)
 (*                                                                     *)
-(*  Copyright (c) 1997-2015 INRIA.                                     *)
+(*  Copyright (c) 1997-2018 INRIA.                                     *)
 (*  Institut National de Recherche en Informatique et en Automatique.  *)
 (*  All rights reserved. This file is distributed only by permission.  *)
 (*                                                                     *)
@@ -18,8 +18,9 @@
 
 (* $Id$ *)
 
-(** {3 OCamlGen precedences}
+(** {3 OCamlGen precedences} *)
 
+(**
  The data type definitions for precedences used by pretty-printers or
  readers provided by and generated with OCamlGen.
 
@@ -28,17 +29,24 @@
 
  OCamlGen provides pretty-printers or readers for values of any predefined
  OCaml type:
- * values of basic monomorphic type such as bool, string or numbers;
- * values of basic polymorphic type such as couple, list, array, or format.
+ * values of basic monomorphic type such as bool, string, char, or number
+ types;
+ * values of basic polymorphic type such as ref, option, list, array and
+ tuple types.
 
- Type [enclosing_mode] specifies the enclosing mode needed by pretty-printers
- or readers for each type.
+ Type [enclosing_mode] specifies usage of delimiters around expression items.
+ When a generated pretty-printer or reader should treat an item, it should
+ print or read the item so as the item is either:
+ - always enclosed with parens,
+ - never enclosed with parens,
+ - enclosed with parens in some context.
 
  Type [context_kind] is used to specify the context in which pretty-printers
  or readers are used (both provided and generated).
 
- The comparison function [must_parenthesize] specifies the behavior of each
- [enclosing_mode] in each [context_kind] for OCaml syntax. *)
+ The comparison function [use_delimiters] specifies the behavior of each
+ [enclosing_mode] in each [context_kind] for OCaml syntax.
+*)
 
 type enclosing_mode =
   | Em_do_close
@@ -46,10 +54,10 @@ type enclosing_mode =
       (i.e. matching parens for expressions, matching brackets for list,
        matching bracket bars for array, or matching braces for record). *)
   | Em_tuple
-    (** Item is a tuple, it could be enclosed or not within parens according to
-      the context. *)
+    (** Item is a tuple, it must be enclosed or not within parens according
+      to the context. *)
   | Em_application
-    (** Item is a function application, it could be enclosed within parens
+    (** Item is a function application, it must be enclosed within parens
       or not, according to the context. *)
   | Em_do_not_close
     (** Item is an expression that is intrinsically closed, parentheses are
@@ -69,7 +77,7 @@ type context_kind =
     (** All context dependent parens must be written. *)
 ;;
 
-val must_parenthesize : enclosing_mode -> context_kind -> bool;;
+val use_delimiters : enclosing_mode -> context_kind -> bool;;
 
 val string_of_enclosing_mode : enclosing_mode -> string;;
 val string_of_context_kind : context_kind -> string;;

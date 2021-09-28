@@ -294,35 +294,35 @@ let remove efname =
 ;;
 
 let path_open_in kfind open_in fname =
-  if fname = std_io_file_name then Pervasives.stdin else
+  if fname = std_io_file_name then Stdlib.stdin else
   kfind open_in fname
 ;;
 
-let open_in = path_open_in kfind Pervasives.open_in;;
-let open_in_bin = path_open_in kfind Pervasives.open_in_bin;;
+let open_in = path_open_in kfind Stdlib.open_in;;
+let open_in_bin = path_open_in kfind Stdlib.open_in_bin;;
 
 let identity x = x;;
 
-let open_explicit_in = path_open_in identity Pervasives.open_in;;
-let open_explicit_in_bin = path_open_in identity Pervasives.open_in_bin;;
+let open_explicit_in = path_open_in identity Stdlib.open_in;;
+let open_explicit_in_bin = path_open_in identity Stdlib.open_in_bin;;
 
 let path_open_out kfind open_out fname =
-  if fname = std_io_file_name then Pervasives.stdout else
+  if fname = std_io_file_name then Stdlib.stdout else
   kfind open_out fname
 ;;
 
-let open_out = path_open_out kfind Pervasives.open_out;;
-let open_out_bin = path_open_out kfind Pervasives.open_out_bin;;
+let open_out = path_open_out kfind Stdlib.open_out;;
+let open_out_bin = path_open_out kfind Stdlib.open_out_bin;;
 
-let open_explicit_out = path_open_out identity Pervasives.open_out;;
-let open_explicit_out_bin = path_open_out identity Pervasives.open_out_bin;;
+let open_explicit_out = path_open_out identity Stdlib.open_out;;
+let open_explicit_out_bin = path_open_out identity Stdlib.open_out_bin;;
 
 let close_in ic =
-  if ic != stdin then Pervasives.close_in ic
+  if ic != stdin then Stdlib.close_in ic
 ;;
 
 let close_out oc =
-  if oc != stdout then Pervasives.close_out oc
+  if oc != stdout then Stdlib.close_out oc
 ;;
 
 let path_with_in_file open_in fname f =

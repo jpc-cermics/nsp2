@@ -44,7 +44,7 @@ let set_lexbuf_filename_positions fname lexbuf =
 ;;
 
 let lexing_from_file fname =
-  let ic = Pervasives.open_in fname in
+  let ic = Stdlib.open_in fname in
   let lexbuf = Lexing.from_channel ic in
   set_lexbuf_filename_positions fname lexbuf;
   ic, lexbuf
