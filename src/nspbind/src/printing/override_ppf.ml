@@ -60,7 +60,7 @@ type tag_new_line_markers = {
 ;;
 
 type tag_handler = {
-  tag_funs : formatter_tag_functions;
+  tag_funs : formatter_stag_functions;
   out_funs : formatter_out_functions;
   mark_tags : bool;
 }
@@ -68,7 +68,7 @@ type tag_handler = {
 
 let set_tag_handler ppf h =
 (*  prerr_endline "Setting the tag handler to a ppf argument";*)
-  pp_set_formatter_tag_functions ppf h.tag_funs;
+  pp_set_formatter_stag_functions ppf h.tag_funs;
   pp_set_formatter_out_functions ppf h.out_funs;
   pp_set_mark_tags ppf h.mark_tags;
 ;;
@@ -76,7 +76,7 @@ let set_tag_handler ppf h =
 let get_tag_handler ppf =
 (*  prerr_endline "Getting the tag handler of a ppf argument";*)
  {
-   tag_funs = pp_get_formatter_tag_functions ppf ();
+   tag_funs = pp_get_formatter_stag_functions ppf ();
    out_funs = pp_get_formatter_out_functions ppf ();
    mark_tags = pp_get_mark_tags ppf ();
  }
@@ -112,38 +112,38 @@ let make_tag_ppf tnlm ppf =
       tnlm.n_tag_new_line 0 (String.length tnlm.m_tag_new_line) in
 
   let rec m_tag_mark_open_tag = function
-    | "m" | "" ->
+    | String_tag "m" | String_tag "" ->
       push_tag_handler (get_tag_handler ppf);
       set_tag_handler ppf m_tag_tag_handler;
-(*      "(.m_tag." *)
+      (*      "(.m_tag." *)
       ""
-    | "n" ->
+    | String_tag "n" ->
       push_tag_handler (get_tag_handler ppf);
       set_tag_handler ppf n_tag_tag_handler;
 (*      "(.n_tag." *)
       ""
-    | tag -> ppf_tag_handler.tag_funs.mark_open_tag tag
+    | tag -> ppf_tag_handler.tag_funs.mark_open_stag tag
 
   and m_tag_mark_close_tag = function
-    | "m" | "" ->
+    | String_tag "m" | String_tag "" ->
       let ppf_tag_handler = top_tag_handler () in
       set_tag_handler ppf ppf_tag_handler;
       pop_tag_handler ();
-(*      ".m_tag.)" *)
+      (*      ".m_tag.)" *)
       ""
-    | "n" ->
+    | String_tag "n" ->
       let ppf_tag_handler = top_tag_handler () in
       set_tag_handler ppf ppf_tag_handler;
       pop_tag_handler ();
 (*      ".n_tag.)" *)
       ""
-    | tag -> ppf_tag_handler.tag_funs.mark_close_tag tag
+    | tag -> ppf_tag_handler.tag_funs.mark_close_stag tag
 
   and m_tag_tag_handler = {
     tag_funs = {
       ppf_tag_handler.tag_funs with
-      mark_open_tag = m_tag_mark_open_tag;
-      mark_close_tag = m_tag_mark_close_tag;
+      mark_open_stag = m_tag_mark_open_tag;
+      mark_close_stag = m_tag_mark_close_tag;
     };
     out_funs = {
       ppf_tag_handler.out_funs with
@@ -155,8 +155,8 @@ let make_tag_ppf tnlm ppf =
   and n_tag_tag_handler = {
     tag_funs = {
       ppf_tag_handler.tag_funs with
-      mark_open_tag = m_tag_mark_open_tag;
-      mark_close_tag = m_tag_mark_close_tag;
+      mark_open_stag = m_tag_mark_open_tag;
+      mark_close_stag = m_tag_mark_close_tag;
     };
     out_funs = {
       ppf_tag_handler.out_funs with
@@ -165,7 +165,7 @@ let make_tag_ppf tnlm ppf =
     mark_tags = true;
   } in
 
-  pp_set_formatter_tag_functions ppf m_tag_tag_handler.tag_funs;
+  pp_set_formatter_stag_functions ppf m_tag_tag_handler.tag_funs;
   pp_set_mark_tags ppf m_tag_tag_handler.mark_tags;
   ppf
 ;;
