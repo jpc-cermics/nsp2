@@ -32,15 +32,17 @@ n=4;m=3;
 //A and B full
 A=testmat1(2.5,n);C=rand(n,m);B=testmat1(0.3,m);
 
+// check that wrong calls are detected 
 if execstr('X = linmeq(5,A,B,C)',errcatch=%t)==%t then pause,end; lasterror();
 if execstr('X = linmeq(1,A,B)',errcatch=%t)==%t then pause,end; lasterror();
 if execstr('X = linmeq(1,rand(3,3),B,C)',errcatch=%t)==%t then pause,end; lasterror();
 if execstr('X = linmeq(1,rand(4,3),B,C)',errcatch=%t)==%t then pause,end; lasterror();
 if execstr('X = linmeq(1,A,rand(3,2),C)',errcatch=%t)==%t then pause,end; lasterror();
 if execstr('X = linmeq(1,A,B,rand(m,n))',errcatch=%t)==%t then pause,end; lasterror();
- 
-if execstr('X = linmeq(1,A,B,C,[0,0,0],8)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,A,B,C,[0,0,0],0,4)',errcatch=%t)==%t then pause,end
+
+if execstr('X = linmeq(1,A,B,C,[0,0,0],8)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,A,B,C,[0,0,0],0,4)',errcatch=%t)==%t then pause,end; lasterror();
+
 flag=[0,0,0];  
 X = linmeq(1,A,B,C);
 if norm(A*X+X*B-C,1)>1000*%eps then pause,end
@@ -321,14 +323,15 @@ if norm(A*X+X*B-C,1)>100000*%eps then pause,end
 n=4;m=3;
 //A and B full
 A=testmat1(2.5,n);C=rand(n,m);B=testmat1(0.3,m);flag=[1,0,0];
-if execstr('X = linmeq(5,A,B,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,rand(3,3),B,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,rand(4,3),B,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,A,rand(3,2),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,A,B,rand(m,n),flag)',errcatch=%t)==%t then pause,end
+// check that wrong calls are detected 
+if execstr('X = linmeq(5,A,B,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,rand(3,3),B,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,rand(4,3),B,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,A,rand(3,2),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,A,B,rand(m,n),flag)',errcatch=%t)==%t then pause,end; lasterror();
  
-if execstr('X = linmeq(1,A,B,C,flag,8)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(1,A,B,C,flag,0,4)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(1,A,B,C,flag,8)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(1,A,B,C,flag,0,4)',errcatch=%t)==%t then pause,end; lasterror();
 
 X = linmeq(1,A,B,C,flag);
 if norm(A*X*B+X-C,1)>1000*%eps then pause,end
@@ -600,17 +603,19 @@ if norm(A*X*B+X-C,1)>100000*%eps then pause,end
 n=4;
 //A  full
 A=testmat1(2.5,n);C=rand(n,n);C=C+C';
-if execstr('X = linmeq(2,A,C)',errcatch=%t)==%t then pause,end
 
-if execstr('X = linmeq(2,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end
+// check that wrong calls are detected 
+// if execstr('X = linmeq(2,A,C)',errcatch=%t)==%t then pause,end; lasterror();
+
+if execstr('X = linmeq(2,A,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,A,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
  
-if execstr('X = linmeq(2,A,C,flag,8)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(2,A,C,flag,0,4)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(2,A,C,flag,8)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(2,A,C,flag,0,4)',errcatch=%t)==%t then pause,end; lasterror();
 
 function A=testmat2(a,n)
   A=testmat1(a,n); A = A+ eye(size(A))+diag([1,1],n-2); 
@@ -750,17 +755,18 @@ n=4;
 //A  full
 C=rand(n,n);A=testmat1(2.5,n);flag=[0,0];
 
-if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end
+// check that wrong calls are detected 
+if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end ; lasterror();
+if execstr('X = linmeq(3,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
  
-if execstr('X = linmeq(3,A,C,flag,8)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,C,flag,0,4)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(3,A,C,flag,8)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,C,flag,0,4)',errcatch=%t)==%t then pause,end; lasterror();
 
-if execstr('X = linmeq(3,A,C)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(3,A,C)',errcatch=%t)==%t then pause,end; lasterror();
 //shift poles to make all of them negative
 
 function A=testmat3(a,n)
@@ -839,15 +845,15 @@ C=rand(n,n);
 A=testmat1(2.5,n);
 flag=[1,0];
 
-if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,rand(3,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,rand(4,3),C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,C,flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,rand(4,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,rand(3,3),flag)',errcatch=%t)==%t then pause,end; lasterror();
  
-if execstr('X = linmeq(3,A,C,flag,8)',errcatch=%t)==%t then pause,end
-if execstr('X = linmeq(3,A,C,flag,0,4)',errcatch=%t)==%t then pause,end
+if execstr('X = linmeq(3,A,C,flag,8)',errcatch=%t)==%t then pause,end; lasterror();
+if execstr('X = linmeq(3,A,C,flag,0,4)',errcatch=%t)==%t then pause,end; lasterror();
 
 //shift poles to make all of them negative
 function A=testmat4(a,n),A=testmat1(a,n)/((2+a^2)/a),endfunction
@@ -947,5 +953,5 @@ X      = X1/X2;
 C_disc = F'*X*F-(F'*X*G1/(G2+G1'*X*G1))*(G1'*X*F)-X;
 
 // Comparaison des différents résultats obtenus
-if norm(C_cont+C,1) > (10000*%eps) then pause,end
-if norm(C_disc+H,1) > (10000*%eps) then pause,end
+if norm(C_cont+C,1) > (100000*%eps) then pause,end
+if norm(C_disc+H,1) > (100000*%eps) then pause,end

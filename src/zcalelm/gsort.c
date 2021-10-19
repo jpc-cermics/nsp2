@@ -281,7 +281,8 @@ int nsp_imatrix_sort(NspIMatrix *A,NspObject **Index,int ind_flag,char dir, nsp_
       /* merge sort */
       {
 #define IMAT_SORT(name,type,arg)					\
-	if ( nsp_mergesort_##type(A->Iv,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;break;
+	if ( nsp_mergesort_##type(A->Iv,index,ind_flag,0,A->mn,dir)==FAIL) return FAIL;	\
+	break;
 	NSP_ITYPE_SWITCH(A->itype,IMAT_SORT,"");
 #undef  IMAT_SORT
       }

@@ -985,7 +985,8 @@ NspIMatrix  *nsp_matrix_to_imatrix(const NspMatrix *M, nsp_itype itype)
   else
     {
 #define IMAT_COPY(name,type,arg)					\
-      for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->C[i].r;break;
+      for (i= 0 ; i < Loc->mn; i++) Loc->name[i]= (type)M->C[i].r;	\
+      break;
       NSP_ITYPE_SWITCH(Loc->itype,IMAT_COPY,void);
 #undef IMAT_COPY
     }
@@ -1502,7 +1503,9 @@ static void BMij_plus_format(const void *m, int i, int j)
 {
   const NspIMatrix *M=m;
 #define IMAT_PRINT(name,type,arg) if ( M->name[i+(M->m)*j] == 0) Sciprintf(" ");\
-  else Sciprintf("+");break;
+  else									\
+    Sciprintf("+");							\
+  break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT,"");
 #undef IMAT_PRINT
 }

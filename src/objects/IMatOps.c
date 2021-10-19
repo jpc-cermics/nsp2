@@ -81,7 +81,8 @@ static int MatOp(NspIMatrix *A, NspIMatrix *B, MPM F1, PM F2, MPM F3, int flag)
 	  /* flag != 1 ==> [] op A  returns F4(A) **/
 	  /* resize A to B */ 
 	  if ( nsp_imatrix_resize(A, B->m, B->n) == FAIL) return FAIL;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[i];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[i];\
+	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
 	  return (*F2)(A); 
@@ -283,7 +284,8 @@ int nsp_imatrix_dadd(NspIMatrix *Mat1, NspIMatrix *Mat2)
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
     }
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] += Mat2->name[i];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] += Mat2->name[i]; \
+  break;
   NSP_ITYPE_SWITCH(Mat1->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -324,7 +326,8 @@ int nsp_imatrix_add_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2)
 {
   int i;
   if ( Mat1->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] += Mat2->name[0];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] += Mat2->name[0]; \
+  break;
   NSP_ITYPE_SWITCH(Mat1->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -346,7 +349,8 @@ int nsp_imatrix_add_scalar_bis(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
   if ( A->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] += B->name[0];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] += B->name[0];\
+  break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -393,7 +397,8 @@ int nsp_imatrix_dsub(NspIMatrix *Mat1, NspIMatrix *Mat2)
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
     }
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] -= Mat2->name[i];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] -= Mat2->name[i];\
+  break;
   NSP_ITYPE_SWITCH(Mat1->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -414,7 +419,8 @@ int nsp_imatrix_sub_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2)
 {
   int i;
   if ( Mat1->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] -= Mat2->name[0];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] -= Mat2->name[0];\
+  break;
   NSP_ITYPE_SWITCH(Mat1->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -436,7 +442,8 @@ int nsp_imatrix_sub_scalar_bis(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
   if ( A->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] -= B->name[0];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] -= B->name[0];\
+  break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -457,7 +464,8 @@ int nsp_imatrix_subs_calarm(NspIMatrix *Mat1, NspIMatrix *Mat2)
 {
   int i;
   if ( Mat1->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] = -Mat1->name[i]+ Mat2->name[0];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < Mat1->mn ; i++) Mat1->name[i] = -Mat1->name[i]+ Mat2->name[0];\
+  break;
   NSP_ITYPE_SWITCH(Mat1->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -495,7 +503,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int f
     }
   if (  SameDim(A,B) )
     {
-#define IMAT_MAX(name,type,arg) for ( i=0 ; i < A->mn ; i++)			\
+#define IMAT_MAX(name,type,arg) for ( i=0 ; i < A->mn ; i++)		\
 	if  (  A->name[i] <  B->name[i] )				\
 	  {								\
 	    A->name[i] = B->name[i] ;					\
@@ -506,7 +514,7 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int f
     }
   else if ( B->mn == 1) 
     {
-#define IMAT_MAX(name,type,arg) for ( i=0 ; i < A->mn ; i++)			\
+#define IMAT_MAX(name,type,arg) for ( i=0 ; i < A->mn ; i++)		\
 	if  (  A->name[i] <  B->name[0] )				\
 	  {								\
 	    A->name[i] = B->name[0] ;					\
@@ -522,7 +530,8 @@ int nsp_imatrix_maxitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind,int j,int f
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name,type,arg) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->R[0]; break 
+      if ( flag == 1) indval = (int) Ind->R[0];		\
+      break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
@@ -610,7 +619,8 @@ int nsp_imatrix_minitt1(NspIMatrix *A, NspIMatrix *B, NspMatrix *Ind, int j, int
        */
       nsp_int_union xx; 
 #define IMAT_MAX(name,type,arg) xx.name = A->name[0];	\
-      if ( flag == 1) indval = (int) Ind->R[0]; break 
+      if ( flag == 1) indval = (int) Ind->R[0];		\
+      break 
       NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
 #undef IMAT_MAX
       if ( nsp_imatrix_resize(A,B->m,B->n) == FAIL) return FAIL;
@@ -694,7 +704,8 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
     case 0: 
       if ((Sum = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) Sum->name[0] +=A->name[i] ;break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) Sum->name[0] +=A->name[i];\
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
       break;
@@ -760,7 +771,8 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
 	return(NULLIMAT);
 #define IMAT_AC(name,type,arg)						\
       Prod->name[0]=1;							\
-      for ( i=0 ; i < A->mn ; i++) Prod->name[0] *=A->name[i] ;break;
+      for ( i=0 ; i < A->mn ; i++) Prod->name[0] *=A->name[i] ;		\
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
       break;
@@ -2408,7 +2420,8 @@ NspIMatrix *nsp_imatrix_ior_unary(NspIMatrix *A, int dim)
 	return(NULLIMAT);
 #define IMAT_AC(name,type,arg)						\
       Ior->name[0]= A->name[0];						\
-      for ( i=1 ; i < A->mn ; i++) Ior->name[0] |= A->name[i] ;break;
+      for ( i=1 ; i < A->mn ; i++) Ior->name[0] |= A->name[i] ;		\
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
       break;
@@ -2479,8 +2492,9 @@ NspIMatrix *nsp_imatrix_iand_unary(NspIMatrix *A, int dim)
       if ((Iand = nsp_imatrix_create(NVOID,1,1,A->itype)) == NULLIMAT) 
 	return(NULLIMAT);
 #define IMAT_AC(name,type,arg)						\
-      Iand->name[0]= A->name[0];						\
-      for ( i=1 ; i < A->mn ; i++) Iand->name[0] &= A->name[i] ;break;
+      Iand->name[0]= A->name[0];					\
+      for ( i=1 ; i < A->mn ; i++) Iand->name[0] &= A->name[i] ;	\
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
       break;
@@ -2902,7 +2916,8 @@ int nsp_imatrix_find(NspIMatrix *A, int lhs, NspObject **Res1, NspObject **Res2,
 	return FAIL;
       count=0;
 #define IMAT_FIND2(name,type,arg) for ( i=0 ; i < A->mn ; i++) \
-	if ( A->name[i] ) indr[count++] = i+1; break;
+	if ( A->name[i] ) indr[count++] = i+1;		       \
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_FIND2,"");
 #undef FIND2
     }
@@ -3200,7 +3215,8 @@ int nsp_scalar_sub_imatrix_bis(NspIMatrix *A, NspIMatrix *B)
       return FAIL;
     }
   if ( A->mn == 0 )  return OK;
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[0] - A->name[i];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] = B->name[0] - A->name[i];\
+  break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
   return OK;
@@ -3228,7 +3244,8 @@ int nsp_imatrix_sub_mat(NspIMatrix *A, NspIMatrix *B)
 
   if (SameDim(A,B))
     {
-#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] -= B->name[i];break;
+#define IMAT_AC(name,type,arg) for ( i=0 ; i < A->mn ; i++) A->name[i] -= B->name[i];\
+      break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
 #undef IMAT_AC
       return OK;
@@ -3788,14 +3805,14 @@ static Boolean array_is_sorted(NspIMatrix *A, int length, int start, int inc, Bo
 	{
 #define IMAT_AC(name,type,arg)					\
 	  for ( i = start+1 ; i < start+length && bool ; i++ )	\
-	    bool = A->name[i-1] < A->name[i];				\
+	    bool = A->name[i-1] < A->name[i];			\
 	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
 #undef IMAT_AC
 	}
       else
 	{
-#define IMAT_AC(name,type,arg)					\
+#define IMAT_AC(name,type,arg)						\
 	  for ( i = 1, j=start+inc ; i < length && bool ; i++, j+=inc )	\
 	    bool = A->name[j-inc] < A->name[j];				\
 	  break;
@@ -3808,8 +3825,8 @@ static Boolean array_is_sorted(NspIMatrix *A, int length, int start, int inc, Bo
     {
       if ( inc == 1 )
 	{
-#define IMAT_AC(name,type,arg)					\
-	  for ( i = start+1 ; i < start+length && bool ; i++ )	\
+#define IMAT_AC(name,type,arg)						\
+	  for ( i = start+1 ; i < start+length && bool ; i++ )		\
 	    bool = A->name[i-1] <= A->name[i];				\
 	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
@@ -3817,9 +3834,9 @@ static Boolean array_is_sorted(NspIMatrix *A, int length, int start, int inc, Bo
 	}
       else
 	{
-#define IMAT_AC(name,type,arg)					\
+#define IMAT_AC(name,type,arg)						\
 	  for ( i = 1, j=start+inc ; i < length && bool ; i++, j+=inc )	\
-	    bool = A->name[j-inc] <= A->name[j];				\
+	    bool = A->name[j-inc] <= A->name[j];			\
 	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
 #undef IMAT_AC

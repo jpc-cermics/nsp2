@@ -3846,9 +3846,9 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
       if (  kl == 0  ||  ku == 0 )  /* triangular or diagonal cases */
 	{
 	  if ( kl > 0 )
-	    stat = nsp_mat_bdiv_triangular(A, C, 'l', 'n', &info);
+	    stat = nsp_mat_bdiv_triangular(A, C, 'L', 'N', &info);
 	  else if ( ku > 0 )
-	    stat = nsp_mat_bdiv_triangular(A, C, 'u', 'n', &info);
+	    stat = nsp_mat_bdiv_triangular(A, C, 'U', 'N', &info);
 	  else
 	    stat = nsp_mat_bdiv_diagonal(A, C, &info);
 	  
@@ -4041,8 +4041,8 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rc
  * nsp_mat_bdiv_triangular:
  * @A: a #NspMatrix (not modified)
  * @B: a #NspMatrix (modified)
- * @tri_type: a char 'u' for upper triangular, 'l' for lower triangular
- * @trans: a char 'n', (solve Tx=B) 't' (solve T^t x=B), or 'c' (solve T^*x=B)
+ * @tri_type: a char 'U' for upper triangular, 'L' for lower triangular
+ * @trans: a char 'N', (solve Tx=B) 'T' (solve T^t x=B), or 'C' (solve T^*x=B)
  * @info: an int 0 if all is OK else a zero pivot have been met.
  * 
  * solve a linear triangular system A X = B, B is overwritten by the solution X

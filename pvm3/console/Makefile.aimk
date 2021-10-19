@@ -27,7 +27,7 @@ TRCLIBDEP	=	$(TRCLDIR)/$(LIBPREFIX)$(TRCLIB).a
 CFLAGS		=	$(CFLOPTS) -DIMA_$(PVM_ARCH) -I$(PVMIDIR) -I$(TRCIDIR) \
 				-I$(PVMSDIR) $(ARCHCFLAGS)
 LIBS		=	$(LOPT) -L$(TRCLDIR) -L$(PVMLDIR) \
-				-l$(TRCLIB) -l$(PVMLIB) $(ARCHLIB)
+				-l$(TRCLIB) -l$(PVMLIB) $(ARCHLIB) $(ARCHDLIB)
 OBJ			=	cons.o cmds.o job.o trc.o
 
 SILENT=$(findstring s,$(MFLAGS))

@@ -1108,7 +1108,7 @@ int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs)
 
 int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *A,*B,*C,*D;
+  NspObject *A,*B=NULL,*C=NULL,*D=NULL;
   NspLinearSys *sys;
   CheckRhs(1,1);
   CheckLhs(1,4);

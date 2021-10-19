@@ -1483,7 +1483,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 2 :/* lo lower triangular */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'l', 'n', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'L', 'N', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1493,7 +1493,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 3: /* up upper triangular */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'u', 'n', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'U', 'N', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1529,7 +1529,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 7: /* loT */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'l', 't', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'L', 'T', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1539,7 +1539,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 8: /* loH */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'l', 'c', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'L', 'C', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1549,7 +1549,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 9: /* upT */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'u', 't', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'U', 'T', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");
@@ -1559,7 +1559,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 10: /* upH */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( nsp_mat_bdiv_triangular(A, C, 'u', 'c', &info) == FAIL ) goto err;
+    if ( nsp_mat_bdiv_triangular(A, C, 'U', 'C', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
 	Scierror("Error: matrix is singular\n");

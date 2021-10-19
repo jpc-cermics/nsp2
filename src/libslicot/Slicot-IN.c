@@ -1646,61 +1646,57 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   int one=1;
   NspMatrix *A,*B,*C,*Flag;
   NspMatrix *Work=NULL,*U=NULL,*V=NULL,*Iwork=NULL,*WI=NULL,*WR=NULL,*SEP=NULL;
-  double ONE=1.0 ,ZERO=0, sep;
+  double ONE=1.0 ,ZERO=0, sep= ZERO;
   char *DICO, *FACT, *FACTA, *FACTB, *JOB, *SCHU, *TRANA, *TRANB, *ULA, *ULB ;
   int INFO ,ISGN ,LDA ,LDB ,LDC ,LDU ,LDV ,NDWORK ,M ,N ,P;
   double FERR ,SCALE ,TOL ;
-  int PERTRB, IB, IP, J, LDW1, LDW2, NIWORK,  MXMN,  NM, NSCHUR=1, TASK, TRANS ;
+  int PERTRB, IB, IP, J, LDW1, LDW2, NIWORK,  MXMN,  NM, schur=1, task, trans=0 ;
   int Iflag[4]={0,0,0,0};
+
   CheckRhs(3,7);
   CheckLhs(1,2);
   
   /* task at position 1 */
-  if (GetScalarInt (stack, 1 , &TASK) == FAIL)  return RET_BUG;
-  if (TASK < 1 ||TASK > 3 )
+  if (GetScalarInt (stack, 1 , &task) == FAIL)  return RET_BUG;
+  if (task < 1 ||task > 3 )
     {
-      Scierror ("task has 1, 2, or 3 as admissible values");
+      Scierror ("Error: argument task has 1, 2, or 3 as admissible values\n");
+      return RET_BUG;
     }
-  if (TASK == 1 )
+  if (task == 1 && rhs < 4 )
     {
-      if (rhs < 4 )
-	{
-	  Scierror ("Error: linmeq requires at least 4 input arguments when task equals 1");
-	  return RET_BUG;
-	}
-      IP =6;
+      Scierror ("Error: linmeq requires at least 4 input arguments when task equals 1\n");
+      return RET_BUG;
     }
-  else 
-    {
-      IP =5;
-    }
-  TRANS =0;
-  /* trans at position 6 or 5 */
+  /* trans, if given, is at position 6 or 5 (given by IP) else it is set to 0 */
+  IP = (task == 1) ? 6: 5;
   if ( rhs >= IP )
     {
-      if (GetScalarInt (stack, IP , &TRANS) == FAIL)  return RET_BUG;
+      if (GetScalarInt (stack, IP , &trans) == FAIL)  return RET_BUG;
     }
-  if (TASK == 1 && (TRANS < 0  || TRANS > 3 ))
+  if (task == 1 )
     {
-      Scierror("Error: admissible values for trans are 0, 1, 2, OR 3 when task == 1\n");
-      return RET_BUG;
+      if (trans < 0  || trans > 3 )
+	{
+	  Scierror("Error: admissible values for trans are 0, 1, 2, OR 3 when task == 1\n");
+	  return RET_BUG;
+	}
     }
   else
     {
-      if ( TASK != 1  && (TRANS < 0  || TRANS > 1 ))
+      if (trans < 0  || trans > 1 )
 	{
-	  Scierror("Error: admissible values for trans are 0, or 1 when task != 1");
+	  Scierror("Error: admissible values for trans are 0, or 1 when task != 1\n");
 	  return RET_BUG;
 	}
     }
   /*  schur */
-  if (TASK == 1 )
+  if (task == 1 )
     {
-      NSCHUR =1;
       if (rhs >= IP +1)
 	{
-	  if (GetScalarInt (stack, IP+1 , &NSCHUR) == FAIL)  return RET_BUG;
-	  if (NSCHUR < 1  || NSCHUR > 2 )
+	  if (GetScalarInt (stack, IP+1 , &schur) == FAIL)  return RET_BUG;
+	  if (schur < 1  || schur > 2 )
 	    {
 	      Scierror("Error: admissible values for schur are 1, or 2 when task == 1\n");
 	      return RET_BUG;
@@ -1712,7 +1708,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   if((A=GetRealMatCopy(stack,2))==NULL) return RET_BUG;
   CheckSquare(NspFname(stack),2,A);
   N=A->m;
-  if (TASK == 1)
+  if (task == 1)
     {
       if((B=GetRealMatCopy(stack,3))==NULL) return RET_BUG;
       CheckSquare(NspFname(stack),3,B);
@@ -1727,7 +1723,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   else
     {
       if((C=GetRealMatCopy(stack,3))==NULL) return RET_BUG;
-      if (TRANS == 0 )
+      if (trans == 0 )
 	{
 	  P = C->m;
 	  if( C->n != A->m )
@@ -1746,26 +1742,22 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	  P = C->n;
 	}
     }
-  if (TASK == 1)
-    IP=5;
-  else
-    IP=4;
-
-  /*    flag */
+  /* get flag argument */
+  IP = (task == 1) ? 5 : 4;
   if (rhs >= IP )
     {
       int i;
       if((Flag=GetRealMatCopy(stack,IP))==NULL) return RET_BUG;
-      if (TASK == 1 )
+      if (task == 1 )
 	{
-	  if ( Flag->mn  > 3) {
-	    Scierror("Error: flag must be a vector with at most 3 elements\n");
+	  if ( Flag->mn != 3) {
+	    Scierror("Error: flag must be a vector with 3 elements when task = 1\n");
 	    return RET_BUG;
 	  }
 	}
       else 
-	{if ( Flag->mn > 2 ) {
-	    Scierror("Error: flag must be a vector with at most 2 elements");
+	{if ( Flag->mn != 2 ) {
+	    Scierror("Error: flag must be a vector with 2 elements when task <> 1\n");
 	    return RET_BUG;
 	  }
 	}
@@ -1778,10 +1770,10 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
    *
    */
   LDA =Max (1,N );
-  if (TASK == 1 )
+  if (task == 1 )
     {
       LDB =Max (1,M );
-      if (NSCHUR == 2 )
+      if (schur == 2 )
 	{
 	  if ( Iflag[2] == 1)
 	    {
@@ -1832,7 +1824,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	}
       NM =M ;
     }
-  else if (TASK == 2 )
+  else if (task == 2 )
     {
       NDWORK =Max (1, Max(N *N ,3*N ));
       if (lhs == 2 ) {
@@ -1841,11 +1833,11 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       }
       NM =N ;
     }
-  if (TASK != 3 ) 
+  if (task != 3 ) 
     LDC =LDA ;
   else
     {
-      if (TRANS == 0 ) 
+      if (trans == 0 ) 
 	LDC =Max (1, Max(N ,P) );
       else 
 	LDC =LDA ;
@@ -1856,10 +1848,10 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   /* 
    * Allocate variable dimension local arrays.
    */
-  if (TASK == 1 )
+  if (task == 1 )
     {
       if( (Work = nsp_matrix_create(NVOID,'r',NDWORK,1))== NULL) return RET_BUG;
-      if (NSCHUR == 2 )
+      if (schur == 2 )
 	{
 	  if ( Iflag[2] == 1) {
 	    FACTA ="S";
@@ -1905,7 +1897,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if (TASK == 2 )
+      if (task == 2 )
 	{
 	  LDU =LDA ;
 	  if( (U=nsp_matrix_create(NVOID,'r',LDU,N)) == NULL) return RET_BUG;;
@@ -1930,20 +1922,20 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   /*
-    C Do the actual computations.
-  */
-  if (TASK == 1 ) {
-    if (NSCHUR == 2 ) {
-      if (TRANS == 0 ) {
+   * C Do the actual computations.
+   */
+  if (task == 1 ) {
+    if (schur == 2 ) {
+      if (trans == 0 ) {
 	TRANA ="N";
 	TRANB ="N";}
-      else if (TRANS == 1 ){ 
+      else if (trans == 1 ){ 
 	TRANA ="T";
 	TRANB ="T";}
-      else if (TRANS == 2 ){ 
+      else if (trans == 2 ){ 
 	TRANA ="T";
 	TRANB ="N";}
-      else if (TRANS == 3 ){ 
+      else if (trans == 3 ){ 
 	TRANA ="N";
 	TRANB ="T";}
       if (Iflag[1] != 0) 
@@ -1957,7 +1949,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
     }
     else
       {
-	if (TRANS == 0 ){ 
+	if (trans == 0 ){ 
 	  if ( strcmp(SCHU ,"S")== 0)
 	    { 
 	      TRANA ="N";
@@ -1968,7 +1960,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	    ULB ="U";
 	  }
 	}		  
-	else if (TRANS == 1 ){ 
+	else if (trans == 1 ){ 
 	  if ( strcmp(SCHU ,"S")==0 ){ 
 	    TRANA ="T";
 	    TRANB ="T";}
@@ -1987,7 +1979,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	      }
 	  }
 	}
-	else if (TRANS == 2 ){ 
+	else if (trans == 2 ){ 
 	  if ( strcmp(SCHU ,"S")==0){ 
 	    TRANA ="T";
 	    TRANB ="N";}
@@ -2001,7 +1993,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	      }
 	  }
 	}
-	else if (TRANS == 3 ){ 
+	else if (trans == 3 ){ 
 	  if ( strcmp(SCHU ,"S")==0){ 
 	    TRANA ="N";
 	    TRANB ="T";}
@@ -2055,9 +2047,9 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       DICO = (Iflag[1] == 0) ? "C" : "D";
       FACT = (Iflag[2] != 1) ? "N" : "F";
       if ( FACT[0]== 'F') C2F(dlaset) ("FULL",&N ,&N ,&ZERO ,&ONE ,U->R,&LDU,1L );
-      TRANA = (TRANS == 0 ) ? "N": "T";
+      TRANA = (trans == 0 ) ? "N": "T";
 
-      if (TASK == 2 )
+      if (task == 2 )
 	{ 
 	  JOB =  (lhs == 2 ) ? "B": "X";
 	  nsp_slicot_sb03md (DICO ,JOB ,FACT ,TRANA ,&N ,A->R, &LDA ,
@@ -2072,12 +2064,12 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   
-  PERTRB =(TASK == 1  && (INFO == N +M +1 ||  (Iflag[2]*Iflag[3]  == 1 &&  INFO == 1 ))) || 
-    (TASK == 2  && INFO == N +1) || (TASK == 3  && INFO == 1 );
+  PERTRB =(task == 1  && (INFO == N +M +1 ||  (Iflag[2]*Iflag[3]  == 1 &&  INFO == 1 )))
+    || (task == 2  && INFO == N +1) || (task == 3  && INFO == 1 );
   if (INFO == 0  || PERTRB ){ 
     if (lhs >= 1 ){ 
-      if (TASK == 3 ){ 
-	if (TRANS == 0  && P > N )
+      if (task == 3 ){ 
+	if (trans  == 0  && P > N )
 	  C2F(dlacpy) ("UPPER",&N ,&N , C->R,&LDC ,C->R,&LDA,1L );
 	if (N > 1 ) {
 	  int nm1=N-1;
@@ -2085,74 +2077,67 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	}
       }
     }
-    if (TASK == 2 ){ 
-      if (lhs >= 2 ){
-	double sep;
+    if (task == 2 && lhs >= 2)
+      {
+	/* return SEP */
 	if (N == ZERO ) sep =ZERO ;
 	if( (SEP=nsp_matrix_create(NVOID,'r',1,1)) == NULL) return RET_BUG;;
 	SEP->R[0]=sep;
       }
-    }
   }
   /* 
    * Error and warning handling.
    */
   if (INFO > 0 )
-    { 
-      if (TASK == 1 ){ 
-	if (NSCHUR == 2 )
-	  { 
-	    if(INFO <= M+N) Scierror("Error: Failure when computing eigenvalues\n");
-	    else if(INFO > M+N)	Scierror("Error: equation is singular\n");
-	    goto err;
-	  }
-	else
-	  {
-	    if (strcmp(SCHU ,"N")==0)
-	      { 
-		if(INFO <= M) Scierror("Error: Failure when computing eigenvalues\n");
-		else if(INFO > M) Scierror("Error: equation is singular\n");
-	      }
-	    else
-	      {
-		Scierror("Error: equation is singular\n");
-	      }
-	    goto err;
-	  }
-      }
-      else if (TASK == 2 )
-	{ 
-	  if(INFO <= N) Scierror("Error: Failure when computing eigenvalues\n");
-	  else if(INFO > N) 		Scierror("Error: equation is singular\n");
-	  goto err;
-	}
-      else if (TASK == 3 )
-	{ 
-	  if (INFO == 1) Scierror("Error: equation is singular\n");
+    {
+      const char *error_message = "Error: equation is singular\n";
+      switch ( task )
+	{
+	case 1: 
+	  if (schur == 2 )
+	    {
+	      error_message = (INFO <= M+N) ? "Error: Failure when computing eigenvalues\n"
+		: "Error: equation is singular\n";
+	    }
+	  else if (strcmp(SCHU ,"N")==0)
+	    { 
+	      error_message =(INFO <= M) ? "Error: Failure when computing eigenvalues\n"
+		:"Error: equation is singular\n";
+	    }
+	  break;
+	case 2:
+	  error_message =(INFO <= N) ? "Error: Failure when computing eigenvalues\n"
+	    : "Error: equation is singular\n";
+	  break;
+	case 3:
+	  if (INFO == 1) error_message = "Error: equation is singular\n";
 	  else if (INFO == 2 || INFO == 3)
 	    {
-	      if( strcmp(DICO,"C")==0) Scierror("Error: Matrix is not stable (cont)\n");
-	      else Scierror("Error: not a schur form\n");
+	      error_message = ( strcmp(DICO,"C")==0) ? "Error: Matrix is not stable (cont)\n"
+		: "Error: not a schur form\n";
 	    }
 	  else if (INFO == 4 || INFO == 5)
 	    {
-	      Scierror("Error: not a schur form");
+	      error_message ="Error: not a schur form\n";
 	    }
-	  else if (INFO == 6) {
-	    Scierror("Error: Failure when computing eigenvalues\n");
-	  }
-	  goto err;
+	  else if (INFO == 6)
+	    {
+	      error_message ="Error: Failure when computing eigenvalues\n";
+	    }
+	  break;
 	}
+      Scierror(error_message);
+      goto err;
     }
   else if(INFO < 0)
     {
-      Scierror("Error: internal error in linmeq");
+      Scierror("Error: internal error in linmeq\n");
       goto err;
     }
   if ((INFO == 0  || PERTRB ) && SCALE != ONE )
     {
       double TEMP;
-      if (TASK >= 2 ) 
+      if (task >= 2 ) 
 	TEMP =SCALE ;
       else 
 	TEMP =SCALE * SCALE;
@@ -2160,7 +2145,8 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
     }
   if (INFO != 0  &&  !PERTRB )
     {
-      Scierror("Error: in linmeq");
+      /* we should never get here as we already returned if INFO != 0 */
+      Scierror("Error: in linmeq\n");
       goto err;
     }
   else if (SCALE != ONE )
@@ -2173,7 +2159,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(C)->ret_pos = 1;
   if ( lhs >= 2 )
     {
-      if (TASK == 2 )
+      if (task == 2 )
 	{
 	  MoveObj(stack,2,NSP_OBJECT(SEP));
 	}

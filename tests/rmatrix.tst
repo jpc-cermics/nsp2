@@ -129,10 +129,7 @@ if ~R.equal[[(1)/(s+s^2);(1)/(1+s^2)]] then pause;end
 
 r = [1/(1+s),s/(1+s^2)]
 R = r*[(1+s);2/s]
-if ~R.equal[[1+(2/(1+s^2))]] then pause;end 
-
-r = [1/(1+s),s/(1+s^2)]
-R = r *[(1+s);2/s]
+R = clean(R);
 if ~R.equal[[1+(2/(1+s^2))]] then pause;end 
 
 // / 
