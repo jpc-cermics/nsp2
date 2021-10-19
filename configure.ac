@@ -34,6 +34,9 @@ AC_ARG_ENABLE(optimize,
 AC_ARG_ENABLE(pg,
     [  --enable-pg             use -pg compilation option])
 
+AC_ARG_ENABLE(fpic,
+    [  --enable-fpic           use fpic compilation option])
+
 AC_ARG_WITH(nsp-pvm,
     [  --with-nsp-pvm          prefer local pvm version to a preinstalled one ])
 
@@ -740,6 +743,16 @@ case "$host" in
     ;;
 esac
 
+############################################
+# add fpic 
+############################################
+
+if test "$enable_fpic" = yes; then
+   CC_OPTIONS="${CFLAGS} ${CC_PICFLAGS}"
+   FC_OPTIONS="${FFLAGS} ${FC_PICFLAGS}"
+   CXX_OPTIONS="${CXXFLAGS} ${CC_PICFLAGS}"
+fi
+
 if test "$with_gtk3" == yes; then
   NSP_ISS_GTK=gtk3
   GTK_PKG='gtk+-3.0'
@@ -1340,9 +1353,9 @@ if test xx"$have_webkit2" != xx"yes"; then
        GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
        WEBKIT_GEN="webkit.o"
        if test "$with_gtk3" == no; then
-         HELP_OBJS="helpwebkit.o helpwebkit-1.o"
+         HELP_OBJS="helpwebkit.o helpwebkit-1.o eggfindbar.o"
        else
-         HELP_OBJS="helpwebkit.o helpwebkit-1.o"
+         HELP_OBJS="helpwebkit.o helpwebkit-1.o eggfindbar.o"
        fi
        AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
        PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
@@ -1903,7 +1916,6 @@ fi
 ## libtirpc
 ## (lib rpc on Fedora 16)
 #################
-
 
 if test "x$PKG_CONFIG" != x; then # try first to use pkg-config
    ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
