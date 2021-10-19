@@ -11,5 +11,9 @@ bin/scilex: $(NSPLIBS)
 	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
 		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) 
 
-
-
+bin/libnsp.so: $(NSPLIBS)
+	@echo "creation of $@" 
+	@$(CC) -shared -o  $@ \
+		-Wl,--allow-multiple-definition \
+		$(LIBS) -Xlinker --out-implib -Xlinker bin/libnsp.dll.a \
+		-lgfortran $(EXTERNLIBS) $(FC_LDFLAGS)
