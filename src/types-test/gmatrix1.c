@@ -1781,8 +1781,11 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 		      double *zmax,double *coeff,
 		      const int *colminmax,const double *zminmax,const double z[],int zn)
 {
+  *coeff=1;
   *colmin=1;
   *colmax=Xgc->graphic_engine->xget_last(Xgc);
+  *zmin =0;
+  *zmax =1;
   if ( remap == TRUE)
     {
       if ( colminmax != NULL)
@@ -1806,4 +1809,4 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-#line 1810 "gmatrix1.c"
+#line 1813 "gmatrix1.c"

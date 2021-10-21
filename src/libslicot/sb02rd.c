@@ -55,14 +55,14 @@ nsp_slicot_sb02rd (char *job, char *dico, char *hinv, char *trana, char *uplo,
   int n2;
   int lsort;
   int nn, iu, iw;
-  double rconda;
+  double rconda=0;
   char lofact[1];
   int nofact;
   int update, colequ;
   char tranat[1];
   double rcondu;
   int notrna;
-  double pivota;
+  double pivota=0;
   int np1;
   int rowequ;
   double pivotu, wrkopt;

@@ -1320,7 +1320,12 @@ double marsaglia_K(double x, int n)
   k=(int)(n*d)+1;
   m=2*k-1;
   h=k-n*d;
-  H=(double*)malloc((m*m)*sizeof(double));
+  /* switch to calloc to avoid a compiler warning telling that 
+   * H may be used unitialized in  H[(m-1)*m]+=(2*h-1>0?pow(2*h-1,m):0); 
+   * which is indeed not the case except if m==0 which seams is not possible
+   */
+  /* H=(double*)malloc((m*m)*sizeof(double));*/
+  H=(double*) calloc(m*m,sizeof(double));
   Q=(double*)malloc((m*m)*sizeof(double));
   for(i=0;i<m;i++)
     for(j=0;j<m;j++)

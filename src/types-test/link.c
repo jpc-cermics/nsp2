@@ -1019,6 +1019,9 @@ NspLink *link_create_n(const char *name,int n,int color,int thickness)
   NspMatrix *P;
   grl_lock l;
   NspLink *L;
+  l.port.lock = FALSE;
+  l.port.port = 0;
+  l.port.object_sid = 0;
   if ((P =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
   if (nsp_object_set_name(NSP_OBJECT(P),"lpt") == FAIL) return NULLLINK;  
   if(( L = nsp_link_create(name,NULL,color,thickness,0,P,l,l,NULL)) 
@@ -1931,4 +1934,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1935 "link.c"
+#line 1938 "link.c"

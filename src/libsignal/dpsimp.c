@@ -1,7 +1,10 @@
+#include <string.h> /* for memmove */
 #include "signal.h"
 
-static int c__1 = 1;
-static double c_b11 = 0.;
+static void signal_dcopymem(int n, double *dx, double *dy);
+
+static const int c__1 = 1;
+static const double dzero = 0.;
 
 static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
 			  double *u, int *nu, int *l, double *x, double *v, double *w,
@@ -124,27 +127,27 @@ int signal_dpsimp (double *a,const int *na,double *b,const int *nb,
       if (nz == 0)
 	{
 	  i1 = *na1 + 1;
-	  C2F(dcopy) (&i1, &a[la0], &c__1, &a1[1], &c__1);
+	  signal_dcopymem (i1, &a[la0],  &a1[1]);
 	  i1 = *nb1 + 1;
-	  C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (i1, &b[lb0],  &b1[1]);
 	}
       else if (nz > 0)
 	{
-	  nsp_dset (&nz, &c_b11, &a1[1], &c__1);
+	  nsp_dset (&nz, &dzero, &a1[1], &c__1);
 	  i1 = *na1 + 1;
-	  C2F(dcopy) (&i1, &a[la0], &c__1, &a1[nz + 1], &c__1);
+	  signal_dcopymem (i1, &a[la0],  &a1[nz + 1]);
 	  i1 = *nb1 + 1;
-	  C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (i1, &b[lb0],  &b1[1]);
 	  *na1 += nz;
 	}
       else
 	{
 	  i1 = *na1 + 1;
-	  C2F(dcopy) (&i1, &a[la0], &c__1, &a1[1], &c__1);
+	  signal_dcopymem (i1, &a[la0],  &a1[1]);
 	  i1 = -nz;
-	  nsp_dset (&i1, &c_b11, &b1[1], &c__1);
+	  nsp_dset (&i1, &dzero, &b1[1], &c__1);
 	  i1 = *nb1 + 1;
-	  C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[-nz + 1], &c__1);
+	  signal_dcopymem (i1, &b[lb0],  &b1[-nz + 1]);
 	  *nb1 -= nz;
 	}
       ++(*na1);
@@ -176,24 +179,24 @@ int signal_dpsimp (double *a,const int *na,double *b,const int *nb,
       t = 1. / t;
       if (nz == 0)
 	{
-	  C2F(dcopy) (&nnum, &w[ipb[4]], &c__1, &a1[1], &c__1);
-	  C2F(dcopy) (&nden, &w[ipb[3]], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (nnum, &w[ipb[4]],  &a1[1]);
+	  signal_dcopymem (nden, &w[ipb[3]],  &b1[1]);
 	  C2F(dscal) (&nden, &t, &b1[1], &c__1);
 	}
       else if (nz > 0)
 	{
-	  C2F(dcopy) (&nnum, &w[ipb[4]], &c__1, &a1[nz + 1], &c__1);
-	  nsp_dset (&nz, &c_b11, &a1[1], &c__1);
+	  signal_dcopymem (nnum, &w[ipb[4]],  &a1[nz + 1]);
+	  nsp_dset (&nz, &dzero, &a1[1], &c__1);
 	  nnum += nz;
-	  C2F(dcopy) (&nden, &w[ipb[3]], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (nden, &w[ipb[3]],  &b1[1]);
 	  C2F(dscal) (&nden, &t, &b1[1], &c__1);
 	}
       else if (nz < 0)
 	{
 	  nz = -nz;
-	  C2F(dcopy) (&nnum, &w[ipb[4]], &c__1, &a1[1], &c__1);
-	  C2F(dcopy) (&nden, &w[ipb[3]], &c__1, &b1[nz + 1], &c__1);
-	  nsp_dset (&nz, &c_b11, &b1[1], &c__1);
+	  signal_dcopymem (nnum, &w[ipb[4]],  &a1[1]);
+	  signal_dcopymem (nden, &w[ipb[3]],  &b1[nz + 1]);
+	  nsp_dset (&nz, &dzero, &b1[1], &c__1);
 	  C2F(dscal) (&nden, &t, &b1[nz + 1], &c__1);
 	  nden += nz;
 	}
@@ -204,22 +207,22 @@ int signal_dpsimp (double *a,const int *na,double *b,const int *nb,
     {
       if (nz == 0)
 	{
-	  C2F(dcopy) (&nnum, &a[la0], &c__1, &a1[1], &c__1);
-	  C2F(dcopy) (&nden, &b[lb0], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (nnum, &a[la0],  &a1[1]);
+	  signal_dcopymem (nden, &b[lb0],  &b1[1]);
 	}
       else if (nz > 0)
 	{
-	  C2F(dcopy) (&nnum, &a[la0], &c__1, &a1[nz + 1], &c__1);
-	  nsp_dset (&nz, &c_b11, &a1[1], &c__1);
+	  signal_dcopymem (nnum, &a[la0],  &a1[nz + 1]);
+	  nsp_dset (&nz, &dzero, &a1[1], &c__1);
 	  nnum += nz;
-	  C2F(dcopy) (&nden, &b[lb0], &c__1, &b1[1], &c__1);
+	  signal_dcopymem (nden, &b[lb0],  &b1[1]);
 	}
       else
 	{
 	  nz = -nz;
-	  C2F(dcopy) (&nnum, &a[la0], &c__1, &a1[1], &c__1);
-	  C2F(dcopy) (&nden, &b[lb0], &c__1, &b1[nz + 1], &c__1);
-	  nsp_dset (&nz, &c_b11, &b1[1], &c__1);
+	  signal_dcopymem (nnum, &a[la0],  &a1[1]);
+	  signal_dcopymem (nden, &b[lb0],  &b1[nz + 1]);
+	  nsp_dset (&nz, &dzero, &b1[1], &c__1);
 	  nden += nz;
 	}
       C2F(dscal) (&nnum, &t1, &a1[1], &c__1);
@@ -238,27 +241,27 @@ int signal_dpsimp (double *a,const int *na,double *b,const int *nb,
   if (nz == 0)
     {
       i1 = *na1 + 1;
-      C2F(dcopy) (&i1, &a[la0], &c__1, &a1[1], &c__1);
+      signal_dcopymem (i1, &a[la0],  &a1[1]);
       i1 = *nb1 + 1;
-      C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[1], &c__1);
+      signal_dcopymem (i1, &b[lb0],  &b1[1]);
     }
   else if (nz > 0)
     {
-      nsp_dset (&nz, &c_b11, &a1[1], &c__1);
+      nsp_dset (&nz, &dzero, &a1[1], &c__1);
       i1 = *na1 + 1;
-      C2F(dcopy) (&i1, &a[la0], &c__1, &a1[nz + 1], &c__1);
+      signal_dcopymem (i1, &a[la0],  &a1[nz + 1]);
       i1 = *nb1 + 1;
-      C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[1], &c__1);
+      signal_dcopymem (i1, &b[lb0],  &b1[1]);
       *na1 += nz;
     }
   else
     {
       i1 = *na1 + 1;
-      C2F(dcopy) (&i1, &a[la0], &c__1, &a1[1], &c__1);
+      signal_dcopymem (i1, &a[la0],  &a1[1]);
       i1 = -nz;
-      nsp_dset (&i1, &c_b11, &b1[1], &c__1);
+      nsp_dset (&i1, &dzero, &b1[1], &c__1);
       i1 = *nb1 + 1;
-      C2F(dcopy) (&i1, &b[lb0], &c__1, &b1[-nz + 1], &c__1);
+      signal_dcopymem (i1, &b[lb0],  &b1[-nz + 1]);
       *nb1 -= nz;
     }
   ++(*na1);
@@ -1166,3 +1169,15 @@ signal_dpmul (double *p1, int *d1, double *p2, int *d2, double *p3, int *d3)
   p3[1] += p1[1] * p2[1];
   return 0;
 }	
+
+/* memmove is slower than memcpy but acceps overlaping regions 
+ * using dcopy directly in signal_dpsimp appears to give bugs with certain 
+ * versions of blas
+ */
+
+static void signal_dcopymem(int n, double *dx, double *dy)
+{
+  memmove((void *) dy,(void *) dx, n*sizeof(double)) ; 
+} 
+
+

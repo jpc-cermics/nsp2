@@ -378,7 +378,8 @@ NspSMio *nsp_smio_rcreate(char *name,char *str,int flag,const char *data,unsigne
   memcpy(F->obj->D,data,len);
   F->obj->len = len;
   F->obj->pos = 0;
-  strncpy(F->obj->openf,str,3);
+  /* avoid warning of strncpy in strncpy(F->obj->openf,str,3); */
+  memcpy(F->obj->openf,str,3);
   F->obj->openf[3]='\0';
   F->obj->flag =flag;
   return(F);

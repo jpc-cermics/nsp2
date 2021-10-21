@@ -773,22 +773,10 @@ static int dxpnrm_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu1,
 static int dxpqnu_(Dxblk2 *dxblk2,double *nu1, double *nu2, int *mu, double *x, double *sx,
 		   int *id, double *pqa, int *ipqa, int *ierror)
 {
-  int i__1;
-  double d__1;
-  double flok, a;
-  int i__, j, k;
-  double r__;
-  double w, y, z__;
-  int ipsik;
-  int j0, ipsix;
-  double x1, x2;
-  int ia;
-  double di;
-  int if__;
-  double pq, nu, xs, factmu, pq1, pq2;
-  int ix1;
-  double dmu;
-  int ipq, ixs, ipq1, ipq2;
+  double d__1, di, dmu,flok, a, pq, nu, xs, factmu=1, pq1, pq2;
+  double r__, w, y, z__, x1, x2;
+  int i__, j, k,  i__1, ia, if__=0, ipq, ixs, ipq1, ipq2, ipsik;
+  int ix1, j0, ipsix;
 
   --ipqa;
   --pqa;

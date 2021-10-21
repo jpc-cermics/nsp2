@@ -1730,8 +1730,8 @@ C2F(ddaskr) (Dres res, int *neq, double *t, double *y, double *yprime,
   int le;
   int lenic;
   int leniwp;
-  int lenpd=0, lsoff, msave, index=0, itemp, leniw, nzflg;
-  int lenwp=0, lenrw, mxord, nwarn;
+  int lenpd=0, lsoff, msave, index=0, itemp, leniw=0, nzflg;
+  int lenwp=0, lenrw=0, mxord, nwarn;
   int lphi;
   int lr0, lr1;
   int lsavr;

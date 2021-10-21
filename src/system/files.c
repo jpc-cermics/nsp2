@@ -304,7 +304,9 @@ static int get_env(char *var,char *buf,int buflen,int iflag)
     }
   else
     {
-      char *last;
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+      /* to be improved one day */
+      char *last;      
       strncpy(buf,local,buflen);
       /* is it useful ? */
       last = &buf[strlen(buf)-1];
