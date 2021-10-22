@@ -466,6 +466,14 @@ qmd = clean(q-d);
 if ~pmn.equal[0*s] then pause;end 
 if ~qmd.equal[0*s] then pause;end
 
+r=(s+1)*(s-1);
+p=(s+2)*(s-4);q=(s-2);
+[n,d]=simp(r*p,r*q);
+pmn = clean(p-n);
+qmd = clean(q-d);
+if ~pmn.equal[0*s] then pause;end 
+if ~qmd.equal[0*s] then pause;end
+
 //sfact
 if %t then
   p=(s-1/2)*(2-s);

@@ -2,11 +2,11 @@
 #include "signal.h"
 
 static void signal_dcopymem(int n, double *dx, double *dy);
-static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
-			  double *u, int *nu, int *l, double *x, double *v, double *w,
+static int signal_bezstp (double *p1, int n1, double *p2, int n2, double *a, int na,
+			  double *u, int nu, int l, double *x, double *v, double *w,
 			  double *best, int *ipb, double *errr);
-static int signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3);
-static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3);
+static void signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3);
+static void signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3);
 
 static const int c__1 = 1;
 static const int c_n1 = -1;
@@ -391,7 +391,7 @@ int signal_recbez (double *p1, int *n1, double *p2, int *n2, double *best,
       /*    la :  pointeur sur le coin en haut a gauche de la matrice a courante 
        *    lu : pointeur sur le coin en haut a gauche de la matrice u courante 
        */
-      signal_bezstp (&p1[1], &nn1, &p2[1], &nn2, &w[la], &na, &w[lu], &nu, &l,
+      signal_bezstp (&p1[1], nn1, &p2[1], nn2, &w[la], na, &w[lu], nu, l,
 		     &w[la - 1 + na], &w[lu - 1 - (nu << 1)], &w[iw],
 		     &best[1], &ipb[1], err);
       /* L20: */
@@ -518,13 +518,11 @@ int signal_recbez (double *p1, int *n1, double *p2, int *n2, double *best,
   return 0;
 }
 
-static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
-		   double *u, int *nu, int *l, double *x, double *v, double *w,
+static int signal_bezstp (double *p1, int n1, double *p2, int n2, double *a, int na,
+		   double *u, int nu, int l, double *x, double *v, double *w,
 		   double *best, int *ipb, double *errr)
 {
-
-  int a_dim1, a_offset, u_dim1, u_offset, x_dim1, x_offset, v_dim1, v_offset,
-    i1, i2;
+  int a_dim1, a_offset, u_dim1, u_offset, x_dim1, x_offset, v_dim1, v_offset, i1, i2;
   double d__1, d__2;
   double fact;
   double errd, erri;
@@ -544,16 +542,16 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
 
   --p1;
   --p2;
-  x_dim1 = *na;
+  x_dim1 = na;
   x_offset = x_dim1 + 1;
   x -= x_offset;
-  a_dim1 = *na;
+  a_dim1 = na;
   a_offset = a_dim1 + 1;
   a -= a_offset;
-  v_dim1 = *nu;
+  v_dim1 = nu;
   v_offset = v_dim1 + 1;
   v -= v_offset;
-  u_dim1 = *nu;
+  u_dim1 = nu;
   u_offset = u_dim1 + 1;
   u -= u_offset;
   --w;
@@ -561,17 +559,10 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
   --ipb;
 
   /* Function Body */
-  /* eps = C2F(dlamch) ("p", 1L); */
-  n0 = Max (*n1, *n2) + 1;
-  /*Computing MAX 
-   */
-  i1 = *n1 - *n2;
-  m1 = Max (i1, 0);
-  /*Computing MAX 
-   */
-  i1 = *n2 - *n1;
-  m2 = Max (i1, 0);
-  ll = *l << 1;
+  n0 = Max (n1,n2) + 1;
+  m1 = Max (n1-n2 , 0);
+  m2 = Max (n2-n1, 0);
+  ll = l << 1;
   iuv = 1;
   ixy = iuv + ll;
   iw1 = ixy + ll;
@@ -579,34 +570,34 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
 
   /* 
    */
-  i1 = *l;
+  i1 = l;
   for (k = 1; k <= i1; ++k)
     {
       nsp_ctrlpack_giv (&a[k + (n0 + 1 - k) * a_dim1],
 			&a[k + 1 + (n0 + 1 - k) * a_dim1], &c__, &s);
-      C2F(drot) (&n0, &a[k + a_dim1], na, &a[k + 1 + a_dim1], na, &c__, &s);
+      C2F(drot) (&n0, &a[k + a_dim1], &na, &a[k + 1 + a_dim1], &na, &c__, &s);
       a[k + 1 + (n0 + 1 - k) * a_dim1] = 0.;
-      C2F(drot) (&ll, &u[k + u_dim1], nu, &u[k + 1 + u_dim1], nu, &c__, &s);
-      if (k == 1 && *l < n0)
+      C2F(drot) (&ll, &u[k + u_dim1], &nu, &u[k + 1 + u_dim1], &nu, &c__, &s);
+      if (k == 1 && l < n0)
 	{
 	  i2 = n0 - 1;
-	  C2F(dcopy) (&i2, &a[a_dim1 + 2], na, &x[x_offset], na);
-	  C2F(dcopy) (&ll, &u[u_dim1 + 2], nu, &v[v_offset], nu);
+	  C2F(dcopy) (&i2, &a[a_dim1 + 2], &na, &x[x_offset], &na);
+	  C2F(dcopy) (&ll, &u[u_dim1 + 2], &nu, &v[v_offset], &nu);
 	}
       /* L10: */
     }
   /* 
    */
-  C2F(dcopy) (&ll, &u[*l + u_dim1], nu, &w[iuv], &c__1);
-  C2F(dcopy) (&ll, &u[*l + 1 + u_dim1], nu, &w[ixy], &c__1);
+  C2F(dcopy) (&ll, &u[l + u_dim1], &nu, &w[iuv], &c__1);
+  C2F(dcopy) (&ll, &u[l + 1 + u_dim1], &nu, &w[ixy], &c__1);
   /* 
    */
-  if (*l <= (i1 = *n1 - *n2, Abs (i1)))
+  if ( l <= (i1 = n1 - n2, Abs (i1)))
     {
       goto L99;
     }
-  fact = a[*l + (n0 - *l + 1) * a_dim1];
-  if (*l > 1)
+  fact = a[l + (n0 - l + 1) * a_dim1];
+  if (l > 1)
     {
       /*Computing 2nd power 
        */
@@ -647,8 +638,8 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
   d__1 = 1. / fact;
   C2F(dscal) (&ll, &d__1, &w[iuv], &c__1);
   dt0 =
-    w[ixy + ((*l - 1) << 1)] * w[iuv + (*l << 1) - 1]
-    - w[ixy + (*l << 1) - 1] * w[iuv + ((*l - 1) << 1)];
+    w[ixy + ((l - 1) << 1)] * w[iuv + (l << 1) - 1]
+    - w[ixy + (l << 1) - 1] * w[iuv + ((l - 1) << 1)];
   if (dt0 == 0.)
     {
       goto L99;
@@ -661,53 +652,53 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
    * 
    *    p1*x 
    */
-  i1 = *l - m1;
+  i1 = l - m1;
   C2F(dcopy) (&i1, &w[ixy + (m1 << 1)], &c__2, &w[iw1], &c_n1);
-  i1 = *l - 1 - m1;
-  signal_dpmul1 (&p1[1], *n1, &w[iw1], i1, &w[iw]);
-  nw = *n1 + *l - 1 - m1;
+  i1 = l - 1 - m1;
+  signal_dpmul1 (&p1[1], n1, &w[iw1], i1, &w[iw]);
+  nw = n1 + l - 1 - m1;
   /*    p1*x+p2*y 
    */
-  i1 = *l - m2;
+  i1 = l - m2;
   C2F(dcopy) (&i1, &w[ixy + 1 + (m2 << 1)], &c__2, &w[iw1], &c_n1);
-  i1 = *l - 1 - m2;
-  signal_dpmul (&p2[1], *n2, &w[iw1], i1, &w[iw], nw);
+  i1 = l - 1 - m2;
+  signal_dpmul (&p2[1], n2, &w[iw1], i1, &w[iw], nw);
   i1 = nw + 1;
   errd = C2F(ddot) (&i1, &w[iw], &c__1, &w[iw], &c__1);
   /*    p1*u 
    */
-  if (*l - 1 - m1 > 0)
+  if (l - 1 - m1 > 0)
     {
-      i1 = *l - 1 - m1;
+      i1 = l - 1 - m1;
       C2F(dcopy) (&i1, &w[iuv + 2 + (m1 << 1)], &c__2, &w[iw1], &c_n1);
-      i1 = *l - 2 - m1;
-      signal_dpmul1 (&p1[1], *n1, &w[iw1], i1, &w[iw]);
-      nw = *n1 + *l - 2 - m1;
+      i1 = l - 2 - m1;
+      signal_dpmul1 (&p1[1], n1, &w[iw1], i1, &w[iw]);
+      nw = n1 + l - 2 - m1;
     }
   else
     {
-      signal_dpmul1 (&p1[1], *n1, &w[iuv + (m1 << 1)], c__0, &w[iw]);
-      nw = *n1;
+      signal_dpmul1 (&p1[1], n1, &w[iuv + (m1 << 1)], c__0, &w[iw]);
+      nw = n1;
     }
   /*    p1*u+p2*v 
    */
-  if (*l - 1 - m2 > 0)
+  if (l - 1 - m2 > 0)
     {
-      i1 = *l - 1 - m2;
+      i1 = l - 1 - m2;
       C2F(dcopy) (&i1, &w[iuv + 3 + (m2 << 1)], &c__2, &w[iw1], &c_n1);
-      i1 = *l - 2 - m2;
-      signal_dpmul (&p2[1], *n2, &w[iw1], i1, &w[iw], nw);
+      i1 = l - 2 - m2;
+      signal_dpmul (&p2[1], n2, &w[iw1], i1, &w[iw], nw);
     }
   else
     {
-      signal_dpmul (&p2[1], *n2, &w[iuv + 1 + (m2 << 1)], c__0, &w[iw], nw);
+      signal_dpmul (&p2[1], n2, &w[iuv + 1 + (m2 << 1)], c__0, &w[iw], nw);
     }
   /*    p 
    */
-  np = n0 - *l;
+  np = n0 - l;
   i1 = np + 1;
-  C2F(dcopy) (&i1, &a[*l + a_dim1], na, &w[iw1], &c__1);
-  C2F(daxpy) (&np, &z__, &a[*l + 1 + a_dim1], na, &w[iw1], &c__1);
+  C2F(dcopy) (&i1, &a[l + a_dim1], &na, &w[iw1], &c__1);
+  C2F(daxpy) (&np, &z__, &a[l + 1 + a_dim1], &na, &w[iw1], &c__1);
   i1 = np + 1;
   d__1 = 1. / fact;
   C2F(dscal) (&i1, &d__1, &w[iw1], &c__1);
@@ -722,69 +713,60 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
    *    ------------------------------ 
    *    y 
    */
-  i1 = *n1 - np + 1;
+  i1 = n1 - np + 1;
   C2F(dcopy) (&i1, &w[ixy + 1 + (m2 << 1)], &c__2, &w[iw], &c_n1);
   /*    p*y+p1 
    */
-  i1 = *n1 - np;
+  i1 = n1 - np;
   signal_dpmul1 (&w[iw1], np, &w[iw], i1, &w[iw]);
-  i1 = *n1 + 1;
+  i1 = n1 + 1;
   nsp_dadd (i1, &p1[1], c__1, &w[iw], c__1);
-  i1 = *n1 + 1;
+  i1 = n1 + 1;
   erri = C2F(ddot) (&i1, &w[iw], &c__1, &w[iw], &c__1);
   /*    x 
    */
-  i1 = *n2 - np + 1;
+  i1 = n2 - np + 1;
   C2F(dcopy) (&i1, &w[ixy + (m1 << 1)], &c__2, &w[iw], &c_n1);
   /*    p*x 
    */
-  i1 = *n2 - np;
+  i1 = n2 - np;
   signal_dpmul1 (&w[iw1], np, &w[iw], i1, &w[iw]);
   /*    p*x-p2 
    */
-  i1 = *n2 + 1;
+  i1 = n2 + 1;
   nsp_calpack_ddif (&i1, &p2[1], &c__1, &w[iw], &c__1);
-  i1 = *n2 + 1;
+  i1 = n2 + 1;
   erri += C2F(ddot) (&i1, &w[iw], &c__1, &w[iw], &c__1);
-  /*      write(6,*) np,errd,erri 
-   * 
-   */
+
   if (Max (erri, errd) < *errr)
     {
       *errr = Max (erri, errd);
       /*Computing MAX 
        */
-      i1 = 0, i2 = n0 - *l;
-      nb = Max (i1, i2);
+      nb = Max (0,n0 - l);
       ipb[1] = 1;
       /*    pgcd 
        */
       i1 = nb + 1;
-      C2F(dcopy) (&i1, &a[*l + a_dim1], na, &best[ipb[1]], &c__1);
-      if (*l > 1)
+      C2F(dcopy) (&i1, &a[l + a_dim1], &na, &best[ipb[1]], &c__1);
+      if (l > 1)
 	{
 	  i1 = nb + 1;
-	  C2F(daxpy) (&i1, &z__, &a[*l + 1 + a_dim1], na, &best[ipb[1]],
+	  C2F(daxpy) (&i1, &z__, &a[l + 1 + a_dim1], &na, &best[ipb[1]],
 		      &c__1);
 	}
       i1 = nb + 1;
       d__1 = 1. / fact;
       C2F(dscal) (&i1, &d__1, &best[ipb[1]], &c__1);
       ipb[2] = ipb[1] + nb + 1;
-      if (*l > 1)
+      if (l > 1)
 	{
-	  /*Computing MAX 
-	   */
-	  i1 = *n2 - nb;
-	  nn = Max (i1, 1);
-	  C2F(dcopy) (&nn, &w[iuv + ((*l - nn) << 1)], &c__2, &best[ipb[2]],
+	  nn = Max (n2-nb, 1);
+	  C2F(dcopy) (&nn, &w[iuv + ((l - nn) << 1)], &c__2, &best[ipb[2]],
 		      &c_n1);
 	  ipb[3] = ipb[2] + nn;
-	  /*Computing MAX 
-	   */
-	  i1 = *n1 - nb;
-	  nn = Max (i1, 1);
-	  C2F(dcopy) (&nn, &w[iuv + 1 + ((*l - nn) << 1)], &c__2,
+	  nn = Max (n1-nb, 1);
+	  C2F(dcopy) (&nn, &w[iuv + 1 + ((l - nn) << 1)], &c__2,
 		      &best[ipb[3]], &c_n1);
 	  ipb[4] = ipb[3] + nn;
 	}
@@ -795,13 +777,11 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
 	  best[ipb[3]] = w[iuv + 1];
 	  ipb[4] = ipb[3] + 1;
 	}
-      nn = *n2 + 1 - nb;
-      C2F(dcopy) (&nn, &w[ixy + ((*l - nn) << 1)], &c__2, &best[ipb[4]],
-		  &c_n1);
+      nn = n2 + 1 - nb;
+      C2F(dcopy) (&nn, &w[ixy + ((l - nn) << 1)], &c__2, &best[ipb[4]], &c_n1);
       ipb[5] = ipb[4] + nn;
-      nn = *n1 + 1 - nb;
-      C2F(dcopy) (&nn, &w[ixy + 1 + ((*l - nn) << 1)], &c__2, &best[ipb[5]],
-		  &c_n1);
+      nn = n1 + 1 - nb;
+      C2F(dcopy) (&nn, &w[ixy + 1 + ((l - nn) << 1)], &c__2, &best[ipb[5]], &c_n1);
       ipb[6] = ipb[5] + nn;
     }
   /* 
@@ -823,78 +803,62 @@ static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, i
  *         p3 should point to an array of size d1+d2+1
  */
 
-static int signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3)
+void signal_dpmul1(double *p1, int d1, double *p2, int d2, double *p3)
 {
-  int i1, k, m3;
   const int d3 = d1 + d2;
-  int l = 1, l1 = d1 + 1, l2 = d2 + 1, l3 = d3 + 1;
-    
+  int k, l = 1, l1 = d1 + 1, l2 = d2 + 1, l3 = d3 + 1;
+  int imax;
   /* Parameter adjustments */
   --p3;
   --p2;
   --p1;
 
-  /* 
-   */
-  m3 = Min (l1, l2);
-  i1 = m3;
-  for (k = 1; k <= i1; ++k)
+  /* take care that l1 and l2 change during the loop, thus precompute the max bound of iteration loop */
+  imax =  Min (l1, l2);
+  for (k = 1; k <= imax ; ++k)
     {
       p3[l3] = C2F(ddot) (&l, &p1[l1], &c__1, &p2[l2], &c_n1);
       ++l;
       --l3;
       --l1;
       --l2;
-      /* L10: */
     }
   --l;
-  /* 
-   */
+
   if (l1 == 0)
     {
-      goto L30;
+      if (l2 != 0)
+	{
+	  imax = l2;
+	  for (k = 1; k <= imax; ++k)
+	    {
+	      p3[l3] = C2F(ddot) (&l, &p1[1], &c__1, &p2[l2], &c_n1);
+	      --l2;
+	      --l3;
+	    }
+	}
     }
-  m3 = l1;
-  i1 = m3;
-  for (k = 1; k <= i1; ++k)
+  else
     {
-      p3[l3] = C2F(ddot) (&l, &p1[l1], &c__1, &p2[1], &c_n1);
-      --l1;
-      --l3;
-      /* L20: */
+      imax = l1;
+      for (k = 1; k <= imax; ++k)
+	{
+	  p3[l3] = C2F(ddot) (&l, &p1[l1], &c__1, &p2[1], &c_n1);
+	  --l1;
+	  --l3;
+	}
     }
-  goto L40;
- L30:
-  if (l2 == 0)
+
+  if (l3 != 0)
     {
-      goto L40;
+      imax=l3;
+      for (k = 1; k <= imax; ++k)
+	{
+	  --l;
+	  p3[l3] = C2F(ddot) (&l, &p1[1], &c__1, &p2[1], &c_n1);
+	  --l3;
+	}
     }
-  m3 = l2;
-  i1 = m3;
-  for (k = 1; k <= i1; ++k)
-    {
-      p3[l3] = C2F(ddot) (&l, &p1[1], &c__1, &p2[l2], &c_n1);
-      --l2;
-      --l3;
-      /* L31: */
-    }
-  /* 
-   */
- L40:
-  if (l3 == 0)
-    {
-      return 0;
-    }
-  m3 = l3;
-  i1 = m3;
-  for (k = 1; k <= i1; ++k)
-    {
-      --l;
-      p3[l3] = C2F(ddot) (&l, &p1[1], &c__1, &p2[1], &c_n1);
-      --l3;
-      /* L41: */
-    }
-  return 0;
 }
 
 /*
@@ -912,7 +876,7 @@ static int signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3)
  * C. Klimann, 22 feb 1985
  */
 
-static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3)
+static void signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3)
 {
   int i2, i3, j, k, l;
   double w;
@@ -922,7 +886,6 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
   const int dmax= Max(d1,d2);
   const int dmin= dsum - dmax;
   
-
   /* Parameter adjustments */
   --p3;
   --p2;
@@ -943,7 +906,7 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
 	{
 	  /* p1 and p2 are of degree 0 */
 	  p3[1] += p1[1] * p2[1];
-	  return 0;
+	  return ;
 	}
       if ( d1 == 0)
 	{
@@ -954,7 +917,7 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
 	      w1 = p3[i3] + w;
 	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
 	    }
-	  return 0;
+	  return ;
 	}
       /* p2 is of degree 0 */
       for (i3 = 1; i3 <= d1+1; ++i3)
@@ -963,7 +926,7 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
 	  w1 = p3[i3] + w;
 	  p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
 	}
-      return 0;
+      return ;
     }
 
   /* p1 and p2 or not of degree 0 */
@@ -997,7 +960,7 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
 	      w1 = p3[i3] + w;
 	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
 	    }
-	  return 0;
+	  return ;
 	}
       else
 	{
@@ -1022,7 +985,7 @@ static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int
       w1 = p3[i3] + w;
       p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
     }
-  return 0;
+  return ;
 }	
 
 /* memmove is slower than memcpy but acceps overlaping regions 
