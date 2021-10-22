@@ -458,22 +458,29 @@ if ~d.equal[(s-2)] then pause;end
 if ~n.equal[[s+2,s-2]] then pause;end 
 if ~d.equal[[s-2,s+2]] then pause;end 
 
+r=(s+1);
+p=(s+2)*(s-4);q=(s-2);
+[n,d]=simp(r*p,r*q);
+pmn = clean(p-n);
+qmd = clean(q-d);
+if ~pmn.equal[0*s] then pause;end 
+if ~qmd.equal[0*s] then pause;end
+
 //sfact
-if %f then
-p=(s-1/2)*(2-s);
-w=sfact(p); 
-r=w*horner(w, 1 ./ s){1}.num;
-e = r-p;
-if norm(e.coeffs{1}) > 20*%eps then pause;end 
-p1 = m2p([1,2,3,2,1],var='s');
-w=sfact(p1); 
-r=w*horner(w, 1 ./ s){1}.num;
-e = r-p1;
-if norm(e.coeffs{1}) > 200*%eps then pause;end 
+if %t then
+  p=(s-1/2)*(2-s);
+  w=sfact(p); 
+  r=w*horner(w, 1 ./ s){1}.num;
+  e = r-p;
+  if norm(e.coeffs{1}) > 20*%eps then pause;end 
+  p1 = m2p([1,2,3,2,1],var='s');
+  w=sfact(p1); 
+  r=w*horner(w, 1 ./ s){1}.num;
+  e = r-p1;
+  if norm(e.coeffs{1}) > 200*%eps then pause;end 
 end
 
 //bezout
-
 s=poly(0,'s');
 
 p1=(1+s)*(1+2*s)^2;p2=(1+s);
