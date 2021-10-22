@@ -2,16 +2,17 @@
 #include "signal.h"
 
 static void signal_dcopymem(int n, double *dx, double *dy);
-
-static const int c__1 = 1;
-static const double dzero = 0.;
-
 static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
 			  double *u, int *nu, int *l, double *x, double *v, double *w,
 			  double *best, int *ipb, double *errr);
-static int signal_dpmul1 (double *p1, int *d1, double *p2, int *d2, double *p3);
-static int signal_dpmul (double *p1, int *d1, double *p2, int *d2, double *p3, int *d3);
-  
+static int signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3);
+static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3);
+
+static const int c__1 = 1;
+static const int c_n1 = -1;
+static const int c__0 = 0;
+static const double dzero = 0.;
+
 /*
  *    Etant donnes une fraction rationnelle donnee par ses polynomes 
  *    numerateur et denominateurs, ce sous programme retourne le numerateur 
@@ -515,15 +516,9 @@ int signal_recbez (double *p1, int *n1, double *p2, int *n2, double *best,
   C2F(dcopy) (&i1, &p1[1], &c__1, &best[ipb[5]], &c__1);
   ipb[6] = ipb[5] + nn1 + 1;
   return 0;
-  /* 
-   */
-}				/* recbez_ */
+}
 
-
-static int c_n1 = -1;
-static int c__0 = 0;
-
-int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
+static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
 		   double *u, int *nu, int *l, double *x, double *v, double *w,
 		   double *best, int *ipb, double *errr)
 {
@@ -669,14 +664,14 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
   i1 = *l - m1;
   C2F(dcopy) (&i1, &w[ixy + (m1 << 1)], &c__2, &w[iw1], &c_n1);
   i1 = *l - 1 - m1;
-  signal_dpmul1 (&p1[1], n1, &w[iw1], &i1, &w[iw]);
+  signal_dpmul1 (&p1[1], *n1, &w[iw1], i1, &w[iw]);
   nw = *n1 + *l - 1 - m1;
   /*    p1*x+p2*y 
    */
   i1 = *l - m2;
   C2F(dcopy) (&i1, &w[ixy + 1 + (m2 << 1)], &c__2, &w[iw1], &c_n1);
   i1 = *l - 1 - m2;
-  signal_dpmul (&p2[1], n2, &w[iw1], &i1, &w[iw], &nw);
+  signal_dpmul (&p2[1], *n2, &w[iw1], i1, &w[iw], nw);
   i1 = nw + 1;
   errd = C2F(ddot) (&i1, &w[iw], &c__1, &w[iw], &c__1);
   /*    p1*u 
@@ -686,12 +681,12 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
       i1 = *l - 1 - m1;
       C2F(dcopy) (&i1, &w[iuv + 2 + (m1 << 1)], &c__2, &w[iw1], &c_n1);
       i1 = *l - 2 - m1;
-      signal_dpmul1 (&p1[1], n1, &w[iw1], &i1, &w[iw]);
+      signal_dpmul1 (&p1[1], *n1, &w[iw1], i1, &w[iw]);
       nw = *n1 + *l - 2 - m1;
     }
   else
     {
-      signal_dpmul1 (&p1[1], n1, &w[iuv + (m1 << 1)], &c__0, &w[iw]);
+      signal_dpmul1 (&p1[1], *n1, &w[iuv + (m1 << 1)], c__0, &w[iw]);
       nw = *n1;
     }
   /*    p1*u+p2*v 
@@ -701,11 +696,11 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
       i1 = *l - 1 - m2;
       C2F(dcopy) (&i1, &w[iuv + 3 + (m2 << 1)], &c__2, &w[iw1], &c_n1);
       i1 = *l - 2 - m2;
-      signal_dpmul (&p2[1], n2, &w[iw1], &i1, &w[iw], &nw);
+      signal_dpmul (&p2[1], *n2, &w[iw1], i1, &w[iw], nw);
     }
   else
     {
-      signal_dpmul (&p2[1], n2, &w[iuv + 1 + (m2 << 1)], &c__0, &w[iw], &nw);
+      signal_dpmul (&p2[1], *n2, &w[iuv + 1 + (m2 << 1)], c__0, &w[iw], nw);
     }
   /*    p 
    */
@@ -732,7 +727,7 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
   /*    p*y+p1 
    */
   i1 = *n1 - np;
-  signal_dpmul1 (&w[iw1], &np, &w[iw], &i1, &w[iw]);
+  signal_dpmul1 (&w[iw1], np, &w[iw], i1, &w[iw]);
   i1 = *n1 + 1;
   nsp_dadd (i1, &p1[1], c__1, &w[iw], c__1);
   i1 = *n1 + 1;
@@ -744,7 +739,7 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
   /*    p*x 
    */
   i1 = *n2 - np;
-  signal_dpmul1 (&w[iw1], &np, &w[iw], &i1, &w[iw]);
+  signal_dpmul1 (&w[iw1], np, &w[iw], i1, &w[iw]);
   /*    p*x-p2 
    */
   i1 = *n2 + 1;
@@ -813,43 +808,32 @@ int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
    */
  L99:
   return 0;
-}				/* bezstp_ */
-
+}
 
 /*
- * ce sous programme effectue le produit polynomial: 
- * 
- *               p3(x) = p1(x) * p2(x) 
- * 
- *     subroutine dpmul1(p1,d1,p2,d2,p3) 
- *    double precision p1(d1+1),p2(d2+1),p3(d1+d2+1) 
- *    int d1,d2,d3 
- * 
- *    p1 : contient les coefficient du premier polynome ranges 
- *         suivant les puissances croissantes 
- *    p2 : contient les coefficients du second polynome ranges 
- *         suivant les puissances croissantes 
- *    p3 :contient les coefficient du resultats. 
- *        p3 peut designer la meme adresse que p1 ou p2 
- *    d1,d2 : degre respectifs des  polynomesp1 et p2 
+ * polynomial product p3(x) = p1(x) * p2(x) 
+ *    p1 : (in) coefficients of polynomial P1 of degree d1
+ *         P1 = p1[0] + p1[1]*x + ... + p1[d1]*x^d1
+ *         p1 is of size (d1+1)
+ *    p2 : (in) coefficients of polynomial P2 of degree d2
+ *         P2 = p2[0] + p2[1]*x + ... + p2[d2]*x^d2
+ *         p2 is of size (d2+1)
+ *    p3 : (out) coefficients of the product
+ *         note that the address of p3 can be the same as p1 or p2 
+ *         p3 should point to an array of size d1+d2+1
  */
 
-int signal_dpmul1 (double *p1, int *d1, double *p2, int *d2, double *p3)
+static int signal_dpmul1 (double *p1, int d1, double *p2, int d2, double *p3)
 {
-  int i1;
-  int k, l, d3, l1, l2, l3, m3;
-
+  int i1, k, m3;
+  const int d3 = d1 + d2;
+  int l = 1, l1 = d1 + 1, l2 = d2 + 1, l3 = d3 + 1;
+    
   /* Parameter adjustments */
   --p3;
   --p2;
   --p1;
 
-  /* Function Body */
-  l = 1;
-  l1 = *d1 + 1;
-  l2 = *d2 + 1;
-  d3 = *d1 + *d2;
-  l3 = d3 + 1;
   /* 
    */
   m3 = Min (l1, l2);
@@ -911,262 +895,133 @@ int signal_dpmul1 (double *p1, int *d1, double *p2, int *d2, double *p3)
       /* L41: */
     }
   return 0;
-}				/* dpmul1_ */
+}
 
-int
-signal_dpmul (double *p1, int *d1, double *p2, int *d2, double *p3, int *d3)
+/*
+ * Compute the polynomial product 
+ *   p3(x) = p3(x) + (p1(x) * p2(x)) 
+ *    p1 : (in) coefficients of polynomial P1 of degree d1
+ *         P1 = p1[0] + p1[1]*x + ... + p1[d1]*x^d1
+ *         p1 is of size (d1+1)
+ *    p2 : (in) coefficients of polynomial P2 of degree d2
+ *         P2 = p2[0] + p2[1]*x + ... + p2[d2]*x^d2
+ *         p2 is of size (d2+1)
+ *    p3 : (inout) coefficients of the p3 (int) of size d3
+ *         p3 must be large enougth to contain the p3 (out)
+ * 
+ * C. Klimann, 22 feb 1985
+ */
+
+static int signal_dpmul (double *p1, int d1, double *p2, int d2, double *p3, int d3)
 {
-  int i1, i2;
-  double d__1, d__2, d__3;
-
-  /* Local variables */
-  int dmin__, dmax__;
-  int dsum, i3, j, k, l;
+  int i2, i3, j, k, l;
   double w;
-  int e1, e2;
   double w1;
-  double eps;
+  const double eps = C2F(dlamch) ("p", 1L);
+  const int dsum = d1 + d2;
+  const int dmax= Max(d1,d2);
+  const int dmin= dsum - dmax;
+  
 
-  /*!purpose 
-   * ce sous programme effectue le calcul: 
-   * 
-   *               p3(x) = p3(x) + (p1(x) * p2(x)) 
-   * 
-   *ou  p1,  p2  et p3 sont des polynomes de degres d1, d2 et d3, 
-   *respectivement. Ils sont classes en ordre croissant. 
-   *Tous  les  parametres  sont  d'entree, sauf p3 et d3 qui sont 
-   *d'entree-sortie. 
-   *! 
-   *auteur: c. klimann. 
-   *date: 22 fevrier 1985. 
-   *&&var 
-   */
   /* Parameter adjustments */
   --p3;
   --p2;
   --p1;
 
-  /* Function Body */
-  eps = C2F(dlamch) ("p", 1L);
-  /*&&ker 
-   */
-  dsum = *d1 + *d2;
-  /*fixation de dmax et dmin 
-   */
-  dmax__ = *d1;
-  if (*d2 > *d1)
+  if (d3 < dsum)
     {
-      dmax__ = *d2;
+      /* set to zero p3[i] for i >= (d3+1)+1 */
+      for (i3 = d3+2; i3 <= dsum +1; ++i3) p3[i3] = 0.;
+      d3 = dsum;
     }
-  dmin__ = dsum - dmax__;
-  /*fixation de d3 
-   */
-  if (*d3 >= dsum)
+  /* now the result is expected to be of size d3 */
+  
+  if ( d1 == 0 || d2 == 0)
     {
-      goto L1;
+      /* p1 or p2 are of degree 0 */
+      if ( d1 == 0 && d2 == 0)
+	{
+	  /* p1 and p2 are of degree 0 */
+	  p3[1] += p1[1] * p2[1];
+	  return 0;
+	}
+      if ( d1 == 0)
+	{
+	  /* p1 is of degree 0 */
+	  for (i3 = 1; i3 <= d2+1; ++i3)
+	    {
+	      w = p2[i3] * p1[1];
+	      w1 = p3[i3] + w;
+	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
+	    }
+	  return 0;
+	}
+      /* p2 is of degree 0 */
+      for (i3 = 1; i3 <= d1+1; ++i3)
+	{
+	  w = p1[i3] * p2[1];
+	  w1 = p3[i3] + w;
+	  p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
+	}
+      return 0;
     }
-  e1 = *d3 + 2;
-  e2 = dsum + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      p3[i3] = 0.;
-      /* L2: */
-    }
-  *d3 = dsum;
- L1:
-  /*cas des degres egaux a zero 
-   */
-  if (*d1 == 0 || *d2 == 0)
-    {
-      goto L53;
-    }
-  /*produit et addition 
-   */
-  e1 = 1;
-  e2 = dmin__ + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
+
+  /* p1 and p2 or not of degree 0 */
+  for (i3 = 1; i3 <= dmin+1; ++i3)
     {
       w = C2F(ddot) (&i3, &p1[1], &c__1, &p2[1], &c_n1);
       w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L10: */
+      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
     }
   k = 1;
-  if (*d1 == *d2)
+  if ( d1 != d2)
     {
-      goto L21;
-    }
-  e1 = dmin__ + 2;
-  e2 = dmax__ + 1;
-  /*si d1 > d2 
-   */
-  if (*d1 < *d2)
-    {
-      goto L25;
-    }
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      ++k;
-      i2 = dmin__ + 1;
-      w = C2F(ddot) (&i2, &p1[k], &c__1, &p2[1], &c_n1);
-      w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
+      if ( d1 < d2)
 	{
-	  p3[i3] = w1;
+	  for (i3 =dmin + 2; i3 <= dmax+1; ++i3)
+	    {
+	      ++k;
+	      i2 = dmin + 1;
+	      w = C2F(ddot) (&i2, &p2[k], &c_n1, &p1[1], &c__1);
+	      w1 = p3[i3] + w;
+	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
+	    }
+	  l = 1;
+	  j = dmin + 1;
+	  for (i3 = dmax+2; i3 <= dsum+1; ++i3)
+	    {
+	      --j;
+	      ++k;
+	      ++l;
+	      w = C2F(ddot) (&j, &p1[l], &c__1, &p2[k], &c_n1);
+	      w1 = p3[i3] + w;
+	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
+	    }
+	  return 0;
 	}
       else
 	{
-	  p3[i3] = 0.;
+	  for (i3 =dmin + 2; i3 <= dmax+1; ++i3)
+	    {
+	      ++k;
+	      i2 = dmin + 1;
+	      w = C2F(ddot) (&i2, &p1[k], &c__1, &p2[1], &c_n1);
+	      w1 = p3[i3] + w;
+	      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
+	    }
 	}
-      /* L20: */
     }
- L21:
-  e1 = dmax__ + 2;
-  e2 = dsum + 1;
   l = 1;
-  j = dmin__ + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
+  j = dmin + 1;
+  for (i3 = dmax+2; i3 <= dsum+1; ++i3)
     {
       --j;
       ++k;
       ++l;
       w = C2F(ddot) (&j, &p1[k], &c__1, &p2[l], &c_n1);
       w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L40: */
+      p3[i3] = (Abs (w1) > eps * Max ((Abs(p3[i3])),(Abs(w)))) ? w1:0;
     }
-  return 0;
-  /*si d2 > d1 
-   */
- L25:
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      ++k;
-      i2 = dmin__ + 1;
-      w = C2F(ddot) (&i2, &p2[k], &c_n1, &p1[1], &c__1);
-      w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L30: */
-    }
-  e1 = dmax__ + 2;
-  e2 = dsum + 1;
-  l = 1;
-  j = dmin__ + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      --j;
-      ++k;
-      ++l;
-      w = C2F(ddot) (&j, &p1[l], &c__1, &p2[k], &c_n1);
-      w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L50: */
-    }
-  return 0;
-  /*cas des degres egaux a zero 
-   */
- L53:
-  if (*d1 == 0 && *d2 == 0)
-    {
-      goto L100;
-    }
-  e1 = 1;
-  if (*d1 == 0)
-    {
-      goto L60;
-    }
-  e2 = *d1 + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      w = p1[i3] * p2[1];
-      w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L55: */
-    }
-  return 0;
- L60:
-  e2 = *d2 + 1;
-  i1 = e2;
-  for (i3 = e1; i3 <= i1; ++i3)
-    {
-      w = p2[i3] * p1[1];
-      w1 = p3[i3] + w;
-      /*Computing MAX 
-       */
-      d__2 = (d__1 = p3[i3], Abs (d__1)), d__3 = Abs (w);
-      if (Abs (w1) > eps * Max (d__2, d__3))
-	{
-	  p3[i3] = w1;
-	}
-      else
-	{
-	  p3[i3] = 0.;
-	}
-      /* L65: */
-    }
-  return 0;
- L100:
-  p3[1] += p1[1] * p2[1];
   return 0;
 }	
 
