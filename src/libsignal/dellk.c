@@ -6,20 +6,16 @@
 
 static double c_b3 = 2.;
 
-double
-signal_dellk (double *dk)
+double signal_dellk (double dk)
 {
-  static double de = 1.;
-  int i1;
-  double ret_val;
-  double dgeo, flma, dari, domi, dtest;
-  double dpi, dri;
+  double ret_val, dgeo, dari, dtest, dri;
   
-  i1 = (int) C2F(slamch) ("l", 1L) - 2;
-  flma = nsp_pow_di (c_b3, i1);
-  dpi = atan (1.) * 4.;
-  domi = nsp_dlamch ("p") * 2.;
-  dgeo = de - *dk * *dk;
+  const double de = 1.;
+  const int i1 =  (int) C2F(slamch) ("l", 1L) - 2;
+  const double flma = nsp_pow_di (c_b3, i1);
+  const double dpi = atan (1.) * 4.;
+  const double domi = nsp_dlamch ("p") * 2.;
+  dgeo = de - dk * dk;
   if (dgeo <= 0.)
     {
       goto L10;

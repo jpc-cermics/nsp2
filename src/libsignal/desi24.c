@@ -92,7 +92,7 @@ signal_desi24 (int *ndeg, double *adelp, double *adels, double *adelta,
   signal_deli11 (&du, &dr, &dq);
   du = dq;
   dq = sqrt (de - dr * dr);
-  dq = signal_dellk (&dr);
+  dq = signal_dellk (dr);
   du = *dk * du / (dq * (double) (*ndeg));
   dq = exp (-dpi * *dk / *dks);
   du = -signal_dsn2 (&du, dks, &dq);

@@ -280,7 +280,7 @@ int int_amell (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((Out = nsp_matrix_create (NVOID, 'r', U->m, U->n)) == NULLMAT)
     return RET_BUG;
-  signal_amell(U->R, &dk, Out->R, &Out->mn);
+  signal_amell(U->R, dk, Out->R, Out->mn);
   MoveObj (stack, 1, NSP_OBJECT (Out));
   return Max (lhs, 1);
 }

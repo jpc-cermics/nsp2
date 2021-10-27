@@ -33,8 +33,9 @@ extern int signal_cmpse2 (int *m, int *n, int *mode, F_dget * dgetx, F_dget * dg
 			  double *xa, double *xr, double *xi, double *zr, double *zi,
 			  int *ierr);
 
-extern int signal_amell (double *du, double *dk, double *dsn2, int *n);
-extern int signal_bounn (double *adeg, double *acap12, double *vsn);
+extern void signal_amell (const double *du, double dk, double *dsn2, int n);
+extern void signal_bounn (double adeg, double acap12, double *vsn);
+  
 extern int signal_cheby (int *ordr, int *demi, int *ieo, double *dp,
 			 double *x0, double *tam, double *win);
 
@@ -43,10 +44,9 @@ extern int signal_cmpse3 (int *m, int *n, int *mode, double *x, double *y,
 			  int *ierr, int *ichaud, int *nbx);
 extern int signal_coeft (int *ordre, double *poler, double *polei,
 			 double *gain);
-extern int signal_compel (const double *dk, double *dellk);
-extern int signal_degree (int *iapro, double *vsn, double *acap12,
-			  double *adeg);
-
+extern double signal_compel (double dk);
+extern double signal_degree (int iapro, double vsn, double acap12);
+  
 extern int signal_deli11 (const double *x,const double *ck, double *res);
 extern int signal_deli1 (int *n, double *resv, double *xv, double *ck);
 
@@ -55,7 +55,6 @@ extern int signal_deli2 (const int *nn, double *resv,const double *xxv,const dou
 extern int signal_delip (const int *n, double *resr, double *resi, const double *x,
 			 const double *ck);
 
-extern double signal_dellk (double *dk);
 extern int signal_desi00 (int *ityp, double *om, int *norma, double *edeg,
 			  int *ndeg, double *adeg, double *vsn, double *vd,
 			  double *a);
@@ -174,7 +173,7 @@ extern int signal_tscccf (const double *x,const double *y,const int *n, double *
 
 extern double signal_coshin (double *);
 extern int signal_fft842 (const int *,const int *, double *, double *, int *);
-extern double signal_dellk (double *);
+extern double signal_dellk (double);
 extern double signal_arcosh (double *);
 extern double signal_arsinh (double *);
 extern int signal_ouch (void);

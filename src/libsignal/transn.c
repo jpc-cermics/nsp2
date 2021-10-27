@@ -161,8 +161,6 @@ int signal_transn (int *ityp, double *om, int *norma,
   goto L270;
  L260:
   *vd = v1 * *vsn;
-  /* 
-   */
  L270:
   return 0;
 }	

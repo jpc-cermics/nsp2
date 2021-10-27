@@ -5,154 +5,101 @@
  */
 
 /*
- *calculation of the jacobi's elliptic function am(u,k) 
+ *  Jacobi's elliptic function am(u,k) 
  * 
- *external calculation of the parameter necessary 
- *ddk = k($dk) 
- *dq = exp(-pi*k'/k) ... (jacobi's nome) 
- *!calling sequence 
- *    subroutine amell(du, dk, dsn2 ,n) 
- *    double precision du(n),dsn2(n),dk 
- *    int n 
+ *  dsn2[i]=am(u[i],k) for i=1:n 
  */
 
+static double d_mod (double x, double y);
 
-static double d_mod (double *x, double *y);
-
-int
-signal_amell (double *du, double *dk, double *dsn2, int *n)
+void signal_amell (const double *u, double dk, double *am, int n)
 {
-  /* Initialized data */
-
-  static double de = 1.;
-  static double dz = 2.;
-
-  int i__1;
-  double d__1;
-
-  /* Local variables */
-  double domi, dsn22;
-  int i__;
-  double dc, dh, dm, dq;
-  double dkprim, dq1, dq2, du1, ddk;
-  int neg;
-  double dpi;
-  int ijk;
-  double dqq, dpi2;
-
-  /* Parameter adjustments */
-  --dsn2;
-  --du;
-
-  /* Function Body */
-  /* 
-   */
-  domi = nsp_dlamch ("p") * 2.;
-  dpi = atan (1.) * 4.;
-  signal_compel (dk, &ddk);
-  d__1 = sqrt (1. - *dk * *dk);
-  signal_compel (&d__1, &dkprim);
-  i__1 = *n;
-  for (ijk = 1; ijk <= i__1; ++ijk)
+  const double de = 1.;
+  const double dz = 2.;
+  const double domi = nsp_dlamch ("p") * 2.;
+  const double dpi = atan (1.) * 4.;
+  const double ddk = signal_compel (dk);
+  const double dkprim = signal_compel (sqrt (1. - dk * dk));
+  
+  double dc, dh, dm, dq, dq1, dq2, ui, dqq, dpi2, dsn22;
+  int i, j;
+  
+  for (i = 0; i < n; ++i)
     {
-      neg = FALSE;
-      du1 = du[ijk];
-      if (du1 < 0.)
+      int neg = FALSE;
+      ui = u[i];
+      if (ui < 0.)
 	{
 	  neg = TRUE;
-	  du1 = -du1;
+	  ui = -ui;
 	}
-      d__1 = ddk * 4.;
-      du1 = d_mod (&du1, &d__1);
+      ui = d_mod (ui,ddk * 4.);
       dq = exp (-dpi * dkprim / ddk);
       dpi2 = dpi / dz;
       if (Abs (dq) >= de)
 	{
 	  goto L30;
 	}
-      /* 
-       */
-      dm = dpi2 * du1 / ddk;
+      dm = dpi2 * ui / ddk;
       dc = dz * dm;
       dc = cos (dc);
-      /* 
-       */
+
       dm = sin (dm) * ddk / dpi2;
       dqq = dq * dq;
       dq1 = dq;
       dq2 = dqq;
-      /* 
-       */
-      for (i__ = 1; i__ <= 100; ++i__)
+      
+      for (j = 1; j <= 100; ++j)
 	{
 	  dh = (de - dq1) / (de - dq2);
 	  dh *= dh;
 	  dh *= de - dz * dq2 * dc + dq2 * dq2;
 	  dh /= de - dz * dq1 * dc + dq1 * dq1;
 	  dm *= dh;
-	  /* 
-	   */
-	  dh = (d__1 = de - dh, Abs (d__1));
+
+	  dh = Abs(de - dh);
 	  if (dh < domi)
 	    {
 	      goto L20;
 	    }
-	  /* 
-	   */
 	  dq1 *= dqq;
 	  dq2 *= dqq;
-	  /* L10: */
 	}
-      /* 
-       */
       goto L30;
-      /* 
-       */
+      
     L20:
-      if (dm < -1.)
-	{
-	  dm = -1.;
-	}
-      if (dm > 1.)
-	{
-	  dm = 1.;
-	}
+      if (dm < -1.) dm = -1.;
+      if (dm > 1.)  dm = 1.;
       dsn22 = asin (dm);
       if (dsn22 < 0.)
 	{
 	  dsn22 += dpi * 2.;
 	}
-      if (du1 >= ddk && du1 <= ddk * 2.)
+      if (ui >= ddk && ui <= ddk * 2.)
 	{
 	  dsn22 = dpi - dsn22;
 	}
-      if (du1 >= ddk * 2. && du1 <= ddk * 3.)
+      if (ui >= ddk * 2. && ui <= ddk * 3.)
 	{
 	  dsn22 = dpi * 3. - dsn22;
 	}
-      goto L2;
-      /* 
-       */
+      am[i] = (neg) ? -dsn22: dsn22;
+      continue;
+
     L30:
       dsn22 = 0.;
-    L2:
-      if (neg)
-	{
-	  dsn22 = -dsn22;
-	}
-      dsn2[ijk] = dsn22;
-      /* L1: */
-    }
-  return 0;
-}				/* amell_ */
+      am[i] = (neg) ? -dsn22: dsn22;
+      continue;
 
-static double
-d_mod (double *x, double *y)
+    }
+}
+
+static double d_mod (double x, double y)
 {
   double quotient;
-  if ((quotient = *x / *y) >= 0)
+  if ((quotient = x / y) >= 0)
     quotient = floor (quotient);
   else
     quotient = -floor (-quotient);
-  return (*x - (*y) * quotient);
+  return (x - y * quotient);
 }

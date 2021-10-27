@@ -15,7 +15,7 @@ signal_desi01 (int *maxdeg, int *iapro, double *edeg, int *ndeg,
   int m, n;
   double q;
   signal_parcha (iapro, adeg, adelp, adels, vsn, gd1, gd2, acap12);
-  signal_degree (iapro, vsn, acap12, adeg);
+  *adeg = signal_degree (*iapro, *vsn, *acap12);
   q = *adeg * (*edeg + 1.) + .5;
   n = (int) q;
   m = (int) (*adeg);
@@ -48,42 +48,38 @@ signal_desi01 (int *maxdeg, int *iapro, double *edeg, int *ndeg,
   return 0;
 }
 
-  /*
-   * computation of the minimum filter degree (adeg) 
-   *        Nomenclature Rabiner-Gold (page 241) 
-   *        acap12=1/k1 
-   *        vsn=1/k 
-   */
+/*
+ * computation of the minimum filter degree (adeg) 
+ *        Nomenclature Rabiner-Gold (page 241) 
+ *        acap12=1/k1 
+ *        vsn=1/k 
+ */
 
-int
-signal_degree (int *iapro, double *vsn, double *acap12, double *adeg)
+double signal_degree (int iapro, double vsn, double acap12)
 {
-  double d__1;
-  double dadeg, dcap02, dcap12, dcap04, dcap14;
-  double de;
+  double dadeg, dcap02, dcap12, dcap04, dcap14, de, adeg=0;
 
-  switch (*iapro)
+  switch (iapro)
     {
     case 1:
-      *adeg = log (1. / *acap12) / log (*vsn);
+      adeg = log (1. / acap12) / log (vsn);
       break;
     case 2:
-      d__1 = 1. / *acap12;
-      *adeg = acosh (d__1) / acosh (*vsn);
+      adeg = acosh (1. / acap12) / acosh (vsn);
       break;
     case 4:
       de = 1.;
-      dcap02 = de / *vsn;
+      dcap02 = de / vsn;
       dcap04 = sqrt (de - dcap02 * dcap02);
-      dcap12 = *acap12;
+      dcap12 = acap12;
       dcap14 = sqrt (de - dcap12 * dcap12);
       dadeg =
-	signal_dellk (&dcap02) * signal_dellk (&dcap14) /
-	(signal_dellk (&dcap04) * signal_dellk (&dcap12));
-      *adeg = dadeg;
+	signal_dellk (dcap02) * signal_dellk (dcap14) /
+	(signal_dellk (dcap04) * signal_dellk (dcap12));
+      adeg = dadeg;
       break;
     }
-  return 0;
+  return adeg;
 }
 
 /*
@@ -127,7 +123,7 @@ signal_parcha (int *iapro, double *adeg, double *adelp, double *adels,
       *acap12 = 1. / cosh (q);
       break;
     case 4:
-      signal_bounn (adeg, acap12, vsn);
+      signal_bounn (*adeg, *acap12, vsn);
       break;
     }
   if (*gd2 == -1.)
@@ -147,34 +143,32 @@ signal_parcha (int *iapro, double *adeg, double *adelp, double *adels,
  * calculation of a bounn for vsn or acap12 for elliptic filters 
  */
 
-int
-signal_bounn (double *adeg, double *acap12, double *vsn)
+void signal_bounn (double adeg, double acap12, double *vsn)
 {
-  static double de = 1.;
-  double d__1, d__2;
-  double ddeg, dmax__, dcap12;
-  int j;
+  const double de = 1.;
+  const double dpi = atan (1.) * 4.;
+  double d1, d2;
   double dcap14;
+  double ddeg, dmax, dcap12;
   double df[3], dk[3];
-  int ii, jj = 0;
-  double dq, dk1, dab, dde, deg, dkk, dpi;
-
-  dpi = atan (1.) * 4.;
-  if (*acap12 <= 0.)
+  double dq, dk1, dde, deg, dkk;
+  int ii, jj = 0,  j;
+  
+  if (acap12 <= 0.)
     {
       goto L10;
     }
-  dcap12 = *acap12;
-  deg = 1. / *adeg;
+  dcap12 = acap12;
+  deg = 1. / adeg;
   ii = 1;
   goto L20;
  L10:
   dcap12 = de / *vsn;
-  deg = *adeg;
+  deg = adeg;
   ii = -1;
  L20:
   dcap14 = sqrt (de - dcap12 * dcap12);
-  dkk = signal_dellk (&dcap14) / signal_dellk (&dcap12);
+  dkk = signal_dellk (dcap14) / signal_dellk (dcap12);
   dq = exp (-dpi * dkk * deg);
   dk1 = sqrt (dq) * 4.;
   if (dk1 < de)
@@ -188,34 +182,31 @@ signal_bounn (double *adeg, double *acap12, double *vsn)
  L30:
   dk[0] = dk1;
   dk[1] = (de + dk[0]) / 2.;
-  ddeg = *adeg;
-  d__2 = sqrt (de - dk[0] * dk[0]);
-  d__1 = signal_dellk (dk) * dkk / signal_dellk (&d__2);
-  df[0] = nsp_pow_di (d__1, ii) - ddeg;
-  d__2 = sqrt (de - dk[1] * dk[1]);
-  d__1 = signal_dellk (&dk[1]) * dkk / signal_dellk (&d__2);
-  df[1] = nsp_pow_di (d__1, ii) - ddeg;
+  ddeg = adeg;
+  d2 = sqrt (de - dk[0] * dk[0]);
+  d1 = signal_dellk (*dk) * dkk / signal_dellk (d2);
+  df[0] = nsp_pow_di (d1, ii) - ddeg;
+  d2 = sqrt (de - dk[1] * dk[1]);
+  d1 = signal_dellk (dk[1]) * dkk / signal_dellk (d2);
+  df[1] = nsp_pow_di (d1, ii) - ddeg;
  L40:
   dk[2] = dk[0] - df[0] * (dk[0] - dk[1]) / (df[0] - df[1]);
-  d__2 = sqrt (de - dk[2] * dk[2]);
-  d__1 = signal_dellk (&dk[2]) * dkk / signal_dellk (&d__2);
-  df[2] = nsp_pow_di (d__1, ii) - ddeg;
+  d2 = sqrt (de - dk[2] * dk[2]);
+  d1 = signal_dellk (dk[2]) * dkk / signal_dellk (d2);
+  df[2] = nsp_pow_di (d1, ii) - ddeg;
   if (Abs (df[2]) < 1e-6)
     {
       goto L60;
     }
-  dmax__ = 0.;
+  dmax = 0.;
   for (j = 1; j <= 3; ++j)
     {
-      dab = (d__1 = df[j - 1], Abs (d__1));
-      if (dmax__ > dab)
+      double dab = Abs( df[j - 1]);
+      if (dmax <=  dab)
 	{
-	  goto L50;
+	  jj = j;
+	  dmax = dab;
 	}
-      jj = j;
-      dmax__ = dab;
-    L50:
-      ;
     }
   if (jj == 3)
     {
@@ -225,15 +216,15 @@ signal_bounn (double *adeg, double *acap12, double *vsn)
   df[jj - 1] = df[2];
   goto L40;
  L60:
-  if (*acap12 <= 0.)
+  if (acap12 <= 0.)
     {
       goto L70;
     }
   dde = de / dk[2];
   *vsn = dde;
-  return 0;
+  return;
  L70:
-  *acap12 = dk[2];
-  return 0;
+  acap12 = dk[2];
+  return;
 }
 

@@ -6,14 +6,11 @@
 
 int signal_deli11 (const double *x,const double *ck, double *res)
 {
-  double d__1;
+  double d__1, aari, cres, test, angle, sqgeo;
+  double geo, ari, pim;
 
-  /* Local variables */
-  double aari, domi, cres, test, angle, sqgeo;
-  double geo, ari, dpi, pim;
-
-  dpi = atan (1.) * 4.;
-  domi = nsp_dlamch ("p") * 2.;
+  const double dpi = atan (1.) * 4.;
+  const double domi = nsp_dlamch ("p") * 2.;
   if (*x == 0.)
     {
       goto L10;

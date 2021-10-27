@@ -21,28 +21,20 @@
 int
 signal_deli2 (const int *nn, double *resv,const double *xxv,const double *ck)
 {
-  /* Initialized data */
-
-  static double acc = 8.5e-4;
+  const double acc = 8.5e-4;
 
   int i__1;
   double d__1, d__2;
-
-  /* Local variables */
   double lamda, x, y, z__, lolim, c1, c2, c3, e2, e3, uplim;
   int kk;
   double mu, xn, yn, zn, rscale, xx;
-
   double cxn, res, cyn, czn, rtx, rty, rtz;
 
-  /* Parameter adjustments */
   --xxv;
   --resv;
 
-  /* Function Body */
-  /* 
-   *    order x,y,z into xn,yn,zn  st. xn.le.yn.le.zn 
-   *     write(6,*) nn,resv(1),xxv(1),ck 
+  /*  order x,y,z into xn,yn,zn  st. xn.le.yn.le.zn 
+   *  write(6,*) nn,resv(1),xxv(1),ck 
    */
   i__1 = *nn;
   for (kk = 1; kk <= i__1; ++kk)
@@ -172,14 +164,11 @@ signal_deli2 (const int *nn, double *resv,const double *xxv,const double *ck)
 	rscale * ((c1 * e2 - .1 - c2 * e3) * e2 + 1. + c3 * e3) / sqrt (mu);
       res *= xx;
       goto L200;
-      /* 
-       *    failure exits 
-       */
+      /*  failure exits  */
     L180:
       res = 0.;
     L200:
       resv[kk] = res;
-      /* L201: */
     }
   return 0;
-}				/* deli2_ */
+}

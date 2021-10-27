@@ -56,8 +56,8 @@ signal_desi14 (int *nmaxi, int *maxdeg, int *ndeg, double *vsn, double *gd1,
   *dcap02 = de / *vsn;
   dcap01 = sqrt (*dcap02);
   *dcap04 = sqrt (de - *dcap02 * *dcap02);
-  *dk = signal_dellk (dcap02);
-  *dks = signal_dellk (dcap04);
+  *dk = signal_dellk (*dcap02);
+  *dks = signal_dellk (*dcap04);
   /* 
    */
   dq = exp (-dpi * *dks / *dk);

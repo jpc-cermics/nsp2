@@ -27,8 +27,8 @@ signal_delip (const int *n, double *resr, double *resi, const double *x, const d
   m = *ck * *ck;
   m1 = 1. - m;
   ck1 = sqrt (m1);
-  signal_compel (ck, &compk);
-  signal_compel (&ck1, &compk1);
+  compk = signal_compel (*ck);
+  compk1= signal_compel (ck1);
   i__1 = *n;
   for (k = 1; k <= i__1; ++k)
     {
@@ -59,7 +59,7 @@ signal_delip (const int *n, double *resr, double *resi, const double *x, const d
 	  resi[k] = compk1;
 	  resr[k] = r__;
 	}
-      /* L1: */
     }
   return 0;
-}				/* delip_ */
+}
+
