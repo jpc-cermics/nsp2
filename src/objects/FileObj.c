@@ -218,6 +218,7 @@ void nsp_file_destroy(NspFile  *F)
   if ( F->obj->ref_count == 0 )
    {
      /* XXXXXX : we must close file ? before destroying everything **/
+     FREE(F->obj->xdrs);
      FREE(F->obj->fname);
      FREE(F->obj);
    }

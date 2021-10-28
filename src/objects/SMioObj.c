@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define SMio_Private 
+#define SciFile_Private_def
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/smatrix.h> 
@@ -214,6 +215,7 @@ void nsp_smio_destroy(NspSMio  *F)
   F->obj->ref_count--;
   if ( F->obj->ref_count == 0 )
    {
+     FREE(F->obj->xdrs);
      FREE(F->obj->D);
      FREE(F->obj);
    }
@@ -357,6 +359,7 @@ NspSMio *nsp_smio_wcreate(char *name,char *str,int flag,unsigned int len)
   NspSMio *F =nsp_smio_create_void(name,(NspTypeBase *) nsp_type_smio);
   if ( F == NULLSMIO)  return NULLSMIO;
   if ((F->obj = malloc(sizeof(nsp_smio))) == NULL) return NULLSMIO;
+  if ((F->obj->xdrs = malloc(sizeof(XDR))) == NULL) return NULLSMIO;
   F->obj->ref_count=1;
   if ((F->obj->D =new_nsp_string_n(len)) == NULLSTRING) return NULLSMIO;
   F->obj->len = len;
@@ -373,6 +376,7 @@ NspSMio *nsp_smio_rcreate(char *name,char *str,int flag,const char *data,unsigne
   NspSMio *F =nsp_smio_create_void(name,(NspTypeBase *) nsp_type_smio);
   if ( F == NULLSMIO)  return NULLSMIO;
   if ((F->obj = malloc(sizeof(nsp_smio))) == NULL) return NULLSMIO;
+  if ((F->obj->xdrs = malloc(sizeof(XDR))) == NULL) return NULLSMIO;
   F->obj->ref_count=1;
   if ((F->obj->D = new_nsp_string_n(len)) == NULLSTRING) return NULLSMIO;
   memcpy(F->obj->D,data,len);
