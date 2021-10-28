@@ -354,7 +354,7 @@ extern void   xdrmem_create	(XDR *, char *, u_int, enum xdr_op);
 extern void   xdrstdio_create	(XDR *, FILE *, enum xdr_op);
 
 /* XDR pseudo records for tcp */
-extern void   xdrrec_create	(XDR *, u_int, u_int, char *, int (*)(), int (*)());
+extern void   xdrrec_create	(XDR *, u_int, u_int, char *, int (*)(char *, char *, int), int (*)(char *, char *, int));
 
 /* make end of xdr record */
 extern bool_t xdrrec_endofrecord (XDR *, int);

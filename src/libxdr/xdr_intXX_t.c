@@ -17,19 +17,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
 
 #include <stdio.h>
-
-#ifdef __MSC__
-#include <nsp/rpc/types.h>
-#include <nsp/rpc/xdr.h>
-#endif
-
 #include <sys/types.h>
 #include <nsp/rpc/types.h>
+#include <nsp/rpc/xdr.h>
+
+#include "nspxdr.h"
 
 /* We play dirty tricks with aliases.  */
 #define xdr_quad_t Xdr_quad_t

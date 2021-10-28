@@ -12,16 +12,16 @@ typedef struct XDR XDR;
 /* here we need XDR struct and functions declarations */
 
 #if !defined(__MSC__) && !defined(__MINGW32__)
-#include <netinet/in.h> 
+#include <netinet/in.h>
 #endif
 
 #include <nsp/rpc/types.h>
 #include <nsp/rpc/xdr.h>
 
 #ifdef WIN32
-#ifdef interface 
-#undef interface 
-#endif 
+#ifdef interface
+#undef interface
+#endif
 #else  /* NOT WIN32 */
 #if defined(HAVE_TIRPC) || defined(__OpenBSD__)
 #define xdr_int8_t   xdr_char
@@ -31,7 +31,7 @@ typedef struct XDR XDR;
 #define xdr_uint64_t xdr_u_int64_t
 #endif /* HAVE_TIRPC */
 #endif /* WIN32 */
-#endif /* !defined(SciFile_Private) */
 
+#endif /* !defined(SciFile_Private) */
 #endif /* NSP_INC_XDR_H */
 

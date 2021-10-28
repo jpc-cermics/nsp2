@@ -34,6 +34,10 @@
 #ifndef _RPC_TYPES_H
 #define _RPC_TYPES_H
 
+#if !defined(__MSC__) && !defined(__MINGW32__)
+#include <netinet/in.h> 
+#endif
+
 #define	bool_t	int
 #define	enum_t	int
 #define __dontcare__	-1

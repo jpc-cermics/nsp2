@@ -46,6 +46,7 @@
 #endif
 #include <nsp/rpc/types.h> 
 #include <nsp/rpc/xdr.h>
+#include "nspxdr.h"
 
 static bool_t xdrmem_getlong (XDR *, long *);
 static bool_t xdrmem_putlong (XDR *, const long *);

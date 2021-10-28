@@ -40,7 +40,9 @@
  
 #include <stdio.h>
 #include <sys/types.h>
-#include <nsp/rpc/xdr_inc.h>
+#include <nsp/rpc/types.h>
+#include <nsp/rpc/xdr.h>
+#include "nspxdr.h"
 
 #ifndef __MSC__
 #include <sys/param.h>

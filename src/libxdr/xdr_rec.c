@@ -55,6 +55,7 @@
 
 #include <nsp/rpc/types.h> 
 #include <nsp/rpc/xdr.h>
+#include "nspxdr.h"
 
 /* XXXX*/
 typedef uint32_t u_int32_t;

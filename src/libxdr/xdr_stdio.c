@@ -37,7 +37,9 @@
  * from the stream.
  */
 #include <stdio.h>
-#include <nsp/rpc/xdr_inc.h>
+#include <nsp/rpc/types.h>
+#include <nsp/rpc/xdr.h>
+#include "nspxdr.h"
 
 static bool_t xdrstdio_getlong (XDR *, long *);
 static bool_t xdrstdio_putlong (XDR *, const long *);
