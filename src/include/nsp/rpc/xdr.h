@@ -344,9 +344,7 @@ extern bool_t   xdr_netobj();
  * These are the public routines for the various implementations of
  * xdr streams.
  */
-#ifndef __MSC__
-__BEGIN_DECLS
-#endif
+
 /* XDR using memory buffers */
 extern void   xdrmem_create	(XDR *, char *, u_int, enum xdr_op);
 
@@ -364,9 +362,6 @@ extern bool_t xdrrec_skiprecord	(XDR *);
 
 /* true if no more input */
 extern bool_t xdrrec_eof	(XDR *);
-#ifndef __MSC__
-__END_DECLS
-#endif
 
 #endif /* !_RPC_XDR_H */
 

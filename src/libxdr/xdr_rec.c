@@ -48,11 +48,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(__MSC__) && !defined(__MINGW32__)
+#if !defined(__MSC__)  && !defined(__MINGW32__)
 #include <netinet/in.h> /** jpc : je met netinet/ avant rpc pour eviter un warning */
-#include <unistd.h> /** lseek **/
 #endif
 
+#include <unistd.h> /** lseek **/
 #include <nsp/rpc/types.h> 
 #include <nsp/rpc/xdr.h>
 #include "nspxdr.h"
@@ -308,7 +308,7 @@ xdrrec_getpos(const XDR *xdrs)
   register RECSTREAM *rstrm = (RECSTREAM *)xdrs->x_private;
   register long pos;
 
-#ifdef __MSC__
+#if defined(__MSC__) || defined(__MINGW32__)
   /* XXX : no lseek in msvc++ */
   fseek((FILE *) rstrm->tcp_handle, (long) 0, 1);
   pos = ftell((FILE *) rstrm->tcp_handle);

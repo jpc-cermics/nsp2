@@ -57,9 +57,7 @@
 
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
-#ifdef __MSC__ 
-/* #undef FALSE */
-/* #undef TRUE */
+#if defined(__MSC__) || defined(__MINGW32__)
 #include <winsock.h>
 typedef char * caddr_t;
 #define bzero(x,n) memset(x,0,n)
@@ -76,19 +74,5 @@ typedef char * caddr_t;
 #ifndef INADDR_LOOPBACK
 #define	INADDR_LOOPBACK		(u_long)0x7F000001
 #endif
-
-
-/* for MINGWIN32   
- * replaced by winsock.h
- #ifndef PASCAL 
- #define PASCAL      __stdcall
- #endif
- u_long PASCAL htonl (u_long hostlong);
- u_long PASCAL ntohl (u_long netlong);
- */
-
-#ifdef __MINGW32__
-#include <winsock.h>
-#endif 
 
 #endif /* !_RPC_TYPES_H */
