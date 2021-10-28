@@ -44,7 +44,7 @@
 typedef struct _nsp_smio nsp_smio;
 
 struct _nsp_smio {
-  XDR  xdrs[1];  /* xdr struture */
+  XDR  *xdrs;    /* xdr struture */
   int  flag;     /* flag for special open (xdr) */
   char openf[4]; /* flags used in fopen */
   unsigned int pos,len;   /* position in stream and len of string D */

@@ -55,7 +55,9 @@
 #include <ctype.h>  /* isdigit */
 
 #define SciFile_xdr_save_string /* locally change the header */
-#include <nsp/object.h> 
+#define SciFile_Private_def /*  need XDR structure and xdr function */
+
+#include <nsp/object.h>
 #include <nsp/file.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/imatrix.h> 

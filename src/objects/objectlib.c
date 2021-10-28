@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define SciFile_Private_def
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 

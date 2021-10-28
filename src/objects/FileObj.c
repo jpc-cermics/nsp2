@@ -25,7 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SciFile_Private 
+#define SciFile_Private
+#define SciFile_Private_def
 #include <nsp/object.h> 
 #include <nsp/file.h> 
 #include <nsp/smatrix.h> 
@@ -320,6 +321,7 @@ NspFile *nsp_file_create(char *name,const char *fname, char *str,int flag,FILE *
   if ( F == NULLSCIFILE)  return NULLSCIFILE;
   if ((F->obj = malloc(sizeof(nsp_file))) == NULL) return NULLSCIFILE;
   F->obj->ref_count=1;
+  if ((F->obj->xdrs = malloc(sizeof(XDR))) == NULL) return NULLSCIFILE;
   if ((F->obj->fname =new_nsp_string(fname)) == NULLSTRING) return NULLSCIFILE;
   strncpy(F->obj->openf,str,3);F->obj->openf[3]='\0';
   F->obj->flag =flag;

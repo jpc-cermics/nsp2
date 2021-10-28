@@ -32,7 +32,7 @@
 #include <string.h> 
 #include <string.h>
 #include <ctype.h>  /* isdigit */
-
+#define SciFile_Private_def
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/smatrix.h> 

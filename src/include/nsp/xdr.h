@@ -3,6 +3,14 @@
 
 #include <stdio.h>
 
+#if !defined(SciFile_Private_def)
+/* keep structure opaque */
+typedef struct XDR XDR;
+
+#else
+
+/* here we need XDR struct and functions declarations */
+
 #if !defined(__MSC__) && !defined(__MINGW32__)
 #include <netinet/in.h> 
 #endif
@@ -23,5 +31,7 @@
 #define xdr_uint64_t xdr_u_int64_t
 #endif /* HAVE_TIRPC */
 #endif /* WIN32 */
+#endif /* !defined(SciFile_Private) */
+
 #endif /* NSP_INC_XDR_H */
 

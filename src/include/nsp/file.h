@@ -27,10 +27,10 @@ typedef struct _nsp_file nsp_file;
 
 struct _nsp_file {
   FILE *file ;   /* the file */
-  XDR  xdrs[1];  /* xdr struture */
+  XDR  *xdrs;    /* xdr struture opaque out of xdr */
   int  flag;     /* flag for special open (xdr) */
   char openf[4]; /* flags used in fopen */
-  char *fname;  /* file name */
+  char *fname;   /* file name */
   int ref_count;
 };
 

@@ -19,8 +19,7 @@
  * frames for storing evaluation environments.
  */
 
-
-#define  Frame_Private 
+#define Frame_Private 
 #include <nsp/object.h> 
 #include <nsp/type.h> 
 #include <nsp/file.h> 

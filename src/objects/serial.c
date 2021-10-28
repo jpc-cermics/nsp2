@@ -19,7 +19,7 @@
  * Serial Object. 
  */
 
-#define  Serial_Private 
+#define Serial_Private 
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/smatrix.h> 

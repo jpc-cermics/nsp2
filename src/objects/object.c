@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #define Object_Private
+#define SciFile_Private_def
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
 #include <nsp/matrix.h>

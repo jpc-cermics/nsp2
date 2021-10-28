@@ -19,7 +19,6 @@
 
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
-
 #define PList_Private
 #include <nsp/type.h>
 #include <nsp/plist.h>
