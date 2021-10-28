@@ -16,14 +16,19 @@ void signal_amell (const double *u, double dk, double *am, int n)
 {
   const double de = 1.;
   const double dz = 2.;
-  const double domi = nsp_dlamch ("p") * 2.;
+  const double domi = nsp_dlamch ("p") * 2.; /* 2 *%eps */
+  /* be sure that the value is correct when dk is exactly 1. */
+  const double dkn = ( dk == de ) ? de - 2*domi : dk;
   const double dpi = atan (1.) * 4.;
-  const double ddk = signal_compel (dk);
-  const double dkprim = signal_compel (sqrt (1. - dk * dk));
+  const double ddk = signal_compel (dkn);
+  const double dkprim = signal_compel (sqrt (1. - dkn * dkn));
+  const double dq = exp (-dpi * dkprim / ddk);
+  const double dpi2 = dpi / dz;
+  const double dqq = dq * dq;
   
-  double dc, dh, dm, dq, dq1, dq2, ui, dqq, dpi2, dsn22;
+  double dc, dh, dm, dq1, dq2, ui, dsn22;
   int i, j;
-  
+    
   for (i = 0; i < n; ++i)
     {
       int neg = FALSE;
@@ -34,8 +39,6 @@ void signal_amell (const double *u, double dk, double *am, int n)
 	  ui = -ui;
 	}
       ui = d_mod (ui,ddk * 4.);
-      dq = exp (-dpi * dkprim / ddk);
-      dpi2 = dpi / dz;
       if (Abs (dq) >= de)
 	{
 	  goto L30;
@@ -45,7 +48,6 @@ void signal_amell (const double *u, double dk, double *am, int n)
       dc = cos (dc);
 
       dm = sin (dm) * ddk / dpi2;
-      dqq = dq * dq;
       dq1 = dq;
       dq2 = dqq;
       

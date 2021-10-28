@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <rpc/xdr_inc.h>
+#include <nsp/rpc/xdr_inc.h>
 
 #define LASTUNSIGNED	((u_int)0-1)
 

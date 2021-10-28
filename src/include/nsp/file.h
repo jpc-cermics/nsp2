@@ -7,9 +7,9 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
-#include "nsp/sciio.h" 
+#include <nsp/sciio.h>
 #include <nsp/objectf.h>
-#include "nsp/xdr.h"
+#include <nsp/xdr.h>
 
 /**
  * nsp_file:

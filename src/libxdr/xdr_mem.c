@@ -41,18 +41,11 @@
 
 #include <string.h>
 
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
-
-#ifndef __MSC__
-#include <netinet/in.h> /** jpc : je met netinet/ avant rpc pour eviter un warning */
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
-#else
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
+#if !defined(__MSC__) && !defined(__MINGW32__)
+#include <netinet/in.h> 
 #endif
+#include <nsp/rpc/types.h> 
+#include <nsp/rpc/xdr.h>
 
 static bool_t xdrmem_getlong (XDR *, long *);
 static bool_t xdrmem_putlong (XDR *, const long *);

@@ -10,12 +10,12 @@
  * base type (NspTypeObject)
  */
 
-#include "nsp/math.h"
-#include "nsp/string.h"
-#include "nsp/index.h"
-#include "nsp/xdr.h"
-#include "nsp/intsf.h"
-#include "nsp/objectf.h"
+#include <nsp/math.h>
+#include <nsp/string.h>
+#include <nsp/index.h>
+#include <nsp/xdr.h>
+#include <nsp/intsf.h>
+#include <nsp/objectf.h>
 
 /* typedef struct  _NspObject  NspObject;  */
 typedef struct  _AttrTab AttrTab;

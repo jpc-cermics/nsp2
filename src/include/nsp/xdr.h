@@ -1,15 +1,20 @@
 #ifndef NSP_INC_XDR_H
 #define NSP_INC_XDR_H
 
-#ifdef WIN32
 #include <stdio.h>
-#include "rpc/xdr_inc.h"
+
+#if !defined(__MSC__) && !defined(__MINGW32__)
+#include <netinet/in.h> 
+#endif
+
+#include <nsp/rpc/types.h>
+#include <nsp/rpc/xdr.h>
+
+#ifdef WIN32
 #ifdef interface 
 #undef interface 
 #endif 
 #else  /* NOT WIN32 */
-#include <rpc/types.h>
-#include <rpc/xdr.h>
 #if defined(HAVE_TIRPC) || defined(__OpenBSD__)
 #define xdr_int8_t   xdr_char
 #define xdr_uint8_t  xdr_u_char

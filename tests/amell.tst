@@ -1,7 +1,8 @@
 // See https://fr.wikipedia.org/wiki/Fonction_elliptique_de_Jacobi
 
 u=linspace(-5,5,100);
-kv=[0.1:0.05:0.95,0.96,0.97,0.98,0.99,0.999];
+// the limit case 1 should work 
+kv=[0.1:0.05:0.95,0.96,0.97,0.98,0.99,1.0];
 A=ones(size(kv,'*'),size(u,'*'));
 for k=1:size(kv,'*');
   A(k,:)=amell(u,kv(k));

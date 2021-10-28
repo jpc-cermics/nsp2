@@ -48,19 +48,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
-
-#ifndef __MSC__
+#if !defined(__MSC__) && !defined(__MINGW32__)
 #include <netinet/in.h> /** jpc : je met netinet/ avant rpc pour eviter un warning */
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
 #include <unistd.h> /** lseek **/
-#else
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
 #endif
+
+#include <nsp/rpc/types.h> 
+#include <nsp/rpc/xdr.h>
 
 /* XXXX*/
 typedef uint32_t u_int32_t;

@@ -536,6 +536,7 @@ if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end
 s=poly(0,'s');h=[s,s ./ s^4;s^2,s^3];
 r=inv(h,'L');
 r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+
 if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
 
 r=inv(h,'C');

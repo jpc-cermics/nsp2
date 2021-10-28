@@ -40,7 +40,7 @@
  
 #include <stdio.h>
 #include <sys/types.h>
-#include <rpc/xdr_inc.h>
+#include <nsp/rpc/xdr_inc.h>
 
 #ifndef __MSC__
 #include <sys/param.h>
@@ -70,7 +70,7 @@ struct	vax_single {
 #define VAX_SNG_BIAS	0x81
 #define IEEE_SNG_BIAS	0x7f
 
-#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(__x86_64__) && !defined(__i386__)
 static struct sgl_limits {
   struct vax_single s;
   struct ieee_single ieee;
@@ -86,7 +86,7 @@ bool_t
 xdr_float(register XDR *xdrs, register float *fp)
 {
 
-#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(__x86_64__) && !defined(__i386__)
   struct ieee_single is;
   struct vax_single vs, *vsp;
   struct sgl_limits *lim;
@@ -95,7 +95,7 @@ xdr_float(register XDR *xdrs, register float *fp)
   switch (xdrs->x_op) {
 
   case XDR_ENCODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_) || defined(i386)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(__x86_64__) || defined(__i386__)
     return (XDR_PUTLONG(xdrs, (long *)fp));
 #else
     vs = *((struct vax_single *)fp);
@@ -117,7 +117,7 @@ xdr_float(register XDR *xdrs, register float *fp)
 #endif
  
   case XDR_DECODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)|| defined(i386)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(__x86_64__)|| defined(__i386__)
     return (XDR_GETLONG(xdrs, (long *)fp));
 #else
     vsp = (struct vax_single *)fp;
@@ -189,7 +189,7 @@ bool_t
 xdr_double(register XDR *xdrs, double *dp)
 {
   register long *lp;
-#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(__x86_64__) && !defined(__i386__)
   struct	ieee_double id;
   struct	vax_double vd;
   register struct dbl_limits *lim;
@@ -199,7 +199,7 @@ xdr_double(register XDR *xdrs, double *dp)
   switch (xdrs->x_op) {
 
   case XDR_ENCODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_) || defined(i386)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(__x86_64__) || defined(__i386__)
     lp = (long *)dp;
 #else
     vd = *((struct vax_double *)dp);
@@ -224,15 +224,15 @@ xdr_double(register XDR *xdrs, double *dp)
     id.sign = vd.sign;
     lp = (long *)&id;
 #endif
-#if defined(WIN32) || defined(_X86_) || defined(i386)
+#if defined(WIN32) || defined(__x86_64__) || defined(__i386__)
     return (XDR_PUTLONG(xdrs, lp+1) && XDR_PUTLONG(xdrs, lp));
 #else
     return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
 #endif
   case XDR_DECODE:
-#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(_X86_)|| defined(i386)
+#if defined(WIN32) || defined(mc68000) || defined(sparc) || defined(mips) || defined(mmax) || defined(__x86_64__)|| defined(__i386__)
     lp = (long *)dp;
-#if defined(WIN32) || defined(_X86_) || defined(i386)
+#if defined(WIN32) || defined(__x86_64__) || defined(__i386__)
     return (XDR_GETLONG(xdrs, lp+1) && XDR_GETLONG(xdrs, lp));
 #else
     return (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));

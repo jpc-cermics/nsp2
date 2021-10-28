@@ -471,6 +471,9 @@ case "$host" in
        CC_LDFLAGS="${CC_LDFLAGS} -ldl -rdynamic -Wl,-relax"
        LDFLAGS="${LDFLAGS} -Wl,-relax "
     fi
+    LIBXDR_LOCAL='libxdr-n'
+    LIBXDR=
+    LIBXDRA=libs/xdr.a
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Linux sparc
@@ -1914,12 +1917,11 @@ fi
 
 #################
 ## libtirpc
-## (lib rpc on Fedora 16)
 #################
 
 if test "x$PKG_CONFIG" != x; then # try first to use pkg-config
    ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
-   PKG_CHECK_MODULES(TIRPC, libtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
+   PKG_CHECK_MODULES(TIRPC, ZZZZZZZZZZZZZZZZZlibtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
    ## In case of success I just want libtirpc be added in GTK_PKGS_CFLAGS
    if test "$HAVE_TIRPC" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libtirpc"

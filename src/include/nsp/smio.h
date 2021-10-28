@@ -21,9 +21,9 @@
  */
 
 #include <stdio.h>   
-#include "nsp/sciio.h" 
+#include <nsp/sciio.h>
 #include <nsp/objectf.h>
-#include "nsp/xdr.h"
+#include <nsp/xdr.h>
 
 #ifdef HAVE_ZLIB
 #include <zlib.h>

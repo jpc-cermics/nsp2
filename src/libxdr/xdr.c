@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <rpc/xdr_inc.h>
+#include <nsp/rpc/xdr_inc.h>
 
 /*
  * constants specific to the xdr "protocol"

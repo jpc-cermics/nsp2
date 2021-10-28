@@ -24,17 +24,17 @@
 #include <stdio.h>
 
 #ifdef __MSC__
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
+#include <nsp/rpc/types.h>
+#include <nsp/rpc/xdr.h>
 #endif
 
 #include <sys/types.h>
-#include <rpc/types.h>
+#include <nsp/rpc/types.h>
 
 /* We play dirty tricks with aliases.  */
 #define xdr_quad_t Xdr_quad_t
 #define xdr_u_quad_t Xdr_u_quad_t
-#include <rpc/xdr.h>
+#include <nsp/rpc/xdr.h>
 #undef xdr_quad_t
 #undef xdr_u_quad_t
 

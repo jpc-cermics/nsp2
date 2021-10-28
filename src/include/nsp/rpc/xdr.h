@@ -40,6 +40,8 @@
 #ifndef _RPC_XDR_H
 #define _RPC_XDR_H
 
+#include <stdio.h>
+
 #if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <sys/cdefs.h>
 #endif 
@@ -348,10 +350,8 @@ __BEGIN_DECLS
 /* XDR using memory buffers */
 extern void   xdrmem_create	(XDR *, char *, u_int, enum xdr_op);
 
-/* #ifdef _STDIO_H_ */
 /* XDR using stdio library */
 extern void   xdrstdio_create	(XDR *, FILE *, enum xdr_op);
-/* #endif */
 
 /* XDR pseudo records for tcp */
 extern void   xdrrec_create	(XDR *, u_int, u_int, char *, int (*)(), int (*)());
