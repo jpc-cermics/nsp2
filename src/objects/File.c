@@ -68,14 +68,6 @@
 #include "nsp/pr-output.h"   /* nsp_get_format */
 #include <nsp/system.h> /* FSIZE */
 
-#if defined(__APPLE_CC__)
-#define xdr_uint8_t xdr_u_char
-#define xdr_int8_t xdr_char
-#define xdr_uint16_t xdr_u_int16_t
-#define xdr_uint32_t xdr_u_int32_t
-#define xdr_uint64_t xdr_u_int64_t
-#endif 
-
 /**
  *nsp_file_open:
  * @fname: a path name 

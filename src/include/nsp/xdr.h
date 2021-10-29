@@ -23,7 +23,7 @@ typedef struct XDR XDR;
 #undef interface
 #endif
 #else  /* NOT WIN32 */
-#if defined(HAVE_TIRPC) || defined(__OpenBSD__)
+#if defined(HAVE_TIRPC) || defined(__OpenBSD__) || defined(__APPLE_CC__)
 #define xdr_int8_t   xdr_char
 #define xdr_uint8_t  xdr_u_char
 #define xdr_uint16_t xdr_u_int16_t
