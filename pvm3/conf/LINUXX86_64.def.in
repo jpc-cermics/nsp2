@@ -32,11 +32,11 @@ ARCHCFLAGS	= \
 		  -DHASSTDINT -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
 		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t \
 		  -Wno-implicit-int  -Wno-implicit-function-declaration -Wno-unused-result \
-		  $(NSPXDR_INCLUDES)  \
+		  $(@XDR@_INCLUDES)  \
 		  
-ARCHDLIB	= -L/usr/lib64 $(NSPXDR_LIBS)
+ARCHDLIB	= -L/usr/lib64 $(@XDR@_LIBS)
 ARCHDOBJ	=
-ARCHLIB		= $(NSPXDR_LIBS)
+ARCHLIB		= $(@XDR@_LIBS)
 HASRANLIB	=	t
 AR		=	ar
 PVM_ARCH	=	LINUX64
