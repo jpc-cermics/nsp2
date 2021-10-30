@@ -24,7 +24,8 @@ NSPXDR_INCLUDES=-I../../../src/libxdr-n/nspxdr
 LTIRPC_INCLUDES=`pkg-config libtirpc --cflags`
 NSPXDR_LIBS= ../../../libs/xdr.a
 LTIRPC_LIBS=`pkg-config libtirpc --libs`
-
+WITH_FPIC=@CC_PICFLAGS@
+WITHOUT_FPIC=
 
 ARCHCFLAGS	= \
 		  -DSYSVSIGNAL -DNOWAIT3 -DRSHCOMMAND=\"/usr/bin/rsh\" \
@@ -32,7 +33,7 @@ ARCHCFLAGS	= \
 		  -DHASSTDINT -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
 		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t \
 		  -Wno-implicit-int  -Wno-implicit-function-declaration -Wno-unused-result \
-		  $(@XDR@_INCLUDES)  \
+		  $(@XDR@_INCLUDES) $(@FPIC@) \
 		  
 ARCHDLIB	= -L/usr/lib64 $(@XDR@_LIBS)
 ARCHDOBJ	=

@@ -474,6 +474,7 @@ case "$host" in
     LIBXDR_LOCAL='libxdr-n'
     LIBXDR=
     LIBXDRA=libs/xdr.a
+    XDR=NSPXDR
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Linux sparc
@@ -750,10 +751,12 @@ esac
 # add fpic 
 ############################################
 
+FPIC=WITHOUT_FPIC
 if test "$enable_fpic" = yes; then
    CC_OPTIONS="${CFLAGS} ${CC_PICFLAGS}"
    FC_OPTIONS="${FFLAGS} ${FC_PICFLAGS}"
    CXX_OPTIONS="${CXXFLAGS} ${CC_PICFLAGS}"
+   FPIC=WITH_FPIC
 fi
 
 if test "$with_gtk3" == yes; then
@@ -1928,6 +1931,7 @@ if test "x$PKG_CONFIG" != x; then # try first to use pkg-config
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libtirpc"
          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
          GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+	 XDR=LTIRPC
    fi
 fi
 
@@ -2394,6 +2398,7 @@ AC_SUBST(GZVT)
 AC_SUBST(LIBXDR_LOCAL)
 AC_SUBST(LIBXDR)
 AC_SUBST(LIBXDRA)
+AC_SUBST(XDR)
 AC_SUBST(WINXFLAGS)
 AC_SUBST(MENUSOBJS)
 AC_SUBST(MALLOC)
@@ -2535,7 +2540,9 @@ AC_SUBST(CROSS_POPULATE)
 AC_SUBST(TARGET_MACHINE)
 AC_SUBST(CROSS_COPIER)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml)
+AC_SUBST(FPIC)
+
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml pvm3/conf/LINUXX86_64.def)
 
 # should be executable
 chmod +x pvm3/lib/pvmarch
