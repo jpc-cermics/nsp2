@@ -25,11 +25,15 @@ ARCHCFLAGS	= \
 		  -DHASSTDINT -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
 		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t \
 		  -Wno-implicit-int  -Wno-implicit-function-declaration -Wno-unused-result \
-		  `pkg-config libtirpc --cflags` \
+		  -I../../../src/libxdr-n/nspxdr \
+		  
+XXX=		  `pkg-config libtirpc --cflags` 
 		  
 ARCHDLIB	= -L/usr/lib64 -ltirpc
+ARCHDLIB	= ../../../libs/xdr.a
 ARCHDOBJ	=
 ARCHLIB		= -ltirpc
+ARCHLIB		= ../../../libs/xdr.a
 HASRANLIB	=	t
 AR		=	ar
 PVM_ARCH	=	LINUX64
