@@ -53,18 +53,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
+#include <errno.h>
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
+#if XXXXX
 #include <rpc/auth.h>
 #include <rpc/svc_auth.h>
 #include <rpc/svc.h>
 #include <rpc/clnt.h>
-#include <stddef.h>
-#include <errno.h>
+#endif 
+#if XXXXX
 #include <rpc/rpc_com.h>
+#endif
+
+enum xprt_stat {
+	XPRT_DIED,
+	XPRT_MOREREQS,
+	XPRT_IDLE
+};
+
+/* should be static ? */
 
 bool_t __xdrrec_getrec(XDR *, enum xprt_stat *, bool_t);
+bool_t __xdrrec_setnonblock(XDR *xdrs, int maxrec);
 
 static bool_t	xdrrec_getlong(XDR *, long *);
 static bool_t	xdrrec_putlong(XDR *, const long *);
@@ -617,8 +630,7 @@ __xdrrec_getrec(xdrs, statp, expectdata)
 	return FALSE;
 }
 
-bool_t
-__xdrrec_setnonblock(xdrs, maxrec)
+bool_t __xdrrec_setnonblock(xdrs, maxrec)
 	XDR *xdrs;
 	int maxrec;
 {

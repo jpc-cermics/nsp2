@@ -42,10 +42,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if XXX
 #include <rpc/rpc.h>
+#endif
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#include <rpc/rpc_com.h>
+#if XXX
+//#include <rpc/rpc_com.h>
+#endif
 
 typedef quad_t          longlong_t;     /* ANSI long long type */
 typedef u_quad_t        u_longlong_t;   /* ANSI unsigned long long type */
@@ -755,6 +759,7 @@ xdr_union(xdrs, dscmp, unp, choices, dfault)
  * storage is allocated.  The last parameter is the max allowed length
  * of the string as specified by a protocol.
  */
+#if XDRNSP_NOTUSED
 bool_t
 xdr_string(xdrs, cpp, maxsize)
 	XDR *xdrs;
@@ -845,6 +850,7 @@ xdr_wrapstring(xdrs, cpp)
 {
 	return xdr_string(xdrs, cpp, RPC_MAXDATASIZE);
 }
+#endif
 
 /*
  * NOTE: xdr_hyper(), xdr_u_hyper(), xdr_longlong_t(), and xdr_u_longlong_t()
