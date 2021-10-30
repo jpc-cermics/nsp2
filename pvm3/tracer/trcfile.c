@@ -982,7 +982,7 @@ int omit;
 
 	char **strarr;
 
-	char msg[1024];
+	char msg[2048];
 
 	int newtask;
 	int endtask;

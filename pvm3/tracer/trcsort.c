@@ -737,7 +737,7 @@ int createflag;
 
 	static struct timeval delta = { 0, 0 };
 
-	char fname[255];
+	char fname[512];
 
 	int index;
 

@@ -696,7 +696,7 @@ char *hostline;
 	char result[1024];
 	char result2[1024];
 	char tcmd[1024];
-	char tmp[255];
+	char tmp[4096];
 	char user[1024];
 
 	int remote_os = -1;
@@ -1177,7 +1177,7 @@ int rsize;
 
 	char tfile[1024];
 	char tcmd[1024];
-	char tmp[255];
+	char tmp[2048];
 
 	int ret = 1;
 	int len;
