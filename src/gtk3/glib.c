@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -3124,7 +3124,6 @@ int _wrap_g_get_locale_variants(Stack stack, int rhs, int opt, int lhs) /* g_get
     ret =g_get_locale_variants(locale);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3150,7 +3149,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 3154 "glib.c"
+#line 3153 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -3204,7 +3203,6 @@ int _wrap_g_uri_list_extract_uris(Stack stack, int rhs, int opt, int lhs) /* g_u
     ret =g_uri_list_extract_uris(uri_list);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3248,7 +3246,6 @@ int _wrap_g_listenv(Stack stack, int rhs, int opt, int lhs) /* g_listenv */
     ret =g_listenv();
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3261,7 +3258,6 @@ int _wrap_g_get_environ(Stack stack, int rhs, int opt, int lhs) /* g_get_environ
     ret =g_get_environ();
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3304,7 +3300,6 @@ int _wrap_g_environ_setenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
     ret =g_environ_setenv(envp,variable,value,overwrite);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3326,7 +3321,6 @@ int _wrap_g_environ_unsetenv(Stack stack, int rhs, int opt, int lhs) /* g_enviro
     ret =g_environ_unsetenv(envp,variable);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4457,7 +4451,6 @@ int _wrap_g_strsplit(Stack stack, int rhs, int opt, int lhs) /* g_strsplit */
     ret =g_strsplit(string,delimiter,max_tokens);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4473,7 +4466,6 @@ int _wrap_g_strsplit_set(Stack stack, int rhs, int opt, int lhs) /* g_strsplit_s
     ret =g_strsplit_set(string,delimiters,max_tokens);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4531,7 +4523,6 @@ int _wrap_g_strdupv(Stack stack, int rhs, int opt, int lhs) /* g_strdupv */
     ret =g_strdupv(str_array);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5837,4 +5828,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 5841 "glib.c"
+#line 5832 "glib.c"

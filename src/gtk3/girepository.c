@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -42,7 +42,6 @@ static int nsp_gi_info_check(GIBaseInfo *info, GIInfoType info_type_check);
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
 #include <nsp/gtk/gibaseinfo.h>
-#include <nsp/gtk/gifunctioninfo.h>
 #include <nsp/gtk/girepository.h>
 
 
@@ -261,7 +260,7 @@ static int _wrap_g_base_info_get_attributes(NspGIBaseInfo *self,Stack stack,int 
   return 0;
 }
 
-#line 265 "girepository.c"
+#line 264 "girepository.c"
 
 
 static int _wrap_g_function_info_get_symbol(NspGIBaseInfo *self,Stack stack,int rhs,int opt,int lhs)
@@ -286,205 +285,6 @@ static NspMethods *gibaseinfo_get_methods(void) { return gibaseinfo_methods;};
  *-------------------------------------------*/
 
 static AttrTab gibaseinfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
-
-
-/* -----------NspGIFunctionInfo ----------- */
-
-
-#define  NspGIFunctionInfo_Private 
-#include <nsp/objects.h>
-#include <nsp/gtk/gifunctioninfo.h>
-#include <nsp/interf.h>
-#include <nsp/nspthreads.h>
-
-/* 
- * NspGIFunctionInfo inherits from GBoxed 
- */
-
-int nsp_type_gifunctioninfo_id=0;
-NspTypeGIFunctionInfo *nsp_type_gifunctioninfo=NULL;
-
-/*
- * Type object for NspGIFunctionInfo 
- * all the instance of NspTypeGIFunctionInfo share the same id. 
- * nsp_type_gifunctioninfo: is an instance of NspTypeGIFunctionInfo 
- *    used for objects of NspGIFunctionInfo type (i.e built with new_gifunctioninfo) 
- * other instances are used for derived classes 
- */
-NspTypeGIFunctionInfo *new_type_gifunctioninfo(type_mode mode)
-{
-  NspTypeGIFunctionInfo *type= NULL;
-  NspTypeObject *top;
-  if (  nsp_type_gifunctioninfo != 0 && mode == T_BASE )
-    {
-      /* initialization performed and T_BASE requested */
-      return nsp_type_gifunctioninfo;
-    }
-  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
-  type->interface = NULL;
-  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
-  if ( type->surtype == NULL) return NULL;
-  type->attrs = gifunctioninfo_attrs;
-  type->get_attrs = (attrs_func *) int_get_attribute;
-  type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = gifunctioninfo_get_methods;
-  type->gtk_methods = TRUE;
-  type->new = (new_func *) new_gifunctioninfo;
-
-
-  top = NSP_TYPE_OBJECT(type->surtype);
-  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-
-  /* object methods redefined for gifunctioninfo */ 
-
-  top->s_type =  (s_type_func *) nsp_gifunctioninfo_type_as_string;
-  top->sh_type = (sh_type_func *) nsp_gifunctioninfo_type_short_string;
-  /* top->create = (create_func*) int_gifunctioninfo_create;*/
-
-  /* specific methods for gifunctioninfo */
-
-  type->init = (init_func *) init_gifunctioninfo;
-
-  /* 
-   * NspGIFunctionInfo interfaces can be added here 
-   * type->interface = (NspTypeBase *) new_type_b();
-   * type->interface->interface = (NspTypeBase *) new_type_C()
-   * ....
-   */
-  if ( nsp_type_gifunctioninfo_id == 0 ) 
-    {
-      /* 
-       * the first time we get here we initialize the type id and
-       * an instance of NspTypeGIFunctionInfo called nsp_type_gifunctioninfo
-       */
-      type->id =  nsp_type_gifunctioninfo_id = nsp_new_type_id();
-      nsp_type_gifunctioninfo = type;
-      if ( nsp_register_type(nsp_type_gifunctioninfo) == FALSE) return NULL;
-      /* add a ref to nsp_type in the gtype */
-      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gifunctioninfo, GI_TYPE_BASE_INFO);
-      return ( mode == T_BASE ) ? type : new_type_gifunctioninfo(mode);
-    }
-  else 
-    {
-      type->id = nsp_type_gifunctioninfo_id;
-      return type;
-    }
-}
-
-/*
- * initialize NspGIFunctionInfo instances 
- * locally and by calling initializer on parent class 
- */
-
-static int init_gifunctioninfo(NspGIFunctionInfo *Obj,NspTypeGIFunctionInfo *type)
-{
-  /* initialize the surtype */ 
-  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type;
-  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
-  /* specific */
- return OK;
-}
-
-/*
- * new instance of NspGIFunctionInfo 
- */
-
-NspGIFunctionInfo *new_gifunctioninfo() 
-{
-  NspGIFunctionInfo *loc;
-  /* type must exists */
-  nsp_type_gifunctioninfo = new_type_gifunctioninfo(T_BASE);
-  if ( (loc = malloc(sizeof(NspGIFunctionInfo)))== NULLGIFUNCTIONINFO) return loc;
-  /* initialize object */
-  if ( init_gifunctioninfo(loc,nsp_type_gifunctioninfo) == FAIL) return NULLGIFUNCTIONINFO;
-  return loc;
-}
-
-/*----------------------------------------------
- * Object method redefined for NspGIFunctionInfo 
- *-----------------------------------------------*/
-/*
- * type as string 
- */
-
-static char gifunctioninfo_type_name[]="GIFunctionInfo";
-static char gifunctioninfo_short_type_name[]="GIFunctionInfo";
-
-static char *nsp_gifunctioninfo_type_as_string(void)
-{
-  return(gifunctioninfo_type_name);
-}
-
-static char *nsp_gifunctioninfo_type_short_string(NspObject *v)
-{
-  return(gifunctioninfo_short_type_name);
-}
-
-/*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGIFunctionInfo objects 
- * Note that some of these functions could become MACROS
- *-----------------------------------------------------*/
-
-NspGIFunctionInfo   *nsp_gifunctioninfo_object(NspObject *O)
-{
-  /* Follow pointer */
-  HOBJ_GET_OBJECT(O,NULL);
-  /* Check type */
-  if ( check_cast (O,nsp_type_gifunctioninfo_id)  == TRUE  ) return ((NspGIFunctionInfo *) O);
-  else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gifunctioninfo));
-  return NULL;
-}
-
-int IsGIFunctionInfoObj(Stack stack, int i)
-{
-  return nsp_object_type(NthObj(i),nsp_type_gifunctioninfo_id);
-}
-
-int IsGIFunctionInfo(NspObject *O)
-{
-  return nsp_object_type(O,nsp_type_gifunctioninfo_id);
-}
-
-NspGIFunctionInfo  *GetGIFunctionInfoCopy(Stack stack, int i)
-{
-  if (  GetGIFunctionInfo(stack,i) == NULL ) return NULL;
-  return MaybeObjCopy(&NthObj(i));
-}
-
-NspGIFunctionInfo  *GetGIFunctionInfo(Stack stack, int i)
-{
-  NspGIFunctionInfo *M;
-  if (( M = nsp_gifunctioninfo_object(NthObj(i))) == NULLGIFUNCTIONINFO)
-     ArgMessage(stack,i);
-  return M;
-}
-
-/*
- * copy for boxed 
- */
-
-NspGIFunctionInfo *gifunctioninfo_copy(NspGIFunctionInfo *self)
-{
-  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
-                              (NspTypeBase *) nsp_type_gifunctioninfo);
-}
-
-/*-------------------------------------------------------------------
- * wrappers for the GIFunctionInfo
- * i.e functions at Nsp level 
- *-------------------------------------------------------------------*/
-/*-------------------------------------------
- * Methods
- *-------------------------------------------*/
-static NspMethods *gifunctioninfo_get_methods(void) { return NULL;};
-/*-------------------------------------------
- * Attributes
- *-------------------------------------------*/
-
-static AttrTab gifunctioninfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* -----------NspGIRepository ----------- */
@@ -718,7 +518,7 @@ static int _wrap_g_irepository_enumerate_versions
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
-#line 722 "girepository.c"
+#line 522 "girepository.c"
 
 
 #line 59 "codegen-3.0/girepository.override"
@@ -743,7 +543,7 @@ static int _wrap_g_irepository_require
   return 0;
 }
 
-#line 747 "girepository.c"
+#line 547 "girepository.c"
 
 
 #if GTK_CHECK_VERSION(1,44,0)
@@ -757,7 +557,6 @@ static int _wrap_g_irepository_get_immediate_dependencies(NspGIRepository *self,
     ret =g_irepository_get_immediate_dependencies(G_IREPOSITORY(self->obj),namespace_);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -779,7 +578,6 @@ static int _wrap_g_irepository_get_dependencies(NspGIRepository *self,Stack stac
     ret =g_irepository_get_dependencies(G_IREPOSITORY(self->obj),namespace_);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -798,7 +596,7 @@ static int _wrap_g_irepository_get_loaded_namespaces
   return 1;
 }
 
-#line 802 "girepository.c"
+#line 600 "girepository.c"
 
 
 static int _wrap_g_irepository_find_by_gtype(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -861,7 +659,7 @@ static int _wrap_g_irepository_get_n_infos
  * g_base_info_get_namespace(self->info);
  */
 
-#line 865 "girepository.c"
+#line 663 "girepository.c"
 
 
 static int _wrap_g_irepository_get_info(NspGIRepository *self,Stack stack,int rhs,int opt,int lhs)
@@ -1105,24 +903,6 @@ int _wrap_g_base_info_equal(Stack stack, int rhs, int opt, int lhs) /* g_base_in
   return 1;
 }
 
-int _wrap_g_function_info_get_flags(Stack stack, int rhs, int opt, int lhs) /* g_function_info_get_flags */
-{
-  int_types T[] = {obj, t_end};
-  GIFunctionInfo *info = NULL;
-  NspObject *nsp_info = NULL;
-  guint ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_info) == FAIL) return RET_BUG;
-  if (nspg_boxed_check(nsp_info, GI_TYPE_BASE_INFO))
-      info = nspg_boxed_get(nsp_info, GIFunctionInfo);
-  else {
-      Scierror( "Error: info should be a GIFunctionInfo\n");
-      return RET_BUG;
-  }
-    ret =g_function_info_get_flags(info);
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
 int _wrap_g_irepository_get_default(Stack stack, int rhs, int opt, int lhs) /* g_irepository_get_default */
 {
   GIRepository *ret;
@@ -1221,7 +1001,6 @@ static OpTab girepository_func[]={
   { "g_base_info_get_attribute", _wrap_g_base_info_get_attribute},
   { "g_base_info_get_container", _wrap_g_base_info_get_container},
   { "g_base_info_equal", _wrap_g_base_info_equal},
-  { "g_function_info_get_flags", _wrap_g_function_info_get_flags},
   { "g_irepository_get_default", _wrap_g_irepository_get_default},
   { "g_irepository_prepend_search_path", _wrap_g_irepository_prepend_search_path},
   { "g_irepository_prepend_library_path", _wrap_g_irepository_prepend_library_path},
@@ -1275,7 +1054,6 @@ girepository_add_constants(NspObject *module, const gchar *strip_prefix)
 void nsp_initialize_girepository_types(void)
 {
   new_type_gibaseinfo(T_BASE);
-  new_type_gifunctioninfo(T_BASE);
   new_type_girepository(T_BASE);
 }
 
@@ -1300,4 +1078,4 @@ static int nsp_gi_info_check(GIBaseInfo *info, GIInfoType info_type_check)
 }
 
 
-#line 1304 "girepository.c"
+#line 1082 "girepository.c"

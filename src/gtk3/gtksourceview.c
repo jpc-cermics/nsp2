@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -668,7 +668,6 @@ static int _wrap_gtk_source_buffer_get_context_classes_at_iter(NspGtkSourceBuffe
     ret =gtk_source_buffer_get_context_classes_at_iter(GTK_SOURCE_BUFFER(self->obj),iter);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5192,7 +5191,6 @@ static int _wrap_gtk_source_language_get_mime_types(NspGtkSourceLanguage *self,S
     ret =gtk_source_language_get_mime_types(GTK_SOURCE_LANGUAGE(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5205,7 +5203,6 @@ static int _wrap_gtk_source_language_get_globs(NspGtkSourceLanguage *self,Stack 
     ret =gtk_source_language_get_globs(GTK_SOURCE_LANGUAGE(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5218,7 +5215,6 @@ static int _wrap_gtk_source_language_get_style_ids(NspGtkSourceLanguage *self,St
     ret =gtk_source_language_get_style_ids(GTK_SOURCE_LANGUAGE(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -9714,4 +9710,4 @@ void nsp_initialize_gtksourceview_types(void)
   new_type_gtksourcemap(T_BASE);
 }
 
-#line 9718 "gtksourceview.c"
+#line 9714 "gtksourceview.c"

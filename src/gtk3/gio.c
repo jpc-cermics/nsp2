@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1903,7 +1903,6 @@ static int _wrap_g_action_group_list_actions(NspGActionGroup *self,Stack stack,i
     ret =g_action_group_list_actions(G_ACTION_GROUP(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2323,7 +2322,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 2327 "gio.c"
+#line 2326 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -2385,7 +2384,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 2389 "gio.c"
+#line 2388 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -3140,7 +3139,6 @@ static int _wrap_g_app_launch_context_get_environment(NspGAppLaunchContext *self
     ret =g_app_launch_context_get_environment(G_APP_LAUNCH_CONTEXT(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -3916,7 +3914,6 @@ static int _wrap_g_application_command_line_get_arguments(NspGApplicationCommand
     ret =g_application_command_line_get_arguments(G_APPLICATION_COMMAND_LINE(self->obj),&argc);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6544,7 +6541,6 @@ static int _wrap_g_dbus_proxy_get_cached_property_names(NspGDBusProxy *self,Stac
     ret =g_dbus_proxy_get_cached_property_names(G_DBUS_PROXY(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -6966,7 +6962,6 @@ static int _wrap_g_drive_enumerate_identifiers(NspGDrive *self,Stack stack,int r
     ret =g_drive_enumerate_identifiers(G_DRIVE(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -11738,7 +11733,7 @@ static int _wrap_g_input_stream_read(NspGInputStream *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 11742 "gio.c"
+#line 11737 "gio.c"
 
 
 static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -14657,7 +14652,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 14661 "gio.c"
+#line 14656 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -14713,7 +14708,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 14717 "gio.c"
+#line 14712 "gio.c"
 
 
 #if GLIB_CHECK_VERSION(2,32,0)
@@ -16128,7 +16123,6 @@ static int _wrap_g_mount_guess_content_type_finish(NspGMount *self,Stack stack,i
   }
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -16161,7 +16155,6 @@ static int _wrap_g_mount_guess_content_type_sync(NspGMount *self,Stack stack,int
   }
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -17370,7 +17363,7 @@ static int _wrap_g_output_stream_write(NspGOutputStream *self,Stack stack,int rh
   return 1;
 }
 
-#line 17374 "gio.c"
+#line 17367 "gio.c"
 
 
 static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int rhs,int opt,int lhs)
@@ -20459,7 +20452,6 @@ static int _wrap_g_settings_list_children(NspGSettings *self,Stack stack,int rhs
     ret =g_settings_list_children(G_SETTINGS(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20472,7 +20464,6 @@ static int _wrap_g_settings_list_keys(NspGSettings *self,Stack stack,int rhs,int
     ret =g_settings_list_keys(G_SETTINGS(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -20730,7 +20721,6 @@ static int _wrap_g_settings_get_strv(NspGSettings *self,Stack stack,int rhs,int 
     ret =g_settings_get_strv(G_SETTINGS(self->obj),key);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29112,7 +29102,6 @@ static int _wrap_g_volume_enumerate_identifiers(NspGVolume *self,Stack stack,int
     ret =g_volume_enumerate_identifiers(G_VOLUME(self->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -29839,7 +29828,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 29843 "gio.c"
+#line 29832 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -29984,7 +29973,6 @@ int _wrap_g_content_type_guess_for_tree(Stack stack, int rhs, int opt, int lhs) 
     ret =g_content_type_guess_for_tree(G_FILE(root->obj));
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -30502,7 +30490,7 @@ int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resou
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30506 "gio.c"
+#line 30494 "gio.c"
 
 
 #line 228 "codegen-3.0/gio.override"
@@ -30530,7 +30518,7 @@ int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_
   return 1;
 }
 
-#line 30534 "gio.c"
+#line 30522 "gio.c"
 
 
 #line 205 "codegen-3.0/gio.override"
@@ -30555,7 +30543,7 @@ int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_
   return 1;
 }
 
-#line 30559 "gio.c"
+#line 30547 "gio.c"
 
 
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
@@ -30671,7 +30659,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30675 "gio.c"
+#line 30663 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -31064,4 +31052,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 31068 "gio.c"
+#line 31056 "gio.c"

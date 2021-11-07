@@ -2529,18 +2529,18 @@ let nsp_double_array_arg_write_param_gen params info nsp_type _byref =
     | Some x ->
 	varlist_add info.varlist "zzdouble"  ("*" ^ params.pname ^ " = " ^ x) in
   let info = add_parselist info params.pvarargs nsp_type ["&" ^ params.pname]  [params.pname] in
-  (* this is useless since the matrix is obtained with the nsp_type set to "realmat" 
-    let codebefore =
-    Printf.sprintf "  if ( ! IsMat(%s) " params.pname ^
-    Printf.sprintf "  || ((NspMatrix *) %s)->rc_type != 'r' " params.pname ^ 
-    (if params.psize = "" then 
-       ")\n" 
-     else
-       Printf.sprintf " || ((NspMatrix *) %s)->mn != [%s] ) \n" params.pname params.psize) ^
-    Printf.sprintf "     return FAIL;\n" in 
+  (*   this is useless since the matrix is obtained with the nsp_type set to "realmat" 
+   *   let codebefore =
+   *   Printf.sprintf "  if ( ! IsMat(%s) " params.pname ^
+   *   Printf.sprintf "  || ((NspMatrix *\) %s)->rc_type != 'r' " params.pname ^ 
+   *   (if params.psize = "" then 
+   *      ")\n" 
+   *    else
+   *      Printf.sprintf " || ((NspMatrix *\) %s)->mn != [%s] ) \n" params.pname params.psize) ^
+   *   Printf.sprintf "     return FAIL;\n" in 
    *)
   let codebefore = "" in 
-  (*   Printf.sprintf "  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(double));\n" params.pname params.psize in *)
+  (* (\*   Printf.sprintf "  memcpy(%s, ((NspMatrix *\) O)->R,%s*sizeof(double));\n" params.pname params.psize in *\) *)
   { info with
     arglist = ( params.pname ^ "->R")  :: info.arglist;
     varlist = varlist ;
@@ -4215,11 +4215,11 @@ let string_array_arg_write_return _ptype ownsreturn info =
     if ownsreturn then
       "  nsp_ret = (NspObject *) nsp_smatrix_create_from_const_table(ret);\n" ^
       "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+      "  g_strfreev(ret);\n" ^
       "  MoveObj(stack,1,nsp_ret);\n  return 1;" 
     else
       "  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);\n" ^
       "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
-      "  g_strfreev(ret);\n" ^
       "  MoveObj(stack,1,nsp_ret);\n  return 1;" 
   in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2019 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -5344,7 +5344,6 @@ int _wrap_pango_split_file_list(Stack stack, int rhs, int opt, int lhs) /* pango
     ret =pango_split_file_list(str);
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
   if ( nsp_ret == NULL) return RET_BUG;
-  g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -5793,4 +5792,4 @@ void nsp_initialize_pango_types(void)
   new_type_pangolayout(T_BASE);
 }
 
-#line 5797 "pango.c"
+#line 5796 "pango.c"
