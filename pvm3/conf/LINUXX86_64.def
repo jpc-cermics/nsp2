@@ -33,7 +33,7 @@ ARCHCFLAGS	= \
 		  -DHASSTDINT -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
 		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t \
 		  -Wno-implicit-int  -Wno-implicit-function-declaration -Wno-unused-result \
-		  $(NSPXDR_INCLUDES) $(WITH_FPIC) \
+		  $(NSPXDR_INCLUDES) $(WITHOUT_FPIC) \
 		  
 ARCHDLIB	= -L/usr/lib64 $(NSPXDR_LIBS)
 ARCHDOBJ	=

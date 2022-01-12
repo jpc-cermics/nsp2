@@ -1,6 +1,6 @@
 SUFFIXES=.job
 
-H2DEF=./codegen/h2def.py
+H2DEF=./codegen3/h2def.py
 
 all:  gir.defs gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs glib.defs gtksourceview.defs
  

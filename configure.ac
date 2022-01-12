@@ -1923,7 +1923,8 @@ fi
 #################
 
 if test "x$PKG_CONFIG" != x; then # try first to use pkg-config
-   ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
+   ## libtirpc coud be a solution to obtain an xdr library
+   ## but this is not necessary since we use an internal xdr library 
    PKG_CHECK_MODULES(TIRPC, ZZZZZZZZZZZZZZZZZlibtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
    ## In case of success I just want libtirpc be added in GTK_PKGS_CFLAGS
    if test "$HAVE_TIRPC" = "yes"; then

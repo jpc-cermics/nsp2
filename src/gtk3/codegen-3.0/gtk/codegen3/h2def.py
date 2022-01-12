@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- Mode: Python; py-indent-offset: 4 -*-
 # GPL'ed
 # Toby D. Reeves <toby@max.rl.plh.af.mil>
@@ -334,7 +334,7 @@ def clean_func(buf):
     return buf
 
 proto_tag_pat=re.compile(r"""
-(?P<available>(GDK_|G_|GLIB_|GI|cairo_pub|CAIRO_BEGIN_DECLS\ cairo_)\w+) # tag
+(?P<available>(GDK_|G_|ATK_|PANGO_|GLIB_|GI|cairo_pub|CAIRO_BEGIN_DECLS\ cairo_)\w+) # tag
 \s+
 (?P<ret>(-|\w|\&|\*)+\s*)  # return type
 \s+                   # skip whitespace
