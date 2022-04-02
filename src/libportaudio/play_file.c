@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2009-2019 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2009-2022 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -30,6 +30,9 @@
 #include <signal.h> 
 #include <nsp/interf.h>
 #include "pansp.h"
+#if defined(__linux__)
+#include <fcntl.h>
+#endif
 
 /* transmited data to callback */
 
@@ -139,8 +142,6 @@ static int cb_playfile( const void *inputBuffer, void *outputBuffer,
   return ( eread < read ) ? paComplete : paContinue;
 }
 
-
-#include <fcntl.h>
 
 /* remove messages given by Pa_Initialize 
  * but keep error detection 
