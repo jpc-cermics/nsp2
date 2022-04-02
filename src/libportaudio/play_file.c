@@ -139,6 +139,28 @@ static int cb_playfile( const void *inputBuffer, void *outputBuffer,
   return ( eread < read ) ? paComplete : paContinue;
 }
 
+
+#include <fcntl.h>
+
+/* remove messages given by Pa_Initialize 
+ * but keep error detection 
+ */
+
+static PaError Pa_Initialize_wrapper(void)
+{
+  PaError err;
+#if defined(__linux__)
+  int saved_stderr = dup(STDERR_FILENO);
+  int devnull = open("/dev/null", O_RDWR);
+  dup2(devnull, STDERR_FILENO);  // Replace standard out
+#endif
+  err = Pa_Initialize();
+#if defined(__linux__)
+  dup2(saved_stderr, STDERR_FILENO);
+#endif
+  return err;
+}
+
 /* play a wav file. data read by libsndfile.
  */
 
@@ -151,8 +173,8 @@ static void playfile(thread_data *data)
   PaError err;   
 
   data->err=OK;
-
-  if ((err = Pa_Initialize()) != paNoError)
+  
+  if ((err = Pa_Initialize_wrapper()) != paNoError)
     {
       data->pa_print("Error: in portaudio, %s\n",Pa_GetErrorText(err));
       data->err=FAIL; goto end;
