@@ -14,7 +14,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // Adapted from Stephane Mottelet scicoslab plotlib toolbox.
-// Copyright (C) 2016-2017 - Stephane Mottelet, Jean-Philippe Chancelier
+// Copyright (C) 2016-2022 - Stephane Mottelet, Jean-Philippe Chancelier
 
 function triplot(varargin,varargopt)
   // triplot(tri,x,y) draws triangles defined by m-by-3 matrix tri.
@@ -24,9 +24,9 @@ function triplot(varargin,varargopt)
   // WIP: need to map options to fec options 
 
   if length(varargin) <= 0 then
-    // load('SCI/macros/mottelet/tridem.nsp')
+    // load('SCI/macros/plotlib/tridem.nsp')
     // triplot(T,x,y);
-    exec('SCI/macros/mottelet/triplot-demo.sce');
+    exec('SCI/macros/plotlib/triplot-demo.sce');
     triplot(T,pts(:,1),pts(:,2));
     return;
   end

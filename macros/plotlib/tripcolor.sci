@@ -14,13 +14,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // Adapted from Stephane Mottelet scicoslab plotlib toolbox.
-// Copyright (C) 2016-2017 - Stephane Mottelet, Jean-Philippe Chancelier
+// Copyright (C) 2016-2022 - Stephane Mottelet, Jean-Philippe Chancelier
 
 function tripcolor(T,x,y,z,varargin,varargopt)
   // we use fec 
 
   if nargin <= 0 then
-    S=["exec(''NSP/macros/mottelet/triplot-demo.sce'');";
+    S=["exec(''NSP/macros/plotlib/triplot-demo.sce'');";
        "tripcolor(T,pts(:,1),pts(:,2),pts(:,3));"];
     printf("%s\n",S);
     execstr(S);

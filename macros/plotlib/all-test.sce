@@ -268,7 +268,7 @@ endfunction
 // organize the previous list for graphic demo widget 
 graphic_test_2d = build_demo_list("mot_demo",16);
 
-graphic_demos_all=list(list("mottelet", "", "", graphic_test_2d  ));
+graphic_demos_all=list(list("plotlib", "", "", graphic_test_2d  ));
 opengl=%f; 
 graphics_demo_in_gtk(graphic_demos_all,opengl);
 

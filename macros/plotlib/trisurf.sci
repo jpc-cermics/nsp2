@@ -14,7 +14,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // Adapted from Stephane Mottelet scicoslab plotlib toolbox.
-// Copyright (C) 2016-2017 - Stephane Mottelet, Jean-Philippe Chancelier
+// Copyright (C) 2016-2022 - Stephane Mottelet, Jean-Philippe Chancelier
 
 function main_trisurf(typeOfPlot,argList,argOpt,uselight = %f,mesh_only = %f)
   function l=computeLight(n,vect)
@@ -126,7 +126,7 @@ endfunction
 
 function trisurf(varargin,varargopt)
   if nargin==0 then
-    S=["exec(''NSP/macros/mottelet/triplot-demo.sce'');";
+    S=["exec(''NSP/macros/plotlib/triplot-demo.sce'');";
        "trisurf(T,pts,shading=''interp'',colorbar=''on'');"];
     printf("%s\n",S);
     execstr(S);
@@ -137,7 +137,7 @@ endfunction
 
 function trisurfl(varargin,varargopt)
   if nargin==0 then
-    S=["exec(''NSP/macros/mottelet/triplot-demo.sce'');";
+    S=["exec(''NSP/macros/plotlib/triplot-demo.sce'');";
        "trisurfl(T,pts,shading=''interp'',colorbar=''on'');"];
     printf("%s\n",S);
     execstr(S);
@@ -148,7 +148,7 @@ endfunction
 
 function trimesh(varargin,varargopt)
   if nargin==0 then
-    S=["exec(''NSP/macros/mottelet/triplot-demo.sce'');";
+    S=["exec(''NSP/macros/plotlib/triplot-demo.sce'');";
        "trimesh(T,pts,shading=''interp'',colorbar=''on'');"];
     printf("%s\n",S);
     execstr(S);

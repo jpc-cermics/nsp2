@@ -14,7 +14,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // emulates meshgrid with B. Pincon ndgrid function
-// Copyright (C) 2016-2017 - Jean-Philippe Chancelier
+// Copyright (C) 2016-2022 - Jean-Philippe Chancelier
 
 function [xx,yy,zz]=meshgrid(x,y,z)
   if (nargin==0 || nargin > 3) then
