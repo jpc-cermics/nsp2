@@ -149,7 +149,7 @@ do
         echo "Running xml-i18n-toolize..."
 	xml-i18n-toolize --copy --force --automake
       fi
-      if grep "^A[CM]_PROG_LIBTOOL" configure.ac >/dev/null; then
+      if grep "^LT_INIT" configure.ac >/dev/null; then
 	  echo "Running $LIBTOOLIZE --force --copy"
 	  "$LIBTOOLIZE" --force --copy
       fi
@@ -167,9 +167,7 @@ do
 	autoheader
       fi
       echo "Running automake --gnu $am_opt ..."
-      if test -f Makefile.am ; then
-	  automake --add-missing -c --gnu $am_opt
-      fi
+      automake --add-missing -c --gnu $am_opt
       echo "Running autoconf ..."
       autoconf
     )

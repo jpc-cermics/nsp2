@@ -7,7 +7,7 @@ DATE=`date +%Y-%m-%d`
 SCIDIR=`pwd`
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(config)
-AC_CONFIG_HEADER(src/include/nsp/config.h)
+AC_CONFIG_HEADERS([src/include/nsp/config.h])
 AH_BOTTOM([#include "nsp/package_undef.h"])
 AM_INIT_AUTOMAKE
 
@@ -363,9 +363,7 @@ case "$host" in
 esac
 if test X"$ieee_flags" != X ; then
   CFLAGS="$ieee_flags $CFLAGS"
-  AC_TRY_COMPILE(,[int foo;],
-  ac_cv_c_ieee_flags="$ieee_flags",
-  ac_cv_c_ieee_flags="none")
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[int foo;]])],[ac_cv_c_ieee_flags="$ieee_flags"],[ac_cv_c_ieee_flags="none"])
 else
   ac_cv_c_ieee_flags="none"
 fi])
@@ -401,7 +399,7 @@ AC_CHECK_LIB(ieee,main,[LIEEELIB=-lieee],[LIEEELIB=])
 
 echo "configuration of libtool"
 builtin(include,config/libtool.m4)
-AC_PROG_LIBTOOL()
+LT_INIT([])
 echo "end of configuration of libtool"
 
 # get the shared lib extension (need to force evaluation)
@@ -573,10 +571,8 @@ case "$host" in
     ac_save_LDFLAGS="$LDFLAGS"
     LDFLAGS='-Wl,--export-dynamic'
     AC_MSG_CHECKING([if the linker accepts --export-dynamic])
-    AC_TRY_LINK(,,
-      AC_MSG_RESULT(yes)
-       LD_LDFLAGS=["$LD_LDFLAGS  --export-dynamic"],
-       AC_MSG_RESULT(no))
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[AC_MSG_RESULT(yes)
+       LD_LDFLAGS="$LD_LDFLAGS  --export-dynamic"],[AC_MSG_RESULT(no)])
     LDFLAGS="$ac_save_LDFLAGS"
     CC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
     FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
@@ -601,10 +597,8 @@ case "$host" in
     ac_save_LDFLAGS="$LDFLAGS"
     LDFLAGS='-Wl,--export-dynamic'
     AC_MSG_CHECKING([if the linker accepts --export-dynamic])
-    AC_TRY_LINK(,,
-      AC_MSG_RESULT(yes)
-       LD_LDFLAGS=["$LD_LDFLAGS  --export-dynamic"],
-       AC_MSG_RESULT(no))
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[AC_MSG_RESULT(yes)
+       LD_LDFLAGS="$LD_LDFLAGS  --export-dynamic"],[AC_MSG_RESULT(no)])
     LDFLAGS="$ac_save_LDFLAGS"
     CC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
     FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
@@ -929,11 +923,8 @@ AC_MSG_RESULT([$FC_LEADING_UNDERSCORE $FC_TRAILING_UNDERSCORE])
 #####################
 
 AC_MSG_CHECKING([for use of sharpsign in CPP])
-AC_TRY_COMPILE([#define C2F(name) name##_],
-  [C2F(toto)()],
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(USE_SHARP_SIGN,[],[sharp sign can b eused to in macros]),
-  AC_MSG_RESULT(no))
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#define C2F(name) name##_]], [[C2F(toto)()]])],[AC_MSG_RESULT(yes)
+  AC_DEFINE(USE_SHARP_SIGN,,sharp sign can b eused to in macros)],[AC_MSG_RESULT(no)])
 
 ##############################################################
 ## test for functions in standard C library and C math library
@@ -1654,7 +1645,7 @@ if test "$with_gtkglext" != no; then
   AC_MSG_CHECKING([if pkg-config gtkglext-1.0 provides -LGLU])
   ac_save_LIBS="$LIBS"
   LIBS=`$PKG_CONFIG gtkglext-1.0 --cflags --libs`
-  AC_TRY_LINK(,[ gluLookAt();], glu_in_gtkglext=yes, glu_in_gtkglext=no)
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[ gluLookAt();]])],[glu_in_gtkglext=yes],[glu_in_gtkglext=no])
   LIBS=$ac_save_LIBS
 
   if test X"$glu_in_gtkglext" == Xno; then
@@ -2543,7 +2534,8 @@ AC_SUBST(CROSS_COPIER)
 
 AC_SUBST(FPIC)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml pvm3/conf/LINUXX86_64.def)
+AC_CONFIG_FILES([Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml pvm3/conf/LINUXX86_64.def])
+AC_OUTPUT
 
 # should be executable
 chmod +x pvm3/lib/pvmarch
