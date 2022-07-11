@@ -13,12 +13,12 @@ SCIDIRS = \
 	@GLPK_LIB@ @AMOS_CEPHES_LIB@ @QHULL_LIB@ \
 
 ALLSCIDIRS = \
-	zcalelm objects interp functions gtk2 gtk3 \
+	nspbind zcalelm objects interp functions gtk2 gtk3 \
 	system graphics-old graphics-new menus gtksci \
 	gzvt2 modules gobjects types-test librand \
 	libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
 	libminpack liboptim libcontrol libslicot libcalelm libsignal \
-	libpvm libblas liblapack libxdr libsndfile \
+	libpvm libblas liblapack libxdr libxdr-n libsndfile \
 	libumfpack libportaudio libgraphviz libglpk libqhull @AMOS_CEPHES_LIB@ \
 
 # for building 
