@@ -21,6 +21,7 @@ dnl Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
 
 dnl Find a file (or one of more files in a list of dirs)
+
 AC_DEFUN([AC_FIND_FILE],
 [
 $3=NO
@@ -28,9 +29,9 @@ for i in $2;
 do
   for j in $1;
   do
-    echo "configure: __oline__: $i/$j" >&AC_FD_CC
+    echo "configure: __oline__: $i/$j" >&AS_MESSAGE_LOG_FD
     if test -r "$i/$j"; then
-      echo "taking that" >&AC_FD_CC
+      echo "taking that" >&AS_MESSAGE_LOG_FD
       $3=$i
       break 2
     fi
