@@ -3215,7 +3215,7 @@ type object_data =
      od_objname: string;
      od_name: string;
      od_cast: string;
-     od_parent: string;
+     (* od_parent: string; *)
      od_nsp_arg_type: string;
      od_shortname: string;
      od_shortname_uc: string;
@@ -5136,7 +5136,7 @@ let register_object object_rec =
      od_objname = object_rec.or_c_name;
      od_name = object_rec.or_name;
      od_cast = object_rec.or_c_name;
-     od_parent = object_rec.or_parent;
+     (* od_parent = object_rec.or_parent; *)
      od_nsp_arg_type =  object_rec.or_typecode;
      od_shortname = object_rec.or_name;
      od_shortname_uc = (String.uppercase_ascii object_rec.or_name);
