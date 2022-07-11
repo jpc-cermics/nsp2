@@ -91,7 +91,7 @@ element, or row ,or column indices of the matrix.
 \item \verb+A{I,J}+ returns \verb+length(I)xlength(J)+ objects on the calling stack extracted from 
   \verb!A!. For example if \verb+A={[1,2],[5;6]}+ then \verb+[x,y]=A{1:2}+ will store \verb+[1,2]+ in 
   \verb+x+ and \verb+[5;6]+ in \verb+y+.
-\verb Insertion and extraction can of course be recursively called on the cell array elements by chaining 
+  Insertion and extraction can of course be recursively called on the cell array elements by chaining 
   operator \verb+{.}+ or \verb+(.)+ as for example in \verb!A={4,5};A{2}(3,4)=45!. 
 %Note that 
 % in nsp the path to an element of a recursive object can also be specified using a list. For example 
