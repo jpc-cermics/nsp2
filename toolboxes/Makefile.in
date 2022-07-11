@@ -61,14 +61,6 @@ install::
 	@tar   cf - --exclude CVS --exclude '*.c' --exclude '*.o' --exclude '*.lo' \
 		--exclude '*.f' --exclude 'simport' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
-up:
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making $@ in $(DIR)$$i"; \
-		cvs up ); \
-	done
-
 # This part is for developpers who have access to nsp2_dev
 # install the source of the toolboxes used in released nsp
 
