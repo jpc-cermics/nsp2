@@ -235,4 +235,4 @@ cross-populate:
 TAG_VERSION=1_5_pre
 
 tag	:
-	cvs rtag -r HEAD nsp_version_$(TAG_VERSION)  nsp2
+	cvs rtag -F -r HEAD nsp_version_$(TAG_VERSION)  nsp2
