@@ -2272,6 +2272,8 @@ CAML_OUTPUTS=
 TOOLBOX_COMPILERS=
 TOOLBOX_SIMPORT=
 COMPILERS_IN_FILE=
+CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error +A-e-70-69 -annot -g"
+CAML_BIN_COMP_FLAGS="-strict-sequence -w +A-e-70-69 -unsafe -noassert -inline 10000"
 
 # if toolboxes/compilers is present then we need ocaml to compile the toolbox 
 if test "$scicos_scicosc" = "yes"; then
@@ -2285,8 +2287,6 @@ if test "$scicos_scicosc" = "yes"; then
      AC_MSG_WARN([Ocaml compiler is not found, toolboxes/compilers will not be compiled])
    else 
      TOOLBOX_COMPILERS=compilers
-     CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error Ae -annot -g"
-     CAML_BIN_COMP_FLAGS="-strict-sequence -w Ae -unsafe -noassert -inline 10000"
      AC_SUBST(CAML_BYT_COMP_FLAGS)
      AC_SUBST(CAML_BIN_COMP_FLAGS)
    fi			
@@ -2308,8 +2308,6 @@ if test "$scicos_simport" = "yes"; then
      AC_MSG_WARN([Ocaml compiler is not found, toolboxes/simport will not be compiled])
    else 
      TOOLBOX_SIMPORT=simport
-     CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error Ae -annot -g"
-     CAML_BIN_COMP_FLAGS="-strict-sequence -w Ae -unsafe -noassert -inline 10000"
      AC_SUBST(CAML_BYT_COMP_FLAGS)
      AC_SUBST(CAML_BIN_COMP_FLAGS)
    fi			
@@ -2631,10 +2629,10 @@ if test "$scicos_scicosc" = "yes"; then
       echo "Ocaml compiler.........:" "no"
    else 
      TOOLBOX_COMPILERS=compilers
-     CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error Ae -annot -g"
-     CAML_BIN_COMP_FLAGS="-strict-sequence -w Ae -unsafe -noassert -inline 10000"
       echo "ocamlc compiler........:" "$OCAMLC"
       echo "ocamlopt compiler......:" "$OCAMLOPT"
+      echo "ocamlc options.........:" "$CAML_BYT_COMP_FLAGS"
+      echo "ocamlopt options.......:" "$CAML_BIN_COMP_FLAGS"
    fi			
 fi 
 echo 
