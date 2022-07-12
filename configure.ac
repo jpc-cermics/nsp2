@@ -438,7 +438,7 @@ SCICOS_GEN_LIB=
 
 case "$host" in
   # Linux ELF: all standard distributions
-  i*86-*-linux-gnu | *-pc-linux-gnu )
+  i*86-*-linux-gnu)
     CC_PICFLAGS="-fPIC"
     FC_PICFLAGS="-fPIC"
     FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
