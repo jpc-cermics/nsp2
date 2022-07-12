@@ -4775,12 +4775,12 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 }
 
 
-NspMatrix *nsp_matrix_logm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
+NspMatrix *nsp_matrix_logm(NspMatrix *A)
 {
   return nsp_matrix_funm(A,log,nsp_log_c,"logm",TRUE);
 }
 
-NspMatrix *nsp_matrix_sqrtm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
+NspMatrix *nsp_matrix_sqrtm(NspMatrix *A)
 {
   return nsp_matrix_funm(A,sqrt,nsp_sqrt_c,"sqrtm",TRUE);
 }

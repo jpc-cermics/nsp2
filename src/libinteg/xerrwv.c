@@ -27,7 +27,8 @@
 #include "integ.h"
 
 extern struct {
-    int mesflg, lunit;
+  int mesflg;
+  int lunit;
 } integ_eh0001;
 
 

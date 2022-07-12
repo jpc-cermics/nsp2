@@ -23,8 +23,9 @@ extern int nsp_check_events_activated (void);
 extern void write_scilab (char *s); 
 extern void nsp_check_gtk_events (void); 
 extern void sci_winch_signal (int n); 
-typedef int (*Get_char) (void);
-extern Get_char Xorgetchar;
+typedef int (Get_char) (void);
+typedef int (*pGet_char) (void);
+extern pGet_char Xorgetchar;
 
 /* x_main.c */ 
 void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview);

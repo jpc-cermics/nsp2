@@ -1399,12 +1399,16 @@ static void xset_default(BCG *Xgc)
 #define FONTNUMBER 6
 #define FONTMAXSIZE 6
 #define SYMBOLNUMBER 17
+static int FontsListPos[FONTNUMBER][FONTMAXSIZE];
 
-extern int FontsListPos[FONTNUMBER][FONTMAXSIZE];
 /* static int  isizePos[] = { 8 ,10,12,14,18,24}; */
 
-extern struct SciFontInfo { int ok;
-  char fname[20];} FontInfoTabPos[FONTNUMBER];
+typedef struct _SciFontInfo {
+  int ok;
+  char fname[20];
+} SciFontInfo;
+
+static SciFontInfo FontInfoTabPos[FONTNUMBER];
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 {

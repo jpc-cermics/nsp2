@@ -7,7 +7,8 @@
 
 extern struct
 {
-  int ieh[2];
+  int mesgflag;
+  int lunit;
 } integ_eh0001;
 
 /*
@@ -51,8 +52,8 @@ int nsp_ode_svcar1 (double *rsav, double *isav)
       isav[l + i] = (double) lsr001_1.ilsr[i];
     }
   l += lenilr;
-  isav[l] = (double) integ_eh0001.ieh[0];
-  isav[l+1] = (double) integ_eh0001.ieh[1];
+  isav[l] = (double) integ_eh0001.mesgflag;
+  isav[l+1] = (double) integ_eh0001.lunit;
   return 0;
 }
 

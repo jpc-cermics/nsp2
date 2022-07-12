@@ -1495,13 +1495,14 @@ MoreFun nsp_set_nsp_more(MoreFun F)
  * Input main routine !!!
  */
 
-extern int Xorgetchar(void);
-
-SciGetC Scigetchar = Xorgetchar;
+extern SciGetC Xorgetchar;
 
 SciGetC nsp_set_nsp_getchar(SciGetC F)
 {
-  SciGetC g =  Scigetchar;
+  SciGetC Scigetchar = NULL;
+  SciGetC g;
+  if ( Scigetchar == NULL ) Scigetchar = *Xorgetchar;
+  g =  Scigetchar;
   Scigetchar = F;
   return g;
 }

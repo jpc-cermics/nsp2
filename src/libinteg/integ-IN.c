@@ -65,7 +65,7 @@ struct _ode_data
 static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0}; 
 
 struct {
-  int mesflg, lunit;
+  int mesflag, lunit;
 } integ_eh0001;
 
 /**
@@ -672,7 +672,7 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
     }
 
   ierode_1.iero = 0;
-  integ_eh0001.mesflg = warn ;
+  integ_eh0001.mesflag = warn ;
 
   /* loop on time */
   if ( task == 1 )     /* in this case the solver should output the solution at specified times */

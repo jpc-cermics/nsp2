@@ -5,7 +5,8 @@
 
 extern struct
 {
-  int ieh[2];
+  int mesgflag;
+  int lunit;
 } integ_eh0001;
 
 /* 
@@ -51,8 +52,8 @@ int nsp_ode_svcma1 (double *rsav, double *isav)
       isav[lenils + i] = (double) lsa001_1.ilsa[i];
     }
 
-  isav[lenils + lenila] = (double) integ_eh0001.ieh[0];
-  isav[lenils + lenila + 1] = (double) integ_eh0001.ieh[1];
+  isav[lenils + lenila] = (double) integ_eh0001.mesgflag;
+  isav[lenils + lenila + 1] = (double) integ_eh0001.lunit;
   return 0;
 }	
 

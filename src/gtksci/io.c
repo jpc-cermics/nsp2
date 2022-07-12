@@ -407,14 +407,14 @@ int Xorgetchar_thread(void)
  */
 
 #if (defined(WITH_GTKOSX) || defined(WIN32))
-Get_char Xorgetchar = Xorgetchar_thread ;
+pGet_char Xorgetchar = Xorgetchar_thread ;
 #else 
-Get_char Xorgetchar = Xorgetchar_select ;
+pGet_char Xorgetchar = Xorgetchar_select ;
 #endif 
 
-Get_char nsp_set_getchar_fun(Get_char F)
+pGet_char nsp_set_getchar_fun(pGet_char F)
 {
-  Get_char g = Xorgetchar;
+  pGet_char g = Xorgetchar;
   Xorgetchar = F;
   return g;
 }
@@ -443,3 +443,22 @@ SciReadFunction nsp_set_readline_fun(SciReadFunction F)
 #ifdef NSP_ENTRY_INPUT_TEST 
 #include "term.c"
 #endif
+
+typedef int (pipo) (void);
+pipo FF;
+
+int foo (void)
+{
+  return 1;
+}
+
+pipo foo;
+
+typedef int (*pipo1) (void);
+
+pipo1 Foo = foo;
+
+typedef pipo *pipo1;
+
+pipo1 Foo1 = foo;
+

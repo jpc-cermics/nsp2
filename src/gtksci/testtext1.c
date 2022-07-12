@@ -62,7 +62,7 @@
 extern void controlC_handler (int sig);
 extern void controlC_handler_void (int sig);
 extern GtkWidget *create_main_menu( GtkWidget  *window);
-extern Get_char nsp_set_getchar_fun(Get_char F);
+extern pGet_char nsp_set_getchar_fun(pGet_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 extern char *nsp_prompt(void);
 
