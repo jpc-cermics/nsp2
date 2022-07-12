@@ -469,7 +469,7 @@ case "$host" in
        CC_LDFLAGS="${CC_LDFLAGS} -ldl -rdynamic -Wl,-relax"
        LDFLAGS="${LDFLAGS} -Wl,-relax "
     fi
-    LIBXDR_LOCAL='libxdr-n'
+    LIBXDR_LOCAL="libxdr-n"
     LIBXDR=
     LIBXDRA=libs/xdr.a
     XDR=NSPXDR
@@ -523,7 +523,7 @@ case "$host" in
    *-*-mingw32*)
     MINGW32=yes
     NSP_SCRIPT=nsp-gcwin32.g
-    LIBXDR_LOCAL='libxdr'
+    LIBXDR_LOCAL="libxdr"
     LIBXDR=
     LIBXDRA=libs/xdr.a
     MENUSOBJS=WOBJS
@@ -1913,18 +1913,21 @@ fi
 ## libtirpc
 #################
 
+HAVE_TIRPC="no"
+
 if test "x$PKG_CONFIG" != x; then # try first to use pkg-config
    ## libtirpc coud be a solution to obtain an xdr library
    ## but this is not necessary since we use an internal xdr library 
-   PKG_CHECK_MODULES(TIRPC, ZZZZZZZZZZZZZZZZZlibtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
+   #### PKG_CHECK_MODULES(TIRPC, libtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
    ## In case of success I just want libtirpc be added in GTK_PKGS_CFLAGS
-   if test "$HAVE_TIRPC" = "yes"; then
-	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libtirpc"
-	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libtirpc"
-         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-	 XDR=LTIRPC
-   fi
+   #### if test "$HAVE_TIRPC" = "yes"; then
+   #### 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libtirpc"
+   #### 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libtirpc"
+   ####       GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+   ####       GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+   #### 	 XDR=LTIRPC
+   #### fi
+   HAVE_TIRPC="no"
 fi
 
 if test "$HAVE_TIRPC" = "yes"; then
