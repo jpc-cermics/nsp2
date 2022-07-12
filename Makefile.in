@@ -229,3 +229,10 @@ shared:
 
 cross-populate:
 	@./config/@CROSS_COPIER@ @NSP_HOST_TYPE@ @CROSS_VERSION@
+
+# tag the repository
+
+TAG_VERSION=1_5_pre
+
+tag	:
+	cvs rtag -r HEAD nsp_version_$(TAG_VERSION)  nsp2
