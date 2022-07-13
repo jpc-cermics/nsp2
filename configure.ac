@@ -2275,48 +2275,45 @@ COMPILERS_IN_FILE=
 CAML_BYT_COMP_FLAGS="-strict-sequence -warn-error +A-e-70-69 -annot -g"
 CAML_BIN_COMP_FLAGS="-strict-sequence -w +A-e-70-69 -unsafe -noassert -inline 10000"
 
-# if toolboxes/compilers is present then we need ocaml to compile the toolbox 
+OCAML_CHECK=no
+
+# ocaml is needed for the following toolboxes 
 if test "$scicos_scicosc" = "yes"; then
+   OCAML_CHECK=yes
+   TOOLBOX_COMPILERS=compilers
+   CAML_OUTPUTS="$CAML_OUTPUTS toolboxes/compilers/Makefile.incl"
+fi
+
+if test "$scicos_simport" = "yes"; then
+   OCAML_CHECK=yes
+   TOOLBOX_SIMPORT=simport
+   CAML_OUTPUTS="$CAML_OUTPUTS toolboxes/simport/Make.ocaml"
+fi 
+
+if test "$OCAML_CHECK" = "yes"; then 
    AC_PROG_OCAML
    AC_PROG_OCAMLYACC
    AC_PROG_OCAMLLEX
    AC_PROG_HTMLC
    AC_PROG_OCAMLPRINTC
 
+   if test "$OCAMLPRINTC" = "no"; then
+      # just do noting
+      OCAMLPRINTC=echo
+      AC_SUBST(OCAMLPRINTC)
+   fi
    if test "$OCAMLC" = "no"; then
-     AC_MSG_WARN([Ocaml compiler is not found, toolboxes/compilers will not be compiled])
+ 	 AC_MSG_WARN([Ocaml compiler is not found, toolboxes/compilers will not be compiled])
    else 
-     TOOLBOX_COMPILERS=compilers
-     AC_SUBST(CAML_BYT_COMP_FLAGS)
-     AC_SUBST(CAML_BIN_COMP_FLAGS)
+        TOOLBOX_COMPILERS=compilers
+        AC_SUBST(CAML_BYT_COMP_FLAGS)
+        AC_SUBST(CAML_BIN_COMP_FLAGS)
    fi			
    # compilers will copy executables in bin/
    COMPILERS_SRC_INSTALL_DIR=../..
    AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
-   
-   CAML_OUTPUTS="toolboxes/compilers/Makefile.incl"
 fi 
 
-if test "$scicos_simport" = "yes"; then
-   AC_PROG_OCAML
-   AC_PROG_OCAMLYACC
-   AC_PROG_OCAMLLEX
-   AC_PROG_HTMLC
-   AC_PROG_OCAMLPRINTC
-
-   if test "$OCAMLC" = "no"; then
-     AC_MSG_WARN([Ocaml compiler is not found, toolboxes/simport will not be compiled])
-   else 
-     TOOLBOX_SIMPORT=simport
-     AC_SUBST(CAML_BYT_COMP_FLAGS)
-     AC_SUBST(CAML_BIN_COMP_FLAGS)
-   fi			
-   # simport will copy executables in bin/
-   COMPILERS_SRC_INSTALL_DIR=../..
-   AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
-   
-   CAML_OUTPUTS="$CAML_OUTPUTS toolboxes/simport/Make.ocaml"
-fi 
 
 #########################
 ## List of default toolboxes 
