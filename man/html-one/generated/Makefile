@@ -5,7 +5,7 @@ all:: manual
 MANPAGE=model/model.tex
 
 manual::
-	./htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' ' -cunihtf' '' '\def\manname{$(MANPAGE)}'
+	./htlatex ../manual 'manual,html,3,section+,next,notoc*' ' -cunihtf' '' '\def\manname{$(MANPAGE)}'
 	$(RM) -f  manual.css
 	cp ../../html/manual.css manual.css
 

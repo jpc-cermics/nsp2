@@ -6,15 +6,20 @@ SHELL=/bin/bash
 # with a few changes at the end to allow copy/paste to nsp 
 # 
 
+# I have changed 'manual,xhtml,...' to 'manual,html,...'
+# Some closing tags are missing in the generated code
+# and it blocks the display when using xhtml while html is more permissive.
+# July 2022
+
 manual:
-	./htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' ' -cunihtf' ''
+	./htlatex ../manual 'manual,html,3,section+,next,notoc*' ' -cunihtf' ''
 	@cp ../manual.css manual.css
 
 all:: manual-silent index-silent manual2-silent  manualindex 
 
 manual-silent manual2-silent:
 	@echo -n "running htlatex..."
-	@./htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' ' -cunihtf' '' >& /dev/null
+	@./htlatex ../manual 'manual,html,3,section+,next,notoc*' ' -cunihtf' '' >& /dev/null
 	@cp ../manual.css manual.css
 	@echo "done"
 
