@@ -1,6 +1,15 @@
 \documentclass[11pt]{book}
 
 \usepackage{latexdoc}
+\usepackage{mintednsp}
+
+\def\mansrc{../src/}
+
+\ifdefined\HCode 
+\else 
+\def\HCode#1{}
+\def\Hnewline{}
+\fi
 
 \title{Nsp manual pages}
 

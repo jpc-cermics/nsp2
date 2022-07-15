@@ -9,7 +9,8 @@ all::
 	ps2pdf manual.ps
 
 all-debug:
-	export TEXINPUTS=::`pwd`/../src// ; latex manual 
+	export TEXINPUTS=::`pwd`/../src// ; \
+		latex -shell-escape manual 
 	makeindex -s index.isty manual.idx
 	export TEXINPUTS=::`pwd`/../src// ; \
 		latex -interaction=batchmode manual
