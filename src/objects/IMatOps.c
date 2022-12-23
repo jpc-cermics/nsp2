@@ -1560,7 +1560,7 @@ int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B)
   
   /* now use the power algorithm */
   {
-    NspIMatrix *temp, *oddmat;
+    NspIMatrix *temp, *oddmat=NULL;
     if ( (temp = nsp_imatrix_create(NVOID,A->m,A->n,A->itype)) == NULLIMAT ) 
       return FAIL;
     while ( p > 1 )

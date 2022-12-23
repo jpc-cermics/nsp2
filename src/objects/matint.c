@@ -2498,9 +2498,9 @@ int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
 	      /* take care that resize can allocate values thus we have to free. 
 	       * give an option to resize ? 
 	       */
-	      if (A->S+Am*A->n  != NULL)
-		for ( j= Am*A->n ; j < A->mn ; j++)
-		  MAT_INT(type)->free_elt((void **) A->S+j);
+	      /* if (A->S+Am*A->n  != NULL) removed since always evaluate to true */
+	      for ( j= Am*A->n ; j < A->mn ; j++)
+		MAT_INT(type)->free_elt((void **) A->S+j);
 	      for ( j = A->n-1  ; j >= 1 ; j-- ) 
 		{
 		  memmove(to +j*(A->m)*step,fromA+j*Am*step,Am*step);

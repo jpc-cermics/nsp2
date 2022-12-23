@@ -63,7 +63,7 @@ signal_remez (int *ngr, int *nfc, int *iext, double *ad, double *x, double *y,
   int j, k, l;
   double dtemp, gtemp;
   int k1, nzzmj;
-  double y1 = 0 , aa, bb, dk, cn, pi;
+  double y1 = 0 , aa=0, bb=0, dk, cn, pi;
   int kn;
   double ft, xe;
   int jchnge, nu, nz;

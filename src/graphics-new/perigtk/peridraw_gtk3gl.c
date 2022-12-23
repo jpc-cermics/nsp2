@@ -1825,12 +1825,21 @@ void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,
  * Silicon Graphics, Inc.
  */
 
+/* 
 static void identityf(GLfloat m[16])
 {
     m[0+4*0] = 1; m[0+4*1] = 0; m[0+4*2] = 0; m[0+4*3] = 0;
     m[1+4*0] = 0; m[1+4*1] = 1; m[1+4*2] = 0; m[1+4*3] = 0;
     m[2+4*0] = 0; m[2+4*1] = 0; m[2+4*2] = 1; m[2+4*3] = 0;
     m[3+4*0] = 0; m[3+4*1] = 0; m[3+4*2] = 0; m[3+4*3] = 1;
+}
+*/
+static void identityf(GLfloat m[4][4])
+{
+    m[0][0] = 1; m[0][1] = 0; m[0][2] = 0; m[0][3] = 0;
+    m[1][0] = 0; m[1][1] = 1; m[1][2] = 0; m[1][3] = 0;
+    m[2][0] = 0; m[2][1] = 0; m[2][2] = 1; m[2][3] = 0;
+    m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
 }
 
 static void normalize(float v[3])
@@ -1873,7 +1882,8 @@ static void  mygluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez, GLdouble c
     /* Recompute up as: up = side x forward */
     cross(side, forward, up);
 
-    identityf(&m[0][0]);
+    /* identityf(&m[0][0]);*/
+    identityf(m);
     m[0][0] = side[0];
     m[1][0] = side[1];
     m[2][0] = side[2];

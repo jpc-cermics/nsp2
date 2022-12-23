@@ -1221,15 +1221,9 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      * with the min and max z values.
      */
 
-    if ( zminmax == NULL  ) {
-      zmin=(double) Mini(func,Nnode);
-      zmax=(double) Maxi(func,Nnode);
-    }
-    else {
-      zmin = Min( zminmax[0] , zminmax[1] );
-      zmax = Max( zminmax[0] , zminmax[1] );
-    };
-
+    zmin = Min( zminmax[0] , zminmax[1] );
+    zmax = Max( zminmax[0] , zminmax[1] );
+    
     whiteid= Xgc->graphic_engine->xget_last(Xgc);
     nz=whiteid;
 
@@ -1809,4 +1803,4 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-#line 1813 "gmatrix1.c"
+#line 1807 "gmatrix1.c"
