@@ -112,12 +112,12 @@ let make_tag_ppf tnlm ppf =
       tnlm.n_tag_new_line 0 (String.length tnlm.m_tag_new_line) in
 
   let rec m_tag_mark_open_tag = function
-    | String_tag "m" | String_tag "" ->
+    | Format.String_tag "m" | Format.String_tag "" ->
       push_tag_handler (get_tag_handler ppf);
       set_tag_handler ppf m_tag_tag_handler;
       (*      "(.m_tag." *)
       ""
-    | String_tag "n" ->
+    | Format.String_tag "n" ->
       push_tag_handler (get_tag_handler ppf);
       set_tag_handler ppf n_tag_tag_handler;
 (*      "(.n_tag." *)
@@ -125,13 +125,13 @@ let make_tag_ppf tnlm ppf =
     | tag -> ppf_tag_handler.tag_funs.mark_open_stag tag
 
   and m_tag_mark_close_tag = function
-    | String_tag "m" | String_tag "" ->
+    | Format.String_tag "m" | Format.String_tag "" ->
       let ppf_tag_handler = top_tag_handler () in
       set_tag_handler ppf ppf_tag_handler;
       pop_tag_handler ();
       (*      ".m_tag.)" *)
       ""
-    | String_tag "n" ->
+    | Format.String_tag "n" ->
       let ppf_tag_handler = top_tag_handler () in
       set_tag_handler ppf ppf_tag_handler;
       pop_tag_handler ();
