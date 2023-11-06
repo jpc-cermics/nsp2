@@ -1791,6 +1791,13 @@ void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
   cm->prefer_zomplex = TRUE ;
 
   /* use mxMalloc and related memory management routines */
+
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (4,0) )
+  SuiteSparse_config_malloc_func_set (mxMalloc); 
+  SuiteSparse_config_calloc_func_set (mxCalloc);
+  SuiteSparse_config_realloc_func_set (mxRealloc);
+  SuiteSparse_config_free_func_set (mxFree);
+#else
 #if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0) )
   SuiteSparse_config.malloc_func  = mxMalloc ;
   SuiteSparse_config.free_func    = mxFree ;
@@ -1802,16 +1809,21 @@ void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
   cm->realloc_memory = mxRealloc ;
   cm->calloc_memory  = mxCalloc ;
 #endif
-
+#endif
+  
   /* printing and error handling */
   if (spumoni == 0)
     {
       /* do not print anything from within CHOLMOD */
       cm->print = -1 ;
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (4,0) )
+      SuiteSparse_config_printf_func_set (NULL);
+#else
 #if  (CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0) )
       SuiteSparse_config.printf_func  = NULL;
 #else
       cm->print_function = NULL ;
+#endif
 #endif
     }
   else
@@ -1821,10 +1833,14 @@ void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
        * spumoni = 2: also print a short summary of each object.
        */
       cm->print = spumoni + 2 ;
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (4,0) )
+      SuiteSparse_config_printf_func_set (mexPrintf);
+#else
 #if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0))
       SuiteSparse_config.printf_func  = mexPrintf;
 #else
       cm->print_function = mexPrintf ;
+#endif
 #endif
     }
 
