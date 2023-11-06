@@ -40,9 +40,12 @@ extern "C" {
   typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
 
 #ifndef __cplusplus
+#ifdef MEXLIB
+  /* should not be inserted when compiling suitesparse */
   typedef int bool;
-#endif 
-
+#endif
+#endif
+  
 #ifndef true 
 #define true TRUE 
 #endif 

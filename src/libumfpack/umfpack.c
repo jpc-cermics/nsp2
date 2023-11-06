@@ -485,10 +485,10 @@ static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(H));
   if ( lhs == 2)
     {
-      NspObject *bool;
-      if ((bool = nsp_create_boolean_object(NVOID, singular==TRUE))== NULLOBJ) 
+      NspObject *obool;
+      if ((obool = nsp_create_boolean_object(NVOID, singular==TRUE))== NULLOBJ) 
 	return RET_BUG;
-      MoveObj(stack,2,NSP_OBJECT(bool));
+      MoveObj(stack,2,NSP_OBJECT(obool));
     }
   return Max(1,lhs);
 } 
