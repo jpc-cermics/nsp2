@@ -2,7 +2,8 @@
 autom4te.cache
 config.log
 config.status
-Makefile Makefile.incl 
+Makefile
+Makefile.incl 
 Path.incl
 configure
 libtool
