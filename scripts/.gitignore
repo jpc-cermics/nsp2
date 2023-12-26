@@ -1,0 +1,11 @@
+Path.incl
+scilab-inst
+nsplibtool-inst
+.nsp_history
+Makefile
+nsp-inst
+nsp.g 
+nsp-gtk.g
+nsp-gtk2.g
+nsp-gtk3.g
+Blatdoc

@@ -1,0 +1,10 @@
+.nsp_history
+autom4te.cache
+config.log
+config.status
+Makefile Makefile.incl 
+Path.incl
+configure
+libtool
+aclocal.m4
+nsp.iss
