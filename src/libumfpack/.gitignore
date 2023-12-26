@@ -1,0 +1,5 @@
+*.d
+*.mak
+.archive_target
+.nsp_history
+*.o

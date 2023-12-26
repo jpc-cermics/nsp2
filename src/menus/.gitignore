@@ -1,0 +1,7 @@
+*.d
+.archive_target
+Makefile.mak 
+Makefile.amk
+Makefile
+.nsp_history
+*.o
