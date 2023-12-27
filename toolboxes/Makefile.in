@@ -65,8 +65,9 @@ install::
 # install the source of the toolboxes used in released nsp
 
 TOOLBOXES=scicos-4.4 compilers simport codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp coselica-0.7
+TOOLBOXES=scicos-4.4 compilers codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp coselica-0.7
 
-USER=jpc
+GITREPO=cermics:/u/cermics/Z/jpc/cvs2svn/git/nsp2-dev/contribs/
 
 up_release:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -77,14 +78,12 @@ up_release:
 	done
 
 %/UP :
-	@if test -d `dirname $@`/CVS; then \
-		echo "`dirname $@`/CVS exists: updating with cvs up"; \
-		cd `dirname $@`; cvs up -d; \
+	@if test -d `dirname $@`/.git; then \
+		echo "`dirname $@`/.git exists: updating with git"; \
+		cd `dirname $@`; git pull; \
         else ( \
-		echo -n "checking out $@ " ;\
-		cvs -Q -d :ext:$(USER)@cermics.enpc.fr:/u/cermics/m/stochopt/cvsroot co nsp2_dev/contribs/`dirname $@` ;\
-		mv nsp2_dev/contribs/`dirname $@` . ;\
-		$(RM) -fr nsp2_dev ;\
+		echo -n "clone git repository $@ " ;\
+		git clone $(GITREPO)/`dirname $@`.git `dirname $@`;\
 		echo "done" \
 	  ); \
         fi;
