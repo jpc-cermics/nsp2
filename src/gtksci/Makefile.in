@@ -16,6 +16,14 @@ WEBKIT2_OBJS= BrowserCellRendererVariant.o \
 	BrowserSettingsDialog.o \
 	BrowserWindow.o \
 
+WEBKIT2_1_OBJS= BrowserCellRendererVariant.o \
+	BrowserDownloadsBar.o \
+	BrowserMarshal.o \
+	BrowserSearchBox.o \
+	BrowserTab.o \
+	BrowserSettingsDialog.o \
+	BrowserWindow.o \
+
 OBJSC =	command.o  io.o  menus.o  x_main.o \
 	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
 	testtext1.o edit.o @RC_FILE@ threads.o
@@ -71,30 +79,37 @@ threads.o :  ../include/nsp/nspthreads.h
 
 # used when webkit2 is used
 
-BrowserCellRendererVariant.o: webkit2-gtk/BrowserCellRendererVariant.c
+BrowserCellRendererVariant.o: @WEBKIT2_REP@/BrowserCellRendererVariant.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE)  -c $< -o $*.o
 
-BrowserDownloadsBar.o: webkit2-gtk/BrowserDownloadsBar.c
+BrowserDownloadsBar.o: @WEBKIT2_REP@/BrowserDownloadsBar.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE)  -c $< -o $*.o
 
-BrowserMarshal.o: webkit2-gtk/BrowserMarshal.c
+BrowserMarshal.o: @WEBKIT2_REP@/BrowserMarshal.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE)  -c $< -o $*.o
 
-BrowserSearchBar.o: webkit2-gtk/BrowserSearchBar.c
+BrowserSearchBar.o: @WEBKIT2_REP@/BrowserSearchBar.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE)  -c $< -o $*.o
 
-BrowserSettingsDialog.o: webkit2-gtk/BrowserSettingsDialog.c
+BrowserSettingsDialog.o: @WEBKIT2_REP@/BrowserSettingsDialog.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE)  -c $< -o $*.o
 
-BrowserWindow.o: webkit2-gtk/BrowserWindow.c
+BrowserWindow.o: @WEBKIT2_REP@/BrowserWindow.c
 	@echo "compiling $<  Wall "
 	@$(COMPILE) -DINSIDE_NSP -c $< -o $*.o
 
+BrowserSearchBox.o: @WEBKIT2_REP@/BrowserSearchBox.c
+	@echo "compiling $<  Wall "
+	@$(COMPILE)  -c $< -o $*.o
+
+BrowserTab.o: @WEBKIT2_REP@/BrowserTab.c
+	@echo "compiling $<  Wall "
+	@$(COMPILE) -DINSIDE_NSP -c $< -o $*.o
 
 # generated with gcc -MMD 
 #--------------------------

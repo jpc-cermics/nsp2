@@ -1287,42 +1287,65 @@ fi
 
 HELP_OBJS=
 WEBKIT_GEN=
+WEBKIT2_REP=webkit2-gtk
 
 if test xx"$with_gtk" == xx; then
   # only checks if gtk is selected 
   if test "$with_gtk3" == yes; then
-     WEBKIT=webkit2gtk-4.0   
+     # new version for 4.1 to be finished
+     # that is uncomment the two lines below 
+     WEBKIT=webkit2gtk-4.1   
      PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
      if test "x${have_webkit2}" = "xyes" ; then
        GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
        GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
        GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
        GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+       WEBKIT2_REP="webkit2-gtk"
+       #WEBKIT2_REP="webkit2-1-gtk"
        WEBKIT_GEN="webkit2.o"
        HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
+       #HELP_OBJS="helpwebkit.o helpwebkit-2-1.o \$(WEBKIT2_1_OBJS) "
        AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
        PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
        if test "x${have_webkit_zoom}" = "xyes" ; then
        	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
        fi
-     else	
-       WEBKIT=webkit2gtk-3.0
+     else
+       # what follows should also work for 4.1
+       WEBKIT=webkit2gtk-4.0  
        PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
        if test "x${have_webkit2}" = "xyes" ; then
          GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
          GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-         WEBKIT_GEN="webkit2.o"
-         HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
-         AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
-         PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
-         if test "x${have_webkit_zoom}" = "xyes" ; then
+       	 GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+	 WEBKIT2_REP="webkit2-gtk"
+       	 WEBKIT_GEN="webkit2.o"
+       	 HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
+       	 AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
+       	 PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+       	 if test "x${have_webkit_zoom}" = "xyes" ; then
        	  AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
-         fi
+	 fi
+       else	
+         PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
+         if test "x${have_webkit2}" = "xyes" ; then
+           GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
+           GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
+           GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+           GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+           WEBKIT_GEN="webkit2.o"
+           HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
+           AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
+           PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+           if test "x${have_webkit_zoom}" = "xyes" ; then
+       	     AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
+           fi
+       	 fi
        fi
-    fi
-  fi
+     fi
+   fi
 fi
 
 ###########################
@@ -2467,6 +2490,7 @@ AC_SUBST(STRIP)
 AC_SUBST(PERIGLEXT)
 AC_SUBST(HELP_OBJS)
 AC_SUBST(WEBKIT_GEN)
+AC_SUBST(WEBKIT2_REP)
 AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
