@@ -9,3 +9,14 @@ configure
 libtool
 aclocal.m4
 nsp.iss
+bin/XML2Modelica.exe
+bin/modelicac.exe
+bin/nsp
+bin/nsplibtool
+bin/paksazi.exe
+bin/scilex
+bin/simport.exe
+bin/translator.exe
+bin/zterm
+libs/simport_pervasives.mdlio
+
