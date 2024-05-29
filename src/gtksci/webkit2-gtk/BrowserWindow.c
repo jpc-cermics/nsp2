@@ -389,10 +389,13 @@ static gboolean webViewLoadFailedWithTLSerrors(WebKitWebView *webView, const cha
 
     if (response == GTK_RESPONSE_YES) {
       /* WebKitCertificateInfo *info =  (WebKitCertificateInfo *) certificate ; */
+#if WEBKIT_CHECK_VERSION(2,44,2)
+#else
       SoupURI *uri = soup_uri_new(failingURI);
       webkit_web_context_allow_tls_certificate_for_host(webkit_web_view_get_context(webView), certificate, uri->host);
       soup_uri_free(uri);
       webkit_web_view_load_uri(webView, failingURI);
+#endif
     }
 #endif
     return TRUE;
