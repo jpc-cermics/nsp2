@@ -65,8 +65,10 @@ install::
 # install the source of the toolboxes used in released nsp
 
 TOOLBOXES=scicos-4.4 compilers simport codegen-peval distmesh modnum_nsp coselica-0.4.8-nsp coselica-0.7
+TOOLBOXES=scicos-4.4 compilers codegen-peval
 
 GITREPO=cermics:/u/cermics/Z/jpc/cvs2svn/git/nsp2-dev/contribs/
+GITREPO=git@github.com:jpc-cermics
 
 up_release:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
