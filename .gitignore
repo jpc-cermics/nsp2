@@ -19,4 +19,5 @@ bin/simport.exe
 bin/translator.exe
 bin/zterm
 libs/simport_pervasives.mdlio
+*.dia
 
