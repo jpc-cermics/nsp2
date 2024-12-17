@@ -82,8 +82,10 @@ int   get_echo_mode(void);
 #include <string.h>
 #include <ctype.h>
 #include "nsp/machine.h"
+#include "nsp/gtksci.h" 
 #include "nsp/object.h"
 #include "nsp/sciio.h" 
+#include <nsp/system.h>
 
 #ifdef __STDC__
 #include <stdlib.h>
@@ -832,7 +834,7 @@ static int gchar_no_echo(void)
   int i;
   /* get next character, gotten in cbreak mode
    * so no wait for <cr> */
-  i = Scigetchar();
+  i =  Xorgetchar();
   /* if more than one character */
   if(i == ESC) {
     /* translate control code sequences to codes over 100 hex */
@@ -924,7 +926,7 @@ static int translate(int ichar)
     }
     /* if any sequence not finished yet */
     if(not_done) {
-      ichar = Scigetchar();
+      ichar =  Xorgetchar();
     }
     else {
       /* hopefully at first character */
@@ -1119,14 +1121,26 @@ int nsp_write_history(void)
   return 0;
 }
 
-/*
- * use to clear line after a pause 
- * (only usefull when readline calls are 
- * reentrant 
- */
-
 void nsp_readline_clear_line() 
 {
   
 }
 
+void nsp_read_clean_after_ctrc(void) {}
+
+void nsp_clear_history(void) 
+{
+  /* */
+  clear_history ();
+}
+static int in_text_view = FALSE;
+
+void nsp_set_in_text_view(int value)
+{
+  in_text_view = value;
+}
+
+int nsp_get_in_text_view(void)
+{
+  return   in_text_view ;
+}
