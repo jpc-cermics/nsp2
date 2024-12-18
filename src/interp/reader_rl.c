@@ -37,11 +37,13 @@
 #include <signal.h>
 #include <glib.h>
 
-#include "nsp/machine.h" 
+#include <nsp/nsp.h>
+#include <nsp/smatrix.h>
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h" 
 #include <nsp/system.h> /* FSIZE */
 #include <nsp/nsptcl.h> /* FSIZE */
+#include <nsp/eval.h> /* FSIZE */
 
 #ifdef WIN32
 #define sigsetjmp(x,y) setjmp(x)
@@ -53,6 +55,7 @@ extern int checkqueue_nsp_command(void) ;
 extern int dequeue_nsp_command(char *buf,int buf_len);
 extern void controlC_handler (int sig);
 extern void controlC_handler_void (int sig);
+static void nsp_reader_rl_eval_cut_and_paste(char *line);
 
 static int fd=0;              /* file number for standard in */
 static int use_prompt=1;
@@ -217,10 +220,6 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 	signal (SIGINT, controlC_handler);
       }
     }
-  if (hist && line && *line != '\0') 
-    {
-      add_history (line);
-    }
   
   if ( line == NULL) 
     {
@@ -231,15 +230,29 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
     }
   else 
     {
-      *len_line= strlen(line);
-      strncpy(buffer,line,*buf_size);
-      /* Do not free line on reentrant calls  */
-      if ( enter == 1 ) 
+      if (strchr(line, '\n') != NULL)
 	{
-	  free(line);
-	  line = NULL;
+	  nsp_reader_rl_eval_cut_and_paste(line);
+	  *len_line= 1;
+	  buffer[0]= '\n';
+	  *eof = FALSE;
 	}
-      *eof = FALSE;
+      else
+	{
+	  if (hist && line && *line != '\0') 
+	    {
+	      add_history (line);
+	    }
+	  strncpy(buffer,line,*buf_size);
+	  /* Do not free line on reentrant calls  */
+	  *len_line= strlen(line);
+	  if ( enter == 1 ) 
+	    {
+	      free(line);
+	      line = NULL;
+	    }
+	  *eof = FALSE;
+	}
     }
   if(get_echo_mode()==0)  set_echo_mode(TRUE);
   set_is_reading(FALSE);
@@ -460,3 +473,17 @@ static char *command_generator (const char *text, int state)
 }
 
 #endif 
+
+/* special cas of pasted text */
+
+static void nsp_reader_rl_eval_cut_and_paste(char *line)
+{
+  int i;
+  NspSMatrix *S = nsp_smatrix_split_string(line,"\n",1);
+  for ( i = 0 ; i < S->mn ; i++ )
+    {
+      if (hist && *S->S[i] != '\0') add_history (S->S[i]);
+    }
+  nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+  nsp_smatrix_destroy(S);
+}
