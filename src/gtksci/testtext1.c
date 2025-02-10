@@ -452,11 +452,7 @@ static void nsptv_key_press_return(View *view,int stop_signal)
 /* callback dealing with keypressed in text view
  */
 
-#if defined(USE_SHARP_SIGN)
-#define GDK_KEY(name) GDK_KEY_##name
-#else
-#define GDK_KEY(name) GDK_KEY_/**/name
-#endif
+#define GDK_KEY(name) CNAME(GDK_KEY_,name) 
 
 static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 {
