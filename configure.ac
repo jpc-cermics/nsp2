@@ -926,6 +926,29 @@ AC_MSG_CHECKING([for use of sharpsign in CPP])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#define C2F(name) name##_]], [[C2F(toto)()]])],[AC_MSG_RESULT(yes)
   AC_DEFINE(USE_SHARP_SIGN,,sharp sign can b eused to in macros)],[AC_MSG_RESULT(no)])
 
+if test "$USE_SHARP_SIGN" = no; then
+   CNAME="#define CNAME(name1,name2) name1/**/name2"	
+else
+   CNAME="#define CNAME(name1,name2) name1##name2"
+fi
+
+if test "$FC_TRAILING_UNDERSCORE" = yes; then
+  if test "$USE_SHARP_SIGN" = no; then
+    C2F="#define C2F(name) name/**/_"
+    F2C="#define F2C(name) name/**/_"
+  else
+    C2F="#define C2F(name) name##_"
+    F2C="#define F2C(name) name##_"
+  fi
+else
+    C2F="#define C2F(name) name"
+    F2C="#define F2C(name) name"
+fi
+
+AC_SUBST(CNAME)
+AC_SUBST(C2F)
+AC_SUBST(F2C)
+
 ##############################################################
 ## test for functions in standard C library and C math library
 ##############################################################
@@ -2556,7 +2579,7 @@ AC_SUBST(CROSS_COPIER)
 
 AC_SUBST(FPIC)
 
-AC_CONFIG_FILES([Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml pvm3/conf/LINUXX86_64.def])
+AC_CONFIG_FILES([Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/hoster/Makefile.aimk pvm3/lib/pvmarch src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS config/Make.ocaml pvm3/conf/LINUXX86_64.def src/include/nsp/machine.h])
 AC_OUTPUT
 
 # should be executable
