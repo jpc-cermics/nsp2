@@ -244,27 +244,12 @@
 #define NSP_POINTER_CAST_TO_INT (unsigned long long)
 #endif 
 #endif
-/* CNAME(x,y) ==> xy **/
+   
+/* generate the macros CNAME, C2F and F2C according to the results of configure*/
 
-#if defined(USE_SHARP_SIGN)
 #define CNAME(name1,name2) name1##name2
-#else 
-#define CNAME(name1,name2) name1/**/name2
-#endif
-
-/* Define  C2F and F2C entry point conversion */
-#if defined(WTU)
-#if defined(USE_SHARP_SIGN)
 #define C2F(name) name##_
 #define F2C(name) name##_
-#else 
-#define C2F(name) name/**/_
-#define F2C(name) name/**/_
-#endif
-#else
-#define C2F(name) name
-#define F2C(name) name
-#endif
 
 /* Define some functions */
 
