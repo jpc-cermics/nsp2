@@ -9,4 +9,4 @@ distclean: clean
 	$(RM) -fr _build
 
 install:
-	cp _build/default/main_gen.exe ../../bin/nspbind
+	cp _build/default/driver.exe ../../bin/nspbind

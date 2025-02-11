@@ -1,13 +1,12 @@
 
 (executable
- (name main_gen)
- ;; (flags :standard -w -3)
- (libraries unix num)
+ (name driver)
+ (flags :standard -w -3)
+ (libraries unix num str)
  ;;  (modules_without_implementation)
  ;;  (link_flags -cclib -lz)
-
  (modules_without_implementation ast_node codegen_configuration
- format_printer og_types override_ast)
+   format_printer og_types override_ast)
 )
 
 (include_subdirs unqualified)
