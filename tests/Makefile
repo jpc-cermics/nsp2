@@ -150,7 +150,7 @@ tests: all
 
 distclean	::
 	@echo cleaning tests
-	@$(RM) $(TESTS) $(ALG) $(VL) 
+	@$(RM) $(TESTS) $(ALG) $(VL) test.bib test.data
 	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
