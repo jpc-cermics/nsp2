@@ -18,6 +18,7 @@ bin/scilex
 bin/simport.exe
 bin/translator.exe
 bin/zterm
+bin/nspbind
 libs/simport_pervasives.mdlio
 *.dia
 
