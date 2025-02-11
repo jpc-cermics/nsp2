@@ -1,0 +1,8 @@
+(lang dune 2.0)
+
+(package
+ (name translator)
+ (depends num unix)
+ )
+
+;;(generate_opam_files)
