@@ -5363,7 +5363,7 @@ int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scala
   if ( (ind = malloc((m+1)*sizeof(int *))) == NULL )
     goto err;
 
-  if ( (func = malloc(m*sizeof(CompOp *))) == NULL )
+  if ( (func = malloc(((unsigned int) m)*sizeof(CompOp *))) == NULL )
     goto err;
   for ( i = 0 ; i < m ; i++ )
     if ( (func[i] = SearchCompBis(ops[i])) == NULL )

@@ -2769,7 +2769,7 @@ static int
 _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,s_int,s_int,s_int,s_int,t_end};
-  GdkRectangle cell_area;
+  GdkRectangle cell_area= { 0, 0, 0, 0 };
   gint x_offset, y_offset, width, height;
 
   gtk_tree_view_column_cell_get_size(GTK_TREE_VIEW_COLUMN(self->obj),

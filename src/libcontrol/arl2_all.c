@@ -3559,7 +3559,7 @@ nsp_ctrlpack_domout (int *neq, double *q, double *qi, int *nbout, double *ti,
 
   /* Local variables */
   int kmax, ierr;
-  double tpas;
+  double tpas=0;
   int lqex;
   double tout, eps390;
   int k, nface;
