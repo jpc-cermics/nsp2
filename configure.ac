@@ -2342,7 +2342,9 @@ if test "$OCAML_CHECK" = "yes"; then
    AC_PROG_OCAMLLEX
    AC_PROG_HTMLC
    AC_PROG_OCAMLPRINTC
-
+   AC_PROG_DUNE
+   AC_PROG_OPAM
+      
    if test "$OCAMLPRINTC" = "no"; then
       # just do noting
       OCAMLPRINTC=echo
@@ -2358,6 +2360,15 @@ if test "$OCAML_CHECK" = "yes"; then
    # compilers will copy executables in bin/
    COMPILERS_SRC_INSTALL_DIR=../..
    AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
+
+   # To be done, check for num
+   # $OCAML_PKG_num will be num or no
+   AC_CHECK_OCAML_PKG(num)
+   # echo ZZZZZZZZ  $OCAML_PKG_num
+   AC_CHECK_OCAML_MODULE(Inum,num,[Num],[+../num])
+   # echo ZZZZZZZZ  $Inum
+   # chercher aussi
+   # ocamlfind query -i-format num
 fi 
 
 
@@ -2677,6 +2688,17 @@ if test "$scicos_scicosc" = "yes"; then
       echo "ocamlopt compiler......:" "$OCAMLOPT"
       echo "ocamlc options.........:" "$CAML_BYT_COMP_FLAGS"
       echo "ocamlopt options.......:" "$CAML_BIN_COMP_FLAGS"
+
+      if test "$DUNE_PROG" = "no"; then
+        echo "dune...................:" "no"
+      else
+        echo "dune...................:" "yes"
+      fi 
+      if test "$OPAM_PROG" = "no"; then
+        echo "opam...................:" "no"
+      else
+        echo "opam...................:" "yes"
+      fi 
    fi			
 fi 
 echo 
