@@ -265,3 +265,18 @@ EOF
   AC_MSG_RESULT([$OCAML_OS_TYPE])
   AC_SUBST([OCAML_OS_TYPE])
 ])
+
+
+AC_DEFUN([AC_PROG_DUNE],
+[dnl
+  AC_ARG_VAR([DUNE_PROG], [dune, dune command])dnl
+  AC_CHECK_TOOL([DUNE_PROG],[dune],[no])
+  AC_SUBST(DUNE_PROG)
+])
+
+AC_DEFUN([AC_PROG_OPAM],
+[dnl
+  AC_ARG_VAR([OPAM_PROG], [opam, opam command])dnl
+  AC_CHECK_TOOL([OPAM_PROG],[opam],[no])
+  AC_SUBST(OPAM_PROG)
+])
